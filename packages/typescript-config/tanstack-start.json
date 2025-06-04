@@ -1,0 +1,24 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"include": [
+		"${configDir}/worker-configuration.d.ts",
+		"${configDir}/env.d.ts",
+		"${configDir}/**/*.ts",
+		"${configDir}/**/*.tsx"
+	],
+	"exclude": [
+		"${configDir}/node_modules/",
+		"${configDir}/.output/",
+		"${configDir}/.vinxi/",
+		"${configDir}/eslint.config.ts"
+	],
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"moduleResolution": "Bundler",
+		"module": "ESNext",
+		"target": "ES2022",
+		"skipLibCheck": true,
+		"strictNullChecks": true,
+		"types": ["./worker-configuration.d.ts", "@cloudflare/vitest-pool-workers"]
+	}
+}
