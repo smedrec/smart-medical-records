@@ -20,7 +20,7 @@
 		"@commander-js/extra-typings": "14.0.0",
 		"@jahands/cli-tools": "0.10.10",
 		"@types/fs-extra": "11.0.4",
-		"@types/node": "22.15.27",
+		"@types/node": "22.15.29",
 		"cli-table3": "0.6.5",
 		"commander": "14.0.0",
 		"empathic": "1.1.0",
@@ -28,11 +28,11 @@
 		"memoize-one": "6.0.0",
 		"ts-pattern": "5.7.1",
 		"tsx": "4.19.4",
-		"zod": "3.25.42",
+		"zod": "3.25.50",
 		"zx": "8.5.4"
 	},
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",
-		"vitest": "3.1.4"
+		"vitest": "3.2.1"
 	}
 }

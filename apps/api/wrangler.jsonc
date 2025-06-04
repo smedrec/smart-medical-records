@@ -1,0 +1,42 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "api",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-04-28",
+	"compatibility_flags": ["nodejs_compat"],
+	"routes": [],
+	"logpush": true,
+	// Local development
+	"dev": {
+		"local_protocol": "http",
+		"upstream_protocol": "https",
+		"ip": "localhost",
+		"port": 8801
+	},
+
+	"observability": {
+		"enabled": true
+	},
+
+	"vars": {
+		"ENVIRONMENT": "development", // overridden during deployment
+		"SENTRY_RELEASE": "unknown" // overridden during deployment
+	},
+
+	"kv_namespaces": [
+		{
+			"binding": "KV",
+			"id": "<YOUR_BINDING_ID>"
+		}
+	],
+
+	// D1 database configuration
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "smedrec-auth",
+			"database_id": "<D1DATABASE_BINDING_ID>",
+			"migrations_dir": "drizzle"
+		}
+	]
+}

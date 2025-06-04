@@ -47,25 +47,28 @@
 		}
 	],
 	"cSpell.words": [
+		"addrs",
 		"cftrace",
 		"cloudflareaccess",
 		"codemod",
+		"Cordeiro",
+		"devlist",
+		"gitea",
 		"Hono",
+		"ianvs",
 		"itty",
 		"jachands",
+		"José",
+		"logtail",
 		"luxon",
 		"miniflare",
 		"opentelemetry",
 		"otel",
+		"paralleldrive",
 		"pnpx",
 		"runx",
 		"syncpack",
-		"typecheck",
-		"addrs",
-		"devlist",
-		"gitea",
-		"logtail",
-		"miniflare",
-		"tldraw"
+		"tldraw",
+		"typecheck"
 	]
 }

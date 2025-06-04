@@ -2,9 +2,17 @@ import { env } from 'cloudflare:workers'
 import { Hono } from 'hono'
 import { useWorkersLogger } from 'workers-tagged-logger'
 
+import { AppClient } from '@repo/app-client'
 import { getRequestLogData, logger, useNotFound, useOnError } from '@repo/hono-helpers'
 
 import type { App } from './context'
+
+const appClient = new AppClient({
+	baseUrl: 'http://localhost:8801',
+	retries: 3, // Number of retry attempts
+	backoffMs: 300, // Initial backoff time
+	maxBackoffMs: 5000, // Maximum backoff time
+})
 
 const app = new Hono<App>()
 	.use(
@@ -34,6 +42,9 @@ const app = new Hono<App>()
 
 		const headers = new Headers(c.req.raw.headers)
 
+		const api = await appClient.ok()
+		const assistants = await appClient.getAssistants({})
+
 		const data = {
 			method: c.req.method,
 			url: c.req.url,
@@ -42,6 +53,8 @@ const app = new Hono<App>()
 			hostname: url.hostname,
 			headers: Object.fromEntries(headers.entries()),
 			body: body ?? null,
+			api: api.ok,
+			assistants: assistants,
 		}
 
 		logger
