@@ -31,6 +31,11 @@ coverage
 # Vercel
 .vercel
 
+# Tanstack Start
+.output
+.vinxi
+routeTree.gen.ts
+
 # Build Outputs
 .next/
 out/
@@ -47,3 +52,4 @@ yarn-error.log*
 
 # Agents
 .claude/settings.local.json
+

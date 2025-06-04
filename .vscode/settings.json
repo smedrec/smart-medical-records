@@ -50,8 +50,10 @@
 		"addrs",
 		"cftrace",
 		"cloudflareaccess",
+		"cmdk",
 		"codemod",
 		"Cordeiro",
+		"daveyplate",
 		"devlist",
 		"gitea",
 		"Hono",
@@ -59,6 +61,8 @@
 		"itty",
 		"jachands",
 		"José",
+		"joseantcordeiro",
+		"logpush",
 		"logtail",
 		"luxon",
 		"miniflare",
@@ -67,8 +71,13 @@
 		"paralleldrive",
 		"pnpx",
 		"runx",
+		"SMEDREC",
+		"sonner",
 		"syncpack",
 		"tldraw",
-		"typecheck"
+		"topo",
+		"typecheck",
+		"unenv",
+		"vinxi"
 	]
 }

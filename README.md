@@ -1,4 +1,4 @@
-# Smart Medical Records (SMeD-REC)
+# Smart Medical Records (SMEDREC)
 
 A modern, open-source medical records system for registering patient cases with treatments, forms, and conclusions. Built with Cloudflare Workers, Hono, and Drizzle ORM.
 
@@ -65,4 +65,4 @@ pnpm turbo -F api test
 
 ## 📄 License
 
-MIT License - see [LICENSE](mdc:LICENSE) for details
+MIT License - see [LICENSE](LICENSE) for details
