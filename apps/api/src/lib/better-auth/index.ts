@@ -192,6 +192,7 @@ export const auth = betterAuth({
 	trustedOrigins: [
 		`${env.BETTER_AUTH_URL}/auth`,
 		`${env.BETTER_AUTH_URL}`,
+		'https://localhost:8801',
 		'http://localhost:3000',
 		'http://localhost:8787',
 	],
