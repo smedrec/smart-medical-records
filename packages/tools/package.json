@@ -28,8 +28,8 @@
 		"memoize-one": "6.0.0",
 		"ts-pattern": "5.7.1",
 		"tsx": "4.19.4",
-		"zod": "3.25.50",
-		"zx": "8.5.4"
+		"zod": "3.25.51",
+		"zx": "8.5.5"
 	},
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",

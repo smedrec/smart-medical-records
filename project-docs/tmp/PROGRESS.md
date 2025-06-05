@@ -61,24 +61,24 @@
 #### Core Features
 
 - [ ] **Therapist Management**  
-      **Progress**: 85%  
-      **Remaining**: License API integrations (FR/DE)  
-      **Dependencies**: National license registries
+       **Progress**: 85%  
+       **Remaining**: License API integrations (FR/DE)  
+       **Dependencies**: National license registries
 
 - [ ] **Custom Form Builder**  
-      **Progress**: 70%  
-      **Remaining**: PDF export functionality  
-      **Dependencies**: React Flow, JSPDF
+       **Progress**: 70%  
+       **Remaining**: PDF export functionality  
+       **Dependencies**: React Flow, JSPDF
 
 #### Additional Features
 
 - [ ] **Internationalization**  
-      **Priority**: High  
-      **Status**: In Progress (12/50 languages)
+       **Priority**: High  
+       **Status**: In Progress (12/50 languages)
 
 - [ ] **Audit Logs**  
-      **Priority**: Medium  
-      **Status**: Not Started
+       **Priority**: Medium  
+       **Status**: Not Started
 
 ---
 

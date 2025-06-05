@@ -1,6 +1,7 @@
-import { cn } from '@/lib/utils'
 import { AuthCard } from '@daveyplate/better-auth-ui'
 import { createFileRoute } from '@tanstack/react-router'
+
+import { cn } from '@repo/ui/lib/utils'
 
 export const Route = createFileRoute('/auth/$pathname')({
 	component: RouteComponent,

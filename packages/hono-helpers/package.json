@@ -15,11 +15,11 @@
 		"hono": "4.7.11",
 		"http-codex": "0.5.9",
 		"workers-tagged-logger": "0.11.2",
-		"zod": "3.25.50"
+		"zod": "3.25.51"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "0.8.36",
-		"@cloudflare/workers-types": "4.20250603.0",
+		"@cloudflare/workers-types": "4.20250605.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",

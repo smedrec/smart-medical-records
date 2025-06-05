@@ -1,8 +1,9 @@
 import { GitHubIcon, UserButton } from '@daveyplate/better-auth-ui'
 import { Link } from '@tanstack/react-router'
 
+import { Button } from '@repo/ui/components/ui/button'
+
 import { ModeToggle } from './mode-toggle'
-import { Button } from './ui/button'
 
 export function Header() {
 	return (
