@@ -36,6 +36,9 @@ coverage
 .vinxi
 routeTree.gen.ts
 
+Mastra
+.mastra
+
 # Build Outputs
 .next/
 out/
