@@ -15,6 +15,13 @@
 - Auth via [better-auth](mdc:apps/api/src/lib/better-auth/index.ts)
 - API routes in [apps/api/src/routes/](mdc:apps/api/src/routes/)
 
+**AI Framework**:
+
+- Cloudflare Worker using Mastra, The TypeScript Agent Framework (see [Mastra](https://mastra.ai/))
+- AI processing in [apps/ai/](mdc:apps/ai/)
+- Integrates [Cloudflare Vectorize](https://developers.cloudflare.com/vectorize/) for document analysis
+- Uses [Mastra Client SDK](https://mastra.ai/en/docs/deployment/client) for API communication
+
 **Database**:
 
 - Cloudflare D1 schema in [apps/api/drizzle/schema/](mdc:apps/api/drizzle/schema/)
@@ -61,6 +68,11 @@
 		"framework": "Hono with Cloudflare Workers",
 		"database": "Cloudflare D1 + Cloudflare KV",
 		"orm": "Drizzle ORM (see [apps/api/src/db/index.ts](mdc:apps/api/src/db/index.ts))"
+	},
+	"ai": {
+		"framework": "Mastra with Cloudflare Workers",
+		"models": "Cloudflare Vectorize for document processing",
+		"integration": "REST API from apps/api/ for data access"
 	}
 }
 ```
