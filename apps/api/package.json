@@ -18,6 +18,7 @@
 	},
 	"dependencies": {
 		"@hono/zod-openapi": "0.19.8",
+		"@mastra/client-js": "^0.10.2",
 		"@paralleldrive/cuid2": "2.2.2",
 		"@repo/hono-helpers": "workspace:*",
 		"better-auth": "1.2.8",

@@ -3,6 +3,7 @@ import { cors } from 'hono/cors'
 import { auth } from './lib/better-auth'
 import { newApp } from './lib/hono'
 import { init } from './lib/hono/init'
+import { registerAiChat } from './routes/ai/chat'
 import { registerAssistantCreate } from './routes/assistant/create'
 import { registerAssistantDelete } from './routes/assistant/delete'
 import { registerAssistantFindOne } from './routes/assistant/findOne'
@@ -71,5 +72,7 @@ registerPatientFindOne(app)
 registerPatientUpdate(app)
 registerPatientsToTherapists(app)
 registerPatientsDisableTherapists(app)
+// ai routes
+registerAiChat(app)
 
 export default app

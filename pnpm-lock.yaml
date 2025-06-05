@@ -102,6 +102,9 @@ importers:
       '@hono/zod-openapi':
         specifier: 0.19.8
         version: 0.19.8(hono@4.7.11)(zod@3.25.51)
+      '@mastra/client-js':
+        specifier: ^0.10.2
+        version: 0.10.2(@mastra/core@0.10.3(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.51))(zod@3.25.51)
       '@paralleldrive/cuid2':
         specifier: 2.2.2
         version: 2.2.2
@@ -540,6 +543,18 @@ packages:
     resolution: {integrity: sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==}
     engines: {node: '>=0.10.0'}
 
+  '@ag-ui/client@0.0.27':
+    resolution: {integrity: sha512-W7PX/C40dxeCdf/j9lSL6TI8IEpWct/Fn9JkZdX3zXFf5rPN+RpckRKhYTC0ZstMi909oTww7SHVsVm7exPReg==}
+
+  '@ag-ui/core@0.0.27':
+    resolution: {integrity: sha512-I8i0qsamIVaOhPZ11bz7a+JQ7DIwIhLCon2EYWHikgcLiWzfZNBJhlVBR6Fn29tv3Ost4p6wYWQy84WzAhjJ+Q==}
+
+  '@ag-ui/encoder@0.0.27':
+    resolution: {integrity: sha512-GO42BDdi9pmNsfhPlMQeSxGFfMJJg/Jvgng/N/5elHEfEOjGVtOCkDPpN4lirkuBoXEh/hW6gIgYAXDu/HuZJA==}
+
+  '@ag-ui/proto@0.0.27':
+    resolution: {integrity: sha512-bgF2DGqU+DvcNKF3gOlT97kZmhHNB0lWfjkJQ6ONxMtmWlSVYAE97LCtdTIjXEhnHyqi3QQBQ0BEXJ74q7QMcg==}
+
   '@ai-sdk/groq@1.2.9':
     resolution: {integrity: sha512-7MoDaxm8yWtiRbD1LipYZG0kBl+Xe0sv/EeyxnHnGPZappXdlgtdOgTZVjjXkT3nWP30jjZi9A45zoVrBMb3Xg==}
     engines: {node: '>=18'}
@@ -869,6 +884,9 @@ packages:
 
   '@better-fetch/fetch@1.1.18':
     resolution: {integrity: sha512-rEFOE1MYIsBmoMJtQbl32PGHHXuG2hDxvEd7rUHE0vCBoFQVSDqaVs9hkZEtHCxRoY+CljXKFCOuJ8uxqw1LcA==}
+
+  '@bufbuild/protobuf@2.5.1':
+    resolution: {integrity: sha512-lut4UTvKL8tqtend0UDu7R79/n9jA7Jtxf77RNPbxtmWqfWI4qQ9bTjf7KCS4vfqLmpQbuHr1ciqJumAgJODdw==}
 
   '@changesets/apply-release-plan@7.0.12':
     resolution: {integrity: sha512-EaET7As5CeuhTzvXTQCRZeBUcisoYPDDcXvgTE/2jmmypKp0RC7LxKj/yzqeh/1qFTZI7oDGFcL1PHRuQuketQ==}
@@ -2275,6 +2293,12 @@ packages:
     peerDependencies:
       react: ^17.0.2 || ^18.0.0 || ^19.0
       react-dom: ^17.0.2 || ^18.0.0 || ^19.0
+
+  '@mastra/client-js@0.10.2':
+    resolution: {integrity: sha512-FmO86A2LYJMc9+Rt/hv8oper2SMTb3x64kYc+UwX/v71aMMtUqHIqNhPgayZ0ziFPEZwA6i4sOP/v0AiJHJjrA==}
+    peerDependencies:
+      '@mastra/core': ^0.10.2-alpha.0
+      zod: ^3.0.0
 
   '@mastra/cloudflare-d1@0.10.1':
     resolution: {integrity: sha512-U8b3DwbVhNwTFyKJGYFjx/42OZyR/uPwmIv+QXOtGZJoFq1iE7AE1/QAZupmKLFqYuLXvSYiGghMBCJGoompHg==}
@@ -4614,6 +4638,9 @@ packages:
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
 
+  '@types/uuid@10.0.0':
+    resolution: {integrity: sha512-7gqG38EyHgyP1S+7+xomFtL+ZNHcKv6DwNaCZmJmo1vgMugyF3TCnXVg4t1uk89mLNwnLtnY3TpOpCOyp1/xHQ==}
+
   '@types/uuid@9.0.8':
     resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
 
@@ -6540,6 +6567,9 @@ packages:
   fast-glob@3.3.3:
     resolution: {integrity: sha512-7MptL8U0cqcFdzIzwOTHoilX9x5BrNqye7Z/LuC7kCMRio1EMSyqRK3BEAUD7sXRq4iT4AzTVuZdhgQ2TCvYLg==}
     engines: {node: '>=8.6.0'}
+
+  fast-json-patch@3.1.1:
+    resolution: {integrity: sha512-vf6IHUX2SBcA+5/+4883dsIjpBTqmfBjmYiWK1savxQmFk4JfBMLa7ynTYOs1Rolp/T1betJxHiGD3g1Mn8lUQ==}
 
   fast-json-stable-stringify@2.1.0:
     resolution: {integrity: sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==}
@@ -9078,6 +9108,9 @@ packages:
     resolution: {integrity: sha512-hTdwr+7yYNIT5n4AMYp85KA6yw2Va0FLa3Rguvbpa4W3I5xynaBZo41cM3XM+4Q6fRMj3sBYIR1VAmZMXYJvRQ==}
     engines: {npm: '>=2.0.0'}
 
+  rxjs@7.8.1:
+    resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
+
   rxjs@7.8.2:
     resolution: {integrity: sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==}
 
@@ -10000,6 +10033,9 @@ packages:
       uploadthing:
         optional: true
 
+  untruncate-json@0.0.1:
+    resolution: {integrity: sha512-4W9enDK4X1y1s2S/Rz7ysw6kDuMS3VmRjMFg7GZrNO+98OSe+x5Lh7PKYoVjy3lW/1wmhs6HW0lusnQRHgMarA==}
+
   untun@0.1.3:
     resolution: {integrity: sha512-4luGP9LMYszMRZwsvyUd9MrxgEGZdZuZgpVQHEEX0lCYFESasVRvZd0EYpCkOIbJKHMuv0LskpXc/8Un+MJzEQ==}
     hasBin: true
@@ -10533,6 +10569,33 @@ packages:
 snapshots:
 
   '@aashutoshrathi/word-wrap@1.2.6': {}
+
+  '@ag-ui/client@0.0.27':
+    dependencies:
+      '@ag-ui/core': 0.0.27
+      '@ag-ui/encoder': 0.0.27
+      '@ag-ui/proto': 0.0.27
+      '@types/uuid': 10.0.0
+      fast-json-patch: 3.1.1
+      rxjs: 7.8.1
+      untruncate-json: 0.0.1
+      uuid: 11.1.0
+      zod: 3.25.51
+
+  '@ag-ui/core@0.0.27':
+    dependencies:
+      rxjs: 7.8.1
+      zod: 3.25.51
+
+  '@ag-ui/encoder@0.0.27':
+    dependencies:
+      '@ag-ui/core': 0.0.27
+      '@ag-ui/proto': 0.0.27
+
+  '@ag-ui/proto@0.0.27':
+    dependencies:
+      '@ag-ui/core': 0.0.27
+      '@bufbuild/protobuf': 2.5.1
 
   '@ai-sdk/groq@1.2.9(zod@3.25.51)':
     dependencies:
@@ -11225,6 +11288,8 @@ snapshots:
       uncrypto: 0.1.3
 
   '@better-fetch/fetch@1.1.18': {}
+
+  '@bufbuild/protobuf@2.5.1': {}
 
   '@changesets/apply-release-plan@7.0.12':
     dependencies:
@@ -12320,6 +12385,16 @@ snapshots:
     dependencies:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
+
+  '@mastra/client-js@0.10.2(@mastra/core@0.10.3(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.51))(zod@3.25.51)':
+    dependencies:
+      '@ag-ui/client': 0.0.27
+      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.51)
+      '@mastra/core': 0.10.3(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.51)
+      json-schema: 0.4.0
+      rxjs: 7.8.1
+      zod: 3.25.51
+      zod-to-json-schema: 3.24.5(zod@3.25.51)
 
   '@mastra/cloudflare-d1@0.10.1(@mastra/core@0.10.3(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.51))':
     dependencies:
@@ -15481,6 +15556,8 @@ snapshots:
 
   '@types/unist@3.0.3': {}
 
+  '@types/uuid@10.0.0': {}
+
   '@types/uuid@9.0.8': {}
 
   '@types/webidl-conversions@7.0.3': {}
@@ -17840,6 +17917,8 @@ snapshots:
       glob-parent: 5.1.2
       merge2: 1.4.1
       micromatch: 4.0.8
+
+  fast-json-patch@3.1.1: {}
 
   fast-json-stable-stringify@2.1.0: {}
 
@@ -20606,6 +20685,10 @@ snapshots:
     dependencies:
       tslib: 1.14.1
 
+  rxjs@7.8.1:
+    dependencies:
+      tslib: 2.8.1
+
   rxjs@7.8.2:
     dependencies:
       tslib: 2.8.1
@@ -21672,6 +21755,8 @@ snapshots:
       '@upstash/redis': 1.35.0
       db0: 0.3.2(drizzle-orm@0.44.2(@cloudflare/workers-types@4.20250605.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@upstash/redis@1.35.0)(kysely@0.28.2)(pg@8.16.0)(postgres@3.4.7))
       ioredis: 5.6.1
+
+  untruncate-json@0.0.1: {}
 
   untun@0.1.3:
     dependencies:
