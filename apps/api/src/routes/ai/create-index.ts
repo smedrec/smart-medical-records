@@ -1,7 +1,8 @@
 import { createRoute, z } from '@hono/zod-openapi'
 
-import { aiClient } from '../../lib/ai/ai-client'
+import { aiClient } from '../../lib/ai'
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
+import { idParamsSchema } from '../../shared/types'
 import { AiCreateIndexSchema } from './types'
 
 import type { App } from '../../lib/hono'
@@ -10,9 +11,10 @@ const route = createRoute({
 	tags: ['AI'],
 	operationId: 'ai-create-index',
 	method: 'post',
-	path: '/ai/create-index',
+	path: '/ai/create-index/{id}',
 	security: [{ cookieAuth: [] }],
 	request: {
+		params: idParamsSchema,
 		body: {
 			required: true,
 			description: 'Create Vector Index',
@@ -70,9 +72,10 @@ export const registerAiCreateIndex = (app: App) =>
       })
     } */
 
+		const { id } = c.req.valid('param')
 		const data = c.req.valid('json')
 
-		const vectorStore = aiClient.getVector('mongoVector')
+		const vectorStore = aiClient.getVector(id)
 
 		try {
 			// Create an index for our paper chunks

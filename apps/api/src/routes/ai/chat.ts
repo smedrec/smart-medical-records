@@ -1,7 +1,8 @@
 import { createRoute, z } from '@hono/zod-openapi'
 
-import { aiClient } from '../../lib/ai/ai-client'
+import { aiClient } from '../../lib/ai'
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
+import { idParamsSchema } from '../../shared/types'
 import { AiChatSchema } from './types'
 
 import type { App } from '../../lib/hono'
@@ -10,9 +11,10 @@ const route = createRoute({
 	tags: ['AI'],
 	operationId: 'ai-chat',
 	method: 'post',
-	path: '/ai/chat',
+	path: '/ai/chat/{id}',
 	security: [{ cookieAuth: [] }],
 	request: {
+		params: idParamsSchema,
 		body: {
 			required: true,
 			description: 'Chat message',
@@ -70,10 +72,11 @@ export const registerAiChat = (app: App) =>
 			})
 		} */
 
+		const { id } = c.req.valid('param')
 		const data = c.req.valid('json')
 
 		try {
-			const agent = aiClient.getAgent('weatherAgent')
+			const agent = aiClient.getAgent(id)
 			const response = await agent.generate({
 				messages: [{ role: data.role, content: data.content }],
 			})

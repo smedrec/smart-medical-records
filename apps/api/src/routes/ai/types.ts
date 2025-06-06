@@ -15,6 +15,10 @@ export const AiChatSchema = z
 
 export const AiStoreSchema = z
 	.object({
+		index: z.string().openapi({
+			description: 'The vector index',
+			example: 'papers',
+		}),
 		paperUrl: z.string().openapi({
 			description: 'The paper url.',
 			example: 'https://arxiv.org/html/1706.03762',

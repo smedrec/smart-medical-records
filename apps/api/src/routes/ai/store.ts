@@ -3,8 +3,9 @@ import { MDocument } from '@mastra/rag'
 import { embedMany } from 'ai'
 import { ollama } from 'ollama-ai-provider'
 
-import { aiClient } from '../../lib/ai/ai-client'
+import { aiClient } from '../../lib/ai'
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
+import { idParamsSchema } from '../../shared/types'
 import { AiStoreSchema } from './types'
 
 import type { App } from '../../lib/hono'
@@ -13,12 +14,13 @@ const route = createRoute({
 	tags: ['AI'],
 	operationId: 'ai-store',
 	method: 'post',
-	path: '/ai/store',
+	path: '/ai/store/{id}',
 	security: [{ cookieAuth: [] }],
 	request: {
+		params: idParamsSchema,
 		body: {
 			required: true,
-			description: 'Chat message',
+			description: 'Index and data to store',
 			content: {
 				'application/json': {
 					schema: AiStoreSchema,
@@ -73,6 +75,7 @@ export const registerAiStore = (app: App) =>
       })
     } */
 
+		const { id } = c.req.valid('param')
 		const data = c.req.valid('json')
 		const response = await fetch(data.paperUrl)
 		const paperText = await response.text()
@@ -92,12 +95,12 @@ export const registerAiStore = (app: App) =>
 			values: chunks.map((chunk) => chunk.text),
 		})
 
-		const vectorStore = aiClient.getVector('mongoVector')
+		const vectorStore = aiClient.getVector(id)
 
 		try {
 			// Store embeddings
 			await vectorStore.upsert({
-				indexName: 'papers',
+				indexName: data.index,
 				vectors: embeddings,
 				metadata: chunks.map((chunk) => ({
 					text: chunk.text,
