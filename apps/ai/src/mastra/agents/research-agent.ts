@@ -2,7 +2,7 @@ import { groq } from '@ai-sdk/groq'
 import { Agent } from '@mastra/core/agent'
 import { Memory } from '@mastra/memory'
 
-import { mongoStorage } from '../stores/mongo-db'
+import { pgStorage } from '../stores/pgvector'
 import { vectorQueryTool } from '../tools/vector-query-tool'
 
 export const researchAgent = new Agent({
@@ -21,6 +21,6 @@ export const researchAgent = new Agent({
 		//  binding: DB, // D1Database binding provided by the Workers runtime
 		//  tablePrefix: "dev_", // Optional: isolate tables per environment
 		//}),
-		storage: mongoStorage,
+		storage: pgStorage,
 	}),
 })

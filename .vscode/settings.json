@@ -74,6 +74,7 @@
 		"opentelemetry",
 		"otel",
 		"paralleldrive",
+		"pgvector",
 		"pnpx",
 		"runx",
 		"SMEDREC",

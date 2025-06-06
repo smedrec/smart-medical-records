@@ -24,6 +24,7 @@
 		"@mastra/loggers": "^0.10.1",
 		"@mastra/memory": "^0.10.2",
 		"@mastra/mongodb": "^0.10.2",
+		"@mastra/pg": "^0.10.1",
 		"@mastra/rag": "^0.10.2",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",

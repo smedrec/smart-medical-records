@@ -7,7 +7,8 @@ import { PinoLogger } from '@mastra/loggers'
 
 import { researchAgent } from './agents/research-agent'
 import { weatherAgent } from './agents/weather-agent'
-import { mongoStorage, mongoVector } from './stores/mongo-db'
+import { pgStorage, pgVector } from './stores/pgvector'
+//import { mongoStorage, mongoVector } from './stores/mongo-db'
 import { weatherWorkflow } from './workflows/weather-workflow'
 
 //type Env = {
@@ -47,12 +48,12 @@ export const mastra = new Mastra({
 	}),
 	workflows: { weatherWorkflow },
 	agents: { researchAgent, weatherAgent },
-	vectors: { mongoVector },
+	vectors: { pgVector },
 	//storage: new D1Store({
 	//  binding: DB, // D1Database binding provided by the Workers runtime
 	//  tablePrefix: "dev_", // Optional: isolate tables per environment
 	//}),
-	storage: mongoStorage,
+	storage: pgStorage,
 	logger: new PinoLogger({
 		name: 'Mastra',
 		level: 'info',
