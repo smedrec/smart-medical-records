@@ -69,6 +69,8 @@
 		"luxon",
 		"mastra",
 		"miniflare",
+		"nomic",
+		"ollama",
 		"opentelemetry",
 		"otel",
 		"paralleldrive",

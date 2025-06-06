@@ -1,9 +1,10 @@
 import { groq } from '@ai-sdk/groq'
 import { Agent } from '@mastra/core/agent'
 import { Memory } from '@mastra/memory'
-//import { D1Database } from "@cloudflare/workers-types";
-import { MongoDBStore } from '@mastra/mongodb'
 
+//import { D1Database } from "@cloudflare/workers-types";
+
+import { mongoStorage } from '../stores/mongo-db'
 //import { D1Store } from "@mastra/cloudflare-d1";
 import { weatherTool } from '../tools/weather-tool'
 
@@ -33,9 +34,6 @@ export const weatherAgent = new Agent({
 		//  binding: DB, // D1Database binding provided by the Workers runtime
 		//  tablePrefix: "dev_", // Optional: isolate tables per environment
 		//}),
-		storage: new MongoDBStore({
-			url: process.env.MONGO_DB_URL!,
-			dbName: 'mastra',
-		}),
+		storage: mongoStorage,
 	}),
 })

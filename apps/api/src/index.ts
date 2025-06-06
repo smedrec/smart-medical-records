@@ -4,6 +4,11 @@ import { auth } from './lib/better-auth'
 import { newApp } from './lib/hono'
 import { init } from './lib/hono/init'
 import { registerAiChat } from './routes/ai/chat'
+import { registerAiCreateIndex } from './routes/ai/create-index'
+import { registerAiDeleteIndex } from './routes/ai/delete-index'
+import { registerAiDetailsIndex } from './routes/ai/details-index'
+import { registerAiIndexes } from './routes/ai/indexes'
+import { registerAiStore } from './routes/ai/store'
 import { registerAssistantCreate } from './routes/assistant/create'
 import { registerAssistantDelete } from './routes/assistant/delete'
 import { registerAssistantFindOne } from './routes/assistant/findOne'
@@ -74,5 +79,10 @@ registerPatientsToTherapists(app)
 registerPatientsDisableTherapists(app)
 // ai routes
 registerAiChat(app)
+registerAiStore(app)
+registerAiCreateIndex(app)
+registerAiDeleteIndex(app)
+registerAiDetailsIndex(app)
+registerAiIndexes(app)
 
 export default app
