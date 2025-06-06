@@ -1,8 +1,9 @@
 import { groq } from '@ai-sdk/groq'
 import { Agent } from '@mastra/core/agent'
 import { Memory } from '@mastra/memory'
+import { ollama } from 'ollama-ai-provider'
 
-import { pgStorage } from '../stores/pgvector'
+import { pgStorage, pgVector } from '../stores/pgvector'
 //import { D1Database } from "@cloudflare/workers-types";
 
 //import { D1Store } from "@mastra/cloudflare-d1";
@@ -12,6 +13,14 @@ import { weatherTool } from '../tools/weather-tool'
 // Add your bindings here, e.g. Workers KV, D1, Workers AI, etc.
 //DB: D1Database;
 //};
+
+// Initialize memory with PostgreSQL storage and vector search
+const memory = new Memory({
+	embedder: ollama.embedding('nomic-embed-text:latest'),
+	storage: pgStorage,
+	vector: pgVector,
+	options: { lastMessages: 10, semanticRecall: { topK: 3, messageRange: 2 } },
+})
 
 export const weatherAgent = new Agent({
 	name: 'Weather Agent',
@@ -29,11 +38,5 @@ export const weatherAgent = new Agent({
 `,
 	model: groq('llama-3.3-70b-versatile'),
 	tools: { weatherTool },
-	memory: new Memory({
-		//storage: new D1Store({
-		//  binding: DB, // D1Database binding provided by the Workers runtime
-		//  tablePrefix: "dev_", // Optional: isolate tables per environment
-		//}),
-		storage: pgStorage,
-	}),
+	memory,
 })

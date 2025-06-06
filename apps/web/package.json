@@ -18,6 +18,9 @@
 		"vinxi:dev": "vinxi dev"
 	},
 	"dependencies": {
+		"@assistant-ui/react": "^0.10.21",
+		"@assistant-ui/react-ai-sdk": "^0.10.13",
+		"@assistant-ui/react-markdown": "^0.10.4",
 		"@daveyplate/better-auth-tanstack": "1.3.6",
 		"@daveyplate/better-auth-ui": "1.7.4",
 		"@repo/app-client": "workspace:*",
@@ -37,6 +40,7 @@
 		"postcss": "8.5.4",
 		"react": "19.1.0",
 		"react-dom": "19.1.0",
+		"remark-gfm": "^4.0.1",
 		"sonner": "2.0.5",
 		"tailwindcss-safe-area": "0.6.0",
 		"unenv": "1.10.0",

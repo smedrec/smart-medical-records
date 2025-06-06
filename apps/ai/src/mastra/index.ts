@@ -2,13 +2,13 @@ import { Mastra } from '@mastra/core/mastra'
 import { CloudflareDeployer } from '@mastra/deployer-cloudflare'
 import { PinoLogger } from '@mastra/loggers'
 
+import { chefAgent } from './agents/chef-agent'
 //import { D1Store } from "@mastra/cloudflare-d1";
 //import type { D1Database } from "@cloudflare/workers-types";
 
 import { researchAgent } from './agents/research-agent'
 import { weatherAgent } from './agents/weather-agent'
 import { pgStorage, pgVector } from './stores/pgvector'
-//import { mongoStorage, mongoVector } from './stores/mongo-db'
 import { weatherWorkflow } from './workflows/weather-workflow'
 
 //type Env = {
@@ -47,7 +47,7 @@ export const mastra = new Mastra({
 		],
 	}),
 	workflows: { weatherWorkflow },
-	agents: { researchAgent, weatherAgent },
+	agents: { researchAgent, weatherAgent, chefAgent },
 	vectors: { pgVector },
 	//storage: new D1Store({
 	//  binding: DB, // D1Database binding provided by the Workers runtime
