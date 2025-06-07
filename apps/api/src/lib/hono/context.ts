@@ -1,7 +1,7 @@
+import type { auth, Session } from '@repo/auth'
 import type { db } from '@repo/db'
 import type { HonoApp } from '@repo/hono-helpers'
 import type { SharedHonoEnv, SharedHonoVariables } from '@repo/hono-helpers/src/types'
-import type { auth, Session } from '../better-auth'
 import type { Logger } from '../logs'
 
 export type Env = SharedHonoEnv & {

@@ -1,8 +1,6 @@
 import { env } from 'cloudflare:workers'
 import { WorkerMailer } from 'worker-mailer'
 
-import { CONSTANTS } from '../../shared/constants'
-
 // Connect to SMTP server
 const mailer = async () =>
 	await WorkerMailer.connect({
@@ -28,7 +26,7 @@ export const emailService = {
 	}) => {
 		const workerMailer = await mailer()
 		await workerMailer.send({
-			from: { name: CONSTANTS.FROM_NAME, email: CONSTANTS.FROM_EMAIL },
+			from: { name: env.FROM_NAME, email: env.FROM_EMAIL },
 			to,
 			subject,
 			html,

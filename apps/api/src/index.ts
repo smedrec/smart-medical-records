@@ -1,6 +1,7 @@
 import { cors } from 'hono/cors'
 
-import { auth } from './lib/better-auth'
+import { auth } from '@repo/auth'
+
 import { newApp } from './lib/hono'
 import { init } from './lib/hono/init'
 import { registerAiChat } from './routes/ai/chat'

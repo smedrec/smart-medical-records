@@ -83,6 +83,9 @@ importers:
       '@mastra/rag':
         specifier: 0.10.2
         version: 0.10.2(@mastra/core@0.10.3(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.56))(ai@4.3.16(react@19.1.0)(zod@3.25.56))
+      '@repo/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
@@ -123,6 +126,9 @@ importers:
       '@paralleldrive/cuid2':
         specifier: 2.2.2
         version: 2.2.2
+      '@repo/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@repo/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -336,6 +342,43 @@ importers:
         specifier: 3.2.2
         version: 3.2.2(@types/debug@4.1.12)(@types/node@22.15.30)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.40.0)(tsx@4.19.4)(yaml@2.8.0)
 
+  packages/auth:
+    dependencies:
+      '@repo/db':
+        specifier: workspace:*
+        version: link:../db
+      '@repo/hono-helpers':
+        specifier: workspace:*
+        version: link:../hono-helpers
+      '@repo/mailer':
+        specifier: workspace:*
+        version: link:../mailer
+      better-auth:
+        specifier: 1.2.8
+        version: 1.2.8
+      drizzle-orm:
+        specifier: 0.44.2
+        version: 0.44.2(@cloudflare/workers-types@4.20250607.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@upstash/redis@1.35.0)(kysely@0.28.2)(pg@8.16.0)(postgres@3.4.7)
+    devDependencies:
+      '@cloudflare/vitest-pool-workers':
+        specifier: 0.8.36
+        version: 0.8.36(@cloudflare/workers-types@4.20250607.0)(@vitest/runner@3.2.2)(@vitest/snapshot@3.2.2)(vitest@3.2.2(@types/debug@4.1.12)(@types/node@22.15.30)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.40.0)(tsx@4.19.4)(yaml@2.8.0))
+      '@cloudflare/workers-types':
+        specifier: 4.20250607.0
+        version: 4.20250607.0
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@repo/tools':
+        specifier: workspace:*
+        version: link:../tools
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      vitest:
+        specifier: 3.2.2
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.15.30)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.40.0)(tsx@4.19.4)(yaml@2.8.0)
+
   packages/db:
     dependencies:
       '@paralleldrive/cuid2':
@@ -450,6 +493,34 @@ importers:
       zod:
         specifier: 3.25.56
         version: 3.25.56
+    devDependencies:
+      '@cloudflare/vitest-pool-workers':
+        specifier: 0.8.36
+        version: 0.8.36(@cloudflare/workers-types@4.20250607.0)(@vitest/runner@3.2.2)(@vitest/snapshot@3.2.2)(vitest@3.2.2(@types/debug@4.1.12)(@types/node@22.15.30)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.40.0)(tsx@4.19.4)(yaml@2.8.0))
+      '@cloudflare/workers-types':
+        specifier: 4.20250607.0
+        version: 4.20250607.0
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@repo/tools':
+        specifier: workspace:*
+        version: link:../tools
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      vitest:
+        specifier: 3.2.2
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.15.30)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.40.0)(tsx@4.19.4)(yaml@2.8.0)
+
+  packages/mailer:
+    dependencies:
+      '@repo/hono-helpers':
+        specifier: workspace:*
+        version: link:../hono-helpers
+      worker-mailer:
+        specifier: 1.1.4
+        version: 1.1.4
     devDependencies:
       '@cloudflare/vitest-pool-workers':
         specifier: 0.8.36

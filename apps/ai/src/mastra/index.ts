@@ -2,6 +2,8 @@ import { Mastra } from '@mastra/core/mastra'
 import { CloudflareDeployer } from '@mastra/deployer-cloudflare'
 import { PinoLogger } from '@mastra/loggers'
 
+import { auth } from '@repo/auth'
+
 import { chefAgent } from './agents/chef-agent'
 //import { D1Store } from "@mastra/cloudflare-d1";
 //import type { D1Database } from "@cloudflare/workers-types";

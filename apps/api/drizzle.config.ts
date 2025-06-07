@@ -8,7 +8,10 @@ import { defineConfig } from 'drizzle-kit'
 
 export default defineConfig({
 	out: './drizzle',
-	schema: ['./src/db/schema/auth.ts', './src/db/schema/app.ts'],
+	schema: [
+		'../../packages/db/src/database/schema/auth.ts',
+		'../../packages/db/src/database/schema/app.ts',
+	],
 	dialect: 'sqlite',
 	driver: 'd1-http',
 	dbCredentials: {

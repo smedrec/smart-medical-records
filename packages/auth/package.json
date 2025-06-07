@@ -1,0 +1,28 @@
+{
+	"name": "@repo/auth",
+	"version": "0.1.0",
+	"private": true,
+	"sideEffects": false,
+	"type": "module",
+	"main": "src/index.ts",
+	"scripts": {
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"test": "run-vitest"
+	},
+	"dependencies": {
+		"@repo/db": "workspace:*",
+		"@repo/hono-helpers": "workspace:*",
+		"@repo/mailer": "workspace:*",
+		"better-auth": "1.2.8",
+		"drizzle-orm": "0.44.2"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "0.8.36",
+		"@cloudflare/workers-types": "4.20250607.0",
+		"@repo/eslint-config": "workspace:*",
+		"@repo/tools": "workspace:*",
+		"@repo/typescript-config": "workspace:*",
+		"vitest": "3.2.2"
+	}
+}

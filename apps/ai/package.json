@@ -26,6 +26,7 @@
 		"@mastra/mongodb": "0.10.2",
 		"@mastra/pg": "0.10.1",
 		"@mastra/rag": "0.10.2",
+		"@repo/auth": "workspace:*",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"ai": "4.3.16",

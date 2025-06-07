@@ -4,8 +4,8 @@ import { admin as adminPlugin, openAPI, organization } from 'better-auth/plugins
 import { env } from 'cloudflare:workers'
 
 import { db } from '@repo/db'
+import { emailService } from '@repo/mailer'
 
-import { emailService } from '../email'
 import { getActiveOrganization } from './functions'
 import { betterAuthOptions } from './options'
 import { ac as appAc, admin as appAdmin, user } from './permissions/admin'

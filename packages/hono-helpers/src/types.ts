@@ -21,6 +21,24 @@ export type SharedHonoEnv = {
 	 */
 	SENTRY_RELEASE: string
 	/**
+	 * Better Auth environment variables.
+	 *
+	 */
+	BETTER_AUTH_URL: string
+	BETTER_AUTH_SECRET: string
+	/**
+	 * Application environment variables.
+	 */
+	APP_PUBLIC_URL: string
+	/**
+	 * SMTP credentials.
+	 */
+	SMTP_USER: string
+	SMTP_PASSWORD: string
+	SMTP_HOST: string
+	FROM_NAME: string
+	FROM_EMAIL: string
+	/**
 	 * The ...
 	 */
 	DB: D1Database

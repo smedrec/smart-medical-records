@@ -1,5 +1,6 @@
 import { eq } from 'drizzle-orm'
-import { HTTPException } from 'hono/http-exception'
+
+//import { HTTPException } from 'hono/http-exception'
 
 //import { APIError } from 'better-auth/api';
 
