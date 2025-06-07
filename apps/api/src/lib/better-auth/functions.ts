@@ -3,8 +3,7 @@ import { HTTPException } from 'hono/http-exception'
 
 //import { APIError } from 'better-auth/api';
 
-import { db } from '../../db'
-import { member } from '../../db/schema'
+import { db, member } from '@repo/db'
 
 export async function getActiveOrganization(userId: string): Promise<string | null> {
 	try {

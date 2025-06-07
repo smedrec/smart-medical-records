@@ -1,7 +1,8 @@
 import { createRoute } from '@hono/zod-openapi'
 import { and, eq } from 'drizzle-orm'
 
-import { assistant, user } from '../../db/schema'
+import { assistant, user } from '@repo/db'
+
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
 import { idParamsSchema } from '../../shared/types'
 import { AssistantSelectSchema } from './types'

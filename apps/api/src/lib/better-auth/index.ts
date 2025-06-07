@@ -3,7 +3,8 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { admin as adminPlugin, openAPI, organization } from 'better-auth/plugins'
 import { env } from 'cloudflare:workers'
 
-import { db } from '../../db'
+import { db } from '@repo/db'
+
 import { emailService } from '../email'
 import { getActiveOrganization } from './functions'
 import { betterAuthOptions } from './options'

@@ -1,7 +1,8 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { asc, eq } from 'drizzle-orm'
 
-import { patient } from '../../db/schema'
+import { patient } from '@repo/db'
+
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
 import { getOffset, paginatedData, parseQueryInt } from '../../lib/utils/paginated'
 import { querySchema } from '../../shared/types'

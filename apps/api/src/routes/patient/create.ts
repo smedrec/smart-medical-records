@@ -1,6 +1,7 @@
 import { createRoute } from '@hono/zod-openapi'
 
-import { patient } from '../../db/schema'
+import { patient } from '@repo/db'
+
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
 import { PatientInsertSchema, PatientSelectSchema } from './types'
 

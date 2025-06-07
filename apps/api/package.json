@@ -18,27 +18,28 @@
 	},
 	"dependencies": {
 		"@hono/zod-openapi": "0.19.8",
-		"@mastra/client-js": "^0.10.2",
-		"@mastra/rag": "^0.10.2",
+		"@mastra/client-js": "0.10.2",
+		"@mastra/rag": "0.10.2",
 		"@paralleldrive/cuid2": "2.2.2",
+		"@repo/db": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
-		"ai": "^4.3.16",
+		"ai": "4.3.16",
 		"better-auth": "1.2.8",
 		"drizzle-orm": "0.44.2",
 		"hono": "4.7.11",
-		"ollama-ai-provider": "^1.2.0",
+		"ollama-ai-provider": "1.2.0",
 		"worker-mailer": "1.1.4",
 		"workers-tagged-logger": "0.11.2",
-		"zod": "3.25.51"
+		"zod": "3.25.56"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "0.8.36",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/node": "22.15.29",
+		"@types/node": "22.15.30",
 		"drizzle-kit": "0.31.1",
-		"vitest": "3.2.1",
+		"vitest": "3.2.2",
 		"wrangler": "4.19.1"
 	}
 }

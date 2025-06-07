@@ -1,7 +1,8 @@
 //import { redis } from "../db/redis";
 import { createId } from '@paralleldrive/cuid2'
 
-import { db } from '../../db'
+import { db } from '@repo/db'
+
 import { auth } from '../better-auth'
 import { ConsoleLogger } from '../logs'
 

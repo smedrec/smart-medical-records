@@ -1,6 +1,7 @@
 import { createRoute } from '@hono/zod-openapi'
 
-import { assistant } from '../../db/schema'
+import { assistant } from '@repo/db'
+
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
 import { AssistantInsertSchema, AssistantSelectSchema } from './types'
 

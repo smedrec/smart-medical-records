@@ -20,6 +20,11 @@ export type SharedHonoEnv = {
 	 * Useful for logs, Sentry, etc.
 	 */
 	SENTRY_RELEASE: string
+	/**
+	 * The ...
+	 */
+	DB: D1Database
+	KV: KVNamespace
 }
 /** Global Hono variables */
 export type SharedHonoVariables = {

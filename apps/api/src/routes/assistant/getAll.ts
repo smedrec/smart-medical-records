@@ -1,7 +1,8 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { asc, eq } from 'drizzle-orm'
 
-import { assistant, user } from '../../db/schema'
+import { assistant, user } from '@repo/db'
+
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
 import { getOffset, paginatedData, parseQueryInt } from '../../lib/utils/paginated'
 import { querySchema } from '../../shared/types'

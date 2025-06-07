@@ -1,7 +1,7 @@
 import { relations } from 'drizzle-orm'
 import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
 
-import { createId } from '../../lib/utils/id'
+import { createId } from '../utils/id'
 import { organization, user } from './auth'
 
 export const assistant = sqliteTable(

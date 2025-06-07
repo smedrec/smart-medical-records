@@ -1,13 +1,11 @@
+import type { db } from '@repo/db'
 import type { HonoApp } from '@repo/hono-helpers'
 import type { SharedHonoEnv, SharedHonoVariables } from '@repo/hono-helpers/src/types'
-import type { db } from '../../db'
 import type { auth, Session } from '../better-auth'
 import type { Logger } from '../logs'
 
 export type Env = SharedHonoEnv & {
 	// add additional Bindings here
-	DB: D1Database
-	KV: KVNamespace
 }
 
 export type ServiceContext = {

@@ -1,6 +1,6 @@
 {
-	"name": "@repo/hono-helpers",
-	"version": "0.1.4",
+	"name": "@repo/db",
+	"version": "0.1.0",
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
@@ -11,11 +11,9 @@
 		"test": "run-vitest"
 	},
 	"dependencies": {
-		"@hono/standard-validator": "0.1.2",
-		"hono": "4.7.11",
-		"http-codex": "0.5.9",
-		"workers-tagged-logger": "0.11.2",
-		"zod": "3.25.56"
+		"@paralleldrive/cuid2": "2.2.2",
+		"@repo/hono-helpers": "workspace:*",
+		"drizzle-orm": "0.44.2"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "0.8.36",

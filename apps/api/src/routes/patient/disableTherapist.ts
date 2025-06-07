@@ -1,7 +1,8 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { and, eq } from 'drizzle-orm'
 
-import { patientsToTherapists } from '../../db/schema'
+import { patientsToTherapists } from '@repo/db'
+
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
 
 import type { App } from '../../lib/hono'

@@ -1,7 +1,8 @@
 import { createRoute } from '@hono/zod-openapi'
 import { eq } from 'drizzle-orm'
 
-import { therapist } from '../../db/schema'
+import { therapist } from '@repo/db'
+
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
 import { idParamsSchema } from '../../shared/types'
 import { patchTherapistSchema, TherapistSelectSchema } from './types'

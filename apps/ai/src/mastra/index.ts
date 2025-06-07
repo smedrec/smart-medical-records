@@ -46,6 +46,37 @@ export const mastra = new Mastra({
 			},
 		],
 	}),
+	server: {
+		middleware: [
+			{
+				handler: async (c, next) => {
+					const session = await auth.api.getSession({ headers: c.req.raw.headers })
+
+					if (!session) {
+						return new Response('Unauthorized', { status: 401 })
+					}
+					const authHeader = c.req.header('Authorization')
+					if (!authHeader) {
+						return new Response('Unauthorized', { status: 401 })
+					}
+					await next()
+				},
+				path: '/api/*',
+			},
+
+			async (c, next) => {
+				const start = Date.now()
+				const isFromMastraCloud = c.req.header('x-mastra-cloud') === 'true'
+				const clientType = c.req.header('x-mastra-client-type')
+				const isDevPlayground = c.req.header('x-mastra-dev-playground') === 'true'
+				await next()
+				const duration = Date.now() - start
+				console.log(
+					`${c.req.method} ${c.req.url} - ${duration}ms ${isFromMastraCloud ? '- from mastra' : ''} -  Client type:${clientType} - ${isDevPlayground ? '- dev-playground' : ''}`
+				)
+			},
+		],
+	},
 	workflows: { weatherWorkflow },
 	agents: { researchAgent, weatherAgent, chefAgent },
 	vectors: { pgVector },

@@ -13,10 +13,10 @@
 	"dependencies": {},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "0.8.36",
-		"@cloudflare/workers-types": "4.20250605.0",
+		"@cloudflare/workers-types": "4.20250607.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"vitest": "3.2.1"
+		"vitest": "3.2.2"
 	}
 }
