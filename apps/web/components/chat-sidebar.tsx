@@ -12,11 +12,9 @@ import {
 	SidebarRail,
 } from '@repo/ui/components/ui/sidebar'
 
-import { ThreadList } from './assistant-ui/thread-list'
-
 export function ChatSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	return (
-		<Sidebar {...props}>
+		<Sidebar collapsible="icon" {...props}>
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
@@ -33,9 +31,7 @@ export function ChatSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarHeader>
-			<SidebarContent>
-				<ThreadList />
-			</SidebarContent>
+			<SidebarContent>{/**<ThreadList />*/}</SidebarContent>
 
 			<SidebarRail />
 			<SidebarFooter>

@@ -1,3 +1,4 @@
+import { registerCopilotKit } from '@mastra/agui'
 import { Mastra } from '@mastra/core/mastra'
 import { CloudflareDeployer } from '@mastra/deployer-cloudflare'
 import { PinoLogger } from '@mastra/loggers'
@@ -45,6 +46,11 @@ export const mastra = new Mastra({
 		],
 	}),
 	server: {
+		cors: {
+			origin: '*',
+			allowMethods: ['*'],
+			allowHeaders: ['*'],
+		},
 		middleware: [
 			{
 				handler: async (c, next) => {
@@ -74,6 +80,17 @@ export const mastra = new Mastra({
 					`${c.req.method} ${c.req.url} - ${duration}ms ${isFromMastraCloud ? '- from mastra' : ''} -  Client type:${clientType} ${isDevPlayground ? '- dev-playground' : ''} - Body: ${JSON.stringify(body)}}`
 				)
 			},
+		],
+		apiRoutes: [
+			registerCopilotKit({
+				path: '/copilotkit',
+				resourceId: 'weatherAgent',
+				setContext: (c, runtimeContext) => {
+					// Add whatever you need to the runtimeContext
+					runtimeContext.set('user-id', c.req.header('X-User-ID'))
+					runtimeContext.set('temperature-scale', 'celsius')
+				},
+			}),
 		],
 	},
 	workflows: { weatherWorkflow },

@@ -40,7 +40,6 @@ export function Providers({ children }: { children: ReactNode }) {
 						Link={({ href, ...props }) => <Link to={href} {...props} />}
 					>
 						{children}
-
 						<Toaster />
 					</AuthUIProviderTanstack>
 				</ThemeProvider>

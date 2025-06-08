@@ -54,7 +54,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
 			<body>
 				<Providers>
 					<div className="flex min-h-svh flex-col">
-						<Header />
+						{/**<Header />*/}
 
 						{children}
 					</div>
