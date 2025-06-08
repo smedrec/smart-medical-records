@@ -2,7 +2,7 @@ import { Mastra } from '@mastra/core/mastra'
 import { CloudflareDeployer } from '@mastra/deployer-cloudflare'
 import { PinoLogger } from '@mastra/loggers'
 
-import { auth } from '@repo/auth'
+//import { auth } from '@repo/auth'
 
 import { chefAgent } from './agents/chef-agent'
 //import { D1Store } from "@mastra/cloudflare-d1";
@@ -10,13 +10,9 @@ import { chefAgent } from './agents/chef-agent'
 
 import { researchAgent } from './agents/research-agent'
 import { weatherAgent } from './agents/weather-agent'
+import { d1Storage } from './stores/d1'
 import { pgStorage, pgVector } from './stores/pgvector'
 import { weatherWorkflow } from './workflows/weather-workflow'
-
-//type Env = {
-// Add your bindings here, e.g. Workers KV, D1, Workers AI, etc.
-//DB: D1Database;
-//};
 
 export const mastra = new Mastra({
 	deployer: new CloudflareDeployer({
@@ -52,7 +48,7 @@ export const mastra = new Mastra({
 		middleware: [
 			{
 				handler: async (c, next) => {
-					const session = await auth.api.getSession({ headers: c.req.raw.headers })
+					/**const session = await auth.api.getSession({ headers: c.req.raw.headers })
 
 					if (!session) {
 						return new Response('Unauthorized', { status: 401 })
@@ -60,7 +56,7 @@ export const mastra = new Mastra({
 					const authHeader = c.req.header('Authorization')
 					if (!authHeader) {
 						return new Response('Unauthorized', { status: 401 })
-					}
+					} */
 					await next()
 				},
 				path: '/api/*',
@@ -71,10 +67,11 @@ export const mastra = new Mastra({
 				const isFromMastraCloud = c.req.header('x-mastra-cloud') === 'true'
 				const clientType = c.req.header('x-mastra-client-type')
 				const isDevPlayground = c.req.header('x-mastra-dev-playground') === 'true'
+				const body = c.req.parseBody()
 				await next()
 				const duration = Date.now() - start
 				console.log(
-					`${c.req.method} ${c.req.url} - ${duration}ms ${isFromMastraCloud ? '- from mastra' : ''} -  Client type:${clientType} - ${isDevPlayground ? '- dev-playground' : ''}`
+					`${c.req.method} ${c.req.url} - ${duration}ms ${isFromMastraCloud ? '- from mastra' : ''} -  Client type:${clientType} ${isDevPlayground ? '- dev-playground' : ''} - Body: ${JSON.stringify(body)}}`
 				)
 			},
 		],

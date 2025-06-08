@@ -3,16 +3,9 @@ import { Agent } from '@mastra/core/agent'
 import { Memory } from '@mastra/memory'
 import { ollama } from 'ollama-ai-provider'
 
+import { d1Storage } from '../stores/d1'
 import { pgStorage, pgVector } from '../stores/pgvector'
-//import { D1Database } from "@cloudflare/workers-types";
-
-//import { D1Store } from "@mastra/cloudflare-d1";
 import { weatherTool } from '../tools/weather-tool'
-
-//type Env = {
-// Add your bindings here, e.g. Workers KV, D1, Workers AI, etc.
-//DB: D1Database;
-//};
 
 // Initialize memory with PostgreSQL storage and vector search
 const memory = new Memory({

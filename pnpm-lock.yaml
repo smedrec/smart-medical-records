@@ -86,12 +86,6 @@ importers:
       '@repo/auth':
         specifier: workspace:*
         version: link:../../packages/auth
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../../packages/eslint-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
       ai:
         specifier: 4.3.16
         version: 4.3.16(react@19.1.0)(zod@3.25.56)
@@ -102,6 +96,15 @@ importers:
         specifier: 3.25.56
         version: 3.25.56
     devDependencies:
+      '@cloudflare/workers-types':
+        specifier: 4.20250607.0
+        version: 4.20250607.0
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
       '@types/node':
         specifier: 22.15.30
         version: 22.15.30

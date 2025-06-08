@@ -4,7 +4,7 @@ import { admin as adminPlugin, openAPI, organization } from 'better-auth/plugins
 import { env } from 'cloudflare:workers'
 
 import { db } from '@repo/db'
-import { emailService } from '@repo/mailer'
+import { email } from '@repo/mailer'
 
 import { getActiveOrganization } from './functions'
 import { betterAuthOptions } from './options'
@@ -38,7 +38,7 @@ export const auth = betterAuth({
 		maxPasswordLength: 128,
 		requireEmailVerification: true,
 		sendResetPassword: async ({ user, url }) => {
-			await emailService.send({
+			await email.send({
 				to: { name: user.name, email: user.email },
 				subject: 'Reset your password',
 				html: `
@@ -53,7 +53,7 @@ export const auth = betterAuth({
 		sendOnSignUp: true,
 		autoSignInAfterVerification: true,
 		sendVerificationEmail: async ({ user, url }) => {
-			await emailService.send({
+			await email.send({
 				to: { name: user.name, email: user.email },
 				subject: 'Verify your email address',
 				html: `
@@ -68,7 +68,7 @@ export const auth = betterAuth({
 		changeEmail: {
 			enabled: true,
 			sendChangeEmailVerification: async ({ user, newEmail, url }) => {
-				await emailService.send({
+				await email.send({
 					to: { name: user.name, email: newEmail },
 					subject: 'Verify your email change',
 					html: `
@@ -83,7 +83,7 @@ export const auth = betterAuth({
 		deleteUser: {
 			enabled: true,
 			sendDeleteAccountVerification: async ({ user, url }) => {
-				await emailService.send({
+				await email.send({
 					to: { name: user.name, email: user.email },
 					subject: 'Verify your account deletion',
 					html: `
@@ -170,7 +170,7 @@ export const auth = betterAuth({
 			},
 			async sendInvitationEmail(data) {
 				const inviteLink = `${env.APP_PUBLIC_URL}/accept-invitation/${data.id}`
-				await emailService.send({
+				await email.send({
 					to: { name: data.email, email: data.email },
 					subject: `Invite to join to the ${data.organization.name} team!`,
 					html: `
@@ -196,6 +196,7 @@ export const auth = betterAuth({
 		'https://localhost:8801',
 		'http://localhost:3000',
 		'http://localhost:8787',
+		'http://localhost:4111',
 	],
 })
 

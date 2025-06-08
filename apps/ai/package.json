@@ -11,9 +11,9 @@
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"deploy": "pnpm mastra:build && wrangler  --cwd .mastra/output/ deploy",
-		"dev": "pnpm mastra:build && wrangler  --cwd .mastra/output/ dev",
 		"mastra:build": "mastra build",
-		"mastra:dev": "mastra dev"
+		"mastra:dev": "mastra dev",
+		"worker:dev": "pnpm mastra:build && wrangler  --cwd .mastra/output/ dev"
 	},
 	"dependencies": {
 		"@ai-sdk/groq": "1.2.9",
@@ -27,13 +27,14 @@
 		"@mastra/pg": "0.10.1",
 		"@mastra/rag": "0.10.2",
 		"@repo/auth": "workspace:*",
-		"@repo/eslint-config": "workspace:*",
-		"@repo/typescript-config": "workspace:*",
 		"ai": "4.3.16",
 		"ollama-ai-provider": "1.2.0",
 		"zod": "3.25.56"
 	},
 	"devDependencies": {
+		"@cloudflare/workers-types": "4.20250607.0",
+		"@repo/eslint-config": "workspace:*",
+		"@repo/typescript-config": "workspace:*",
 		"@types/node": "22.15.30",
 		"mastra": "0.10.3",
 		"wrangler": "4.19.1"

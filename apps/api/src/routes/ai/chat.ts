@@ -79,6 +79,11 @@ export const registerAiChat = (app: App) =>
 			const agent = aiClient.getAgent(id)
 			const response = await agent.generate({
 				messages: [{ role: data.role, content: data.content }],
+				memoryOptions: {
+					workingMemory: {
+						enabled: true,
+					},
+				},
 			})
 			//console.log('Response:', response)
 			return c.json({ text: response.text }, 200)

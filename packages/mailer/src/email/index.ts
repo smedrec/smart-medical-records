@@ -14,7 +14,7 @@ const mailer = async () =>
 		secure: false,
 	})
 
-export const emailService = {
+export const email = {
 	send: async ({
 		to,
 		subject,
