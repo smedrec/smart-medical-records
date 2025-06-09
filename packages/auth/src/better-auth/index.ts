@@ -1,12 +1,12 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { admin, apiKey, openAPI, organization } from 'better-auth/plugins'
+import { admin, apiKey, customSession, openAPI, organization } from 'better-auth/plugins'
 import { env } from 'cloudflare:workers'
 
 import { db } from '@repo/db'
 import { email } from '@repo/mailer'
 
-import { getActiveOrganization } from './functions'
+import { getActiveMemberRole, getActiveOrganization } from './functions'
 import { betterAuthOptions } from './options'
 import { ac as appAc, admin as appAdmin, user } from './permissions/admin'
 import {
@@ -16,6 +16,10 @@ import {
 	admin as orgAdmin,
 	owner,
 } from './permissions/organization'
+
+type Permissions = {
+	[resourceType: string]: string[]
+}
 
 /**
  * Better Auth Instance
@@ -190,7 +194,46 @@ export const auth = betterAuth({
 				maxRequests: 10, // 10 requests per day
 			},
 			enableMetadata: true,
+			permissions: {
+				defaultPermissions: async (userId, ctx) => {
+					let permissions: Permissions = {} // Initialize with empty object
+					// Fetch user role or other data to determine permissions
+					const organizationId = ctx.context.session?.session.activeOrganizationId
+					const role = await getActiveMemberRole(userId, organizationId)
+
+					if (role === 'owner' || role === 'admin')
+						permissions = {
+							assistant: ['read', 'create', 'update', 'delete'],
+							therapist: ['read', 'create', 'update', 'delete'],
+							patient: ['read', 'create', 'update', 'delete'],
+						}
+
+					if (role === 'member')
+						permissions = {
+							assistant: ['read'],
+						}
+
+					if (role === 'assistant')
+						permissions = {
+							assistant: ['read'],
+							therapist: ['read'],
+							patient: ['read', 'create', 'update'],
+						}
+
+					return permissions
+				},
+			},
 		}),
+		/**customSession(async ({ user, session }) => {
+			const organizationId = await getActiveOrganization(session.userId)
+			return {
+				user: user,
+				session: {
+					...session,
+					activeOrganizationId: organizationId,
+				},
+			}
+		}),*/
 		openAPI(),
 	],
 	account: {

@@ -1,13 +1,13 @@
 import { relations } from 'drizzle-orm'
 import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
 
-import { createId } from '../utils/id'
+import { generateId } from '../utils/id'
 import { organization, user } from './auth'
 
 export const assistant = sqliteTable(
 	'assistant',
 	{
-		id: text('id').primaryKey().$defaultFn(createId('assistant')),
+		id: text('id').primaryKey().$defaultFn(generateId),
 		telephone: text('telephone').notNull(),
 		dob: text('dob').notNull(),
 		gender: text('gender').$type<'MALE' | 'FEMALE' | 'OTHER'>().notNull(),
@@ -48,7 +48,7 @@ export const assistant = sqliteTable(
 export const therapist = sqliteTable(
 	'therapist',
 	{
-		id: text('id').primaryKey().$defaultFn(createId('therapist')),
+		id: text('id').primaryKey().$defaultFn(generateId),
 		type: text('type'),
 		title: text('title'),
 		telephone: text('telephone').notNull(),
@@ -92,7 +92,7 @@ export const therapist = sqliteTable(
 export const patient = sqliteTable(
 	'patient',
 	{
-		id: text('id').primaryKey().$defaultFn(createId('patient')),
+		id: text('id').primaryKey().$defaultFn(generateId),
 		name: text('name').notNull(),
 		telephone: text('telephone').notNull(),
 		email: text('email').notNull(),

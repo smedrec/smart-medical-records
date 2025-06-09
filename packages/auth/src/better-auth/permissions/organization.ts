@@ -20,16 +20,16 @@ export const member = ac.newRole({
 })
 
 export const admin = ac.newRole({
-	assistant: ['create', 'update', 'delete'],
-	therapist: ['create', 'update', 'delete'],
-	patient: ['create', 'update', 'delete'],
+	assistant: ['read', 'create', 'update', 'delete'],
+	therapist: ['read', 'create', 'update', 'delete'],
+	patient: ['read', 'create', 'update', 'delete'],
 	...adminAc.statements,
 })
 
 export const owner = ac.newRole({
-	assistant: ['create', 'update', 'delete'],
-	therapist: ['create', 'update', 'delete'],
-	patient: ['create', 'update', 'delete'],
+	assistant: ['read', 'create', 'update', 'delete'],
+	therapist: ['read', 'create', 'update', 'delete'],
+	patient: ['read', 'create', 'update', 'delete'],
 	...ownerAc.statements,
 })
 

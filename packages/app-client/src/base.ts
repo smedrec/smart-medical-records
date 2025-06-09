@@ -33,7 +33,7 @@ export class BaseResource {
 						...headers,
 						...options.headers,
 						// TODO: Bring this back once we figure out what we/users need to do to make this work with cross-origin requests
-						'x-api-key': 'bOPXYDDmOepUzKApNAcoajvJPhfIePcPSwMwaXsvRMIPkeBpzDQBPVVVdhkTBBiA',
+						// 'x-api-key': 'bOPXYDDmOepUzKApNAcoajvJPhfIePcPSwMwaXsvRMIPkeBpzDQBPVVVdhkTBBiA',
 					},
 					//credentials: 'include',
 					body:

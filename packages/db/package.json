@@ -11,7 +11,7 @@
 		"test": "run-vitest"
 	},
 	"dependencies": {
-		"@paralleldrive/cuid2": "2.2.2",
+		"@better-auth/utils": "^0.2.5",
 		"@repo/hono-helpers": "workspace:*",
 		"drizzle-orm": "0.44.2"
 	},

@@ -2,6 +2,7 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import { prettyJSON } from 'hono/pretty-json'
 
 import { auth } from '@repo/auth'
+import { getActiveOrganization } from '@repo/auth/src/better-auth/functions'
 import { useNotFound } from '@repo/hono-helpers'
 
 import { handleError, handleZodError } from '../errors'
@@ -34,11 +35,21 @@ export function newApp() {
 		)
 		c.set('userAgent', c.req.header('User-Agent'))
 
-		const session = await auth.api.getSession({ headers: c.req.raw.headers })
+		const session = await auth.api.getSession({
+			query: {
+				disableCookieCache: true,
+			},
+			headers: c.req.raw.headers,
+		})
 
 		if (!session) {
 			c.set('session', null)
 			return next()
+		}
+
+		if (c.req.header('x-api-key')) {
+			const organization = await getActiveOrganization(session.session?.userId)
+			session.session.activeOrganizationId = organization
 		}
 
 		c.set('session', session)

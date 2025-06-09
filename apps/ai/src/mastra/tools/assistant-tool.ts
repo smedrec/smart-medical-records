@@ -8,6 +8,9 @@ const appClient = new AppClient({
 	retries: 3, // Number of retry attempts
 	backoffMs: 300, // Initial backoff time
 	maxBackoffMs: 5000, // Maximum backoff time
+	headers: {
+		'x-api-key': 'bOPXYDDmOepUzKApNAcoajvJPhfIePcPSwMwaXsvRMIPkeBpzDQBPVVVdhkTBBiA',
+	},
 })
 
 export const getAssistant = createTool({

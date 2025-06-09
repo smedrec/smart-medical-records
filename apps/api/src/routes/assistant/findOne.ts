@@ -41,6 +41,7 @@ export const registerAssistantFindOne = (app: App) =>
 	app.openapi(route, async (c) => {
 		const { auth, db } = c.get('services')
 		const session = c.get('session')
+		let canReadAssistant: boolean
 
 		if (!session)
 			throw new ApiError({
@@ -48,14 +49,30 @@ export const registerAssistantFindOne = (app: App) =>
 				message: 'You Need to login first to continue.',
 			})
 
-		const canReadAssistant = await auth.api.hasPermission({
-			headers: c.req.raw.headers,
-			body: {
-				permissions: {
-					assistant: ['read'], // This must match the structure in your access control
+		if (c.req.header('x-api-key')) {
+			const result = await auth.api.verifyApiKey({
+				body: {
+					key: c.req.header('x-api-key') as string,
+					permissions: {
+						assistant: ['read'],
+					},
 				},
-			},
-		})
+			})
+			console.log('Api Key', c.req.header('x-api-key'))
+			console.log('Verify Key Result', JSON.stringify(result))
+			canReadAssistant = result.valid
+		} else {
+			const result = await auth.api.hasPermission({
+				headers: c.req.raw.headers,
+				body: {
+					permissions: {
+						assistant: ['read'], // This must match the structure in your access control
+					},
+				},
+			})
+			console.log('Verify Permissions Result', JSON.stringify(result))
+			canReadAssistant = result.success
+		}
 
 		if (!canReadAssistant) {
 			throw new ApiError({
