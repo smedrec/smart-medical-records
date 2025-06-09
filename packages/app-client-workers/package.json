@@ -1,19 +1,11 @@
 {
-	"name": "@repo/app-client",
+	"name": "@repo/app-client-workers",
 	"version": "0.1.0",
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"default": "./dist/index.cjs"
-		},
-		"./package.json": "./package.json"
-	},
-	"main": "./dist/index.mjs",
+	"main": "./src/index.ts",
 	"scripts": {
-		"build": "runx build lib index.ts -d src -f cjs --platform node",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"te st": "run-vitest"

@@ -1,3 +1,4 @@
+import { Link, useLocation } from '@tanstack/react-router'
 import { Github, MessagesSquare } from 'lucide-react'
 import * as React from 'react'
 
@@ -5,6 +6,8 @@ import {
 	Sidebar,
 	SidebarContent,
 	SidebarFooter,
+	SidebarGroup,
+	SidebarGroupContent,
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
@@ -12,9 +15,45 @@ import {
 	SidebarRail,
 } from '@repo/ui/components/ui/sidebar'
 
+const links = [
+	{
+		name: 'Agents',
+		url: '/agents',
+		//icon: AgentIcon,
+	},
+	{
+		name: 'Networks',
+		url: '/networks',
+		//icon: Network,
+	},
+	{
+		name: 'Tools',
+		url: '/tools',
+		//icon: ToolsIcon,
+	},
+	{
+		name: 'MCP Servers',
+		url: '/mcps',
+		//icon: McpServerIcon,
+	},
+	{
+		name: 'Workflows',
+		url: '/workflows',
+		//icon: WorkflowIcon,
+	},
+	{
+		name: 'Runtime Context',
+		url: '/runtime-context',
+		//icon: Globe,
+	},
+]
+
 export function ChatSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+	const pathname = useLocation({
+		select: (location) => location.pathname,
+	})
 	return (
-		<Sidebar collapsible="icon" {...props}>
+		<Sidebar {...props}>
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
@@ -31,7 +70,35 @@ export function ChatSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarHeader>
-			<SidebarContent>{/**<ThreadList />*/}</SidebarContent>
+			<SidebarContent>
+				<SidebarGroup>
+					<SidebarGroupContent>
+						<SidebarMenu>
+							{links.map((item, index) => {
+								const [_, pagePath] = pathname.split('/')
+								const lowercasedPagePath = item.name.toLowerCase()
+								const isActive =
+									item.url === pathname || item.name === pathname || pagePath === lowercasedPagePath
+								return (
+									<SidebarMenuItem key={`${item.name}-${index}`}>
+										<SidebarMenuButton tooltip={item.name} asChild>
+											<Link
+												className={`group/icon pr-4 ${isActive ? 'text-primary bg-muted/50' : 'text-[#939393]'}`}
+												to={item.url}
+											>
+												{/**<Icon>
+													<item.icon />
+												</Icon>*/}
+												<span className="text-[0.8rem] font-normal">{item.name}</span>
+											</Link>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+								)
+							})}
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
+			</SidebarContent>
 
 			<SidebarRail />
 			<SidebarFooter>

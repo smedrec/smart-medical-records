@@ -1,4 +1,3 @@
-import { Header } from '@/components/header'
 import { seo } from '@/lib/seo'
 import globalsCss from '@/styles/globals.css?url'
 import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router'

@@ -3,7 +3,6 @@ import { Agent } from '@mastra/core/agent'
 import { Memory } from '@mastra/memory'
 import { ollama } from 'ollama-ai-provider'
 
-import { d1Storage } from '../stores/d1'
 import { pgStorage, pgVector } from '../stores/pgvector'
 import { weatherTool } from '../tools/weather-tool'
 

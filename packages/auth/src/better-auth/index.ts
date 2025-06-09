@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { admin as adminPlugin, openAPI, organization } from 'better-auth/plugins'
+import { admin, apiKey, openAPI, organization } from 'better-auth/plugins'
 import { env } from 'cloudflare:workers'
 
 import { db } from '@repo/db'
@@ -22,12 +22,12 @@ import {
  */
 export const auth = betterAuth({
 	...betterAuthOptions,
-	session: {
+	/**session: {
 		cookieCache: {
 			enabled: true,
 			maxAge: 5 * 60, // Cache duration in seconds
 		},
-	},
+	},*/
 	database: drizzleAdapter(db, { provider: 'sqlite' }),
 	baseURL: env.BETTER_AUTH_URL,
 	secret: env.BETTER_AUTH_SECRET,
@@ -147,7 +147,7 @@ export const auth = betterAuth({
 	},
 	// Additional options that depend on env ...
 	plugins: [
-		adminPlugin({
+		admin({
 			defaultRole: 'user',
 			ac: appAc,
 			roles: {
@@ -182,6 +182,14 @@ export const auth = betterAuth({
           `,
 				})
 			},
+		}),
+		apiKey({
+			rateLimit: {
+				enabled: true,
+				timeWindow: 1000 * 60 * 60 * 24, // 1 day
+				maxRequests: 10, // 10 requests per day
+			},
+			enableMetadata: true,
 		}),
 		openAPI(),
 	],

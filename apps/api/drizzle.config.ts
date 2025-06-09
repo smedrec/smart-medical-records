@@ -9,8 +9,8 @@ import { defineConfig } from 'drizzle-kit'
 export default defineConfig({
 	out: './drizzle',
 	schema: [
-		'../../packages/db/src/database/schema/auth.ts',
-		'../../packages/db/src/database/schema/app.ts',
+		'/home/jose/Documents/workspace/smedrec/smart-medical-records/packages/db/src/schema/auth.ts',
+		'/home/jose/Documents/workspace/smedrec/smart-medical-records/packages/db/src/schema/app.ts',
 	],
 	dialect: 'sqlite',
 	driver: 'd1-http',

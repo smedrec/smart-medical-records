@@ -18,10 +18,6 @@ import { Separator } from '@repo/ui/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@repo/ui/components/ui/sidebar'
 
 export const Assistant = () => {
-	/**const runtime = useChatRuntime({
-		api: 'http://localhost:4111/api/agents/chefAgent/stream',
-	})*/
-
 	return (
 		<SidebarProvider>
 			<ChatSidebar />
@@ -40,7 +36,7 @@ export const Assistant = () => {
 							</BreadcrumbItem>
 						</BreadcrumbList>
 					</Breadcrumb>
-					<Separator orientation="vertical" className="mr-2 h-4" />
+
 					<div className="flex items-center gap-2">
 						<a
 							href="https://github.com/daveyplate/better-auth-tanstack-starter"
@@ -56,7 +52,6 @@ export const Assistant = () => {
 						<UserButton />
 					</div>
 				</header>
-				{/**<Thread />*/}
 				<CopilotKitComponent />
 			</SidebarInset>
 		</SidebarProvider>

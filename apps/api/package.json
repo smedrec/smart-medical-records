@@ -5,6 +5,7 @@
 	"sideEffects": false,
 	"type": "module",
 	"scripts": {
+		"better-auth:generate": "pnpm dlx @better-auth/cli@latest generate --config ./better-auth.config.ts --output /home/jose/Documents/workspace/smedrec/smart-medical-records/packages/db/src/schema/auth.ts",
 		"build:wrangler": "run-wrangler-build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",

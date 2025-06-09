@@ -1,4 +1,4 @@
-import { AppClient } from '@repo/app-client'
+import { AppClient } from '@repo/app-client-workers'
 
 export const appClient = new AppClient({
 	baseUrl: 'http://localhost:8801',

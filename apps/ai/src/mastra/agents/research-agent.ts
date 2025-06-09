@@ -2,7 +2,6 @@ import { groq } from '@ai-sdk/groq'
 import { Agent } from '@mastra/core/agent'
 import { Memory } from '@mastra/memory'
 
-import { d1Storage } from '../stores/d1'
 import { pgStorage } from '../stores/pgvector'
 import { vectorQueryTool } from '../tools/vector-query-tool'
 
