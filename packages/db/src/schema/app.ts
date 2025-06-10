@@ -1,4 +1,4 @@
-import { relations, sql } from 'drizzle-orm'
+import { relations } from 'drizzle-orm'
 import {
 	blob,
 	index,
@@ -275,7 +275,6 @@ export const caseStudyRelation = sqliteTable(
 export const caseStudyTherapist = sqliteTable(
 	'case_study_therapist',
 	{
-		id: text('id').primaryKey().$defaultFn(generateId),
 		caseStudy: text('case_study')
 			.notNull()
 			.references(() => caseStudy.id, { onDelete: 'cascade' }),
@@ -303,9 +302,6 @@ export const caseStudyTherapist = sqliteTable(
 	(table) => {
 		return [
 			primaryKey({ columns: [table.caseStudy, table.therapist] }),
-			uniqueIndex('case_study_therapist_primary_true_idx')
-				.on(table.caseStudy, table.primaryTherapist)
-				.where(sql`primary_therapist`),
 			index('case_study_therapist_case_study_idx').on(table.caseStudy),
 			index('case_study_therapist_idx').on(table.therapist),
 			index('case_study_therapist_primary_idx').on(table.primaryTherapist),
