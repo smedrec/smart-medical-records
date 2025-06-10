@@ -11,6 +11,7 @@ const statement = {
 	assistant: ['create', 'share', 'update', 'delete', 'read'],
 	therapist: ['create', 'share', 'update', 'delete', 'read'],
 	patient: ['create', 'share', 'update', 'delete', 'read'],
+	caseStudy: ['create', 'share', 'update', 'delete', 'read'],
 } as const
 
 export const ac = createAccessControl(statement)
@@ -37,6 +38,7 @@ export const therapist = ac.newRole({
 	assistant: ['read'],
 	therapist: ['read'],
 	patient: ['read', 'create', 'update'],
+	caseStudy: ['create', 'share', 'update', 'delete', 'read'],
 	...ownerAc.statements,
 })
 

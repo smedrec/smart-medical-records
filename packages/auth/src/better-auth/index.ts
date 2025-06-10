@@ -15,6 +15,7 @@ import {
 	ac as orgAc,
 	admin as orgAdmin,
 	owner,
+	therapist,
 } from './permissions/organization'
 
 type Permissions = {
@@ -166,6 +167,7 @@ export const auth = betterAuth({
 				admin: orgAdmin,
 				member,
 				assistant,
+				therapist,
 			},
 			teams: {
 				enabled: true,
@@ -218,6 +220,7 @@ export const auth = betterAuth({
 							assistant: ['read'],
 							therapist: ['read'],
 							patient: ['read', 'create', 'update'],
+							caseStudy: ['create', 'share', 'update', 'delete', 'read'],
 						}
 
 					return permissions

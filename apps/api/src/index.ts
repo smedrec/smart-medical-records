@@ -15,6 +15,11 @@ import { registerAssistantDelete } from './routes/assistant/delete'
 import { registerAssistantFindOne } from './routes/assistant/findOne'
 import { registerAssistantGetAll } from './routes/assistant/getAll'
 import { registerAssistantUpdate } from './routes/assistant/update'
+import { registerCaseStudyCreate } from './routes/caseStudy/create'
+import { registerCaseStudyDelete } from './routes/caseStudy/delete'
+import { registerCaseStudyFindOne } from './routes/caseStudy/findOne'
+import { registerCaseStudyGetAll } from './routes/caseStudy/getAll'
+import { registerCaseStudyUpdate } from './routes/caseStudy/update'
 // routes
 import { registerLiveness } from './routes/liveness'
 import { registerPatientsToTherapists } from './routes/patient/addTherapist'
@@ -78,6 +83,12 @@ registerPatientFindOne(app)
 registerPatientUpdate(app)
 registerPatientsToTherapists(app)
 registerPatientsDisableTherapists(app)
+// CaseStudy routes
+registerCaseStudyCreate(app)
+registerCaseStudyDelete(app)
+registerCaseStudyGetAll(app)
+registerCaseStudyFindOne(app)
+registerCaseStudyUpdate(app)
 // ai routes
 registerAiChat(app)
 registerAiStore(app)
