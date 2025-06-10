@@ -89,5 +89,8 @@
 		"typecheck",
 		"unenv",
 		"vinxi"
-	]
+	],
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	}
 }

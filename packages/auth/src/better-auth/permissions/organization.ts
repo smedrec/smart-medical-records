@@ -33,6 +33,13 @@ export const owner = ac.newRole({
 	...ownerAc.statements,
 })
 
+export const therapist = ac.newRole({
+	assistant: ['read'],
+	therapist: ['read'],
+	patient: ['read', 'create', 'update'],
+	...ownerAc.statements,
+})
+
 export const assistant = ac.newRole({
 	patient: ['read'],
 	...memberAc.statements,

@@ -4,7 +4,7 @@ import { and, eq } from 'drizzle-orm'
 
 //import { APIError } from 'better-auth/api';
 
-import { db, member } from '@repo/db'
+import { db, member, apikey } from '@repo/db'
 
 export async function getActiveOrganization(userId: string): Promise<string | null> {
 	try {
@@ -48,3 +48,29 @@ export async function getActiveMemberRole(
 		//throw new HTTPException(500, { message: 'A machine readable error.' });
 	}
 }
+
+export async function getApiKey(userId: string): Promise<string | null> {
+	try {
+		const result = await db.query.apikey.findFirst({
+			where: and(eq(apikey.userId, userId), eq(apikey.enabled, true)),
+		})
+		if (result) {
+			const now = new Date().getTime();
+			const expiresAt = result.expiresAt?.getTime() as number;
+			if (now > expiresAt) {
+				return null
+			}
+			return result.key
+		} else {
+			return null
+			//throw new HTTPException(404, { message: 'The user is not member.' });
+			/**throw new APIError('BAD_REQUEST', {
+        message: 'User must agree to the TOS before signing up.',
+      });*/
+		}
+	} catch (error) {
+		return null
+		//throw new HTTPException(500, { message: 'A machine readable error.' });
+	}
+}
+
