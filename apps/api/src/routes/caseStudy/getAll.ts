@@ -5,8 +5,8 @@ import { caseStudy, caseStudyTherapist, patient } from '@repo/db'
 
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
 import { getOffset, paginatedData, parseQueryInt } from '../../lib/utils/paginated'
-import { querySchema } from '../../shared/types'
-import { CaseStudySelectByPatientSchema, CaseStudySelectSchema } from './types'
+import { idParamsSchema, querySchema } from '../../shared/types'
+import { CaseStudySelectSchema } from './types'
 
 import type { App } from '../../lib/hono'
 
@@ -14,19 +14,11 @@ const route = createRoute({
 	tags: ['CaseStudy'],
 	operationId: 'caseStudy-get-all',
 	method: 'get',
-	path: '/caseStudy',
+	path: '/caseStudy/get-all/{id}',
 	security: [{ cookieAuth: [] }],
 	request: {
 		query: querySchema,
-		body: {
-			required: true,
-			description: 'The patient id',
-			content: {
-				'application/json': {
-					schema: CaseStudySelectByPatientSchema,
-				},
-			},
-		},
+		params: idParamsSchema,
 	},
 	responses: {
 		200: {
@@ -42,9 +34,7 @@ const route = createRoute({
 })
 
 export type Route = typeof route
-export type CaseStudyGetAllRequest = z.infer<
-	(typeof route.request.body.content)['application/json']['schema']
->
+
 export type CaseStudyGetAllResponse = z.infer<
 	(typeof route.responses)[200]['content']['application/json']['schema']
 >
@@ -92,20 +82,20 @@ export const registerCaseStudyGetAll = (app: App) =>
 			})
 		}
 
-		const { patientId } = c.req.valid('json')
+		const { id } = c.req.valid('param')
 
 		const limit = parseQueryInt(c.req.query('limit')) || 10
 		const page = parseQueryInt(c.req.query('page')) || 1
-		const total = await db.$count(caseStudy, eq(caseStudy.patient, patientId))
+		const total = await db.$count(caseStudy, eq(caseStudy.patient, id))
 		const offset = getOffset(page, limit)
 		const pagination = paginatedData({ size: limit, page, count: total })
 
 		const result = await db
 			.select()
 			.from(caseStudy)
-			.leftJoin(patient, eq(patient.id, caseStudy.patient))
+			//.leftJoin(patient, eq(patient.id, caseStudy.patient))
 			.leftJoin(caseStudyTherapist, eq(caseStudyTherapist.caseStudy, caseStudy.id))
-			.where(eq(caseStudy.patient, patientId))
+			.where(eq(caseStudy.patient, id))
 			.orderBy(asc(caseStudy.id)) // order by is mandatory
 			.limit(limit) // the number of rows to return
 			.offset(offset)
@@ -113,7 +103,7 @@ export const registerCaseStudyGetAll = (app: App) =>
 		if (result.length < 1)
 			throw new ApiError({
 				code: 'NOT_FOUND',
-				message: 'Assistants not found.',
+				message: 'Case studies not found.',
 			})
 
 		return c.json(

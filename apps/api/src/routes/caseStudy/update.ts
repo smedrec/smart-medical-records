@@ -44,7 +44,7 @@ export type Route = typeof route
 export type CaseStudyUpdateRequest = z.infer<
 	(typeof route.request.body.content)['application/json']['schema']
 >
-export type CaseStudytUpdateResponse = z.infer<
+export type CaseStudyUpdateResponse = z.infer<
 	(typeof route.responses)[200]['content']['application/json']['schema']
 >
 
@@ -102,8 +102,8 @@ export const registerCaseStudyUpdate = (app: App) =>
 
 		if (result.length < 1)
 			throw new ApiError({
-				code: 'INTERNAL_SERVER_ERROR',
-				message: 'A machine readable error.',
+				code: 'NOT_FOUND',
+				message: 'Case Study not found.',
 			})
 
 		return c.json(result[0], 200)

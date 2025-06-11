@@ -29,7 +29,7 @@ export const CaseStudySelectSchema = z
 		}),
 		patient: z.string().length(32).openapi({}),
 		title: z.string().openapi({}),
-		careTeam: z.string().openapi({}),
+		careTeam: z.string().optional().openapi({}),
 		createdBy: z.string().optional().openapi({}),
 		updatedBy: z.string().optional().openapi({}),
 		createdAt: z.string().optional().openapi({}),
@@ -45,12 +45,3 @@ export const CaseStudyPatchSchema = z
 		}),
 	})
 	.openapi('CaseStudyPatchSchema')
-
-export const CaseStudySelectByPatientSchema = z
-	.object({
-		patientId: z.string().length(32).openapi({
-			description: 'The patient id.',
-			example: '',
-		}),
-	})
-	.openapi('CaseStudySelectByPatientSchema')

@@ -86,13 +86,13 @@ export const registerCaseStudyFindOne = (app: App) =>
 			.select()
 			.from(caseStudy)
 			.leftJoin(patient, eq(patient.id, caseStudy.patient))
-			.leftJoin(caseStudyTherapist, eq(caseStudyTherapist.caseStudy, caseStudy.id))
+			//.leftJoin(caseStudyTherapist, eq(caseStudyTherapist.caseStudy, caseStudy.id))
 			.where(eq(caseStudy.id, id))
 
 		if (result.length < 1)
 			throw new ApiError({
 				code: 'NOT_FOUND',
-				message: 'Assistant not found.',
+				message: 'Case not found.',
 			})
 
 		return c.json(result[0], 200)
