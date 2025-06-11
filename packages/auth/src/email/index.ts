@@ -26,8 +26,7 @@ export const email = {
 	}) => {
 		const workerMailer = await mailer()
 		await workerMailer.send({
-			//from: { name: env.FROM_NAME, email: env.FROM_EMAIL },
-			from: { name: 'SMEDREC', email: 'no-reply@smedrec.com' },
+			from: { name: env.FROM_NAME, email: env.FROM_EMAIL },
 			to,
 			subject,
 			html,

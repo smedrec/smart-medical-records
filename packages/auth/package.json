@@ -15,7 +15,8 @@
 		"@repo/hono-helpers": "workspace:*",
 		"@repo/mailer": "workspace:*",
 		"better-auth": "1.2.8",
-		"drizzle-orm": "0.44.2"
+		"drizzle-orm": "0.44.2",
+		"worker-mailer": "1.1.4"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "0.8.36",

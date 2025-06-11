@@ -386,6 +386,9 @@ importers:
       drizzle-orm:
         specifier: 0.44.2
         version: 0.44.2(@cloudflare/workers-types@4.20250607.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@upstash/redis@1.35.0)(kysely@0.28.2)(pg@8.16.0)(postgres@3.4.7)
+      worker-mailer:
+        specifier: 1.1.4
+        version: 1.1.4
     devDependencies:
       '@cloudflare/vitest-pool-workers':
         specifier: 0.8.36
@@ -411,9 +414,6 @@ importers:
       '@better-auth/utils':
         specifier: ^0.2.5
         version: 0.2.5
-      '@paralleldrive/cuid2':
-        specifier: 2.2.2
-        version: 2.2.2
       '@repo/hono-helpers':
         specifier: workspace:*
         version: link:../hono-helpers
@@ -21430,7 +21430,7 @@ snapshots:
       isstream: 0.1.2
       jsonwebtoken: 9.0.2
       mime-types: 2.1.35
-      retry-axios: 2.6.0(axios@1.9.0(debug@4.4.1))
+      retry-axios: 2.6.0(axios@1.9.0)
       tough-cookie: 4.1.4
     transitivePeerDependencies:
       - supports-color
@@ -24443,7 +24443,7 @@ snapshots:
       onetime: 7.0.0
       signal-exit: 4.1.0
 
-  retry-axios@2.6.0(axios@1.9.0(debug@4.4.1)):
+  retry-axios@2.6.0(axios@1.9.0):
     dependencies:
       axios: 1.9.0(debug@4.4.1)
 

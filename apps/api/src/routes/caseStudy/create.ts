@@ -52,7 +52,7 @@ export const registerCaseStudyCreate = (app: App) =>
 		const { auth, db } = c.get('services')
 		const session = c.get('session')
 		let canCreateCaseStudy: boolean = false
-		let careTeam: any = {}
+		// let careTeam: any = {}
 
 		if (!session)
 			throw new ApiError({ code: 'UNAUTHORIZED', message: 'You Need to login first to continue.' })
@@ -88,7 +88,7 @@ export const registerCaseStudyCreate = (app: App) =>
 			})
 		}
 
-		const body = c.req.valid('json')
+		/**const body = c.req.valid('json')
 
 		if (!body.careTeam) {
 			careTeam = await auth.api.createTeam({
@@ -123,12 +123,10 @@ export const registerCaseStudyCreate = (app: App) =>
 					message: 'Failed to add user to the care team.',
 				})
 			}
-		}
+		} */
 
 		const data = {
-			patient: body.patient,
-			title: body.title,
-			careTeam: careTeam.id,
+			...c.req.valid('json'),
 			createdBy: session.session.userId,
 			updatedBy: session.session.userId,
 		}
@@ -139,7 +137,7 @@ export const registerCaseStudyCreate = (app: App) =>
 			.insert(caseStudyTherapist)
 			.values({
 				caseStudy: result[0].id,
-				therapist: body.therapist,
+				therapist: data.therapist,
 				createdBy: session.session.userId,
 				updatedBy: session.session.userId,
 			})

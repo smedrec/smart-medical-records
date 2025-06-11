@@ -204,11 +204,9 @@ export const caseStudy = sqliteTable(
 			.notNull()
 			.references(() => patient.id),
 		title: text('title').notNull(),
-		careTeam: text('care_team')
-			.notNull()
-			.references(() => team.id, {
-				onDelete: 'cascade',
-			}), // The Care Team includes all the people in an organization who plan to participate in the coordination and delivery of care.
+		careTeam: text('care_team').references(() => team.id, {
+			onDelete: 'cascade',
+		}), // The Care Team includes all the people in an organization who plan to participate in the coordination and delivery of care.
 		createdBy: text('created_by')
 			.notNull()
 			.references(() => user.id, {

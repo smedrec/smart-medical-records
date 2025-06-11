@@ -22,6 +22,13 @@
       "when": 1749578057332,
       "tag": "0002_dear_shockwave",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1749603286199,
+      "tag": "0003_first_mole_man",
+      "breakpoints": true
     }
   ]
 }
