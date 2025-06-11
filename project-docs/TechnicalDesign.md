@@ -2,30 +2,22 @@
 
 ## Architecture Overview
 
-**Frontend**:
+```
++-------------------+     +-------------------+     +-------------------+
+|   Frontend        |     |   AI Framework     |     |   Backend          |
+| (Tanstack Start)  |<--->| (Mastra)           |<--->| (Hono + Workers)  |
++-------------------+     +-------------------+     +-------------------+
+        |                          |                          |
+        v                          v                          v
++-------------------+     +-------------------+     +-------------------+
+| React Components   |    | Cloudflare Vectorize |  | API Routes         |
+| (apps/web/)        |    | (Document Analysis) |   | (apps/api/src/)    |
++-------------------+     +-------------------+     +-------------------+
+```
 
 - Tanstack Start with React Server Components
-- Vinxi for optimized builds (see [packages/typescript-config/workers.json](mdc:packages/typescript-config/tanstack-start.json))
 - Client components in [apps/web/components/](mdc:apps/web/components/)
 - Shared types in [apps/api/src/shared/types.ts](mdc:apps/api/src/shared/types.ts)
-
-**Backend**:
-
-- Node.js 22.x with Hono framework (see [packages/hono-helpers/](mdc:packages/hono-helpers/))
-- Auth via [better-auth](mdc:apps/api/src/lib/better-auth/index.ts)
-- API routes in [apps/api/src/routes/](mdc:apps/api/src/routes/)
-
-**AI Framework**:
-
-- Cloudflare Worker using Mastra, The TypeScript Agent Framework (see [Mastra](https://mastra.ai/))
-- AI processing in [apps/ai/](mdc:apps/ai/)
-- Integrates [Cloudflare Vectorize](https://developers.cloudflare.com/vectorize/) for document analysis
-- Uses [Mastra Client SDK](https://mastra.ai/en/docs/deployment/client) for API communication
-
-**Database**:
-
-- Cloudflare D1 schema in [apps/api/drizzle/schema/](mdc:apps/api/drizzle/schema/)
-- Cloudflare KV caching for session management and rate limiting
 
 ## Dependency Management
 
@@ -45,7 +37,7 @@
 
 - OAuth2 + SAML integration in [apps/api/src/lib/better-auth/](mdc:apps/api/src/lib/better-auth/)
 - AES-256 encryption for stored data
-- HIPAA-compliant audit logs in [apps/api/src/lib/logs/](mdc:apps/api/src/lib/logs/)
+- HIPAA-compliant audit logs in [apps/api/src/lib/logs/hipaa.ts](mdc:apps/api/src/lib/logs/hipaa.ts)
 - Rate limiting via [packages/hono-helpers/src/middleware/rate-limit.ts](mdc:packages/hono-helpers/src/middleware/rate-limit.ts)
 
 ## Scalability Strategy
@@ -60,7 +52,7 @@
 ```json
 {
 	"frontend": {
-		"framework": "Tanstack Start with Cloudflare works",
+		"framework": "Tanstack Start with Cloudflare Workers",
 		"stateManagement": "React Hook Form + Zod",
 		"uiLibrary": "Shadcn UI components (see @shadcn/ui)"
 	},

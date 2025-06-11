@@ -33,17 +33,75 @@ export default function() { ... }
 
 ## Prettier
 
-- Configuration in [package.json](mdc:package.json)
+- Configuration in [.prettierrc.cjs](mdc:.prettierrc.cjs)
 - Format files with: `pnpm run format`
-- Special rules:
-  - Single quotes for strings
-  - Trailing commas in objects
-  - 2-space indentation
+
+### Key Formatting Rules
+
+1. **Single Quotes**
+
+   - Use single quotes (`'`) for strings
+   - Rationale: Consistent with TypeScript default and most modern JS projects
+   - Exception: JSX attributes use double quotes (`"`) for HTML compatibility
+
+2. **Trailing Commas**
+
+   - Always add trailing commas in object declarations
+   - Benefits: Easier version control diffs and future-proofing for multi-line objects
+   - Example:
+
+   ```ts
+   // Good
+   const config = {
+   	indent: 2,
+   	singleQuote: true,
+   }
+
+   // Bad
+   const config = {
+   	indent: 2,
+   	singleQuote: true,
+   }
+   ```
+
+3. **2-Space Indentation**
+
+   - Use 2-space indentation for all code
+   - Reason: Matches Prettier's default and improves readability in most code editors
+   - Configuration: `"tabWidth": 2` in [packages/typescript-config/workers.json](mdc:packages/typescript-config/workers.json)
+
+4. **Semicolons**
+
+   - Always add semicolons at the end of statements
+   - Rationale: Prevents ASI (Automatic Semicolon Insertion) issues and ensures explicit statement termination
+   - Example:
+
+   ```ts
+   // Good
+   console.log('Hello')
+
+   // Bad
+   console.log('Hello')
+   ```
+
+5. **Object Literal Spacing**
+
+   - Add spaces between brackets in object literals
+   - Rationale: Improves readability of object declarations
+   - Example:
+
+   ```ts
+   // Good
+   const obj = { key: 'value' }
+
+   // Bad
+   const obj = { key: 'value' }
+   ```
 
 ## File Structure
 
 - Feature files grouped by domain in `src/`
-- Shared utilities in `lib/` or `utils/`
+- Shared utilities in `lib/` or `utils/` directories
 - Tests in `test/` directory with:
   - `*.test.ts` for unit tests
   - `integration/` for worker tests
@@ -55,3 +113,15 @@ export default function() { ... }
   - `fix: resolve bug`
   - `chore: update dependencies`
 - Keep messages under 72 characters
+- Commit message examples:
+
+  ```bash
+  # Good
+  feat: add patient search endpoint
+  fix: resolve form validation bug
+  chore: update dependencies
+
+  # Bad
+  Fixed bug
+  Added new thing
+  ```
