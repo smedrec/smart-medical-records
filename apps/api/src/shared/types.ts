@@ -16,3 +16,8 @@ export const querySchema = z.object({
 	limit: z.string().optional().openapi({}),
 	page: z.string().optional().openapi({}),
 })
+
+export type ResourceBase = {
+	version: number
+	status: 'create' | 'updated' | 'deleted' | 'recreated' | null
+}

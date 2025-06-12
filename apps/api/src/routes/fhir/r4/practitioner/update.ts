@@ -1,18 +1,19 @@
 import { ApiError, openApiErrorResponses } from '@/lib/errors'
 import { idParamsSchema } from '@/shared/types'
 import { createRoute, z } from '@hono/zod-openapi'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 
 import { practitioner, practitionerHistory } from '@repo/db'
 
 import type { App } from '@/lib/hono'
+import type { ResourceBase } from '@/shared/types'
 import type { Practitioner } from '@solarahealth/fhir-r4'
 
 const route = createRoute({
 	tags: ['Practitioner'],
 	operationId: 'practitioner-update',
-	method: 'patch',
-	path: '/fhir/r4/practitioner/{id}',
+	method: 'post',
+	path: '/fhir/r4/practitioner/{id}/update',
 	security: [{ cookieAuth: [] }],
 	request: {
 		params: idParamsSchema,
@@ -51,6 +52,7 @@ export const registerPractitionerUpdate = (app: App) =>
 	app.openapi(route, async (c) => {
 		const { auth, db } = c.get('services')
 		const session = c.get('session')
+		let canUpdatePractitioner: boolean = false
 
 		if (!session)
 			throw new ApiError({
@@ -58,23 +60,39 @@ export const registerPractitionerUpdate = (app: App) =>
 				message: 'You Need to login first to continue.',
 			})
 
-		const canUpdateAssistant = await auth.api.hasPermission({
-			headers: c.req.raw.headers,
-			body: {
-				permissions: {
-					assistant: ['update'], // This must match the structure in your access control
+		if (c.req.header('x-api-key')) {
+			const result = await auth.api.verifyApiKey({
+				body: {
+					key: c.req.header('x-api-key') as string,
+					permissions: {
+						practitioner: ['update'],
+					},
 				},
-			},
-		})
+			})
 
-		if (!canUpdateAssistant) {
+			canUpdatePractitioner = result.valid
+		} else {
+			const result = await auth.api.hasPermission({
+				headers: c.req.raw.headers,
+				body: {
+					permissions: {
+						practitioner: ['update'], // This must match the structure in your access control
+					},
+				},
+			})
+
+			canUpdatePractitioner = result.success
+		}
+
+		if (!canUpdatePractitioner) {
 			throw new ApiError({
 				code: 'FORBIDDEN',
-				message: 'You do not have permissions to update a assistant.',
+				message: 'You do not have permissions to update practitioners.',
 			})
 		}
 
 		const { id } = c.req.valid('param')
+		const organization = session.session.activeOrganizationId as string
 
 		/**const insertedHistory = await db
 			.insert(practitionerHistory)
@@ -94,7 +112,10 @@ export const registerPractitionerUpdate = (app: App) =>
 				resource: practitionerHistory.resource,
 			}) */
 
-		const history = await db.select().from(practitioner).where(eq(practitioner.id, id))
+		const history = await db
+			.select()
+			.from(practitioner)
+			.where(and(eq(practitioner.organization, organization), eq(practitioner.id, id)))
 
 		if (history.length < 1)
 			throw new ApiError({
@@ -122,7 +143,7 @@ export const registerPractitionerUpdate = (app: App) =>
 		const data = {
 			version: (history[0].version as number) + 1,
 			ts: new Date(),
-			status: 'updated' as 'create' | 'updated' | 'deleted' | 'recreated' | null,
+			status: 'updated' as ResourceBase['status'],
 			resource: resource as Practitioner, // Assuming resource is a JSON object
 			updatedBy: session.session.userId,
 		}
@@ -130,7 +151,7 @@ export const registerPractitionerUpdate = (app: App) =>
 		const result = await db
 			.update(practitioner)
 			.set(data)
-			.where(eq(practitioner.id, id))
+			.where(and(eq(practitioner.organization, organization), eq(practitioner.id, id)))
 			.returning()
 
 		if (result.length < 1)

@@ -1,5 +1,10 @@
 // Practitioner routes
+import { registerPractitionerCreate } from '@/routes/fhir/r4/practitioner/create'
+import { registerPractitionerDelete } from '@/routes/fhir/r4/practitioner/delete'
 import { registerPractitionerFindOne } from '@/routes/fhir/r4/practitioner/findOne'
+import { registerPractitionerGetAll } from '@/routes/fhir/r4/practitioner/getAll'
+import { registerPractitionerRecreate } from '@/routes/fhir/r4/practitioner/recreate'
+import { registerPractitionerUpdate } from '@/routes/fhir/r4/practitioner/update'
 import { cors } from 'hono/cors'
 
 import { auth } from '@repo/auth'
@@ -21,8 +26,6 @@ import { registerPatientDelete } from './routes/fhir/r4/patient/delete'
 import { registerPatientFindOne } from './routes/fhir/r4/patient/findOne'
 import { registerPatientGetAll } from './routes/fhir/r4/patient/getAll'
 import { registerPatientUpdate } from './routes/fhir/r4/patient/update'
-import { registerPractitionerCreate } from './routes/fhir/r4/practitioner/create'
-import { registerPractitionerUpdate } from './routes/fhir/r4/practitioner/update'
 import { registerLiveness } from './routes/liveness'
 import { registerWhoiam } from './routes/whoiam'
 
@@ -55,9 +58,13 @@ registerLiveness(app)
 registerWhoiam(app)
 
 // Practitioner routes
+registerPractitionerGetAll(app)
+registerPractitionerFindOne(app)
 registerPractitionerFindOne(app)
 registerPractitionerCreate(app)
 registerPractitionerUpdate(app)
+registerPractitionerDelete(app)
+registerPractitionerRecreate(app)
 // Patient routes
 registerPatientCreate(app)
 registerPatientDelete(app)

@@ -12,14 +12,14 @@ const route = createRoute({
 	tags: ['Practitioner'],
 	operationId: 'practitioner-delete',
 	method: 'post',
-	path: '/fhir/r4/practitioner/{id}/delete',
+	path: '/fhir/r4/practitioner/{id}/recreate',
 	security: [{ cookieAuth: [] }],
 	request: {
 		params: idParamsSchema,
 	},
 	responses: {
 		200: {
-			description: 'The deleted success message',
+			description: 'The recreated success message',
 			content: {
 				'application/json': {
 					schema: z.object({
@@ -35,15 +35,15 @@ const route = createRoute({
 })
 
 export type Route = typeof route
-export type PractitionerDeleteResponse = z.infer<
+export type PractitionerRecreateResponse = z.infer<
 	(typeof route.responses)[200]['content']['application/json']['schema']
 >
 
-export const registerPractitionerDelete = (app: App) =>
+export const registerPractitionerRecreate = (app: App) =>
 	app.openapi(route, async (c) => {
 		const { auth, db } = c.get('services')
 		const session = c.get('session')
-		let canDeletePractitioner: boolean = false
+		let canRecreatePractitioner: boolean = false
 
 		if (!session)
 			throw new ApiError({ code: 'UNAUTHORIZED', message: 'You Need to login first to continue.' })
@@ -53,29 +53,29 @@ export const registerPractitionerDelete = (app: App) =>
 				body: {
 					key: c.req.header('x-api-key') as string,
 					permissions: {
-						practitioner: ['delete'],
+						practitioner: ['recreate'],
 					},
 				},
 			})
 
-			canDeletePractitioner = result.valid
+			canRecreatePractitioner = result.valid
 		} else {
 			const result = await auth.api.hasPermission({
 				headers: c.req.raw.headers,
 				body: {
 					permissions: {
-						practitioner: ['delete'], // This must match the structure in your access control
+						practitioner: ['recreate'], // This must match the structure in your access control
 					},
 				},
 			})
 
-			canDeletePractitioner = result.success
+			canRecreatePractitioner = result.success
 		}
 
-		if (!canDeletePractitioner) {
+		if (!canRecreatePractitioner) {
 			throw new ApiError({
 				code: 'FORBIDDEN',
-				message: 'You do not have permissions to delete practitioners.',
+				message: 'You do not have permissions to recreate practitioners.',
 			})
 		}
 
@@ -103,19 +103,11 @@ export const registerPractitionerDelete = (app: App) =>
 				code: 'INTERNAL_SERVER_ERROR',
 				message: 'Failed to insert history record.',
 			})
-		// Update the practitioner to mark it as deleted
-		// This is a soft delete, we just update the status and version
-		// We also update the updatedBy field to the current user
-		// and set the timestamp to now
-		// This allows us to keep the history of the practitioner
-		// and also allows us to restore it later if needed
-		// We also increment the version number
-		// This is important for the history tracking
-		// and to ensure that the practitioner is not modified after deletion
+
 		const data = {
 			version: (history[0].version as number) + 1,
 			ts: new Date(),
-			status: 'deleted' as ResourceBase['status'],
+			status: 'recreated' as ResourceBase['status'],
 			updatedBy: session.session.userId,
 		}
 
@@ -130,7 +122,7 @@ export const registerPractitionerDelete = (app: App) =>
 
 		return c.json(
 			{
-				message: 'Practitioner deleted successfully',
+				message: 'Practitioner recreated successfully',
 			},
 			200
 		)

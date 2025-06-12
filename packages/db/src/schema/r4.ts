@@ -12,7 +12,79 @@ import {
 import { generateId } from '../utils/id'
 import { organization, user } from './auth'
 
-import type { Patient, Practitioner } from '@solarahealth/fhir-r4'
+import type { ImplementationGuide, Patient, Practitioner } from '@solarahealth/fhir-r4'
+
+/**
+ * A set of rules of how a particular interoperability or standards problem is solved - typically through the use of FHIR resources. This resource is used to gather all the parts of an implementation guide into a logical whole and to publish a computable definition of all the parts.
+ */
+export const implementationguide = sqliteTable(
+	'implementationguide',
+	{
+		id: text('id').primaryKey().$defaultFn(generateId), // id of resource
+		version: integer('version').default(0), // version id and logical transaction id
+		ts: integer('ts', { mode: 'timestamp' }).$defaultFn(() => /* @__PURE__ */ new Date()), // last updated time
+		status: text('status')
+			.$type<'create' | 'updated' | 'deleted' | 'recreated'>()
+			.default('create'), // resource status
+		resource: blob('resource', { mode: 'json' }).$type<ImplementationGuide>(), // resource body
+		organization: text('organization')
+			.notNull()
+			.references(() => organization.id, {
+				onDelete: 'cascade',
+			}),
+		createdBy: text('created_by')
+			.notNull()
+			.references(() => user.id, {
+				onDelete: 'cascade',
+			}),
+		updatedBy: text('updated_by')
+			.notNull()
+			.references(() => user.id, {
+				onDelete: 'cascade',
+			}),
+	},
+	(table) => {
+		return [
+			index('patient_organization_idx').on(table.organization),
+			index('patient_created_by_idx').on(table.createdBy),
+		]
+	}
+)
+
+export const implementationguideHistory = sqliteTable(
+	'implementationguide_history',
+	{
+		id: text('id'),
+		version: integer('version', { mode: 'number' }), // version of history
+		ts: integer('ts', { mode: 'timestamp' }), // last updated time
+		status: text('status')
+			.$type<'create' | 'updated' | 'deleted' | 'recreated'>()
+			.default('create'), // resource status
+		resource: blob('resource', { mode: 'json' }).$type<ImplementationGuide>(), // resource body
+		organization: text('organization')
+			.notNull()
+			.references(() => organization.id, {
+				onDelete: 'cascade',
+			}),
+		createdBy: text('created_by')
+			.notNull()
+			.references(() => user.id, {
+				onDelete: 'cascade',
+			}),
+		updatedBy: text('updated_by')
+			.notNull()
+			.references(() => user.id, {
+				onDelete: 'cascade',
+			}),
+	},
+	(table) => {
+		return [
+			primaryKey({ columns: [table.id, table.version] }),
+			index('patient_history_organization_idx').on(table.organization),
+			index('patient_history_created_by_idx').on(table.createdBy),
+		]
+	}
+)
 
 /**
  * A person with a formal responsibility in the provisioning of healthcare or related services

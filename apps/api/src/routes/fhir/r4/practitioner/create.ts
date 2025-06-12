@@ -5,9 +5,6 @@ import { createPractitionerSchema } from '@solarahealth/fhir-r4'
 
 import { practitioner } from '@repo/db'
 
-//import { AssistantInsertSchema, AssistantSelectSchema } from './types'
-
-//import type { z } from '@hono/zod-openapi'
 import type { App } from '@/lib/hono'
 import type { Practitioner } from '@solarahealth/fhir-r4'
 
@@ -110,7 +107,7 @@ export const registerPractitionerCreate = (app: App) =>
 		if (!valid.success) {
 			throw new ApiError({
 				code: 'BAD_REQUEST',
-				message: 'Invalid practitioner data.',
+				message: `Invalid practitioner data: ${valid.error.message}`,
 			})
 		}
 
