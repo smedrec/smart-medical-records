@@ -15,6 +15,7 @@ import {
 	ac as orgAc,
 	admin as orgAdmin,
 	owner,
+	practitioner,
 	therapist,
 } from './permissions/organization'
 
@@ -168,6 +169,7 @@ export const auth = betterAuth({
 				member,
 				assistant,
 				therapist,
+				practitioner,
 			},
 			teams: {
 				enabled: true,
@@ -208,6 +210,7 @@ export const auth = betterAuth({
 							assistant: ['read', 'create', 'update', 'delete'],
 							therapist: ['read', 'create', 'update', 'delete'],
 							patient: ['read', 'create', 'update', 'delete'],
+							practitioner: ['read', 'create', 'update', 'delete', 'recreate'],
 						}
 
 					if (role === 'member')

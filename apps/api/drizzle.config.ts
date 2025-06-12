@@ -10,7 +10,7 @@ export default defineConfig({
 	out: './drizzle',
 	schema: [
 		'/home/jose/Documents/workspace/smedrec/smart-medical-records/packages/db/src/schema/auth.ts',
-		'/home/jose/Documents/workspace/smedrec/smart-medical-records/packages/db/src/schema/app.ts',
+		'/home/jose/Documents/workspace/smedrec/smart-medical-records/packages/db/src/schema/r4.ts',
 	],
 	dialect: 'sqlite',
 	driver: 'd1-http',

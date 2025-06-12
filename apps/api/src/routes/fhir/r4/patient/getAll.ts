@@ -1,14 +1,14 @@
+import { ApiError, openApiErrorResponses } from '@/lib/errors'
+import { getOffset, paginatedData, parseQueryInt } from '@/lib/utils/paginated'
+import { querySchema } from '@/shared/types'
 import { createRoute, z } from '@hono/zod-openapi'
 import { asc, eq } from 'drizzle-orm'
 
 import { patient } from '@repo/db'
 
-import { ApiError, openApiErrorResponses } from '../../lib/errors'
-import { getOffset, paginatedData, parseQueryInt } from '../../lib/utils/paginated'
-import { querySchema } from '../../shared/types'
 import { PatientSelectSchema } from './types'
 
-import type { App } from '../../lib/hono'
+import type { App } from '@/lib/hono'
 
 const route = createRoute({
 	tags: ['Patient'],

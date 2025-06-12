@@ -1,10 +1,9 @@
+import { ApiError, openApiErrorResponses } from '@/lib/errors'
 import { createRoute, z } from '@hono/zod-openapi'
 
 import { patientsToTherapists } from '@repo/db'
 
-import { ApiError, openApiErrorResponses } from '../../lib/errors'
-
-import type { App } from '../../lib/hono'
+import type { App } from '@/lib/hono'
 
 const route = createRoute({
 	tags: ['Patient'],

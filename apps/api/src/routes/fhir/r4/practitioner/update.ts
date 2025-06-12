@@ -1,0 +1,143 @@
+import { ApiError, openApiErrorResponses } from '@/lib/errors'
+import { idParamsSchema } from '@/shared/types'
+import { createRoute, z } from '@hono/zod-openapi'
+import { eq } from 'drizzle-orm'
+
+import { practitioner, practitionerHistory } from '@repo/db'
+
+import type { App } from '@/lib/hono'
+import type { Practitioner } from '@solarahealth/fhir-r4'
+
+const route = createRoute({
+	tags: ['Practitioner'],
+	operationId: 'practitioner-update',
+	method: 'patch',
+	path: '/fhir/r4/practitioner/{id}',
+	security: [{ cookieAuth: [] }],
+	request: {
+		params: idParamsSchema,
+		body: {
+			required: true,
+			content: {
+				'application/json': {
+					schema: z.object({
+						resource: z.unknown().openapi({}),
+					}),
+				},
+			},
+		},
+	},
+	responses: {
+		200: {
+			description: 'The updated practitioner',
+			content: {
+				'application/json': {
+					schema: practitioner.$inferSelect,
+				},
+			},
+		},
+		...openApiErrorResponses,
+	},
+})
+
+export type Route = typeof route
+export type PractitionerUpdateRequest = z.infer<
+	(typeof route.request.body.content)['application/json']['schema']
+>
+export type PractitionerUpdateResponse =
+	(typeof route.responses)[200]['content']['application/json']['schema']
+
+export const registerPractitionerUpdate = (app: App) =>
+	app.openapi(route, async (c) => {
+		const { auth, db } = c.get('services')
+		const session = c.get('session')
+
+		if (!session)
+			throw new ApiError({
+				code: 'UNAUTHORIZED',
+				message: 'You Need to login first to continue.',
+			})
+
+		const canUpdateAssistant = await auth.api.hasPermission({
+			headers: c.req.raw.headers,
+			body: {
+				permissions: {
+					assistant: ['update'], // This must match the structure in your access control
+				},
+			},
+		})
+
+		if (!canUpdateAssistant) {
+			throw new ApiError({
+				code: 'FORBIDDEN',
+				message: 'You do not have permissions to update a assistant.',
+			})
+		}
+
+		const { id } = c.req.valid('param')
+
+		/**const insertedHistory = await db
+			.insert(practitionerHistory)
+			.select(
+				db
+					.select({
+						ts: practitioner.ts,
+						resource_type: practitioner.resource_type,
+						status: practitioner.status,
+						resource: practitioner.resource,
+					})
+					.from(practitioner)
+					.where(eq(practitioner.id, id))
+			)
+			.returning({
+				id: practitionerHistory.id,
+				resource: practitionerHistory.resource,
+			}) */
+
+		const history = await db.select().from(practitioner).where(eq(practitioner.id, id))
+
+		if (history.length < 1)
+			throw new ApiError({
+				code: 'NOT_FOUND',
+				message: 'Practitioner not found.',
+			})
+
+		const insertedHistory = await db.insert(practitionerHistory).values(history[0]).returning({
+			id: practitionerHistory.id,
+			resource: practitionerHistory.resource,
+		})
+
+		if (insertedHistory.length < 1)
+			throw new ApiError({
+				code: 'INTERNAL_SERVER_ERROR',
+				message: 'Failed to insert history record.',
+			})
+
+		const body = await c.req.json()
+		const resource = {
+			...insertedHistory[0].resource,
+			...body.resource,
+		}
+
+		const data = {
+			version: (history[0].version as number) + 1,
+			ts: new Date(),
+			status: 'updated' as 'create' | 'updated' | 'deleted' | 'recreated' | null,
+			resource: resource as Practitioner, // Assuming resource is a JSON object
+			updatedBy: session.session.userId,
+		}
+
+		const result = await db
+			.update(practitioner)
+			.set(data)
+			.where(eq(practitioner.id, id))
+			.returning()
+
+		if (result.length < 1)
+			throw new ApiError({
+				code: 'INTERNAL_SERVER_ERROR',
+				message: 'A machine readable error.',
+			})
+
+		return c.json(result[0], 200)
+	})

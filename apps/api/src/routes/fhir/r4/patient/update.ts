@@ -1,27 +1,35 @@
+import { ApiError, openApiErrorResponses } from '@/lib/errors'
+import { idParamsSchema } from '@/shared/types'
 import { createRoute } from '@hono/zod-openapi'
 import { and, eq } from 'drizzle-orm'
 
 import { patient } from '@repo/db'
 
-import { ApiError, openApiErrorResponses } from '../../lib/errors'
-import { idParamsSchema } from '../../shared/types'
-import { PatientSelectSchema } from './types'
+import { patchPatientSchema, PatientSelectSchema } from './types'
 
+import type { App } from '@/lib/hono'
 import type { z } from '@hono/zod-openapi'
-import type { App } from '../../lib/hono'
 
 const route = createRoute({
 	tags: ['Patient'],
-	operationId: 'patient-find-one',
-	method: 'get',
+	operationId: 'patient-update',
+	method: 'patch',
 	path: '/patient/{id}',
 	security: [{ cookieAuth: [] }],
 	request: {
 		params: idParamsSchema,
+		body: {
+			required: true,
+			content: {
+				'application/json': {
+					schema: patchPatientSchema,
+				},
+			},
+		},
 	},
 	responses: {
 		200: {
-			description: 'The course',
+			description: 'The patient',
 			content: {
 				'application/json': {
 					schema: PatientSelectSchema,
@@ -33,11 +41,14 @@ const route = createRoute({
 })
 
 export type Route = typeof route
-export type PatientFindOneResponse = z.infer<
+export type PatientUpdateRequest = z.infer<
+	(typeof route.request.body.content)['application/json']['schema']
+>
+export type ClientPatientResponse = z.infer<
 	(typeof route.responses)[200]['content']['application/json']['schema']
 >
 
-export const registerPatientFindOne = (app: App) =>
+export const registerPatientUpdate = (app: App) =>
 	app.openapi(route, async (c) => {
 		const { auth, db } = c.get('services')
 		const session = c.get('session')
@@ -48,29 +59,35 @@ export const registerPatientFindOne = (app: App) =>
 				message: 'You Need to login first to continue.',
 			})
 
-		const canReadPatient = await auth.api.hasPermission({
+		const canUpdatePatient = await auth.api.hasPermission({
 			headers: c.req.raw.headers,
 			body: {
 				permissions: {
-					patient: ['read'], // This must match the structure in your access control
+					patient: ['update'], // This must match the structure in your access control
 				},
 			},
 		})
 
-		if (!canReadPatient) {
+		if (!canUpdatePatient) {
 			throw new ApiError({
 				code: 'FORBIDDEN',
-				message: 'You do not have permissions to read a assistant.',
+				message: 'You do not have permissions to update patients.',
 			})
 		}
 
 		const organization = session.session.activeOrganizationId as string
 		const { id } = c.req.valid('param')
+		const data = {
+			...c.req.valid('json'),
+			updatedBy: session.session.userId,
+			updatedAt: new Date(),
+		}
 
 		const result = await db
-			.select()
-			.from(patient)
+			.update(patient)
+			.set(data)
 			.where(and(eq(patient.organization, organization), eq(patient.id, id)))
+			.returning()
 
 		if (result.length < 1)
 			throw new ApiError({

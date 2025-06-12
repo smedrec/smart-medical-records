@@ -1,7 +1,6 @@
 import { createRoute } from '@hono/zod-openapi'
 
 import { caseStudy, caseStudyTherapist, member } from '@repo/db'
-import { generateId } from '@repo/db/src/utils/id'
 
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
 import { CaseStudyInsertSchema, CaseStudySelectSchema } from './types'
@@ -13,7 +12,7 @@ const route = createRoute({
 	tags: ['CaseStudy'],
 	operationId: 'caseStudy-create',
 	method: 'post',
-	path: '/caseStudy',
+	path: '/caseStudy/',
 	security: [{ cookieAuth: [] }],
 	request: {
 		body: {
@@ -146,5 +145,10 @@ export const registerCaseStudyCreate = (app: App) =>
 		if (result.length < 1)
 			throw new ApiError({ code: 'INTERNAL_SERVER_ERROR', message: 'A machine readable error.' })
 
-		return c.json(result[0], 201)
+		// Transform null values to undefined for optional fields
+		const response = {
+			...result[0],
+			careTeam: result[0].careTeam ?? undefined,
+		}
+		return c.json(response, 201)
 	})

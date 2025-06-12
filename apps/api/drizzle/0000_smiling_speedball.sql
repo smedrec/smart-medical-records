@@ -15,6 +15,31 @@ CREATE TABLE `account` (
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
+CREATE TABLE `apikey` (
+	`id` text PRIMARY KEY NOT NULL,
+	`name` text,
+	`start` text,
+	`prefix` text,
+	`key` text NOT NULL,
+	`user_id` text NOT NULL,
+	`refill_interval` integer,
+	`refill_amount` integer,
+	`last_refill_at` integer,
+	`enabled` integer DEFAULT true,
+	`rate_limit_enabled` integer DEFAULT true,
+	`rate_limit_time_window` integer DEFAULT 86400000,
+	`rate_limit_max` integer DEFAULT 10,
+	`request_count` integer,
+	`remaining` integer,
+	`last_request` integer,
+	`expires_at` integer,
+	`created_at` integer NOT NULL,
+	`updated_at` integer NOT NULL,
+	`permissions` text,
+	`metadata` text,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
 CREATE TABLE `invitation` (
 	`id` text PRIMARY KEY NOT NULL,
 	`organization_id` text NOT NULL,
@@ -97,87 +122,81 @@ CREATE TABLE `verification` (
 	`updated_at` integer
 );
 --> statement-breakpoint
-CREATE TABLE `assistant` (
-	`id` text PRIMARY KEY NOT NULL,
-	`telephone` text NOT NULL,
-	`dob` text NOT NULL,
-	`gender` text NOT NULL,
-	`user` text NOT NULL,
-	`organization` text NOT NULL,
-	`created_by` text NOT NULL,
-	`updated_by` text NOT NULL,
-	`created_at` integer,
-	`updated_at` integer,
-	FOREIGN KEY (`user`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`organization`) REFERENCES `organization`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`created_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`updated_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
-CREATE INDEX `assistant_user_idx` ON `assistant` (`user`);--> statement-breakpoint
-CREATE INDEX `assistant_organization_idx` ON `assistant` (`organization`);--> statement-breakpoint
-CREATE INDEX `assistant_created_by_idx` ON `assistant` (`created_by`);--> statement-breakpoint
 CREATE TABLE `patient` (
 	`id` text PRIMARY KEY NOT NULL,
-	`name` text NOT NULL,
-	`telephone` text NOT NULL,
-	`email` text NOT NULL,
-	`dob` text NOT NULL,
-	`gender` text NOT NULL,
-	`city` text NOT NULL,
-	`address` text NOT NULL,
-	`note` text,
-	`disabled` integer DEFAULT false,
+	`version` integer DEFAULT 0,
+	`ts` integer,
+	`status` text DEFAULT 'create',
+	`resource` blob,
+	`user` text,
 	`organization` text NOT NULL,
 	`created_by` text NOT NULL,
 	`updated_by` text NOT NULL,
-	`created_at` integer,
-	`updated_at` integer,
-	FOREIGN KEY (`organization`) REFERENCES `organization`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`created_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`updated_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
-CREATE INDEX `patient_created_by_idx` ON `patient` (`created_by`);--> statement-breakpoint
-CREATE INDEX `patient_name_idx` ON `patient` (`name`);--> statement-breakpoint
-CREATE UNIQUE INDEX `patient_email_organization_idx` ON `patient` (`email`,`organization`);--> statement-breakpoint
-CREATE INDEX `patient_organization_idx` ON `patient` (`organization`);--> statement-breakpoint
-CREATE TABLE `patients_to_therapists` (
-	`patient` text NOT NULL,
-	`therapist` text NOT NULL,
-	`disabled` integer DEFAULT false,
-	`created_by` text NOT NULL,
-	`updated_by` text NOT NULL,
-	`created_at` integer,
-	`updated_at` integer,
-	PRIMARY KEY(`patient`, `therapist`),
-	FOREIGN KEY (`patient`) REFERENCES `patient`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`therapist`) REFERENCES `therapist`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`created_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`updated_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
-CREATE INDEX `patients_to_therapists_created_by_idx` ON `patients_to_therapists` (`created_by`);--> statement-breakpoint
-CREATE TABLE `therapist` (
-	`id` text PRIMARY KEY NOT NULL,
-	`type` text,
-	`title` text,
-	`telephone` text NOT NULL,
-	`dob` text NOT NULL,
-	`gender` text NOT NULL,
-	`disabled` integer DEFAULT false,
-	`user` text NOT NULL,
-	`organization` text NOT NULL,
-	`created_by` text NOT NULL,
-	`updated_by` text NOT NULL,
-	`created_at` integer,
-	`updated_at` integer,
 	FOREIGN KEY (`user`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`organization`) REFERENCES `organization`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`created_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`updated_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE INDEX `therapist_user_id_idx` ON `therapist` (`user`);--> statement-breakpoint
-CREATE INDEX `therapist_organization_idx` ON `therapist` (`organization`);--> statement-breakpoint
-CREATE INDEX `therapist_created_by_idx` ON `therapist` (`created_by`);
+CREATE INDEX `patient_user_idx` ON `patient` (`user`);--> statement-breakpoint
+CREATE INDEX `patient_organization_idx` ON `patient` (`organization`);--> statement-breakpoint
+CREATE INDEX `patient_created_by_idx` ON `patient` (`created_by`);--> statement-breakpoint
+CREATE TABLE `patient_history` (
+	`id` text,
+	`version` integer,
+	`ts` integer,
+	`status` text DEFAULT 'create',
+	`resource` blob,
+	`user` text,
+	`organization` text NOT NULL,
+	`created_by` text NOT NULL,
+	`updated_by` text NOT NULL,
+	PRIMARY KEY(`id`, `version`),
+	FOREIGN KEY (`user`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`organization`) REFERENCES `organization`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`created_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`updated_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE INDEX `patient_history_user_idx` ON `patient_history` (`user`);--> statement-breakpoint
+CREATE INDEX `patient_history_organization_idx` ON `patient_history` (`organization`);--> statement-breakpoint
+CREATE INDEX `patient_history_created_by_idx` ON `patient_history` (`created_by`);--> statement-breakpoint
+CREATE TABLE `practitioner` (
+	`id` text PRIMARY KEY NOT NULL,
+	`version` integer DEFAULT 0,
+	`ts` integer,
+	`status` text DEFAULT 'create',
+	`resource` blob,
+	`user` text NOT NULL,
+	`organization` text NOT NULL,
+	`created_by` text NOT NULL,
+	`updated_by` text NOT NULL,
+	FOREIGN KEY (`user`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`organization`) REFERENCES `organization`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`created_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`updated_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE INDEX `practitioner_user_idx` ON `practitioner` (`user`);--> statement-breakpoint
+CREATE INDEX `practitioner_organization_idx` ON `practitioner` (`organization`);--> statement-breakpoint
+CREATE INDEX `practitioner_created_by_idx` ON `practitioner` (`created_by`);--> statement-breakpoint
+CREATE TABLE `practitioner_history` (
+	`id` text,
+	`version` integer,
+	`ts` integer,
+	`status` text DEFAULT 'create',
+	`resource` blob,
+	`user` text NOT NULL,
+	`organization` text NOT NULL,
+	`created_by` text NOT NULL,
+	`updated_by` text NOT NULL,
+	PRIMARY KEY(`id`, `version`),
+	FOREIGN KEY (`user`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`organization`) REFERENCES `organization`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`created_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`updated_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE INDEX `practitioner_history_user_idx` ON `practitioner_history` (`user`);--> statement-breakpoint
+CREATE INDEX `practitioner_history_organization_idx` ON `practitioner_history` (`organization`);--> statement-breakpoint
+CREATE INDEX `practitioner_history_created_by_idx` ON `practitioner_history` (`created_by`);

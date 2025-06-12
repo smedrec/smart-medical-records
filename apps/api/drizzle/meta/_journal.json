@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1749032172748,
-      "tag": "0000_round_puma",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1749462420063,
-      "tag": "0001_low_harry_osborn",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1749578057332,
-      "tag": "0002_dear_shockwave",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1749603286199,
-      "tag": "0003_first_mole_man",
+      "when": 1749704582542,
+      "tag": "0000_smiling_speedball",
       "breakpoints": true
     }
   ]

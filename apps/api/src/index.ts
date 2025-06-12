@@ -1,39 +1,29 @@
+// Practitioner routes
+import { registerPractitionerFindOne } from '@/routes/fhir/r4/practitioner/findOne'
 import { cors } from 'hono/cors'
 
 import { auth } from '@repo/auth'
 
 import { newApp } from './lib/hono'
 import { init } from './lib/hono/init'
+// AI routes
 import { registerAiChat } from './routes/ai/chat'
 import { registerAiCreateIndex } from './routes/ai/create-index'
 import { registerAiDeleteIndex } from './routes/ai/delete-index'
 import { registerAiDetailsIndex } from './routes/ai/details-index'
 import { registerAiIndexes } from './routes/ai/indexes'
 import { registerAiStore } from './routes/ai/store'
-import { registerAssistantCreate } from './routes/assistant/create'
-import { registerAssistantDelete } from './routes/assistant/delete'
-import { registerAssistantFindOne } from './routes/assistant/findOne'
-import { registerAssistantGetAll } from './routes/assistant/getAll'
-import { registerAssistantUpdate } from './routes/assistant/update'
-import { registerCaseStudyCreate } from './routes/caseStudy/create'
-import { registerCaseStudyDelete } from './routes/caseStudy/delete'
-import { registerCaseStudyFindOne } from './routes/caseStudy/findOne'
-import { registerCaseStudyGetAll } from './routes/caseStudy/getAll'
-import { registerCaseStudyUpdate } from './routes/caseStudy/update'
-// routes
+// Patient routes
+//import { registerPatientsToTherapists } from './routes/fhir/r4/patient/addTherapist'
+import { registerPatientCreate } from './routes/fhir/r4/patient/create'
+import { registerPatientDelete } from './routes/fhir/r4/patient/delete'
+//import { registerPatientsDisableTherapists } from './routes/fhir/r4/patient/disableTherapist'
+import { registerPatientFindOne } from './routes/fhir/r4/patient/findOne'
+import { registerPatientGetAll } from './routes/fhir/r4/patient/getAll'
+import { registerPatientUpdate } from './routes/fhir/r4/patient/update'
+import { registerPractitionerCreate } from './routes/fhir/r4/practitioner/create'
+import { registerPractitionerUpdate } from './routes/fhir/r4/practitioner/update'
 import { registerLiveness } from './routes/liveness'
-import { registerPatientsToTherapists } from './routes/patient/addTherapist'
-import { registerPatientCreate } from './routes/patient/create'
-import { registerPatientDelete } from './routes/patient/delete'
-import { registerPatientsDisableTherapists } from './routes/patient/disableTherapist'
-import { registerPatientFindOne } from './routes/patient/findOne'
-import { registerPatientGetAll } from './routes/patient/getAll'
-import { registerPatientUpdate } from './routes/patient/update'
-import { registerTherapistCreate } from './routes/therapist/create'
-import { registerTherapistDelete } from './routes/therapist/delete'
-import { registerTherapistFindOne } from './routes/therapist/findOne'
-import { registerTherapistGetAll } from './routes/therapist/getAll'
-import { registerTherapistUpdate } from './routes/therapist/update'
 import { registerWhoiam } from './routes/whoiam'
 
 const app = newApp()
@@ -63,32 +53,20 @@ app.on(['GET', 'POST'], '/auth/*', (c) => {
 
 registerLiveness(app)
 registerWhoiam(app)
-// Assistant routes
-registerAssistantCreate(app)
-registerAssistantDelete(app)
-registerAssistantGetAll(app)
-registerAssistantFindOne(app)
-registerAssistantUpdate(app)
-// Therapist routes
-registerTherapistCreate(app)
-registerTherapistDelete(app)
-registerTherapistGetAll(app)
-registerTherapistFindOne(app)
-registerTherapistUpdate(app)
+
+// Practitioner routes
+registerPractitionerFindOne(app)
+registerPractitionerCreate(app)
+registerPractitionerUpdate(app)
 // Patient routes
 registerPatientCreate(app)
 registerPatientDelete(app)
 registerPatientGetAll(app)
 registerPatientFindOne(app)
 registerPatientUpdate(app)
-registerPatientsToTherapists(app)
-registerPatientsDisableTherapists(app)
-// CaseStudy routes
-registerCaseStudyCreate(app)
-registerCaseStudyDelete(app)
-registerCaseStudyGetAll(app)
-registerCaseStudyFindOne(app)
-registerCaseStudyUpdate(app)
+//registerPatientsToTherapists(app)
+//registerPatientsDisableTherapists(app)
+
 // ai routes
 registerAiChat(app)
 registerAiStore(app)
