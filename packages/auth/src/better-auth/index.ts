@@ -10,13 +10,11 @@ import { getActiveMemberRole, getActiveOrganization, setupOrganizationResource }
 import { betterAuthOptions } from './options'
 import { ac as appAc, admin as appAdmin, user } from './permissions/admin'
 import {
-	assistant,
 	member,
 	ac as orgAc,
 	admin as orgAdmin,
 	owner,
 	practitioner,
-	therapist,
 } from './permissions/organization'
 
 type Permissions = {
@@ -174,8 +172,6 @@ export const auth = betterAuth({
 				owner,
 				admin: orgAdmin,
 				member,
-				assistant,
-				therapist,
 				practitioner,
 			},
 			teams: {
@@ -235,23 +231,13 @@ export const auth = betterAuth({
 
 					if (role === 'owner' || role === 'admin')
 						permissions = {
-							assistant: ['read', 'create', 'update', 'delete'],
-							therapist: ['read', 'create', 'update', 'delete'],
 							patient: ['read', 'create', 'update', 'delete'],
 							practitioner: ['read', 'create', 'update', 'delete', 'recreate'],
 						}
 
 					if (role === 'member')
 						permissions = {
-							assistant: ['read'],
-						}
-
-					if (role === 'assistant')
-						permissions = {
-							assistant: ['read'],
-							therapist: ['read'],
-							patient: ['read', 'create', 'update'],
-							caseStudy: ['create', 'share', 'update', 'delete', 'read'],
+							patient: ['read'],
 						}
 
 					return permissions

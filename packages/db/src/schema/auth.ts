@@ -10,6 +10,7 @@ export const user = sqliteTable('user', {
 		.$defaultFn(() => false)
 		.notNull(),
 	image: text('image'),
+	lang: text('lang').default('en'),
 	createdAt: integer('created_at', { mode: 'timestamp' })
 		.$defaultFn(() => /* @__PURE__ */ new Date())
 		.notNull(),

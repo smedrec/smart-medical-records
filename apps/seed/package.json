@@ -9,6 +9,7 @@
 		"check:types": "run-tsc",
 		"node:build": "tsc",
 		"node:dev": "node ./dist/index.js",
+		"studio": "drizzle-kit studio",
 		"test": "run-vitest"
 	},
 	"dependencies": {
@@ -26,7 +27,9 @@
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
+		"@types/better-sqlite3": "^7.6.13",
 		"@types/node": "22.15.30",
+		"drizzle-kit": "0.31.1",
 		"vitest": "3.2.2",
 		"wrangler": "4.19.1"
 	}

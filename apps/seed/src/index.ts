@@ -38,8 +38,8 @@ const seedDatabase = async () => {
 					const result = await db
 						.insert(codesystem)
 						.values({
-							createdBy: 'riOyVZyHEQrV2n6X3PY2ifhbFm8KDOgk',
-							updatedBy: 'riOyVZyHEQrV2n6X3PY2ifhbFm8KDOgk',
+							createdBy: 'dGj0Iz9Esr2Q9gcCLXTruWm4hocqVAac',
+							updatedBy: 'dGj0Iz9Esr2Q9gcCLXTruWm4hocqVAac',
 							resource: data,
 						})
 						.returning()
@@ -52,8 +52,8 @@ const seedDatabase = async () => {
 					const result = await db
 						.insert(valueset)
 						.values({
-							createdBy: 'riOyVZyHEQrV2n6X3PY2ifhbFm8KDOgk',
-							updatedBy: 'riOyVZyHEQrV2n6X3PY2ifhbFm8KDOgk',
+							createdBy: 'dGj0Iz9Esr2Q9gcCLXTruWm4hocqVAac',
+							updatedBy: 'dGj0Iz9Esr2Q9gcCLXTruWm4hocqVAac',
 							resource: data,
 						})
 						.returning()
@@ -65,9 +65,9 @@ const seedDatabase = async () => {
 					const result = await db
 						.insert(implementationguide)
 						.values({
-							organization: 'vcoCNrwmPJYmhtG7E9emxeFZ3voKIDNl',
-							createdBy: 'riOyVZyHEQrV2n6X3PY2ifhbFm8KDOgk',
-							updatedBy: 'riOyVZyHEQrV2n6X3PY2ifhbFm8KDOgk',
+							organization: 'nEfgVbNmMAOP6cdA65YsQITwZ9JIGKUU',
+							createdBy: 'dGj0Iz9Esr2Q9gcCLXTruWm4hocqVAac',
+							updatedBy: 'dGj0Iz9Esr2Q9gcCLXTruWm4hocqVAac',
 							resource: data,
 						})
 						.returning()
@@ -79,8 +79,8 @@ const seedDatabase = async () => {
 					const result = await db
 						.insert(list)
 						.values({
-							createdBy: 'riOyVZyHEQrV2n6X3PY2ifhbFm8KDOgk',
-							updatedBy: 'riOyVZyHEQrV2n6X3PY2ifhbFm8KDOgk',
+							createdBy: 'dGj0Iz9Esr2Q9gcCLXTruWm4hocqVAac',
+							updatedBy: 'dGj0Iz9Esr2Q9gcCLXTruWm4hocqVAac',
 							resource: data,
 						})
 						.returning()
@@ -88,12 +88,12 @@ const seedDatabase = async () => {
 					break
 				}
 				case 'NamingSystem': {
-					console.log(`Processing List resource type for ${jsonPath}`)
+					console.log(`Processing NamingSystem resource type for ${jsonPath}`)
 					const result = await db
 						.insert(namingsystem)
 						.values({
-							createdBy: 'riOyVZyHEQrV2n6X3PY2ifhbFm8KDOgk',
-							updatedBy: 'riOyVZyHEQrV2n6X3PY2ifhbFm8KDOgk',
+							createdBy: 'dGj0Iz9Esr2Q9gcCLXTruWm4hocqVAac',
+							updatedBy: 'dGj0Iz9Esr2Q9gcCLXTruWm4hocqVAac',
 							resource: data,
 						})
 						.returning()
@@ -101,12 +101,12 @@ const seedDatabase = async () => {
 					break
 				}
 				case 'StructureDefinition': {
-					console.log(`Processing List resource type for ${jsonPath}`)
+					console.log(`Processing StructureDefinition resource type for ${jsonPath}`)
 					const result = await db
 						.insert(structuredefinition)
 						.values({
-							createdBy: 'riOyVZyHEQrV2n6X3PY2ifhbFm8KDOgk',
-							updatedBy: 'riOyVZyHEQrV2n6X3PY2ifhbFm8KDOgk',
+							createdBy: 'dGj0Iz9Esr2Q9gcCLXTruWm4hocqVAac',
+							updatedBy: 'dGj0Iz9Esr2Q9gcCLXTruWm4hocqVAac',
 							resource: data,
 						})
 						.returning()

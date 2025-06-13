@@ -1,4 +1,6 @@
 // Practitioner routes
+import { registerCodeSystemGetAll } from '@/routes/fhir/r4/codesystem/getAll'
+import { registerOrganizationUpdate } from '@/routes/fhir/r4/organization/update'
 import { registerPractitionerCreate } from '@/routes/fhir/r4/practitioner/create'
 import { registerPractitionerDelete } from '@/routes/fhir/r4/practitioner/delete'
 import { registerPractitionerFindOne } from '@/routes/fhir/r4/practitioner/findOne'
@@ -7,7 +9,7 @@ import { registerPractitionerHistoryFindOne } from '@/routes/fhir/r4/practitione
 import { registerPractitionerHistoryGetAll } from '@/routes/fhir/r4/practitioner/history/getAll'
 import { registerPractitionerRecreate } from '@/routes/fhir/r4/practitioner/recreate'
 import { registerPractitionerUpdate } from '@/routes/fhir/r4/practitioner/update'
-import { registerSeed } from '@/routes/seed'
+import { registerValueSetGetAll } from '@/routes/fhir/r4/valueset/getAll'
 import { cors } from 'hono/cors'
 
 import { auth } from '@repo/auth'
@@ -59,7 +61,6 @@ app.on(['GET', 'POST'], '/auth/*', (c) => {
 
 registerLiveness(app)
 registerWhoiam(app)
-registerSeed(app)
 
 // Practitioner routes
 registerPractitionerGetAll(app)
@@ -79,7 +80,12 @@ registerPatientFindOne(app)
 registerPatientUpdate(app)
 //registerPatientsToTherapists(app)
 //registerPatientsDisableTherapists(app)
-
+// FHIR Organization routes
+registerOrganizationUpdate(app)
+// ValueSet routes
+registerValueSetGetAll(app)
+// FHIR CodeSystem routes
+registerCodeSystemGetAll(app)
 // ai routes
 registerAiChat(app)
 registerAiStore(app)

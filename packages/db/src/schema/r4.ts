@@ -102,10 +102,10 @@ export const organizationHistory = sqliteTable(
 	'organization_history',
 	{
 		id: text('id'),
-		name: text('name').notNull(),
-		slug: text('slug').unique(),
+		name: text('name'),
+		slug: text('slug'),
 		logo: text('logo'),
-		createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+		createdAt: integer('created_at', { mode: 'timestamp' }),
 		metadata: text('metadata'),
 		// fhir fields
 		version: integer('version', { mode: 'number' }), // version of history
