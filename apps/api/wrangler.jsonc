@@ -14,6 +14,11 @@
 		"port": 8801
 	},
 
+	"assets": {
+		"directory": "/home/jose/Documents/workspace/smedrec/fhir/hl7.terminology.r4/package",
+		"binding": "ASSETS"
+	},
+
 	"observability": {
 		"enabled": true
 	},

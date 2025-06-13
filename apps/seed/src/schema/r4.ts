@@ -9,8 +9,8 @@ import {
 	uniqueIndex,
 } from 'drizzle-orm/sqlite-core'
 
-import { generateId } from '../utils/id'
-import { organization, user } from './auth'
+import { generateId } from '../utils/id.js'
+import { organization, user } from './auth.js'
 
 import type {
 	CareTeam,

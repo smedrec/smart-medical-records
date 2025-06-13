@@ -15,6 +15,7 @@
 		"migrate:dev": "wrangler d1 migrations apply DB --local",
 		"migrate:new": "drizzle-kit generate",
 		"migrate:prod": "wrangler d1 migrations apply DB --remote",
+		"seed": "tsc src/scripts/seed.ts",
 		"test": "run-vitest"
 	},
 	"dependencies": {
@@ -25,7 +26,7 @@
 		"@repo/auth": "workspace:*",
 		"@repo/db": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
-		"@solarahealth/fhir-r4": "^1.2.0",
+		"@solarahealth/fhir-r4": "1.2.0",
 		"ai": "4.3.16",
 		"better-auth": "1.2.8",
 		"drizzle-orm": "0.44.2",

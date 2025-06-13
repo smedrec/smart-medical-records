@@ -6,7 +6,7 @@ import { env } from 'cloudflare:workers'
 import { db } from '@repo/db'
 import { email } from '@repo/mailer'
 
-import { getActiveMemberRole, getActiveOrganization } from './functions'
+import { getActiveMemberRole, getActiveOrganization, setupOrganizationResource } from './functions'
 import { betterAuthOptions } from './options'
 import { ac as appAc, admin as appAdmin, user } from './permissions/admin'
 import {
@@ -140,23 +140,6 @@ export const auth = betterAuth({
 				},
 			},
 		},
-		organization: {
-			create: {
-				before: async (user, ctx) => {
-					// Modify the user object before it is created
-					/**  return {
-              data: {
-                ...user,
-                firstName: user.name.split(' ')[0],
-                lastName: user.name.split(' ')[1],
-              },
-            };*/
-				},
-				after: async (user) => {
-					//perform additional actions, like creating a stripe customer or send welcome email
-				},
-			},
-		},
 	},
 	secondaryStorage: {
 		get: async (key) => {
@@ -213,6 +196,27 @@ export const auth = betterAuth({
             <p>If you have any doubt please send a email to: ${data.inviter.user.email}.</p>
           `,
 				})
+			},
+			organizationCreation: {
+				disabled: false, // Set to true to disable organization creation
+				/**beforeCreate: async ({ organization, user }, request) => {
+					// Run custom logic before organization is created
+					// Optionally modify the organization data
+					return {
+						data: {
+							...organization,
+							metadata: {
+								customField: 'value',
+							},
+						},
+					}
+				},*/
+				afterCreate: async ({ organization, member, user }, request) => {
+					// Run custom logic after organization is created
+					// e.g., create default resources, send notifications
+
+					await setupOrganizationResource(organization.id)
+				},
 			},
 		}),
 		apiKey({

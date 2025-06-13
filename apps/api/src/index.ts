@@ -3,8 +3,11 @@ import { registerPractitionerCreate } from '@/routes/fhir/r4/practitioner/create
 import { registerPractitionerDelete } from '@/routes/fhir/r4/practitioner/delete'
 import { registerPractitionerFindOne } from '@/routes/fhir/r4/practitioner/findOne'
 import { registerPractitionerGetAll } from '@/routes/fhir/r4/practitioner/getAll'
+import { registerPractitionerHistoryFindOne } from '@/routes/fhir/r4/practitioner/history/findOne'
+import { registerPractitionerHistoryGetAll } from '@/routes/fhir/r4/practitioner/history/getAll'
 import { registerPractitionerRecreate } from '@/routes/fhir/r4/practitioner/recreate'
 import { registerPractitionerUpdate } from '@/routes/fhir/r4/practitioner/update'
+import { registerSeed } from '@/routes/seed'
 import { cors } from 'hono/cors'
 
 import { auth } from '@repo/auth'
@@ -56,6 +59,7 @@ app.on(['GET', 'POST'], '/auth/*', (c) => {
 
 registerLiveness(app)
 registerWhoiam(app)
+registerSeed(app)
 
 // Practitioner routes
 registerPractitionerGetAll(app)
@@ -65,6 +69,8 @@ registerPractitionerCreate(app)
 registerPractitionerUpdate(app)
 registerPractitionerDelete(app)
 registerPractitionerRecreate(app)
+registerPractitionerHistoryGetAll(app)
+registerPractitionerHistoryFindOne(app)
 // Patient routes
 registerPatientCreate(app)
 registerPatientDelete(app)
