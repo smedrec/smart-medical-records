@@ -1,11 +1,12 @@
 import { ApiError, openApiErrorResponses } from '@/lib/errors'
+import { BaseResourceResponseSchema, UserSelectResponseSchema } from '@/lib/utils/responses'
 import { idParamsSchema } from '@/shared/types'
-import { createRoute } from '@hono/zod-openapi'
+import { createRoute, z } from '@hono/zod-openapi'
 import { and, eq } from 'drizzle-orm'
 
 import { practitioner, user } from '@repo/db'
 
-import type { App } from '../../../../lib/hono'
+import type { App } from '@/lib/hono'
 
 const route = createRoute({
 	tags: ['Practitioner'],
@@ -21,7 +22,10 @@ const route = createRoute({
 			description: 'The practitioner',
 			content: {
 				'application/json': {
-					schema: practitioner.$inferSelect,
+					schema: z.object({
+						practitioner: BaseResourceResponseSchema,
+						user: UserSelectResponseSchema,
+					}),
 				},
 			},
 		},
@@ -30,14 +34,15 @@ const route = createRoute({
 })
 
 export type Route = typeof route
-export type PractitionerFindOneResponse =
+export type PractitionerFindOneResponse = z.infer<
 	(typeof route.responses)[200]['content']['application/json']['schema']
+>
 
 export const registerPractitionerFindOne = (app: App) =>
 	app.openapi(route, async (c) => {
 		const { auth, db } = c.get('services')
 		const session = c.get('session')
-		let canReadPractitioner: boolean
+		let canReadPractitioner: boolean = false
 
 		if (!session)
 			throw new ApiError({
@@ -79,17 +84,24 @@ export const registerPractitionerFindOne = (app: App) =>
 		const organization = session.session.activeOrganizationId as string
 		const { id } = c.req.valid('param')
 
-		const result = await db
-			.select()
-			.from(practitioner)
-			.leftJoin(user, eq(user.id, practitioner.user))
-			.where(and(eq(practitioner.organization, organization), eq(practitioner.id, id)))
+		try {
+			const result = await db
+				.select()
+				.from(practitioner)
+				.leftJoin(user, eq(user.id, practitioner.user))
+				.where(and(eq(practitioner.organization, organization), eq(practitioner.id, id)))
 
-		if (result.length < 1)
+			if (result.length < 1)
+				throw new ApiError({
+					code: 'NOT_FOUND',
+					message: 'Practitioner not found.',
+				})
+
+			return c.json(result[0], 200)
+		} catch (error) {
 			throw new ApiError({
-				code: 'NOT_FOUND',
-				message: 'Assistant not found.',
+				code: 'INTERNAL_SERVER_ERROR',
+				message: `An error occurred while fetching the practitioner. ${error instanceof Error ? error.message : 'Unknown error'}`,
 			})
-
-		return c.json(result[0], 200)
+		}
 	})

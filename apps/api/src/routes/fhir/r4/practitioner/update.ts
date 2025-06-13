@@ -1,4 +1,5 @@
 import { ApiError, openApiErrorResponses } from '@/lib/errors'
+import { BaseResourceResponseSchema } from '@/lib/utils/responses'
 import { idParamsSchema } from '@/shared/types'
 import { createRoute, z } from '@hono/zod-openapi'
 import { and, eq } from 'drizzle-orm'
@@ -22,7 +23,9 @@ const route = createRoute({
 			content: {
 				'application/json': {
 					schema: z.object({
-						resource: z.unknown().openapi({}),
+						resource: z.unknown().openapi({
+							description: 'The practitioner resource to update',
+						}),
 					}),
 				},
 			},
@@ -33,7 +36,7 @@ const route = createRoute({
 			description: 'The updated practitioner',
 			content: {
 				'application/json': {
-					schema: practitioner.$inferSelect,
+					schema: BaseResourceResponseSchema,
 				},
 			},
 		},
@@ -45,8 +48,9 @@ export type Route = typeof route
 export type PractitionerUpdateRequest = z.infer<
 	(typeof route.request.body.content)['application/json']['schema']
 >
-export type PractitionerUpdateResponse =
+export type PractitionerUpdateResponse = z.infer<
 	(typeof route.responses)[200]['content']['application/json']['schema']
+>
 
 export const registerPractitionerUpdate = (app: App) =>
 	app.openapi(route, async (c) => {

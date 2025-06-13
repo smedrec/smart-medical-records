@@ -1,4 +1,5 @@
 import { ApiError, openApiErrorResponses } from '@/lib/errors'
+import { BaseResourceResponseSchema } from '@/lib/utils/responses'
 import { idParamsSchema } from '@/shared/types'
 import { createRoute, z } from '@hono/zod-openapi'
 import { and, eq } from 'drizzle-orm'
@@ -22,11 +23,7 @@ const route = createRoute({
 			description: 'The recreated success message',
 			content: {
 				'application/json': {
-					schema: z.object({
-						message: z.string().openapi({
-							description: 'The status message',
-						}),
-					}),
+					schema: BaseResourceResponseSchema,
 				},
 			},
 		},

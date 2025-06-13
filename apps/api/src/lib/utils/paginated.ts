@@ -1,3 +1,5 @@
+import { z } from '@hono/zod-openapi'
+
 export interface Paginated {
 	/** Total number of results */
 	count: number
@@ -38,3 +40,22 @@ export const parseQueryInt = (queryString: unknown): number | undefined => {
 
 	return undefined
 }
+
+export const PaginatedResponse = z.object({
+	current: z.number().openapi({
+		description: 'The current page number',
+		example: 1,
+	}),
+	pageSize: z.number().openapi({
+		description: 'The number of items per page',
+		example: 10,
+	}),
+	totalPages: z.number().openapi({
+		description: 'The total number of pages',
+		example: 5,
+	}),
+	count: z.number().openapi({
+		description: 'The total number of practitioners',
+		example: 50,
+	}),
+})

@@ -1,5 +1,6 @@
 import { ApiError, openApiErrorResponses } from '@/lib/errors'
-import { getOffset, paginatedData, parseQueryInt } from '@/lib/utils/paginated'
+import { getOffset, paginatedData, PaginatedResponse, parseQueryInt } from '@/lib/utils/paginated'
+import { BaseResourceResponseSchema, UserSelectResponseSchema } from '@/lib/utils/responses'
 import { querySchema } from '@/shared/types'
 import { createRoute, z } from '@hono/zod-openapi'
 import { asc, eq } from 'drizzle-orm'
@@ -22,7 +23,15 @@ const route = createRoute({
 			description: 'The practitioners',
 			content: {
 				'application/json': {
-					schema: z.array(practitioner.$inferSelect),
+					schema: z.object({
+						result: z.array(
+							z.object({
+								practitioner: BaseResourceResponseSchema,
+								user: UserSelectResponseSchema,
+							})
+						),
+						pagination: PaginatedResponse,
+					}),
 				},
 			},
 		},
@@ -39,7 +48,7 @@ export const registerPractitionerGetAll = (app: App) =>
 	app.openapi(route, async (c) => {
 		const { auth, db } = c.get('services')
 		const session = c.get('session')
-		let canReadPractitioner: boolean
+		let canReadPractitioner: boolean = false
 
 		if (!session)
 			throw new ApiError({
@@ -86,26 +95,33 @@ export const registerPractitionerGetAll = (app: App) =>
 		const offset = getOffset(page, limit)
 		const pagination = paginatedData({ size: limit, page, count: total })
 
-		const result = await db
-			.select()
-			.from(practitioner)
-			.leftJoin(user, eq(user.id, practitioner.user))
-			.where(eq(practitioner.organization, organization))
-			.orderBy(asc(practitioner.id)) // order by is mandatory
-			.limit(limit) // the number of rows to return
-			.offset(offset)
+		try {
+			const result = await db
+				.select()
+				.from(practitioner)
+				.leftJoin(user, eq(user.id, practitioner.user))
+				.where(eq(practitioner.organization, organization))
+				.orderBy(asc(practitioner.id)) // order by is mandatory
+				.limit(limit) // the number of rows to return
+				.offset(offset)
 
-		if (result.length < 1)
+			if (result.length < 1)
+				throw new ApiError({
+					code: 'NOT_FOUND',
+					message: 'Practitioners not found.',
+				})
+
+			return c.json(
+				{
+					result: result,
+					pagination: pagination,
+				},
+				200
+			)
+		} catch (error) {
 			throw new ApiError({
-				code: 'NOT_FOUND',
-				message: 'Practitioners not found.',
+				code: 'INTERNAL_SERVER_ERROR',
+				message: `Failed to fetch practitioners. ${error instanceof Error ? error.message : 'Unknown error'}`,
 			})
-
-		return c.json(
-			{
-				result: result,
-				pagination: pagination,
-			},
-			200
-		)
+		}
 	})

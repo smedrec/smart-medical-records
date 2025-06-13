@@ -6,6 +6,7 @@ import type { Logger } from '../logs'
 
 export type Env = SharedHonoEnv & {
 	// add additional Bindings here
+	ALLOWED_ORIGINS: string
 }
 
 export type ServiceContext = {

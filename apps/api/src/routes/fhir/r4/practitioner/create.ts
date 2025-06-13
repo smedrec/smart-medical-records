@@ -1,4 +1,5 @@
 import { ApiError, openApiErrorResponses } from '@/lib/errors'
+import { BaseResourceResponseSchema } from '@/lib/utils/responses'
 import { idSchema } from '@/shared/types'
 import { createRoute, z } from '@hono/zod-openapi'
 import { createPractitionerSchema } from '@solarahealth/fhir-r4'
@@ -39,7 +40,7 @@ const route = createRoute({
 			description: 'The practitioner',
 			content: {
 				'application/json': {
-					schema: practitionerSchema,
+					schema: BaseResourceResponseSchema,
 				},
 			},
 		},

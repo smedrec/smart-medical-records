@@ -71,6 +71,13 @@ export const auth = betterAuth({
 		},
 	},
 	user: {
+		additionalFields: {
+			lang: {
+				type: 'string',
+				required: false,
+				defaultValue: 'en',
+			},
+		},
 		changeEmail: {
 			enabled: true,
 			sendChangeEmailVerification: async ({ user, newEmail, url }) => {
@@ -117,6 +124,23 @@ export const auth = betterAuth({
 			},
 		},
 		user: {
+			create: {
+				before: async (user, ctx) => {
+					// Modify the user object before it is created
+					/**  return {
+              data: {
+                ...user,
+                firstName: user.name.split(' ')[0],
+                lastName: user.name.split(' ')[1],
+              },
+            };*/
+				},
+				after: async (user) => {
+					//perform additional actions, like creating a stripe customer or send welcome email
+				},
+			},
+		},
+		organization: {
 			create: {
 				before: async (user, ctx) => {
 					// Modify the user object before it is created

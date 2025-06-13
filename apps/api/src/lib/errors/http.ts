@@ -1,12 +1,12 @@
+import { parseZodErrorMessage } from '@/lib/utils/zod-error'
 import { z } from '@hono/zod-openapi'
+import { env } from 'cloudflare:workers'
 import { HTTPException } from 'hono/http-exception'
 
-import { parseZodErrorMessage } from '../utils/zod-error'
-
+import type { HonoEnv } from '@/lib/hono/context'
 import type { Context } from 'hono'
 import type { StatusCode } from 'hono/utils/http-status'
 import type { ZodError } from 'zod'
-import type { HonoEnv } from '../hono/context'
 
 const ErrorCode = z.enum([
 	'BAD_REQUEST',
@@ -32,10 +32,10 @@ export function errorSchemaFactory(code: z.ZodEnum<any>) {
 				description: 'A machine readable error code.',
 				example: code._def.values.at(0),
 			}),
-			/**docs: z.string().openapi({
-        description: "A link to our documentation with more details about this error code",
-        example: `https://unkey.dev/docs/api-reference/errors/code/${code._def.values.at(0)}`,
-      }),*/
+			docs: z.string().openapi({
+				description: 'A link to our documentation with more details about this error code',
+				example: `${env.APP_PUBLIC_URL}/docs/api-reference/errors/code/${code._def.values.at(0)}`,
+			}),
 			message: z
 				.string()
 				.openapi({ description: 'A human readable explanation of what went wrong' }),
@@ -53,10 +53,10 @@ export const ErrorSchema = z.object({
 			description: 'A machine readable error code.',
 			example: 'INTERNAL_SERVER_ERROR',
 		}),
-		/**docs: z.string().openapi({
-      description: "A link to our documentation with more details about this error code",
-      example: "https://unkey.dev/docs/api-reference/errors/code/BAD_REQUEST",
-    }),*/
+		docs: z.string().openapi({
+			description: 'A link to our documentation with more details about this error code',
+			example: `${env.APP_PUBLIC_URL}/docs/api-reference/errors/code/BAD_REQUEST`,
+		}),
 		message: z.string().openapi({ description: 'A human readable explanation of what went wrong' }),
 		requestId: z.string().openapi({
 			description: 'Please always include the requestId in your error report',
@@ -119,7 +119,7 @@ export class ApiError extends HTTPException {
 	public readonly code: z.infer<typeof ErrorCode>
 
 	constructor({ code, message }: { code: z.infer<typeof ErrorCode>; message: string }) {
-		super(codeToStatus(code), { message })
+		super(codeToStatus(code) as any, { message })
 		this.code = code
 	}
 }
@@ -128,7 +128,7 @@ export class PrismaError extends HTTPException {
 	public readonly code: z.infer<typeof ErrorCode>
 
 	constructor({ code, message }: { code: z.infer<typeof ErrorCode>; message: string }) {
-		super(codeToStatus(code), { message })
+		super(codeToStatus(code) as any, { message })
 		this.code = code
 	}
 }
@@ -150,7 +150,7 @@ export function handleZodError(
 			{
 				error: {
 					code: 'BAD_REQUEST',
-					//docs: "https://unkey.dev/docs/api-reference/errors/code/BAD_REQUEST",
+					docs: `${env.APP_PUBLIC_URL}/docs/api-reference/errors/code/BAD_REQUEST`,
 					message: parseZodErrorMessage(result.error),
 					requestId: c.get('requestId'),
 				},
@@ -179,7 +179,7 @@ export function handleError(err: Error, c: Context<HonoEnv>): Response {
 			{
 				error: {
 					code: err.code,
-					//docs: `https://unkey.dev/docs/api-reference/errors/code/${err.code}`,
+					docs: `${env.APP_PUBLIC_URL}/docs/api-reference/errors/code/${err.code}`,
 					message: err.message,
 					requestId: c.get('requestId'),
 				},
@@ -205,7 +205,7 @@ export function handleError(err: Error, c: Context<HonoEnv>): Response {
 			{
 				error: {
 					code,
-					//docs: `https://unkey.dev/docs/api-reference/errors/code/${code}`,
+					docs: `${env.APP_PUBLIC_URL}/docs/api-reference/errors/code/${code}`,
 					message: err.message,
 					requestId: c.get('requestId'),
 				},
@@ -228,7 +228,7 @@ export function handleError(err: Error, c: Context<HonoEnv>): Response {
 		{
 			error: {
 				code: 'INTERNAL_SERVER_ERROR',
-				//docs: "https://unkey.dev/docs/api-reference/errors/code/INTERNAL_SERVER_ERROR",
+				docs: `${env.APP_PUBLIC_URL}/docs/api-reference/errors/code/INTERNAL_SERVER_ERROR`,
 				message: err.message ?? 'something unexpected happened',
 				requestId: c.get('requestId'),
 			},
@@ -242,11 +242,11 @@ export function errorResponse(c: Context, code: z.infer<typeof ErrorCode>, messa
 		{
 			error: {
 				code: code,
-				//docs: `https://unkey.dev/docs/api-reference/errors/code/${code}`,
+				docs: `${env.APP_PUBLIC_URL}/docs/api-reference/errors/code/${code}`,
 				message,
 				requestId: c.get('requestId'),
 			},
 		},
-		{ status: codeToStatus(code) }
+		{ status: codeToStatus(code) as any }
 	)
 }

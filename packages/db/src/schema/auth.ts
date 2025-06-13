@@ -1,4 +1,6 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { blob, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+
+import type { Organization } from '@solarahealth/fhir-r4'
 
 export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
@@ -73,6 +75,11 @@ export const organization = sqliteTable('organization', {
 	logo: text('logo'),
 	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 	metadata: text('metadata'),
+	// fhir fields
+	version: integer('version').default(0), // version id and logical transaction id
+	ts: integer('ts', { mode: 'timestamp' }).$defaultFn(() => /* @__PURE__ */ new Date()), // last updated time
+	status: text('status').$type<'create' | 'updated' | 'deleted' | 'recreated'>().default('create'), // resource status
+	resource: blob('resource', { mode: 'json' }).$type<Organization>(), // resource body
 })
 
 export const member = sqliteTable('member', {

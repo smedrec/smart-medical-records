@@ -13,8 +13,14 @@ export const idParamsSchema = z.object({
 })
 
 export const querySchema = z.object({
-	limit: z.string().optional().openapi({}),
-	page: z.string().optional().openapi({}),
+	limit: z.string().optional().openapi({
+		description: 'The maximum number of results to return',
+		example: '10',
+	}),
+	page: z.string().optional().openapi({
+		description: 'The page number to return',
+		example: '1',
+	}),
 })
 
 export type ResourceBase = {
