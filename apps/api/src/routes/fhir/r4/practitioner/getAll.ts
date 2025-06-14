@@ -46,9 +46,9 @@ export type PractitionerGetAllResponse = z.infer<
 
 export const registerPractitionerGetAll = (app: App) =>
 	app.openapi(route, async (c) => {
-		const { auth, db } = c.get('services')
+		const { cerbos, db } = c.get('services')
 		const session = c.get('session')
-		let canReadPractitioner: boolean = false
+		//let canReadPractitioner: boolean = false
 
 		if (!session)
 			throw new ApiError({
@@ -56,7 +56,21 @@ export const registerPractitionerGetAll = (app: App) =>
 				message: 'You Need to login first to continue.',
 			})
 
-		if (c.req.header('x-api-key')) {
+		const decision = await cerbos.checkResource({
+			principal: {
+				id: session.session.userId,
+				roles: [session.user.role as string],
+				attributes: {},
+			},
+			resource: {
+				kind: 'practitioner',
+				id: '',
+				attributes: {},
+			},
+			actions: ['read'],
+		})
+
+		/**if (c.req.header('x-api-key')) {
 			const result = await auth.api.verifyApiKey({
 				body: {
 					key: c.req.header('x-api-key') as string,
@@ -78,9 +92,9 @@ export const registerPractitionerGetAll = (app: App) =>
 			})
 
 			canReadPractitioner = result.success
-		}
+		}*/
 
-		if (!canReadPractitioner) {
+		if (!decision.isAllowed('read')) {
 			throw new ApiError({
 				code: 'FORBIDDEN',
 				message: 'You do not have permissions to read practitioners.',

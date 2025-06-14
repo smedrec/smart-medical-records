@@ -1,0 +1,3042 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"title": "Cerbos",
+		"version": "0.44.0",
+		"contact": {
+			"name": "Cerbos",
+			"url": "https://cerbos.dev",
+			"email": "info@cerbos.dev"
+		}
+	},
+	"tags": [
+		{
+			"name": "CerbosService",
+			"description": "Cerbos Policy Decision Point"
+		},
+		{
+			"name": "CerbosAdminService",
+			"description": "Cerbos administration service"
+		}
+	],
+	"schemes": ["http"],
+	"consumes": ["application/json"],
+	"produces": ["application/json"],
+	"paths": {
+		"/admin/auditlog/list/{kind}": {
+			"get": {
+				"summary": "List audit log entries",
+				"operationId": "CerbosAdminService_ListAuditLogEntries",
+				"responses": {
+					"200": {
+						"description": "A successful response.(streaming responses)",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"result": {
+									"$ref": "#/definitions/v1ListAuditLogEntriesResponse"
+								},
+								"error": {
+									"$ref": "#/definitions/googlerpcStatus"
+								}
+							},
+							"title": "Stream result of v1ListAuditLogEntriesResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "kind",
+						"description": "Kind of log entry",
+						"in": "path",
+						"required": true,
+						"type": "string",
+						"enum": ["KIND_UNSPECIFIED", "KIND_ACCESS", "KIND_DECISION"]
+					},
+					{
+						"name": "tail",
+						"description": "Last N entries.",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+						"format": "int64"
+					},
+					{
+						"name": "between.start",
+						"description": "Start date in ISO 8601 format.",
+						"in": "query",
+						"required": true,
+						"type": "string",
+						"format": "date-time"
+					},
+					{
+						"name": "between.end",
+						"description": "End date in ISO 8601 format.",
+						"in": "query",
+						"required": true,
+						"type": "string",
+						"format": "date-time"
+					},
+					{
+						"name": "since",
+						"description": "Entries since N hours/minutes ago",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "lookup",
+						"description": "By Call ID",
+						"in": "query",
+						"required": false,
+						"type": "string",
+						"pattern": "^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$"
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			}
+		},
+		"/admin/policies": {
+			"get": {
+				"summary": "List policies",
+				"operationId": "CerbosAdminService_ListPolicies",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1ListPoliciesResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "includeDisabled",
+						"description": "Include disabled policies",
+						"in": "query",
+						"required": false,
+						"type": "boolean"
+					},
+					{
+						"name": "nameRegexp",
+						"description": "Filter policies by name with regexp",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "scopeRegexp",
+						"description": "Filter policies by scope with regexp",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "versionRegexp",
+						"description": "Filter policies by version with regexp",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "policyId",
+						"description": "For blob, disk, git stores use file name (\u003cfilename\u003e.yaml). For mysql, postgres, sqlite3 use id (\u003ckind\u003e.\u003cname\u003e.\u003cversion\u003e) of the policy",
+						"in": "query",
+						"required": false,
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"collectionFormat": "multi"
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			}
+		},
+		"/admin/policies/inspect": {
+			"get": {
+				"summary": "Inspect policies",
+				"operationId": "CerbosAdminService_InspectPolicies",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1InspectPoliciesResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "includeDisabled",
+						"description": "Include disabled policies",
+						"in": "query",
+						"required": false,
+						"type": "boolean"
+					},
+					{
+						"name": "nameRegexp",
+						"description": "Filter policies by name with regexp",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "scopeRegexp",
+						"description": "Filter policies by scope with regexp",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "versionRegexp",
+						"description": "Filter policies by version with regexp",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					},
+					{
+						"name": "policyId",
+						"description": "For blob, disk, git stores use file name (\u003cfilename\u003e.yaml). For mysql, postgres, sqlite3 use id (\u003ckind\u003e.\u003cname\u003e.\u003cversion\u003e) of the policy",
+						"in": "query",
+						"required": false,
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"collectionFormat": "multi"
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			}
+		},
+		"/admin/policy": {
+			"get": {
+				"summary": "Get policy",
+				"operationId": "CerbosAdminService_GetPolicy",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1GetPolicyResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "id",
+						"description": "For blob, disk, git stores use file name (\u003cfilename\u003e.yaml). For mysql, postgres, sqlite3 use id (\u003ckind\u003e.\u003cname\u003e.\u003cversion\u003e) of the policy",
+						"in": "query",
+						"required": true,
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"collectionFormat": "multi"
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			},
+			"delete": {
+				"summary": "Disable policy",
+				"operationId": "CerbosAdminService_DisablePolicy3",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1DisablePolicyResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "id",
+						"description": "Unique identifier for the policy",
+						"in": "query",
+						"required": true,
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"collectionFormat": "multi"
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			},
+			"post": {
+				"summary": "Add or update policies",
+				"operationId": "CerbosAdminService_AddOrUpdatePolicy",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1AddOrUpdatePolicyResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "body",
+						"description": "Add/update policy request",
+						"in": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/v1AddOrUpdatePolicyRequest"
+						}
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			},
+			"put": {
+				"summary": "Add or update policies",
+				"operationId": "CerbosAdminService_AddOrUpdatePolicy2",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1AddOrUpdatePolicyResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "body",
+						"description": "Add/update policy request",
+						"in": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/v1AddOrUpdatePolicyRequest"
+						}
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			}
+		},
+		"/admin/policy/disable": {
+			"post": {
+				"summary": "Disable policy",
+				"operationId": "CerbosAdminService_DisablePolicy",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1DisablePolicyResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "id",
+						"description": "Unique identifier for the policy",
+						"in": "query",
+						"required": true,
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"collectionFormat": "multi"
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			},
+			"put": {
+				"summary": "Disable policy",
+				"operationId": "CerbosAdminService_DisablePolicy2",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1DisablePolicyResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "body",
+						"description": "Disable policy request",
+						"in": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/v1DisablePolicyRequest"
+						}
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			}
+		},
+		"/admin/policy/enable": {
+			"post": {
+				"summary": "Enable policy",
+				"operationId": "CerbosAdminService_EnablePolicy",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1EnablePolicyResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "id",
+						"description": "Unique identifier for the policy",
+						"in": "query",
+						"required": true,
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"collectionFormat": "multi"
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			},
+			"put": {
+				"summary": "Enable policy",
+				"operationId": "CerbosAdminService_EnablePolicy2",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1EnablePolicyResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "body",
+						"description": "Enable policy request",
+						"in": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/v1EnablePolicyRequest"
+						}
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			}
+		},
+		"/admin/schema": {
+			"get": {
+				"summary": "Get schema",
+				"operationId": "CerbosAdminService_GetSchema",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1GetSchemaResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "id",
+						"description": "Unique identifier for the schema",
+						"in": "query",
+						"required": true,
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"collectionFormat": "multi"
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			},
+			"delete": {
+				"summary": "Delete schema",
+				"operationId": "CerbosAdminService_DeleteSchema",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1DeleteSchemaResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "id",
+						"description": "Unique identifier for the schema",
+						"in": "query",
+						"required": true,
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"collectionFormat": "multi"
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			},
+			"post": {
+				"summary": "Add or update schema",
+				"operationId": "CerbosAdminService_AddOrUpdateSchema",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1AddOrUpdateSchemaResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "body",
+						"description": "Add/update schema request",
+						"in": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/v1AddOrUpdateSchemaRequest"
+						}
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			},
+			"put": {
+				"summary": "Add or update schema",
+				"operationId": "CerbosAdminService_AddOrUpdateSchema2",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1AddOrUpdateSchemaResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "body",
+						"description": "Add/update schema request",
+						"in": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/v1AddOrUpdateSchemaRequest"
+						}
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			}
+		},
+		"/admin/schemas": {
+			"get": {
+				"summary": "List schemas",
+				"operationId": "CerbosAdminService_ListSchemas",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1ListSchemasResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			}
+		},
+		"/admin/store/reload": {
+			"get": {
+				"summary": "Reload store",
+				"operationId": "CerbosAdminService_ReloadStore",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1ReloadStoreResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "wait",
+						"description": "Wait until the reloading process finishes",
+						"in": "query",
+						"required": false,
+						"type": "boolean"
+					}
+				],
+				"tags": ["CerbosAdminService"],
+				"security": [
+					{
+						"BasicAuth": []
+					}
+				]
+			}
+		},
+		"/api/check": {
+			"post": {
+				"summary": "Check",
+				"description": "[Deprecated: Use CheckResources API instead] Check whether a principal has permissions to perform the given actions on a set of resource instances.",
+				"operationId": "CerbosService_CheckResourceSet",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1CheckResourceSetResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "body",
+						"description": "PDP Request",
+						"in": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/v1CheckResourceSetRequest"
+						}
+					}
+				],
+				"tags": ["CerbosService"],
+				"deprecated": true
+			}
+		},
+		"/api/check/resources": {
+			"post": {
+				"summary": "Check resources",
+				"description": "Check a principal's permissions to a batch of heterogeneous resources and actions.",
+				"operationId": "CerbosService_CheckResources",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1CheckResourcesResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "body",
+						"description": "Check resources request",
+						"in": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/v1CheckResourcesRequest"
+						}
+					}
+				],
+				"tags": ["CerbosService"]
+			}
+		},
+		"/api/check_resource_batch": {
+			"post": {
+				"summary": "Check resource batch",
+				"description": "[Deprecated: Use CheckResources API instead] Check a principal's permissions to a batch of heterogeneous resources and actions.",
+				"operationId": "CerbosService_CheckResourceBatch",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1CheckResourceBatchResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "body",
+						"description": "PDP Request",
+						"in": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/v1CheckResourceBatchRequest"
+						}
+					}
+				],
+				"tags": ["CerbosService"],
+				"deprecated": true
+			}
+		},
+		"/api/plan/resources": {
+			"post": {
+				"summary": "Plan resources",
+				"description": "Produce a query plan with conditions that must be satisfied for accessing a set of instances of a resource",
+				"operationId": "CerbosService_PlanResources",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1PlanResourcesResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "body",
+						"description": "PDP Resources Query Plan Request",
+						"in": "body",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/v1PlanResourcesRequest"
+						}
+					}
+				],
+				"tags": ["CerbosService"]
+			}
+		},
+		"/api/server_info": {
+			"get": {
+				"summary": "Get server information",
+				"description": "Get information about the server e.g. server version",
+				"operationId": "CerbosService_ServerInfo",
+				"responses": {
+					"200": {
+						"description": "A successful response.",
+						"schema": {
+							"$ref": "#/definitions/v1ServerInfoResponse"
+						}
+					},
+					"default": {
+						"description": "An unexpected error response.",
+						"schema": {
+							"$ref": "#/definitions/googlerpcStatus"
+						}
+					}
+				},
+				"tags": ["CerbosService"]
+			}
+		}
+	},
+	"definitions": {
+		"AuxDataJWT": {
+			"type": "object",
+			"properties": {
+				"token": {
+					"type": "string",
+					"example": "eyJhbGciOiJFUzM4NCIsImtpZCI6IjE5TGZaYXRFZGc4M1lOYzVyMjNndU1KcXJuND0iLCJ0eXAiOiJKV1QifQ.eyJhdWQiOlsiY2VyYm9zLWp3dC10ZXN0cyJdLCJjdXN0b21BcnJheSI6WyJBIiwiQiIsIkMiXSwiY3VzdG9tSW50Ijo0MiwiY3VzdG9tTWFwIjp7IkEiOiJBQSIsIkIiOiJCQiIsIkMiOiJDQyJ9LCJjdXN0b21TdHJpbmciOiJmb29iYXIiLCJleHAiOjE5NDk5MzQwMzksImlzcyI6ImNlcmJvcy10ZXN0LXN1aXRlIn0.WN_tOScSpd_EI-P5EI1YlagxEgExSfBjAtcrgcF6lyWj1lGpR_GKx9goZEp2p_t5AVWXN_bjz_sMUmJdJa4cVd55Qm1miR-FKu6oNRHnSEWdMFmnArwPw-YDJWfylLFX",
+					"description": "JWT from the original request",
+					"x-example-show-value": false,
+					"x-fill-example": false
+				},
+				"keySetId": {
+					"type": "string",
+					"example": "my-keyset",
+					"description": "Key ID to use when decoding the token (defined in the Cerbos server configuration)",
+					"x-example-show-value": false,
+					"x-fill-example": false
+				}
+			},
+			"description": "JWT from the original request",
+			"required": ["token"]
+		},
+		"CheckOutputActionEffect": {
+			"type": "object",
+			"properties": {
+				"effect": {
+					"$ref": "#/definitions/v1Effect"
+				},
+				"policy": {
+					"type": "string"
+				},
+				"scope": {
+					"type": "string"
+				}
+			}
+		},
+		"CheckResourceBatchRequestBatchEntry": {
+			"type": "object",
+			"properties": {
+				"actions": {
+					"type": "array",
+					"example": ["view:public", "comment"],
+					"items": {
+						"type": "string"
+					},
+					"description": "List of actions being performed on the resource.",
+					"minItems": 1,
+					"uniqueItems": true
+				},
+				"resource": {
+					"$ref": "#/definitions/enginev1Resource"
+				}
+			},
+			"required": ["actions", "resource"]
+		},
+		"CheckResourcesRequestResourceEntry": {
+			"type": "object",
+			"properties": {
+				"actions": {
+					"type": "array",
+					"example": ["view:public", "comment"],
+					"items": {
+						"type": "string"
+					},
+					"description": "List of actions being performed on the resource.",
+					"minItems": 1,
+					"uniqueItems": true
+				},
+				"resource": {
+					"$ref": "#/definitions/enginev1Resource"
+				}
+			},
+			"required": ["actions", "resource"]
+		},
+		"CheckResourcesResponseResultEntry": {
+			"type": "object",
+			"properties": {
+				"resource": {
+					"$ref": "#/definitions/CheckResourcesResponseResultEntryResource"
+				},
+				"actions": {
+					"type": "object",
+					"example": {
+						"view": "EFFECT_ALLOW"
+					},
+					"additionalProperties": {
+						"$ref": "#/definitions/v1Effect"
+					},
+					"description": "Mapping of each action to an effect."
+				},
+				"validationErrors": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1ValidationError"
+					},
+					"description": "List of validation errors (if schema validation is enabled)"
+				},
+				"meta": {
+					"$ref": "#/definitions/CheckResourcesResponseResultEntryMeta",
+					"example": {
+						"actions": {
+							"view:*": {
+								"matched_policy": "album:object:default"
+							},
+							"comment": {
+								"matched_policy": "album:object:default"
+							}
+						},
+						"effective_derived_roles": ["owner"]
+					},
+					"description": "Metadata about policy evaluation"
+				},
+				"outputs": {
+					"type": "array",
+					"example": [
+						{
+							"src": "resource.expense.v1/acme#rule-001",
+							"val": "view_allowed:alice"
+						},
+						{
+							"src": "resource.expense.v1/acme#rule-002",
+							"val": "foo"
+						}
+					],
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1OutputEntry"
+					},
+					"description": "Output for each rule with outputs configured"
+				}
+			}
+		},
+		"CheckResourcesResponseResultEntryMeta": {
+			"type": "object",
+			"properties": {
+				"actions": {
+					"type": "object",
+					"example": {
+						"view:*": {
+							"matched_policy": "album:object:default"
+						},
+						"comment": {
+							"matched_policy": "album:object:default"
+						}
+					},
+					"additionalProperties": {
+						"$ref": "#/definitions/CheckResourcesResponseResultEntryMetaEffectMeta"
+					},
+					"description": "Metadata about the effect calculated for each action on this resource instance."
+				},
+				"effectiveDerivedRoles": {
+					"type": "array",
+					"example": ["owner"],
+					"items": {
+						"type": "string"
+					},
+					"description": "Derived roles that were effective during policy evaluation."
+				}
+			},
+			"description": "Metadata about request evaluation."
+		},
+		"CheckResourcesResponseResultEntryMetaEffectMeta": {
+			"type": "object",
+			"properties": {
+				"matchedPolicy": {
+					"type": "string",
+					"example": "album:object:default",
+					"description": "Policy that matched to produce this effect."
+				},
+				"matchedScope": {
+					"type": "string",
+					"example": "acme.corp.base",
+					"description": "Policy scope that matched to produce this effect."
+				}
+			},
+			"description": "Name of the action."
+		},
+		"CheckResourcesResponseResultEntryResource": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string",
+					"example": "XX125",
+					"description": "ID of the resource instance"
+				},
+				"kind": {
+					"type": "string",
+					"example": "album:photo",
+					"description": "Name of the resource kind being accessed."
+				},
+				"policyVersion": {
+					"type": "string",
+					"example": "default",
+					"description": "The policy version to use to evaluate this request. If not specified, will default to the server-configured default version.",
+					"pattern": "^[[:word:]]*$"
+				},
+				"scope": {
+					"type": "string",
+					"example": "acme.corp",
+					"description": "A dot-separated scope that describes the hierarchy this resource belongs to. This is used for determining policy inheritance.",
+					"pattern": "^([[:alnum:]][[:word:]\\-]*(\\.[[:word:]\\-]*)*)*$"
+				}
+			}
+		},
+		"ExpressionOperand": {
+			"type": "object",
+			"properties": {
+				"value": {},
+				"expression": {
+					"$ref": "#/definitions/PlanResourcesFilterExpression"
+				},
+				"variable": {
+					"type": "string"
+				}
+			}
+		},
+		"InspectPoliciesResponseAttribute": {
+			"type": "object",
+			"properties": {
+				"kind": {
+					"$ref": "#/definitions/InspectPoliciesResponseAttributeKind",
+					"description": "Kind of the attribute being referenced."
+				},
+				"name": {
+					"type": "string",
+					"description": "Name of the attribute being referenced."
+				}
+			}
+		},
+		"InspectPoliciesResponseAttributeKind": {
+			"type": "string",
+			"enum": ["KIND_UNSPECIFIED", "KIND_PRINCIPAL_ATTRIBUTE", "KIND_RESOURCE_ATTRIBUTE"],
+			"default": "KIND_UNSPECIFIED"
+		},
+		"InspectPoliciesResponseConstantKind": {
+			"type": "string",
+			"enum": [
+				"KIND_UNSPECIFIED",
+				"KIND_EXPORTED",
+				"KIND_IMPORTED",
+				"KIND_LOCAL",
+				"KIND_UNDEFINED",
+				"KIND_UNKNOWN"
+			],
+			"default": "KIND_UNSPECIFIED"
+		},
+		"InspectPoliciesResponseDerivedRole": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string",
+					"description": "Derived role name defined in the policy."
+				},
+				"kind": {
+					"$ref": "#/definitions/InspectPoliciesResponseDerivedRoleKind",
+					"description": "Kind of the derived role defined in the policy."
+				},
+				"source": {
+					"type": "string",
+					"description": "Source of the derived role defined in the policy."
+				}
+			}
+		},
+		"InspectPoliciesResponseDerivedRoleKind": {
+			"type": "string",
+			"enum": ["KIND_UNSPECIFIED", "KIND_UNDEFINED", "KIND_EXPORTED", "KIND_IMPORTED"],
+			"default": "KIND_UNSPECIFIED"
+		},
+		"InspectPoliciesResponseVariableKind": {
+			"type": "string",
+			"enum": [
+				"KIND_UNSPECIFIED",
+				"KIND_EXPORTED",
+				"KIND_IMPORTED",
+				"KIND_LOCAL",
+				"KIND_UNDEFINED",
+				"KIND_UNKNOWN"
+			],
+			"default": "KIND_UNSPECIFIED"
+		},
+		"ListAuditLogEntriesRequestTimeRange": {
+			"type": "object",
+			"properties": {
+				"start": {
+					"type": "string",
+					"format": "date-time",
+					"example": "2021-07-05T07:27:01+00:00",
+					"description": "Start date in ISO 8601 format."
+				},
+				"end": {
+					"type": "string",
+					"format": "date-time",
+					"example": "2021-07-05T07:27:01+00:00",
+					"description": "End date in ISO 8601 format."
+				}
+			},
+			"description": "Entries between a time range.",
+			"required": ["start", "end"]
+		},
+		"MatchExprList": {
+			"type": "object",
+			"properties": {
+				"of": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1Match"
+					}
+				}
+			}
+		},
+		"MetaActionMeta": {
+			"type": "object",
+			"properties": {
+				"actions": {
+					"type": "object",
+					"example": {
+						"view:*": {
+							"matched_policy": "album:object:default"
+						},
+						"comment": {
+							"matched_policy": "album:object:default"
+						}
+					},
+					"additionalProperties": {
+						"$ref": "#/definitions/v1CheckResourceSetResponseMetaEffectMeta"
+					},
+					"description": "Metadata about the effect calculated for each action on this resource instance."
+				},
+				"effectiveDerivedRoles": {
+					"type": "array",
+					"example": ["owner"],
+					"items": {
+						"type": "string"
+					},
+					"description": "Derived roles that were effective during policy evaluation."
+				}
+			},
+			"description": "Unique resource instance ID supplied in the request."
+		},
+		"OutputWhen": {
+			"type": "object",
+			"properties": {
+				"ruleActivated": {
+					"type": "string"
+				},
+				"conditionNotMet": {
+					"type": "string"
+				}
+			}
+		},
+		"PlanResourcesFilterExpression": {
+			"type": "object",
+			"properties": {
+				"operator": {
+					"type": "string",
+					"description": "Operator"
+				},
+				"operands": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/ExpressionOperand"
+					}
+				}
+			},
+			"description": "CEL expression"
+		},
+		"SchemasIgnoreWhen": {
+			"type": "object",
+			"properties": {
+				"actions": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"ValidationErrorSource": {
+			"type": "string",
+			"enum": ["SOURCE_UNSPECIFIED", "SOURCE_PRINCIPAL", "SOURCE_RESOURCE"],
+			"default": "SOURCE_UNSPECIFIED"
+		},
+		"cerbosenginev1AuxData": {
+			"type": "object",
+			"properties": {
+				"jwt": {
+					"type": "object",
+					"additionalProperties": {}
+				}
+			},
+			"description": "Structured auxiliary data"
+		},
+		"cerbosrequestv1AuxData": {
+			"type": "object",
+			"properties": {
+				"jwt": {
+					"$ref": "#/definitions/AuxDataJWT"
+				}
+			},
+			"description": "Structured auxiliary data useful for evaluating the request"
+		},
+		"enginev1Principal": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string",
+					"example": "bugs_bunny",
+					"description": "ID of the principal"
+				},
+				"policyVersion": {
+					"type": "string",
+					"example": "default",
+					"description": "The policy version to use to evaluate this request. If not specified, will default to the server-configured default version.",
+					"pattern": "^[[:word:]]*$"
+				},
+				"roles": {
+					"type": "array",
+					"example": ["user"],
+					"items": {
+						"type": "string"
+					},
+					"description": "Roles assigned to this principal from your identity management system.",
+					"minItems": 1,
+					"uniqueItems": true
+				},
+				"attr": {
+					"type": "object",
+					"example": {
+						"beta_tester": true
+					},
+					"additionalProperties": {},
+					"description": "Key-value pairs of contextual data about this principal that should be used during policy evaluation."
+				},
+				"scope": {
+					"type": "string",
+					"example": "acme.corp",
+					"description": "A dot-separated scope that describes the hierarchy this principal belongs to. This is used for determining policy inheritance.",
+					"pattern": "^([[:alnum:]][[:word:]\\-]*(\\.[[:word:]\\-]*)*)*$"
+				}
+			},
+			"description": "A person or application attempting to perform the actions on the set of resources.",
+			"required": ["id", "roles"]
+		},
+		"enginev1Resource": {
+			"type": "object",
+			"properties": {
+				"kind": {
+					"type": "string",
+					"example": "album:photo",
+					"description": "Name of the resource kind being accessed."
+				},
+				"policyVersion": {
+					"type": "string",
+					"example": "default",
+					"description": "The policy version to use to evaluate this request. If not specified, will default to the server-configured default version.",
+					"pattern": "^[[:word:]]*$"
+				},
+				"id": {
+					"type": "string",
+					"example": "XX125",
+					"description": "ID of the resource instance"
+				},
+				"attr": {
+					"type": "object",
+					"example": {
+						"owner": "bugs_bunny"
+					},
+					"additionalProperties": {},
+					"description": "Kay-value pairs of contextual data about this resource that should be used during policy evaluation."
+				},
+				"scope": {
+					"type": "string",
+					"example": "acme.corp",
+					"description": "A dot-separated scope that describes the hierarchy this resource belongs to. This is used for determining policy inheritance.",
+					"pattern": "^([[:alnum:]][[:word:]\\-]*(\\.[[:word:]\\-]*)*)*$"
+				}
+			},
+			"required": ["kind", "id"]
+		},
+		"googlerpcStatus": {
+			"type": "object",
+			"properties": {
+				"code": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"message": {
+					"type": "string"
+				},
+				"details": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/protobufAny"
+					}
+				}
+			}
+		},
+		"protobufAny": {
+			"type": "object",
+			"properties": {
+				"@type": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": {}
+		},
+		"protobufNullValue": {
+			"type": "string",
+			"enum": ["NULL_VALUE"],
+			"default": "NULL_VALUE",
+			"description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\nThe JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
+		},
+		"schemav1Schema": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string",
+					"example": "principal.json",
+					"description": "Unique identifier for the schema"
+				},
+				"definition": {
+					"type": "string",
+					"format": "byte",
+					"example": {
+						"type": "object",
+						"properties": {}
+					},
+					"description": "JSON schema definition"
+				}
+			},
+			"required": ["id", "definition"]
+		},
+		"v1AccessLogEntry": {
+			"type": "object",
+			"properties": {
+				"callId": {
+					"type": "string"
+				},
+				"timestamp": {
+					"type": "string",
+					"format": "date-time"
+				},
+				"peer": {
+					"$ref": "#/definitions/v1Peer"
+				},
+				"metadata": {
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/v1MetaValues"
+					}
+				},
+				"method": {
+					"type": "string"
+				},
+				"statusCode": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"oversized": {
+					"type": "boolean"
+				}
+			}
+		},
+		"v1AddOrUpdatePolicyRequest": {
+			"type": "object",
+			"properties": {
+				"policies": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1Policy"
+					},
+					"description": "List of policies.",
+					"maxItems": 100,
+					"minItems": 1
+				}
+			},
+			"description": "Add/update policy request",
+			"required": ["policies"]
+		},
+		"v1AddOrUpdatePolicyResponse": {
+			"type": "object",
+			"properties": {
+				"success": {
+					"type": "object",
+					"properties": {}
+				}
+			},
+			"description": "Add/update policy response"
+		},
+		"v1AddOrUpdateSchemaRequest": {
+			"type": "object",
+			"properties": {
+				"schemas": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/schemav1Schema"
+					},
+					"description": "List of schemas.",
+					"maxItems": 100,
+					"minItems": 1
+				}
+			},
+			"description": "Add/update schema request",
+			"required": ["schemas"]
+		},
+		"v1AddOrUpdateSchemaResponse": {
+			"type": "object",
+			"description": "Add/update schema response"
+		},
+		"v1AttributesMap": {
+			"type": "object",
+			"properties": {
+				"attr": {
+					"type": "object",
+					"additionalProperties": {},
+					"description": "Key-value pairs of contextual data about this instance that should be used during policy evaluation."
+				}
+			},
+			"description": "Unique identifier for the resource instance."
+		},
+		"v1AuditTrail": {
+			"type": "object",
+			"properties": {
+				"effectivePolicies": {
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/v1SourceAttributes"
+					}
+				}
+			}
+		},
+		"v1CheckInput": {
+			"type": "object",
+			"properties": {
+				"requestId": {
+					"type": "string"
+				},
+				"resource": {
+					"$ref": "#/definitions/enginev1Resource"
+				},
+				"principal": {
+					"$ref": "#/definitions/enginev1Principal"
+				},
+				"actions": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"auxData": {
+					"$ref": "#/definitions/cerbosenginev1AuxData"
+				}
+			},
+			"required": ["resource", "principal", "actions"]
+		},
+		"v1CheckOutput": {
+			"type": "object",
+			"properties": {
+				"requestId": {
+					"type": "string"
+				},
+				"resourceId": {
+					"type": "string"
+				},
+				"actions": {
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/CheckOutputActionEffect"
+					}
+				},
+				"effectiveDerivedRoles": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"validationErrors": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1ValidationError"
+					}
+				},
+				"outputs": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1OutputEntry"
+					}
+				}
+			}
+		},
+		"v1CheckResourceBatchRequest": {
+			"type": "object",
+			"properties": {
+				"requestId": {
+					"type": "string",
+					"example": "c2db17b8-4f9f-4fb1-acfd-9162a02be42b",
+					"description": "Optional application-specific ID useful for correlating logs for analysis."
+				},
+				"principal": {
+					"$ref": "#/definitions/enginev1Principal"
+				},
+				"resources": {
+					"type": "array",
+					"example": [
+						{
+							"actions": ["view", "comment"],
+							"resource": {
+								"kind": "album:object",
+								"policyVersion": "default",
+								"id": "XX125",
+								"attr": {
+									"owner": "bugs_bunny",
+									"public": false,
+									"flagged": false
+								}
+							}
+						}
+					],
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/CheckResourceBatchRequestBatchEntry"
+					},
+					"description": "List of resources and actions.",
+					"minItems": 1,
+					"uniqueItems": true
+				},
+				"auxData": {
+					"$ref": "#/definitions/cerbosrequestv1AuxData"
+				}
+			},
+			"description": "PDP Request",
+			"required": ["principal", "resources"]
+		},
+		"v1CheckResourceBatchResponse": {
+			"type": "object",
+			"properties": {
+				"requestId": {
+					"type": "string",
+					"example": "c2db17b8-4f9f-4fb1-acfd-9162a02be42b",
+					"description": "Request ID provided in the request."
+				},
+				"results": {
+					"type": "array",
+					"example": [
+						{
+							"resourceId": "XX125",
+							"actions": {
+								"view": "EFFECT_ALLOW"
+							}
+						}
+					],
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1CheckResourceBatchResponseActionEffectMap"
+					},
+					"description": "Result for each resource"
+				}
+			},
+			"description": "Policy evaluation response for a batch of resources."
+		},
+		"v1CheckResourceBatchResponseActionEffectMap": {
+			"type": "object",
+			"properties": {
+				"resourceId": {
+					"type": "string",
+					"example": "XX125",
+					"description": "Resource ID"
+				},
+				"actions": {
+					"type": "object",
+					"example": {
+						"view": "EFFECT_ALLOW"
+					},
+					"additionalProperties": {
+						"$ref": "#/definitions/v1Effect"
+					},
+					"description": "Mapping of each action to an effect."
+				},
+				"validationErrors": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1ValidationError"
+					},
+					"description": "List of validation errors (if schema validation is enabled)"
+				}
+			}
+		},
+		"v1CheckResourceSetRequest": {
+			"type": "object",
+			"properties": {
+				"requestId": {
+					"type": "string",
+					"example": "c2db17b8-4f9f-4fb1-acfd-9162a02be42b",
+					"description": "Optional application-specific ID useful for correlating logs for analysis."
+				},
+				"actions": {
+					"type": "array",
+					"example": ["view:public", "comment"],
+					"items": {
+						"type": "string"
+					},
+					"description": "List of actions being performed on the set of resources.",
+					"minItems": 1,
+					"uniqueItems": true
+				},
+				"principal": {
+					"$ref": "#/definitions/enginev1Principal"
+				},
+				"resource": {
+					"$ref": "#/definitions/v1ResourceSet"
+				},
+				"includeMeta": {
+					"type": "boolean",
+					"description": "Opt to receive request processing metadata in the response."
+				},
+				"auxData": {
+					"$ref": "#/definitions/cerbosrequestv1AuxData"
+				}
+			},
+			"description": "PDP Request",
+			"required": ["actions", "principal", "resource"]
+		},
+		"v1CheckResourceSetResponse": {
+			"type": "object",
+			"properties": {
+				"requestId": {
+					"type": "string",
+					"example": "c2db17b8-4f9f-4fb1-acfd-9162a02be42b",
+					"description": "Request ID provided in the request."
+				},
+				"resourceInstances": {
+					"type": "object",
+					"example": {
+						"XX125": {
+							"actions": {
+								"view:*": "EFFECT_ALLOW",
+								"comment": "EFFECT_ALLOW"
+							}
+						},
+						"XX225": {
+							"actions": {
+								"view:*": "EFFECT_DENY",
+								"comment": "EFFECT_DENY"
+							}
+						}
+					},
+					"additionalProperties": {
+						"$ref": "#/definitions/v1CheckResourceSetResponseActionEffectMap"
+					},
+					"description": "Results for each resource instance, keyed by the ID supplied in the request"
+				},
+				"meta": {
+					"$ref": "#/definitions/v1CheckResourceSetResponseMeta",
+					"description": "Optional metadata about the request evaluation process"
+				}
+			},
+			"description": "Policy evaluation response for a set of resources."
+		},
+		"v1CheckResourceSetResponseActionEffectMap": {
+			"type": "object",
+			"properties": {
+				"actions": {
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/v1Effect"
+					},
+					"description": "Mapping of each action to an effect."
+				},
+				"validationErrors": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1ValidationError"
+					},
+					"description": "List of validation errors (if schema validation is enabled)"
+				}
+			}
+		},
+		"v1CheckResourceSetResponseMeta": {
+			"type": "object",
+			"properties": {
+				"resourceInstances": {
+					"type": "object",
+					"example": {
+						"XX125": {
+							"actions": {
+								"view:*": {
+									"matched_policy": "album:object:default"
+								},
+								"comment": {
+									"matched_policy": "album:object:default"
+								}
+							},
+							"effective_derived_roles": ["owner"]
+						},
+						"XX225": {
+							"actions": {
+								"view:*": {
+									"matched_policy": "album:object:default"
+								},
+								"comment": {
+									"matched_policy": "album:object:default"
+								}
+							}
+						}
+					},
+					"additionalProperties": {
+						"$ref": "#/definitions/MetaActionMeta"
+					},
+					"description": "Metadata about resource instances."
+				}
+			},
+			"description": "Metadata about request evaluation."
+		},
+		"v1CheckResourceSetResponseMetaEffectMeta": {
+			"type": "object",
+			"properties": {
+				"matchedPolicy": {
+					"type": "string",
+					"example": "album:object:default",
+					"description": "Policy that matched to produce this effect."
+				},
+				"matchedScope": {
+					"type": "string",
+					"example": "acme.corp.base",
+					"description": "Policy scope that matched to produce this effect."
+				}
+			},
+			"description": "Name of the action."
+		},
+		"v1CheckResourcesRequest": {
+			"type": "object",
+			"properties": {
+				"requestId": {
+					"type": "string",
+					"example": "c2db17b8-4f9f-4fb1-acfd-9162a02be42b",
+					"description": "Optional application-specific ID useful for correlating logs for analysis."
+				},
+				"includeMeta": {
+					"type": "boolean",
+					"description": "Add request processing metadata to the response."
+				},
+				"principal": {
+					"$ref": "#/definitions/enginev1Principal"
+				},
+				"resources": {
+					"type": "array",
+					"example": [
+						{
+							"actions": ["view", "comment"],
+							"resource": {
+								"kind": "album:object",
+								"policyVersion": "default",
+								"id": "XX125",
+								"attr": {
+									"owner": "bugs_bunny",
+									"public": false,
+									"flagged": false
+								}
+							}
+						}
+					],
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/CheckResourcesRequestResourceEntry"
+					},
+					"description": "List of resources and actions.",
+					"minItems": 1,
+					"uniqueItems": true
+				},
+				"auxData": {
+					"$ref": "#/definitions/cerbosrequestv1AuxData"
+				}
+			},
+			"description": "Check resources request",
+			"required": ["principal", "resources"]
+		},
+		"v1CheckResourcesResponse": {
+			"type": "object",
+			"properties": {
+				"requestId": {
+					"type": "string",
+					"example": "c2db17b8-4f9f-4fb1-acfd-9162a02be42b",
+					"description": "Request ID provided in the request."
+				},
+				"results": {
+					"type": "array",
+					"example": [
+						{
+							"resource": {
+								"Id": "XX125",
+								"kind": "album:object"
+							},
+							"actions": {
+								"view": "EFFECT_ALLOW",
+								"comment": "EFFECT_DENY"
+							}
+						}
+					],
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/CheckResourcesResponseResultEntry"
+					},
+					"description": "Result for each resource"
+				},
+				"cerbosCallId": {
+					"type": "string",
+					"description": "Audit log call ID associated with this request"
+				}
+			},
+			"description": "Response from the check resources API call."
+		},
+		"v1Condition": {
+			"type": "object",
+			"properties": {
+				"match": {
+					"$ref": "#/definitions/v1Match"
+				},
+				"script": {
+					"type": "string"
+				}
+			}
+		},
+		"v1Constants": {
+			"type": "object",
+			"properties": {
+				"import": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"local": {
+					"type": "object",
+					"additionalProperties": {}
+				}
+			}
+		},
+		"v1DecisionLogEntry": {
+			"type": "object",
+			"properties": {
+				"callId": {
+					"type": "string"
+				},
+				"timestamp": {
+					"type": "string",
+					"format": "date-time"
+				},
+				"peer": {
+					"$ref": "#/definitions/v1Peer"
+				},
+				"inputs": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1CheckInput"
+					},
+					"description": "Deprecated. Use method.check_resources.inputs instead."
+				},
+				"outputs": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1CheckOutput"
+					},
+					"description": "Deprecated. Use method.check_resources.outputs instead."
+				},
+				"error": {
+					"type": "string",
+					"description": "Deprecated. Use method.check_resources.error instead."
+				},
+				"checkResources": {
+					"$ref": "#/definitions/v1DecisionLogEntryCheckResources"
+				},
+				"planResources": {
+					"$ref": "#/definitions/v1DecisionLogEntryPlanResources"
+				},
+				"metadata": {
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/v1MetaValues"
+					}
+				},
+				"auditTrail": {
+					"$ref": "#/definitions/v1AuditTrail"
+				},
+				"oversized": {
+					"type": "boolean"
+				}
+			}
+		},
+		"v1DecisionLogEntryCheckResources": {
+			"type": "object",
+			"properties": {
+				"inputs": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1CheckInput"
+					}
+				},
+				"outputs": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1CheckOutput"
+					}
+				},
+				"error": {
+					"type": "string"
+				}
+			}
+		},
+		"v1DecisionLogEntryPlanResources": {
+			"type": "object",
+			"properties": {
+				"input": {
+					"$ref": "#/definitions/v1PlanResourcesInput"
+				},
+				"output": {
+					"$ref": "#/definitions/v1PlanResourcesOutput"
+				},
+				"error": {
+					"type": "string"
+				}
+			}
+		},
+		"v1DeleteSchemaResponse": {
+			"type": "object",
+			"properties": {
+				"deletedSchemas": {
+					"type": "integer",
+					"format": "int64"
+				}
+			},
+			"description": "Delete schema(s) response"
+		},
+		"v1DerivedRoles": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"definitions": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1RoleDef"
+					}
+				},
+				"variables": {
+					"$ref": "#/definitions/v1Variables"
+				},
+				"constants": {
+					"$ref": "#/definitions/v1Constants"
+				}
+			}
+		},
+		"v1DisablePolicyRequest": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "array",
+					"example": "principal.sarah.vdefault",
+					"items": {
+						"type": "string"
+					},
+					"description": "Unique identifier for the policy"
+				}
+			},
+			"description": "Disable policy request",
+			"required": ["id"]
+		},
+		"v1DisablePolicyResponse": {
+			"type": "object",
+			"properties": {
+				"disabledPolicies": {
+					"type": "integer",
+					"format": "int64"
+				}
+			},
+			"description": "Disable policy response"
+		},
+		"v1Effect": {
+			"type": "string",
+			"enum": ["EFFECT_UNSPECIFIED", "EFFECT_ALLOW", "EFFECT_DENY", "EFFECT_NO_MATCH"],
+			"default": "EFFECT_UNSPECIFIED"
+		},
+		"v1EnablePolicyRequest": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "array",
+					"example": "principal.sarah.vdefault",
+					"items": {
+						"type": "string"
+					},
+					"description": "Unique identifier for the policy"
+				}
+			},
+			"description": "Enable policy request",
+			"required": ["id"]
+		},
+		"v1EnablePolicyResponse": {
+			"type": "object",
+			"properties": {
+				"enabledPolicies": {
+					"type": "integer",
+					"format": "int64"
+				}
+			},
+			"description": "Enable policy response"
+		},
+		"v1ExportConstants": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"definitions": {
+					"type": "object",
+					"additionalProperties": {}
+				}
+			}
+		},
+		"v1ExportVariables": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"definitions": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"v1GetPolicyResponse": {
+			"type": "object",
+			"properties": {
+				"policies": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1Policy"
+					}
+				}
+			},
+			"description": "Get policy response"
+		},
+		"v1GetSchemaResponse": {
+			"type": "object",
+			"properties": {
+				"schemas": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/schemav1Schema"
+					}
+				}
+			},
+			"description": "Get schema(s) response"
+		},
+		"v1InspectPoliciesResponse": {
+			"type": "object",
+			"properties": {
+				"results": {
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/v1InspectPoliciesResponseResult"
+					}
+				}
+			},
+			"description": "Inspect policies response"
+		},
+		"v1InspectPoliciesResponseConstant": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string",
+					"description": "Constant name defined in the policy."
+				},
+				"value": {
+					"description": "Raw value of the constant defined in the policy."
+				},
+				"kind": {
+					"$ref": "#/definitions/InspectPoliciesResponseConstantKind",
+					"description": "Kind of the constant defined in the policy."
+				},
+				"source": {
+					"type": "string",
+					"description": "Source of the constant defined in the policy. Only exists if the kind is imported."
+				},
+				"used": {
+					"type": "boolean",
+					"description": "Whether the constant is used in a condition."
+				}
+			}
+		},
+		"v1InspectPoliciesResponseResult": {
+			"type": "object",
+			"properties": {
+				"actions": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"description": "Actions defined in the policy."
+				},
+				"variables": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1InspectPoliciesResponseVariable"
+					},
+					"description": "Variables referenced in the policy."
+				},
+				"policyId": {
+					"type": "string",
+					"description": "For blob, disk, and git stores policy ID is the file name. For other stores it is \u003ckind\u003e.\u003cname\u003e.\u003cversion\u003e/\u003cscope\u003e."
+				},
+				"derivedRoles": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/InspectPoliciesResponseDerivedRole"
+					},
+					"description": "Derived roles referenced in the policy."
+				},
+				"attributes": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/InspectPoliciesResponseAttribute"
+					},
+					"description": "Attributes referenced in the policy."
+				},
+				"constants": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1InspectPoliciesResponseConstant"
+					},
+					"description": "Constants referenced in the policy."
+				}
+			}
+		},
+		"v1InspectPoliciesResponseVariable": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string",
+					"description": "Variable name defined in the policy."
+				},
+				"value": {
+					"type": "string",
+					"description": "Raw value of the variable defined in the policy."
+				},
+				"kind": {
+					"$ref": "#/definitions/InspectPoliciesResponseVariableKind",
+					"description": "Kind of the variable defined in the policy."
+				},
+				"source": {
+					"type": "string",
+					"description": "Source of the variable defined in the policy. Only exists if the kind is imported."
+				},
+				"used": {
+					"type": "boolean",
+					"description": "Whether the variable is used in a condition."
+				}
+			}
+		},
+		"v1ListAuditLogEntriesRequestKind": {
+			"type": "string",
+			"enum": ["KIND_UNSPECIFIED", "KIND_ACCESS", "KIND_DECISION"],
+			"default": "KIND_UNSPECIFIED"
+		},
+		"v1ListAuditLogEntriesResponse": {
+			"type": "object",
+			"properties": {
+				"accessLogEntry": {
+					"$ref": "#/definitions/v1AccessLogEntry"
+				},
+				"decisionLogEntry": {
+					"$ref": "#/definitions/v1DecisionLogEntry"
+				}
+			},
+			"description": "Audit log stream."
+		},
+		"v1ListPoliciesResponse": {
+			"type": "object",
+			"properties": {
+				"policyIds": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"description": "List of policies stored in the Cerbos server"
+		},
+		"v1ListSchemasResponse": {
+			"type": "object",
+			"properties": {
+				"schemaIds": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"description": "List schema ids response"
+		},
+		"v1Match": {
+			"type": "object",
+			"properties": {
+				"all": {
+					"$ref": "#/definitions/MatchExprList"
+				},
+				"any": {
+					"$ref": "#/definitions/MatchExprList"
+				},
+				"none": {
+					"$ref": "#/definitions/MatchExprList"
+				},
+				"expr": {
+					"type": "string"
+				}
+			}
+		},
+		"v1MetaValues": {
+			"type": "object",
+			"properties": {
+				"values": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"v1Metadata": {
+			"type": "object",
+			"properties": {
+				"sourceFile": {
+					"type": "string"
+				},
+				"annotations": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "string"
+					}
+				},
+				"hash": {
+					"type": "string",
+					"format": "uint64"
+				},
+				"storeIdentifer": {
+					"type": "string"
+				},
+				"storeIdentifier": {
+					"type": "string"
+				},
+				"sourceAttributes": {
+					"$ref": "#/definitions/v1SourceAttributes"
+				}
+			}
+		},
+		"v1Output": {
+			"type": "object",
+			"properties": {
+				"expr": {
+					"type": "string"
+				},
+				"when": {
+					"$ref": "#/definitions/OutputWhen"
+				}
+			}
+		},
+		"v1OutputEntry": {
+			"type": "object",
+			"properties": {
+				"src": {
+					"type": "string",
+					"example": "resource.expense.v1/acme#rule-001",
+					"description": "Rule that matched to produce this output."
+				},
+				"val": {
+					"example": "some_string",
+					"description": "Dynamic output, determined by user defined rule output."
+				}
+			}
+		},
+		"v1Peer": {
+			"type": "object",
+			"properties": {
+				"address": {
+					"type": "string"
+				},
+				"authInfo": {
+					"type": "string"
+				},
+				"userAgent": {
+					"type": "string"
+				},
+				"forwardedFor": {
+					"type": "string"
+				}
+			}
+		},
+		"v1PlanResourcesFilter": {
+			"type": "object",
+			"properties": {
+				"kind": {
+					"$ref": "#/definitions/v1PlanResourcesFilterKind",
+					"description": "Filter kind. Defines whether the given action is always allowed, always denied or allowed conditionally."
+				},
+				"condition": {
+					"$ref": "#/definitions/ExpressionOperand",
+					"description": "Filter condition. Only populated if kind is KIND_CONDITIONAL."
+				}
+			}
+		},
+		"v1PlanResourcesFilterKind": {
+			"type": "string",
+			"enum": ["KIND_UNSPECIFIED", "KIND_ALWAYS_ALLOWED", "KIND_ALWAYS_DENIED", "KIND_CONDITIONAL"],
+			"default": "KIND_UNSPECIFIED"
+		},
+		"v1PlanResourcesInput": {
+			"type": "object",
+			"properties": {
+				"requestId": {
+					"type": "string"
+				},
+				"action": {
+					"type": "string"
+				},
+				"actions": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"principal": {
+					"$ref": "#/definitions/enginev1Principal"
+				},
+				"resource": {
+					"$ref": "#/definitions/v1PlanResourcesInputResource"
+				},
+				"auxData": {
+					"$ref": "#/definitions/cerbosenginev1AuxData"
+				},
+				"includeMeta": {
+					"type": "boolean"
+				}
+			}
+		},
+		"v1PlanResourcesInputResource": {
+			"type": "object",
+			"properties": {
+				"kind": {
+					"type": "string",
+					"example": "album:object",
+					"description": "Resource kind."
+				},
+				"attr": {
+					"type": "object",
+					"additionalProperties": {},
+					"description": "Key-value pairs of contextual data about the resource that are known at a time of the request."
+				},
+				"policyVersion": {
+					"type": "string",
+					"example": "default",
+					"description": "The policy version to use to evaluate this request. If not specified, will default to the server-configured default version.",
+					"pattern": "^[[:word:]]*$"
+				},
+				"scope": {
+					"type": "string",
+					"description": "A dot-separated scope that describes the hierarchy this resource belongs to. This is used for determining policy inheritance.",
+					"pattern": "^([[:alnum:]][[:word:]\\-]*(\\.[[:word:]\\-]*)*)*$"
+				}
+			},
+			"required": ["kind"]
+		},
+		"v1PlanResourcesOutput": {
+			"type": "object",
+			"properties": {
+				"requestId": {
+					"type": "string"
+				},
+				"action": {
+					"type": "string"
+				},
+				"kind": {
+					"type": "string"
+				},
+				"policyVersion": {
+					"type": "string"
+				},
+				"scope": {
+					"type": "string"
+				},
+				"filter": {
+					"$ref": "#/definitions/v1PlanResourcesFilter"
+				},
+				"filterDebug": {
+					"type": "string"
+				},
+				"validationErrors": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1ValidationError"
+					}
+				},
+				"actions": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"matchedScopes": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"v1PlanResourcesRequest": {
+			"type": "object",
+			"properties": {
+				"requestId": {
+					"type": "string",
+					"example": "c2db17b8-4f9f-4fb1-acfd-9162a02be42b",
+					"description": "Optional application-specific ID useful for correlating logs for analysis."
+				},
+				"action": {
+					"type": "string",
+					"example": "view:public",
+					"description": "Action to be applied to each resource in the list."
+				},
+				"actions": {
+					"type": "array",
+					"example": ["view:public", "edit:profile"],
+					"items": {
+						"type": "string"
+					},
+					"description": "List of actions to generate the query plan for. Mutually exclusive with the singular action field. Must contain at least one action and all actions must be unique.",
+					"uniqueItems": true
+				},
+				"principal": {
+					"$ref": "#/definitions/enginev1Principal"
+				},
+				"resource": {
+					"$ref": "#/definitions/v1PlanResourcesInputResource"
+				},
+				"auxData": {
+					"$ref": "#/definitions/cerbosrequestv1AuxData"
+				},
+				"includeMeta": {
+					"type": "boolean",
+					"description": "Opt to receive request processing metadata in the response."
+				}
+			},
+			"description": "PDP Resources Query Plan Request",
+			"required": ["principal", "resource"]
+		},
+		"v1PlanResourcesResponse": {
+			"type": "object",
+			"properties": {
+				"requestId": {
+					"type": "string",
+					"example": "c2db17b8-4f9f-4fb1-acfd-9162a02be42b",
+					"description": "Request ID provided in the request."
+				},
+				"action": {
+					"type": "string"
+				},
+				"actions": {
+					"type": "array",
+					"example": ["view:public", "edit:profile"],
+					"items": {
+						"type": "string"
+					},
+					"description": "Actions"
+				},
+				"resourceKind": {
+					"type": "string",
+					"example": "album:object",
+					"description": "Resource kind."
+				},
+				"policyVersion": {
+					"type": "string",
+					"example": "default",
+					"description": "The policy version."
+				},
+				"filter": {
+					"$ref": "#/definitions/v1PlanResourcesFilter",
+					"description": "Filter"
+				},
+				"meta": {
+					"$ref": "#/definitions/v1PlanResourcesResponseMeta",
+					"description": "Optional metadata about the request evaluation process"
+				},
+				"validationErrors": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1ValidationError"
+					},
+					"description": "List of validation errors (if schema validation is enabled)"
+				},
+				"cerbosCallId": {
+					"type": "string",
+					"description": "Audit log call ID associated with this request"
+				}
+			},
+			"description": "Resources query plan response for a set of resources."
+		},
+		"v1PlanResourcesResponseMeta": {
+			"type": "object",
+			"properties": {
+				"filterDebug": {
+					"type": "string",
+					"description": "Filter textual representation for debugging purposes."
+				},
+				"matchedScope": {
+					"type": "string"
+				},
+				"matchedScopes": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "string"
+					},
+					"description": "Matched policy scope for each action."
+				}
+			},
+			"description": "Metadata about request evaluation."
+		},
+		"v1Policy": {
+			"type": "object",
+			"properties": {
+				"apiVersion": {
+					"type": "string"
+				},
+				"disabled": {
+					"type": "boolean"
+				},
+				"description": {
+					"type": "string"
+				},
+				"metadata": {
+					"$ref": "#/definitions/v1Metadata"
+				},
+				"resourcePolicy": {
+					"$ref": "#/definitions/v1ResourcePolicy"
+				},
+				"principalPolicy": {
+					"$ref": "#/definitions/v1PrincipalPolicy"
+				},
+				"derivedRoles": {
+					"$ref": "#/definitions/v1DerivedRoles"
+				},
+				"exportVariables": {
+					"$ref": "#/definitions/v1ExportVariables"
+				},
+				"rolePolicy": {
+					"$ref": "#/definitions/v1RolePolicy"
+				},
+				"exportConstants": {
+					"$ref": "#/definitions/v1ExportConstants"
+				},
+				"variables": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "string"
+					}
+				},
+				"$schema": {
+					"type": "string"
+				}
+			}
+		},
+		"v1PrincipalPolicy": {
+			"type": "object",
+			"properties": {
+				"principal": {
+					"type": "string"
+				},
+				"version": {
+					"type": "string"
+				},
+				"rules": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1PrincipalRule"
+					}
+				},
+				"scope": {
+					"type": "string"
+				},
+				"variables": {
+					"$ref": "#/definitions/v1Variables"
+				},
+				"scopePermissions": {
+					"$ref": "#/definitions/v1ScopePermissions"
+				},
+				"constants": {
+					"$ref": "#/definitions/v1Constants"
+				}
+			}
+		},
+		"v1PrincipalRule": {
+			"type": "object",
+			"properties": {
+				"resource": {
+					"type": "string"
+				},
+				"actions": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1PrincipalRuleAction"
+					}
+				}
+			}
+		},
+		"v1PrincipalRuleAction": {
+			"type": "object",
+			"properties": {
+				"action": {
+					"type": "string"
+				},
+				"condition": {
+					"$ref": "#/definitions/v1Condition"
+				},
+				"effect": {
+					"$ref": "#/definitions/v1Effect"
+				},
+				"name": {
+					"type": "string"
+				},
+				"output": {
+					"$ref": "#/definitions/v1Output"
+				}
+			}
+		},
+		"v1ReloadStoreResponse": {
+			"type": "object",
+			"description": "Reload store response"
+		},
+		"v1ResourcePolicy": {
+			"type": "object",
+			"properties": {
+				"resource": {
+					"type": "string"
+				},
+				"version": {
+					"type": "string"
+				},
+				"importDerivedRoles": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"rules": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1ResourceRule"
+					}
+				},
+				"scope": {
+					"type": "string"
+				},
+				"schemas": {
+					"$ref": "#/definitions/v1Schemas"
+				},
+				"variables": {
+					"$ref": "#/definitions/v1Variables"
+				},
+				"scopePermissions": {
+					"$ref": "#/definitions/v1ScopePermissions"
+				},
+				"constants": {
+					"$ref": "#/definitions/v1Constants"
+				}
+			}
+		},
+		"v1ResourceRule": {
+			"type": "object",
+			"properties": {
+				"actions": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"derivedRoles": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"roles": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"condition": {
+					"$ref": "#/definitions/v1Condition"
+				},
+				"effect": {
+					"$ref": "#/definitions/v1Effect"
+				},
+				"name": {
+					"type": "string"
+				},
+				"output": {
+					"$ref": "#/definitions/v1Output"
+				}
+			}
+		},
+		"v1ResourceSet": {
+			"type": "object",
+			"properties": {
+				"kind": {
+					"type": "string",
+					"example": "album:object",
+					"description": "Resource kind."
+				},
+				"policyVersion": {
+					"type": "string",
+					"example": "default",
+					"description": "The policy version to use to evaluate this request. If not specified, will default to the server-configured default version.",
+					"pattern": "^[[:word:]]*$"
+				},
+				"instances": {
+					"type": "object",
+					"example": {
+						"XX125": {
+							"attr": {
+								"owner": "bugs_bunny",
+								"public": false,
+								"flagged": false
+							}
+						},
+						"XX225": {
+							"attr": {
+								"owner": "daffy_duck",
+								"public": true,
+								"flagged": false
+							}
+						}
+					},
+					"additionalProperties": {
+						"$ref": "#/definitions/v1AttributesMap"
+					},
+					"description": "Set of resource instances to check. Each instance must be keyed by an application-specific unique identifier.",
+					"minProperties": 1
+				},
+				"scope": {
+					"type": "string",
+					"description": "A dot-separated scope that describes the hierarchy these resources belong to. This is used for determining policy inheritance.",
+					"pattern": "^([[:alnum:]][[:word:]\\-]*(\\.[[:word:]\\-]*)*)*$"
+				}
+			},
+			"description": "Set of resources to check",
+			"required": ["kind", "instances"]
+		},
+		"v1RoleDef": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"parentRoles": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"condition": {
+					"$ref": "#/definitions/v1Condition"
+				}
+			}
+		},
+		"v1RolePolicy": {
+			"type": "object",
+			"properties": {
+				"role": {
+					"type": "string"
+				},
+				"parentRoles": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"scope": {
+					"type": "string"
+				},
+				"rules": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"$ref": "#/definitions/v1RoleRule"
+					}
+				},
+				"scopePermissions": {
+					"$ref": "#/definitions/v1ScopePermissions",
+					"description": "Deprecated: no-op."
+				}
+			}
+		},
+		"v1RoleRule": {
+			"type": "object",
+			"properties": {
+				"resource": {
+					"type": "string"
+				},
+				"allowActions": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"condition": {
+					"$ref": "#/definitions/v1Condition"
+				}
+			}
+		},
+		"v1Schemas": {
+			"type": "object",
+			"properties": {
+				"principalSchema": {
+					"$ref": "#/definitions/v1SchemasSchema"
+				},
+				"resourceSchema": {
+					"$ref": "#/definitions/v1SchemasSchema"
+				}
+			}
+		},
+		"v1SchemasSchema": {
+			"type": "object",
+			"properties": {
+				"ref": {
+					"type": "string"
+				},
+				"ignoreWhen": {
+					"$ref": "#/definitions/SchemasIgnoreWhen"
+				}
+			}
+		},
+		"v1ScopePermissions": {
+			"type": "string",
+			"enum": [
+				"SCOPE_PERMISSIONS_UNSPECIFIED",
+				"SCOPE_PERMISSIONS_OVERRIDE_PARENT",
+				"SCOPE_PERMISSIONS_REQUIRE_PARENTAL_CONSENT_FOR_ALLOWS"
+			],
+			"default": "SCOPE_PERMISSIONS_UNSPECIFIED"
+		},
+		"v1ServerInfoResponse": {
+			"type": "object",
+			"properties": {
+				"version": {
+					"type": "string"
+				},
+				"commit": {
+					"type": "string"
+				},
+				"buildDate": {
+					"type": "string"
+				}
+			},
+			"description": "Server info response"
+		},
+		"v1SourceAttributes": {
+			"type": "object",
+			"properties": {
+				"attributes": {
+					"type": "object",
+					"additionalProperties": {}
+				}
+			}
+		},
+		"v1ValidationError": {
+			"type": "object",
+			"properties": {
+				"path": {
+					"type": "string"
+				},
+				"message": {
+					"type": "string"
+				},
+				"source": {
+					"$ref": "#/definitions/ValidationErrorSource"
+				}
+			}
+		},
+		"v1Variables": {
+			"type": "object",
+			"properties": {
+				"import": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"local": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "string"
+					}
+				}
+			}
+		}
+	},
+	"securityDefinitions": {
+		"BasicAuth": {
+			"type": "basic"
+		}
+	},
+	"host": "joseantcordeiro.hopto.org:3592"
+}

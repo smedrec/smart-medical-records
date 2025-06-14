@@ -60,14 +60,28 @@ export type PractitionerCreateResponse = z.infer<
 
 export const registerPractitionerCreate = (app: App) =>
 	app.openapi(route, async (c) => {
-		const { auth, db } = c.get('services')
+		const { cerbos, db } = c.get('services')
 		const session = c.get('session')
-		let canCreatePractitioner: boolean
+		//let canCreatePractitioner: boolean
 
 		if (!session)
 			throw new ApiError({ code: 'UNAUTHORIZED', message: 'You Need to login first to continue.' })
 
-		if (c.req.header('x-api-key')) {
+		const decision = await cerbos.checkResource({
+			principal: {
+				id: session.session.userId,
+				roles: [session.user.role as string],
+				attributes: {},
+			},
+			resource: {
+				kind: 'practitioner',
+				id: 'practitioner#1',
+				attributes: {},
+			},
+			actions: ['create'],
+		})
+
+		/**if (c.req.header('x-api-key')) {
 			const result = await auth.api.verifyApiKey({
 				body: {
 					key: c.req.header('x-api-key') as string,
@@ -90,9 +104,9 @@ export const registerPractitionerCreate = (app: App) =>
 			})
 			console.log('Verify Permissions Result', JSON.stringify(result))
 			canCreatePractitioner = result.success
-		}
+		} */
 
-		if (!canCreatePractitioner) {
+		if (!decision.isAllowed('create')) {
 			throw new ApiError({
 				code: 'FORBIDDEN',
 				message: 'You do not have permissions to create practitioners.',

@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/TestFixture/Resources.schema.json
+# docs: https://docs.cerbos.dev/cerbos/latest/policies/compile#_sharing_test_fixtures
+
+resources:
+  practitioner#1:
+    id: practitioner#1
+    kind: practitioner
+    attr: {}
+  patient#2:
+    id: patient#2
+    kind: patient
+    attr: {}

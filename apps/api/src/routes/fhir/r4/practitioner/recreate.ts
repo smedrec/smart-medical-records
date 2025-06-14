@@ -1,13 +1,14 @@
 import { ApiError, openApiErrorResponses } from '@/lib/errors'
 import { BaseResourceResponseSchema } from '@/lib/utils/responses'
 import { idParamsSchema } from '@/shared/types'
-import { createRoute, z } from '@hono/zod-openapi'
+import { createRoute } from '@hono/zod-openapi'
 import { and, eq } from 'drizzle-orm'
 
 import { practitioner, practitionerHistory } from '@repo/db'
 
 import type { App } from '@/lib/hono'
 import type { ResourceBase } from '@/shared/types'
+import type { z } from '@hono/zod-openapi'
 
 const route = createRoute({
 	tags: ['Practitioner'],

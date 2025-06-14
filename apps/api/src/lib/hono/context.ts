@@ -1,3 +1,4 @@
+import type { cerbos } from '@/lib/cerbos'
 import type { auth, Session } from '@repo/auth'
 import type { db } from '@repo/db'
 import type { HonoApp } from '@repo/hono-helpers'
@@ -11,6 +12,7 @@ export type Env = SharedHonoEnv & {
 
 export type ServiceContext = {
 	auth: typeof auth
+	cerbos: typeof cerbos
 	//cache: Cache;
 	//db: { primary: Database; readonly: Database };
 	db: typeof db

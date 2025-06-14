@@ -15,16 +15,16 @@
 		"@repo/hono-helpers": "workspace:*",
 		"@repo/mailer": "workspace:*",
 		"@solarahealth/fhir-r4": "1.2.0",
-		"better-auth": "1.2.8",
+		"better-auth": "1.2.9",
 		"drizzle-orm": "0.44.2",
 		"worker-mailer": "1.1.4"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.36",
-		"@cloudflare/workers-types": "4.20250607.0",
+		"@cloudflare/vitest-pool-workers": "0.8.38",
+		"@cloudflare/workers-types": "4.20250614.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"vitest": "3.2.2"
+		"vitest": "3.2.3"
 	}
 }

@@ -1,4 +1,5 @@
 //import { redis } from "../db/redis";
+import { cerbos } from '@/lib/cerbos'
 import { createId } from '@paralleldrive/cuid2'
 
 import { auth } from '@repo/auth'
@@ -63,6 +64,7 @@ export function init(): MiddlewareHandler<HonoEnv> {
 
 		c.set('services', {
 			auth,
+			cerbos,
 			db,
 			//redis,
 			logger,

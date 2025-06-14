@@ -1,6 +1,6 @@
 {
 	"name": "seed",
-	"version": "0.1.0",
+	"version": "0.4.4",
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
@@ -13,23 +13,23 @@
 	},
 	"dependencies": {
 		"@better-auth/utils": "0.2.5",
-		"@cloudflare/workers-types": "4.20250607.0",
+		"@cloudflare/workers-types": "4.20250614.0",
 		"@repo/db": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
 		"@solarahealth/fhir-r4": "1.2.0",
-		"better-sqlite3": "^11.10.0",
+		"better-sqlite3": "11.10.0",
 		"drizzle-orm": "0.44.2",
-		"workers-tagged-logger": "0.11.2"
+		"workers-tagged-logger": "0.12.2"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.36",
+		"@cloudflare/vitest-pool-workers": "0.8.38",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/better-sqlite3": "^7.6.13",
-		"@types/node": "22.15.30",
+		"@types/better-sqlite3": "7.6.13",
+		"@types/node": "24.0.1",
 		"drizzle-kit": "0.31.1",
-		"vitest": "3.2.2",
-		"wrangler": "4.19.1"
+		"vitest": "3.2.3",
+		"wrangler": "4.20.0"
 	}
 }

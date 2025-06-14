@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/TestSuite.schema.json
+# docs: https://docs.cerbos.dev/cerbos/latest/policies/compile#testing
+
+name: practitionerTestSuite
+description: Tests for verifying the practitioner resource policy
+tests:
+  - name: practitioner actions
+    input:
+      principals:
+        - user#1
+        - admin#2
+        - patient#3
+        - practitioner#4
+        - owner#5
+      resources:
+        - practitioner#1
+      actions:
+        - create
+        - read
+        - update
+        - delete
+    expected:
+      - resource: practitioner#1
+        principal: user#1
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete: EFFECT_DENY
+      - resource: practitioner#1
+        principal: admin#2
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete: EFFECT_ALLOW
+      - resource: practitioner#1
+        principal: patient#3
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_DENY
+          delete: EFFECT_DENY
+      - resource: practitioner#1
+        principal: practitioner#4
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete: EFFECT_DENY
+      - resource: practitioner#1
+        principal: owner#5
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete: EFFECT_ALLOW
