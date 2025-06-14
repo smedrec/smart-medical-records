@@ -12,10 +12,10 @@
 		"deploy": "run-wrangler-deploy",
 		"dev": "run-wrangler-dev",
 		"fix:workers-types": "run-wrangler-types",
-		"migrate:dev": "wrangler d1 migrations apply DB --local",
-		"migrate:new": "drizzle-kit generate",
+		"migrate:dev": "drizzle-kit migrate --config=drizzle-dev.config.ts",
+		"migrate:new": "drizzle-kit generate --config=drizzle-dev.config.ts",
 		"migrate:prod": "wrangler d1 migrations apply DB --remote",
-		"seed": "tsc src/scripts/seed.ts",
+		"studio": "drizzle-kit studio --config=drizzle-dev.config.ts",
 		"test": "run-vitest"
 	},
 	"dependencies": {
@@ -32,6 +32,7 @@
 		"drizzle-orm": "0.44.2",
 		"hono": "4.7.11",
 		"ollama-ai-provider": "1.2.0",
+		"pg": "^8.16.0",
 		"worker-mailer": "1.1.4",
 		"workers-tagged-logger": "0.11.2",
 		"zod": "3.25.56"
@@ -42,6 +43,7 @@
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "22.15.30",
+		"@types/pg": "^8.15.4",
 		"drizzle-kit": "0.31.1",
 		"vitest": "3.2.2",
 		"wrangler": "4.19.1"

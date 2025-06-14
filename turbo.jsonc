@@ -1,15 +1,7 @@
 {
 	"$schema": "https://turbo.build/schema.json",
 	"globalDependencies": ["**/.dev.vars"],
-	"globalEnv": [
-		"CI",
-		"GITHUB_ACTIONS",
-		"VITEST",
-		"DEV",
-		"POSTGRES_DB_URL",
-		"MONGO_DB_URL",
-		"MONGO_DB_VECTOR_DB"
-	],
+	"globalEnv": ["CI", "GITHUB_ACTIONS", "VITEST", "DEV", "POSTGRES_DB_URL", "DATABASE_URL"],
 	"globalPassThroughEnv": ["WRANGLER_LOG", "FORCE_COLOR"],
 	"remoteCache": {
 		// Enable if using Turbo Remote Cache

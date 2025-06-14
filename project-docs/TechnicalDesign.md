@@ -58,7 +58,7 @@
 	},
 	"backend": {
 		"framework": "Hono with Cloudflare Workers",
-		"database": "Cloudflare D1 + Cloudflare KV",
+		"database": "PostgreSQL + pgvector",
 		"orm": "Drizzle ORM (see [apps/api/src/db/index.ts](mdc:apps/api/src/db/index.ts))"
 	},
 	"ai": {

@@ -86,14 +86,11 @@ export const registerPractitionerHistoryGetAll = (app: App) =>
 			})
 		}
 
-		const organization = session.session.activeOrganizationId as string
+		const tenant = session.session.activeOrganizationId as string
 
 		const limit = parseQueryInt(c.req.query('limit')) || 10
 		const page = parseQueryInt(c.req.query('page')) || 1
-		const total = await db.$count(
-			practitionerHistory,
-			eq(practitionerHistory.organization, organization)
-		)
+		const total = await db.$count(practitionerHistory, eq(practitionerHistory.tenant, tenant))
 		const offset = getOffset(page, limit)
 		const pagination = paginatedData({ size: limit, page, count: total })
 
@@ -101,7 +98,7 @@ export const registerPractitionerHistoryGetAll = (app: App) =>
 			const result = await db
 				.select()
 				.from(practitionerHistory)
-				.where(eq(practitionerHistory.organization, organization))
+				.where(eq(practitionerHistory.tenant, tenant))
 				.orderBy(desc(practitionerHistory.ts)) // order by is mandatory
 				.limit(limit) // the number of rows to return
 				.offset(offset)

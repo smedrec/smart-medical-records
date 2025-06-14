@@ -41,7 +41,7 @@
 
 - [x] Base project structure
 - [x] Auth (Clerk integration)
-- [x] Cloudflare D1 + Drizzle ORM
+- [x] PostgreSQL + pgvector + Drizzle ORM
 - [x] REST API foundation
 
 #### In Progress

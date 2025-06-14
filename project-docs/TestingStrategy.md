@@ -18,7 +18,7 @@ All tests follow the [Vitest](mdc:apps/api/vitest.config.ts) configuration with:
 
 ### Integration Testing
 
-- **Database**: Local Miniflare D1 + Local Miniflare KV for test environments
+- **Database**: Local PostgreSQL + pgvector for test environments
 - **Worker**: Cloudflare Worker test harness in [apps/api/src/test/integration/worker.test.ts](mdc:apps/api/src/test/integration/worker.test.ts)
 - **API**: End-to-end flow validation with real database connections
 

@@ -9,8 +9,6 @@ import { practitioner } from '@repo/db'
 import type { App } from '@/lib/hono'
 import type { Practitioner } from '@solarahealth/fhir-r4'
 
-const practitionerSchema = createPractitionerSchema()
-
 const route = createRoute({
 	tags: ['Practitioner'],
 	operationId: 'r4-practitioner-create',
@@ -121,7 +119,7 @@ export const registerPractitionerCreate = (app: App) =>
 			.values({
 				resource: data,
 				user: body.user,
-				organization: session.session.activeOrganizationId as string,
+				tenant: session.session.activeOrganizationId as string,
 				createdBy: session.session.userId,
 				updatedBy: session.session.userId,
 			})

@@ -12,12 +12,12 @@ export default defineConfig({
 		'/home/jose/Documents/workspace/smedrec/smart-medical-records/packages/db/src/schema/auth.ts',
 		'/home/jose/Documents/workspace/smedrec/smart-medical-records/packages/db/src/schema/r4.ts',
 	],
-	dialect: 'sqlite',
-	driver: 'd1-http',
+	dialect: 'postgresql',
 	dbCredentials: {
-		//url: process.env.DATABASE_URL!,
-		accountId: process.env.CLOUDFLARE_ACCOUNT_ID!,
-		databaseId: process.env.CLOUDFLARE_DATABASE_ID!,
-		token: process.env.CLOUDFLARE_D1_TOKEN!,
+		url: process.env.DATABASE_URL!,
+	},
+	migrations: {
+		table: '_journal',
+		schema: 'drizzle',
 	},
 })

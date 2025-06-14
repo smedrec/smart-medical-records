@@ -33,15 +33,5 @@
 			"binding": "KV",
 			"id": "<YOUR_BINDING_ID>"
 		}
-	],
-
-	// D1 database configuration
-	"d1_databases": [
-		{
-			"binding": "DB",
-			"database_name": "smedrec-auth",
-			"database_id": "<D1DATABASE_BINDING_ID>",
-			"migrations_dir": "drizzle"
-		}
 	]
 }

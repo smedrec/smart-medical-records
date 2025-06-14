@@ -1,4 +1,6 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { blob, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+
+import type { Organization } from '@solarahealth/fhir-r4'
 
 export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
@@ -8,6 +10,7 @@ export const user = sqliteTable('user', {
 		.$defaultFn(() => false)
 		.notNull(),
 	image: text('image'),
+	lang: text('lang').default('en'),
 	createdAt: integer('created_at', { mode: 'timestamp' })
 		.$defaultFn(() => /* @__PURE__ */ new Date())
 		.notNull(),
@@ -73,6 +76,11 @@ export const organization = sqliteTable('organization', {
 	logo: text('logo'),
 	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 	metadata: text('metadata'),
+	// fhir fields
+	version: integer('version').default(0), // version id and logical transaction id
+	ts: integer('ts', { mode: 'timestamp' }).$defaultFn(() => /* @__PURE__ */ new Date()), // last updated time
+	status: text('status').$type<'create' | 'updated' | 'deleted' | 'recreated'>().default('create'), // resource status
+	resource: blob('resource', { mode: 'json' }).$type<Organization>(), // resource body
 })
 
 export const member = sqliteTable('member', {
@@ -111,4 +119,30 @@ export const team = sqliteTable('team', {
 		.references(() => organization.id, { onDelete: 'cascade' }),
 	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 	updatedAt: integer('updated_at', { mode: 'timestamp' }),
+})
+
+export const apikey = sqliteTable('apikey', {
+	id: text('id').primaryKey(),
+	name: text('name'),
+	start: text('start'),
+	prefix: text('prefix'),
+	key: text('key').notNull(),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id, { onDelete: 'cascade' }),
+	refillInterval: integer('refill_interval'),
+	refillAmount: integer('refill_amount'),
+	lastRefillAt: integer('last_refill_at', { mode: 'timestamp' }),
+	enabled: integer('enabled', { mode: 'boolean' }).default(true),
+	rateLimitEnabled: integer('rate_limit_enabled', { mode: 'boolean' }).default(true),
+	rateLimitTimeWindow: integer('rate_limit_time_window').default(86400000),
+	rateLimitMax: integer('rate_limit_max').default(10),
+	requestCount: integer('request_count'),
+	remaining: integer('remaining'),
+	lastRequest: integer('last_request', { mode: 'timestamp' }),
+	expiresAt: integer('expires_at', { mode: 'timestamp' }),
+	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+	permissions: text('permissions'),
+	metadata: text('metadata'),
 })

@@ -81,7 +81,7 @@ export const registerPractitionerFindOne = (app: App) =>
 			})
 		}
 
-		const organization = session.session.activeOrganizationId as string
+		const tenant = session.session.activeOrganizationId as string
 		const { id } = c.req.valid('param')
 
 		try {
@@ -89,7 +89,7 @@ export const registerPractitionerFindOne = (app: App) =>
 				.select()
 				.from(practitioner)
 				.leftJoin(user, eq(user.id, practitioner.user))
-				.where(and(eq(practitioner.organization, organization), eq(practitioner.id, id)))
+				.where(and(eq(practitioner.tenant, tenant), eq(practitioner.id, id)))
 
 			if (result.length < 1)
 				throw new ApiError({

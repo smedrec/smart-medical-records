@@ -11,7 +11,7 @@ export default defineConfig({
 		'/home/jose/Documents/workspace/smedrec/smart-medical-records/packages/db/src/schema/auth.ts',
 		'/home/jose/Documents/workspace/smedrec/smart-medical-records/packages/db/src/schema/r4.ts',
 	],
-	dialect: 'sqlite',
+	dialect: 'postgresql',
 	dbCredentials: {
 		url: process.env.DATABASE_URL!,
 	},

@@ -8,8 +8,7 @@
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"node:build": "tsc",
-		"node:dev": "node ./dist/index.js",
-		"studio": "drizzle-kit studio",
+		"node:seed": "node ./dist/index.js",
 		"test": "run-vitest"
 	},
 	"dependencies": {

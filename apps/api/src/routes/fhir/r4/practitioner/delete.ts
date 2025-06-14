@@ -79,13 +79,13 @@ export const registerPractitionerDelete = (app: App) =>
 			})
 		}
 
-		const organization = session.session.activeOrganizationId as string
+		const tenant = session.session.activeOrganizationId as string
 		const { id } = c.req.valid('param')
 
 		const history = await db
 			.select()
 			.from(practitioner)
-			.where(and(eq(practitioner.organization, organization), eq(practitioner.id, id)))
+			.where(and(eq(practitioner.tenant, tenant), eq(practitioner.id, id)))
 
 		if (history.length < 1)
 			throw new ApiError({
@@ -122,7 +122,7 @@ export const registerPractitionerDelete = (app: App) =>
 		const result = await db
 			.update(practitioner)
 			.set(data)
-			.where(and(eq(practitioner.organization, organization), eq(practitioner.id, id)))
+			.where(and(eq(practitioner.tenant, tenant), eq(practitioner.id, id)))
 			.returning()
 
 		if (result.length < 1)

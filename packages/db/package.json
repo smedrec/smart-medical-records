@@ -16,6 +16,7 @@
 		"@repo/hono-helpers": "workspace:*",
 		"@solarahealth/fhir-r4": "1.2.0",
 		"drizzle-orm": "0.44.2",
+		"postgres": "^3.4.7",
 		"zod": "3.25.56"
 	},
 	"devDependencies": {

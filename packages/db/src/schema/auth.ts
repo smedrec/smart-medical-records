@@ -1,34 +1,34 @@
-import { blob, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { boolean, integer, pgSchema, text, timestamp } from 'drizzle-orm/pg-core'
 
-import type { Organization } from '@solarahealth/fhir-r4'
+export const authSchema = pgSchema('auth')
 
-export const user = sqliteTable('user', {
+export const user = authSchema.table('user', {
 	id: text('id').primaryKey(),
 	name: text('name').notNull(),
 	email: text('email').notNull().unique(),
-	emailVerified: integer('email_verified', { mode: 'boolean' })
+	emailVerified: boolean('email_verified')
 		.$defaultFn(() => false)
 		.notNull(),
 	image: text('image'),
-	lang: text('lang').default('en'),
-	createdAt: integer('created_at', { mode: 'timestamp' })
+	createdAt: timestamp('created_at')
 		.$defaultFn(() => /* @__PURE__ */ new Date())
 		.notNull(),
-	updatedAt: integer('updated_at', { mode: 'timestamp' })
+	updatedAt: timestamp('updated_at')
 		.$defaultFn(() => /* @__PURE__ */ new Date())
 		.notNull(),
 	role: text('role'),
-	banned: integer('banned', { mode: 'boolean' }),
+	banned: boolean('banned'),
 	banReason: text('ban_reason'),
-	banExpires: integer('ban_expires', { mode: 'timestamp' }),
+	banExpires: timestamp('ban_expires'),
+	lang: text('lang').default('en'),
 })
 
-export const session = sqliteTable('session', {
+export const session = authSchema.table('session', {
 	id: text('id').primaryKey(),
-	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+	expiresAt: timestamp('expires_at').notNull(),
 	token: text('token').notNull().unique(),
-	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+	createdAt: timestamp('created_at').notNull(),
+	updatedAt: timestamp('updated_at').notNull(),
 	ipAddress: text('ip_address'),
 	userAgent: text('user_agent'),
 	userId: text('user_id')
@@ -38,7 +38,7 @@ export const session = sqliteTable('session', {
 	activeOrganizationId: text('active_organization_id'),
 })
 
-export const account = sqliteTable('account', {
+export const account = authSchema.table('account', {
 	id: text('id').primaryKey(),
 	accountId: text('account_id').notNull(),
 	providerId: text('provider_id').notNull(),
@@ -48,80 +48,71 @@ export const account = sqliteTable('account', {
 	accessToken: text('access_token'),
 	refreshToken: text('refresh_token'),
 	idToken: text('id_token'),
-	accessTokenExpiresAt: integer('access_token_expires_at', { mode: 'timestamp' }),
-	refreshTokenExpiresAt: integer('refresh_token_expires_at', { mode: 'timestamp' }),
+	accessTokenExpiresAt: timestamp('access_token_expires_at'),
+	refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
 	scope: text('scope'),
 	password: text('password'),
-	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+	createdAt: timestamp('created_at').notNull(),
+	updatedAt: timestamp('updated_at').notNull(),
 })
 
-export const verification = sqliteTable('verification', {
+export const verification = authSchema.table('verification', {
 	id: text('id').primaryKey(),
 	identifier: text('identifier').notNull(),
 	value: text('value').notNull(),
-	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
-	createdAt: integer('created_at', { mode: 'timestamp' }).$defaultFn(
-		() => /* @__PURE__ */ new Date()
-	),
-	updatedAt: integer('updated_at', { mode: 'timestamp' }).$defaultFn(
-		() => /* @__PURE__ */ new Date()
-	),
+	expiresAt: timestamp('expires_at').notNull(),
+	createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()),
+	updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date()),
 })
 
-export const organization = sqliteTable('organization', {
+export const tenant = authSchema.table('tenant', {
 	id: text('id').primaryKey(),
 	name: text('name').notNull(),
 	slug: text('slug').unique(),
 	logo: text('logo'),
-	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+	createdAt: timestamp('created_at').notNull(),
 	metadata: text('metadata'),
-	// fhir fields
-	version: integer('version').default(0), // version id and logical transaction id
-	ts: integer('ts', { mode: 'timestamp' }).$defaultFn(() => /* @__PURE__ */ new Date()), // last updated time
-	status: text('status').$type<'create' | 'updated' | 'deleted' | 'recreated'>().default('create'), // resource status
-	resource: blob('resource', { mode: 'json' }).$type<Organization>(), // resource body
 })
 
-export const member = sqliteTable('member', {
+export const member = authSchema.table('member', {
 	id: text('id').primaryKey(),
 	organizationId: text('organization_id')
 		.notNull()
-		.references(() => organization.id, { onDelete: 'cascade' }),
+		.references(() => tenant.id, { onDelete: 'cascade' }),
 	userId: text('user_id')
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
 	role: text('role').default('member').notNull(),
 	teamId: text('team_id'),
-	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+	createdAt: timestamp('created_at').notNull(),
 })
 
-export const invitation = sqliteTable('invitation', {
+export const invitation = authSchema.table('invitation', {
 	id: text('id').primaryKey(),
 	organizationId: text('organization_id')
 		.notNull()
-		.references(() => organization.id, { onDelete: 'cascade' }),
+		.references(() => tenant.id, { onDelete: 'cascade' }),
 	email: text('email').notNull(),
 	role: text('role'),
 	teamId: text('team_id'),
 	status: text('status').default('pending').notNull(),
-	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+	expiresAt: timestamp('expires_at').notNull(),
 	inviterId: text('inviter_id')
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
 })
 
-export const team = sqliteTable('team', {
+export const team = authSchema.table('team', {
 	id: text('id').primaryKey(),
 	name: text('name').notNull(),
 	organizationId: text('organization_id')
 		.notNull()
-		.references(() => organization.id, { onDelete: 'cascade' }),
-	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-	updatedAt: integer('updated_at', { mode: 'timestamp' }),
+		.references(() => tenant.id, { onDelete: 'cascade' }),
+	createdAt: timestamp('created_at').notNull(),
+	updatedAt: timestamp('updated_at'),
 })
 
-export const apikey = sqliteTable('apikey', {
+export const apikey = authSchema.table('apikey', {
 	id: text('id').primaryKey(),
 	name: text('name'),
 	start: text('start'),
@@ -132,17 +123,17 @@ export const apikey = sqliteTable('apikey', {
 		.references(() => user.id, { onDelete: 'cascade' }),
 	refillInterval: integer('refill_interval'),
 	refillAmount: integer('refill_amount'),
-	lastRefillAt: integer('last_refill_at', { mode: 'timestamp' }),
-	enabled: integer('enabled', { mode: 'boolean' }).default(true),
-	rateLimitEnabled: integer('rate_limit_enabled', { mode: 'boolean' }).default(true),
+	lastRefillAt: timestamp('last_refill_at'),
+	enabled: boolean('enabled').default(true),
+	rateLimitEnabled: boolean('rate_limit_enabled').default(true),
 	rateLimitTimeWindow: integer('rate_limit_time_window').default(86400000),
 	rateLimitMax: integer('rate_limit_max').default(10),
 	requestCount: integer('request_count'),
 	remaining: integer('remaining'),
-	lastRequest: integer('last_request', { mode: 'timestamp' }),
-	expiresAt: integer('expires_at', { mode: 'timestamp' }),
-	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+	lastRequest: timestamp('last_request'),
+	expiresAt: timestamp('expires_at'),
+	createdAt: timestamp('created_at').notNull(),
+	updatedAt: timestamp('updated_at').notNull(),
 	permissions: text('permissions'),
 	metadata: text('metadata'),
 })

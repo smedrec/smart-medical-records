@@ -32,7 +32,7 @@ export const auth = betterAuth({
 			maxAge: 5 * 60, // Cache duration in seconds
 		},
 	},*/
-	database: drizzleAdapter(db, { provider: 'sqlite' }),
+	database: drizzleAdapter(db, { provider: 'pg' }),
 	baseURL: env.BETTER_AUTH_URL,
 	secret: env.BETTER_AUTH_SECRET,
 
@@ -167,6 +167,11 @@ export const auth = betterAuth({
 			},
 		}),
 		organization({
+			schema: {
+				organization: {
+					modelName: 'tenant', //map the organization table to tenant
+				},
+			},
 			ac: orgAc,
 			roles: {
 				owner,
@@ -210,8 +215,7 @@ export const auth = betterAuth({
 				afterCreate: async ({ organization, member, user }, request) => {
 					// Run custom logic after organization is created
 					// e.g., create default resources, send notifications
-
-					await setupOrganizationResource(organization.id)
+					// await setupOrganizationResource(organization.id)
 				},
 			},
 		}),
