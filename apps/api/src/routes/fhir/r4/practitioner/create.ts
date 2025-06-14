@@ -62,7 +62,6 @@ export const registerPractitionerCreate = (app: App) =>
 	app.openapi(route, async (c) => {
 		const { cerbos, db } = c.get('services')
 		const session = c.get('session')
-		//let canCreatePractitioner: boolean
 
 		if (!session)
 			throw new ApiError({ code: 'UNAUTHORIZED', message: 'You Need to login first to continue.' })
@@ -75,7 +74,7 @@ export const registerPractitionerCreate = (app: App) =>
 			},
 			resource: {
 				kind: 'practitioner',
-				id: 'practitioner#1',
+				id: '*',
 				attributes: {},
 			},
 			actions: ['create'],

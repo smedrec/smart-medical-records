@@ -49,13 +49,7 @@ export function init(): MiddlewareHandler<HonoEnv> {
 		const logger = new ConsoleLogger({
 			requestId,
 			application: 'api',
-			environment: c.env.ENVIRONMENT as
-				| 'unknown'
-				| 'test'
-				| 'development'
-				| 'preview'
-				| 'canary'
-				| 'production',
+			environment: c.env.ENVIRONMENT as 'VITEST' | 'development' | 'staging' | 'production',
 			defaultFields: { environment: c.env.ENVIRONMENT },
 		})
 

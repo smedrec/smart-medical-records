@@ -5,7 +5,7 @@ export const logContext = z.object({
 })
 
 const commonFields = z.object({
-	environment: z.enum(['test', 'development', 'preview', 'canary', 'production', 'unknown']),
+	environment: z.enum(['VITEST', 'development', 'staging', 'production']),
 	application: z.enum(['api', 'semantic-cache', 'agent', 'logdrain', 'vault']),
 	isolateId: z.string().optional(),
 	requestId: z.string(),

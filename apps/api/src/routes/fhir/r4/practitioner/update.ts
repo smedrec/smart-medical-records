@@ -54,9 +54,9 @@ export type PractitionerUpdateResponse = z.infer<
 
 export const registerPractitionerUpdate = (app: App) =>
 	app.openapi(route, async (c) => {
-		const { auth, db } = c.get('services')
+		const { cerbos, db } = c.get('services')
 		const session = c.get('session')
-		let canUpdatePractitioner: boolean = false
+		const { id } = c.req.valid('param')
 
 		if (!session)
 			throw new ApiError({
@@ -64,38 +64,27 @@ export const registerPractitionerUpdate = (app: App) =>
 				message: 'You Need to login first to continue.',
 			})
 
-		if (c.req.header('x-api-key')) {
-			const result = await auth.api.verifyApiKey({
-				body: {
-					key: c.req.header('x-api-key') as string,
-					permissions: {
-						practitioner: ['update'],
-					},
-				},
-			})
+		const decision = await cerbos.checkResource({
+			principal: {
+				id: session.session.userId,
+				roles: [session.user.role as string],
+				attributes: {},
+			},
+			resource: {
+				kind: 'practitioner',
+				id: id,
+				attributes: {},
+			},
+			actions: ['update'],
+		})
 
-			canUpdatePractitioner = result.valid
-		} else {
-			const result = await auth.api.hasPermission({
-				headers: c.req.raw.headers,
-				body: {
-					permissions: {
-						practitioner: ['update'], // This must match the structure in your access control
-					},
-				},
-			})
-
-			canUpdatePractitioner = result.success
-		}
-
-		if (!canUpdatePractitioner) {
+		if (!decision.isAllowed('update')) {
 			throw new ApiError({
 				code: 'FORBIDDEN',
 				message: 'You do not have permissions to update practitioners.',
 			})
 		}
 
-		const { id } = c.req.valid('param')
 		const tenant = session.session.activeOrganizationId as string
 
 		/**const insertedHistory = await db

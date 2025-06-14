@@ -41,38 +41,28 @@ export type PractitionerDeleteResponse = z.infer<
 
 export const registerPractitionerDelete = (app: App) =>
 	app.openapi(route, async (c) => {
-		const { auth, db } = c.get('services')
+		const { cerbos, db } = c.get('services')
 		const session = c.get('session')
-		let canDeletePractitioner: boolean = false
+		const { id } = c.req.valid('param')
 
 		if (!session)
 			throw new ApiError({ code: 'UNAUTHORIZED', message: 'You Need to login first to continue.' })
 
-		if (c.req.header('x-api-key')) {
-			const result = await auth.api.verifyApiKey({
-				body: {
-					key: c.req.header('x-api-key') as string,
-					permissions: {
-						practitioner: ['delete'],
-					},
-				},
-			})
+		const decision = await cerbos.checkResource({
+			principal: {
+				id: session.session.userId,
+				roles: [session.user.role as string],
+				attributes: {},
+			},
+			resource: {
+				kind: 'practitioner',
+				id: id,
+				attributes: {},
+			},
+			actions: ['delete'],
+		})
 
-			canDeletePractitioner = result.valid
-		} else {
-			const result = await auth.api.hasPermission({
-				headers: c.req.raw.headers,
-				body: {
-					permissions: {
-						practitioner: ['delete'], // This must match the structure in your access control
-					},
-				},
-			})
-
-			canDeletePractitioner = result.success
-		}
-
-		if (!canDeletePractitioner) {
+		if (!decision.isAllowed('delete')) {
 			throw new ApiError({
 				code: 'FORBIDDEN',
 				message: 'You do not have permissions to delete practitioners.',
@@ -80,7 +70,6 @@ export const registerPractitionerDelete = (app: App) =>
 		}
 
 		const tenant = session.session.activeOrganizationId as string
-		const { id } = c.req.valid('param')
 
 		const history = await db
 			.select()

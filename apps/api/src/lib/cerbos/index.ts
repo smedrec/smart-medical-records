@@ -1,5 +1,3 @@
-import { GRPC as Cerbos } from '@cerbos/grpc'
+import { HTTP } from '@cerbos/http'
 
-export const cerbos = new Cerbos('joseantcordeiro.hopto.org:3593', {
-	tls: false,
-})
+export const cerbos = new HTTP('http://joseantcordeiro.hopto.org:3592')

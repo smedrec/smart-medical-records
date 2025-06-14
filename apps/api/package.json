@@ -19,7 +19,7 @@
 		"test": "run-vitest"
 	},
 	"dependencies": {
-		"@cerbos/grpc": "0.22.0",
+		"@cerbos/http": "^0.22.0",
 		"@hono/zod-openapi": "0.19.8",
 		"@mastra/client-js": "0.10.4",
 		"@mastra/rag": "0.10.3",

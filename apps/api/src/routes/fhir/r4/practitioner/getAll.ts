@@ -48,7 +48,6 @@ export const registerPractitionerGetAll = (app: App) =>
 	app.openapi(route, async (c) => {
 		const { cerbos, db } = c.get('services')
 		const session = c.get('session')
-		//let canReadPractitioner: boolean = false
 
 		if (!session)
 			throw new ApiError({
@@ -64,35 +63,11 @@ export const registerPractitionerGetAll = (app: App) =>
 			},
 			resource: {
 				kind: 'practitioner',
-				id: '',
+				id: '*',
 				attributes: {},
 			},
 			actions: ['read'],
 		})
-
-		/**if (c.req.header('x-api-key')) {
-			const result = await auth.api.verifyApiKey({
-				body: {
-					key: c.req.header('x-api-key') as string,
-					permissions: {
-						practitioner: ['read'],
-					},
-				},
-			})
-
-			canReadPractitioner = result.valid
-		} else {
-			const result = await auth.api.hasPermission({
-				headers: c.req.raw.headers,
-				body: {
-					permissions: {
-						practitioner: ['read'], // This must match the structure in your access control
-					},
-				},
-			})
-
-			canReadPractitioner = result.success
-		}*/
 
 		if (!decision.isAllowed('read')) {
 			throw new ApiError({
