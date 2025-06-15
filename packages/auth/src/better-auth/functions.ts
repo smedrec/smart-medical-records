@@ -4,9 +4,9 @@ import { and, eq } from 'drizzle-orm'
 
 //import { APIError } from 'better-auth/api';
 
-import { apikey, db, member, organization } from '@repo/db'
+import { apikey, db, member, organization, person } from '@repo/db'
 
-import type { Organization } from '@solarahealth/fhir-r4'
+import type { Organization, Person } from '@solarahealth/fhir-r4'
 
 export async function getActiveOrganization(userId: string): Promise<string | null> {
 	try {
@@ -92,7 +92,7 @@ export async function setupOrganizationResource(
 			},
 			name: name,
 		}
-		const org = await db
+		const o = await db
 			.insert(organization)
 			.values({
 				tenant: tenantId,
@@ -102,7 +102,44 @@ export async function setupOrganizationResource(
 			})
 			.returning()
 
-		return org[0].id
+		return o[0].id
+	} catch (error) {
+		console.error('Error setting up organization resource:', error)
+		throw new Error(
+			`Error setting up organization resource: ${error instanceof Error ? error.message : 'Unknown error'}`
+		)
+	}
+}
+
+export async function setupPersonResource(id: string, name: string): Promise<string> {
+	try {
+		const resource: Person = {
+			resourceType: 'Person',
+			active: true,
+			id: id,
+			text: {
+				status: 'generated',
+				div: `<div xmlns="http://www.w3.org/1999/xhtml">\n      \n      <p>${name}</p>\n    \n    </div>`,
+			},
+			name: [
+				{
+					use: 'official',
+					family: name.split(' ')[0],
+					given: [name.split(' ')[1]],
+				},
+			],
+		}
+		const p = await db
+			.insert(person)
+			.values({
+				user: id,
+				createdBy: id,
+				updatedBy: id,
+				resource: resource,
+			})
+			.returning()
+
+		return p[0].id
 	} catch (error) {
 		console.error('Error setting up organization resource:', error)
 		throw new Error(

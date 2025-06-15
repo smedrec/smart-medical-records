@@ -4,19 +4,32 @@ import { admin, apiKey, openAPI, organization } from 'better-auth/plugins'
 import { env } from 'cloudflare:workers'
 import { eq } from 'drizzle-orm'
 
-import { db, tenant } from '@repo/db'
+import { db, tenant, user as userDb } from '@repo/db'
 import { email } from '@repo/mailer'
 
-import { getActiveMemberRole, getActiveOrganization, setupOrganizationResource } from './functions'
-import { betterAuthOptions } from './options'
-import { ac as appAc, admin as appAdmin, user } from './permissions/admin'
 import {
+	getActiveMemberRole,
+	getActiveOrganization,
+	setupOrganizationResource,
+	setupPersonResource,
+} from './functions'
+import { betterAuthOptions } from './options'
+import {
+	ac as appAc,
+	admin as appAdmin,
+	owner,
+	patient,
+	practitioner,
+	user,
+} from './permissions/admin'
+
+/**import {
 	member,
 	ac as orgAc,
 	admin as orgAdmin,
 	owner,
 	practitioner,
-} from './permissions/organization'
+} from './permissions/organization'*/
 
 type Permissions = {
 	[resourceType: string]: string[]
@@ -75,6 +88,10 @@ export const auth = betterAuth({
 				type: 'string',
 				required: false,
 				defaultValue: 'en',
+			},
+			personId: {
+				type: 'string',
+				required: false,
 			},
 		},
 		changeEmail: {
@@ -136,6 +153,8 @@ export const auth = betterAuth({
 				},
 				after: async (user) => {
 					//perform additional actions, like creating a stripe customer or send welcome email
+					const id = await setupPersonResource(user.id, user.name)
+					await db.update(userDb).set({ personId: id }).where(eq(userDb.id, user.id))
 				},
 			},
 		},
@@ -164,7 +183,10 @@ export const auth = betterAuth({
 			ac: appAc,
 			roles: {
 				admin: appAdmin,
+				owner,
 				user,
+				patient,
+				practitioner,
 			},
 		}),
 		organization({
@@ -179,13 +201,13 @@ export const auth = betterAuth({
 					},
 				},
 			},
-			ac: orgAc,
+			/**ac: orgAc,
 			roles: {
 				owner,
 				admin: orgAdmin,
 				member,
 				practitioner,
-			},
+			},*/
 			teams: {
 				enabled: true,
 				maximumTeams: 10, // Optional: limit teams per organization

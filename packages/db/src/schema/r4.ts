@@ -548,11 +548,9 @@ export const person = r4Schema.table(
 		status: resourceStatus('status').default('create'), // resource status
 		resource: jsonb('resource').$type<Person>(), // resource body
 		user: text('user').references(() => user.id, { onDelete: 'cascade' }),
-		tenant: text('tenant')
-			.notNull()
-			.references(() => tenant.id, {
-				onDelete: 'cascade',
-			}),
+		tenant: text('tenant').references(() => tenant.id, {
+			onDelete: 'cascade',
+		}),
 		createdBy: text('created_by')
 			.notNull()
 			.references(() => user.id),

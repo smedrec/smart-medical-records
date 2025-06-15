@@ -14,3 +14,15 @@ export const admin = ac.newRole({
 export const user = ac.newRole({
 	...userAc.statements,
 })
+
+export const owner = ac.newRole({
+	...userAc.statements,
+})
+
+export const patient = ac.newRole({
+	...userAc.statements,
+})
+
+export const practitioner = ac.newRole({
+	...userAc.statements,
+})

@@ -1,0 +1,45 @@
+{
+	"policies": [
+		{
+			"apiVersion": "api.cerbos.dev/v1",
+			"metadata": {
+				"sourceFile": "practitioner.yaml",
+				"hash": "4882389134527754693",
+				"storeIdentifer": "practitioner.yaml",
+				"storeIdentifier": "practitioner.yaml",
+				"sourceAttributes": {
+					"attributes": {
+						"driver": "disk",
+						"source": "practitioner.yaml"
+					}
+				}
+			},
+			"resourcePolicy": {
+				"resource": "practitioner",
+				"version": "default",
+				"rules": [
+					{
+						"actions": ["create", "update", "read", "delete"],
+						"roles": ["admin", "owner"],
+						"effect": "EFFECT_ALLOW"
+					},
+					{
+						"actions": ["read"],
+						"roles": ["practitioner"],
+						"effect": "EFFECT_ALLOW"
+					},
+					{
+						"actions": ["update"],
+						"roles": ["practitioner"],
+						"condition": {
+							"match": {
+								"expr": "request.resource.id == request.principal.id"
+							}
+						},
+						"effect": "EFFECT_ALLOW"
+					}
+				]
+			}
+		}
+	]
+}

@@ -3,8 +3,9 @@ import { BaseResourceResponseSchema } from '@/lib/utils/responses'
 import { idSchema } from '@/shared/types'
 import { createRoute, z } from '@hono/zod-openapi'
 import { createPractitionerSchema } from '@solarahealth/fhir-r4'
+import { eq } from 'drizzle-orm'
 
-import { practitioner } from '@repo/db'
+import { practitioner, user } from '@repo/db'
 
 import type { App } from '@/lib/hono'
 import type { Practitioner } from '@solarahealth/fhir-r4'
@@ -80,31 +81,6 @@ export const registerPractitionerCreate = (app: App) =>
 			actions: ['create'],
 		})
 
-		/**if (c.req.header('x-api-key')) {
-			const result = await auth.api.verifyApiKey({
-				body: {
-					key: c.req.header('x-api-key') as string,
-					permissions: {
-						practitioner: ['create'],
-					},
-				},
-			})
-			console.log('Api Key', c.req.header('x-api-key'))
-			console.log('Verify Key Result', JSON.stringify(result))
-			canCreatePractitioner = result.valid
-		} else {
-			const result = await auth.api.hasPermission({
-				headers: c.req.raw.headers,
-				body: {
-					permissions: {
-						practitioner: ['create'], // This must match the structure in your access control
-					},
-				},
-			})
-			console.log('Verify Permissions Result', JSON.stringify(result))
-			canCreatePractitioner = result.success
-		} */
-
 		if (!decision.isAllowed('create')) {
 			throw new ApiError({
 				code: 'FORBIDDEN',
@@ -140,6 +116,10 @@ export const registerPractitionerCreate = (app: App) =>
 
 		if (result.length < 1)
 			throw new ApiError({ code: 'INTERNAL_SERVER_ERROR', message: 'A machine readable error.' })
+
+		const practitionerUser = await db.select().from(user).where(eq(user.id, body.user))
+
+		if (practitionerUser[0].role === 'user') await db.update(user).set({ role: 'practitioner' })
 
 		return c.json(result[0], 201)
 	})

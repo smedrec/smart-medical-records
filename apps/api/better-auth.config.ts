@@ -3,11 +3,13 @@
  *
  * Docs: https://www.better-auth.com/docs/concepts/cli
  */
-import { betterAuth } from 'better-auth'
-import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { admin, apiKey, openAPI, organization } from 'better-auth/plugins'
-import { drizzle } from 'drizzle-orm/node-postgres'
+//import { betterAuth } from 'better-auth'
+//import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+//import { admin, apiKey, openAPI, organization } from 'better-auth/plugins'
+//import { drizzle } from 'drizzle-orm/node-postgres'
+export { auth } from '@repo/auth'
 
+/**
 import type { Env } from './src/lib/hono/context'
 
 const db = (env: Env) => drizzle(env.DATABASE_URL)
@@ -56,3 +58,4 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
 		},
 	},
 })
+ */

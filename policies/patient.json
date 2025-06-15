@@ -1,0 +1,45 @@
+{
+	"policies": [
+		{
+			"apiVersion": "api.cerbos.dev/v1",
+			"metadata": {
+				"sourceFile": "patient.yaml",
+				"hash": "15128418556661891720",
+				"storeIdentifer": "patient.yaml",
+				"storeIdentifier": "patient.yaml",
+				"sourceAttributes": {
+					"attributes": {
+						"driver": "disk",
+						"source": "patient.yaml"
+					}
+				}
+			},
+			"resourcePolicy": {
+				"resource": "patient",
+				"version": "default",
+				"rules": [
+					{
+						"actions": ["read", "update", "create"],
+						"roles": ["admin", "practitioner", "owner"],
+						"effect": "EFFECT_ALLOW"
+					},
+					{
+						"actions": ["delete"],
+						"roles": ["admin", "owner"],
+						"effect": "EFFECT_ALLOW"
+					},
+					{
+						"actions": ["read", "update"],
+						"roles": ["patient"],
+						"condition": {
+							"match": {
+								"expr": "request.resource.id == request.principal.id"
+							}
+						},
+						"effect": "EFFECT_ALLOW"
+					}
+				]
+			}
+		}
+	]
+}
