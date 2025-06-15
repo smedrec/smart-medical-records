@@ -3,7 +3,7 @@ import { cerbos } from '@/lib/cerbos'
 import { createId } from '@paralleldrive/cuid2'
 
 import { auth } from '@repo/auth'
-import { db } from '@repo/db'
+import { WorkerDb } from '@repo/db'
 
 import { ConsoleLogger } from '../logs'
 
@@ -55,6 +55,7 @@ export function init(): MiddlewareHandler<HonoEnv> {
 
 		//const cache = initCache(c);
 		//const cache = null
+		const db = await WorkerDb.getInstance()
 
 		c.set('services', {
 			auth,

@@ -4,7 +4,7 @@ import { admin, apiKey, openAPI, organization } from 'better-auth/plugins'
 import { env } from 'cloudflare:workers'
 import { eq } from 'drizzle-orm'
 
-import { db, tenant, user as userDb } from '@repo/db'
+import { db, tenant, user as userDb, WorkerDb } from '@repo/db'
 import { email } from '@repo/mailer'
 
 import {
@@ -38,6 +38,10 @@ type Permissions = {
 /**
  * Better Auth Instance
  */
+//export const auth = async () => {
+//	const db = await WorkerDb.getInstance()
+
+//	return betterAuth({
 export const auth = betterAuth({
 	...betterAuthOptions,
 	/**session: {
@@ -305,5 +309,33 @@ export const auth = betterAuth({
 		'http://localhost:4111',
 	],
 })
-
+//}
 export type Session = typeof auth.$Infer.Session
+
+/**export type Session = {
+	session: {
+		ipAddress: string
+		userAgent: string
+		expiresAt: Date
+		userId: string
+		token: string
+		createdAt: Date
+		updatedAt: Date
+		activeOrganizationId: string
+	}
+	user: {
+		name: string
+		email: string
+		emailVerified: boolean
+		image: null
+		createdAt: Date
+		updatedAt: Date
+		role: string
+		banned: boolean
+		banReason: string
+		banExpires: Date
+		lang: string
+		personId: string
+		id: string
+	}
+}*/

@@ -85,6 +85,7 @@
 		"otel",
 		"paralleldrive",
 		"pgvector",
+		"plpgsql",
 		"pnpx",
 		"relatedperson",
 		"runx",

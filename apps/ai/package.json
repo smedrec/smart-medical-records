@@ -23,6 +23,7 @@
 		"@mastra/core": "0.10.5",
 		"@mastra/deployer-cloudflare": "0.10.5",
 		"@mastra/loggers": "0.10.2",
+		"@mastra/mcp": "^0.10.3",
 		"@mastra/memory": "0.10.3",
 		"@mastra/mongodb": "0.10.3",
 		"@mastra/pg": "0.10.3",

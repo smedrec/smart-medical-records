@@ -2,7 +2,7 @@ import { ApiError, openApiErrorResponses } from '@/lib/errors'
 import { BaseResourceResponseSchema } from '@/lib/utils/responses'
 import { idParamsSchema } from '@/shared/types'
 import { createRoute, z } from '@hono/zod-openapi'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, sql } from 'drizzle-orm'
 
 import { practitioner, practitionerHistory } from '@repo/db'
 
@@ -129,7 +129,7 @@ export const registerPractitionerUpdate = (app: App) =>
 
 		const body = await c.req.json()
 		const resource = {
-			...insertedHistory[0].resource,
+			...history[0].resource,
 			...body.resource,
 		}
 

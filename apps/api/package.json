@@ -12,6 +12,7 @@
 		"deploy": "run-wrangler-deploy",
 		"dev": "run-wrangler-dev",
 		"fix:workers-types": "run-wrangler-types",
+		"migrate:custom": "drizzle-kit generate --custom --config=drizzle-dev.config.ts",
 		"migrate:dev": "drizzle-kit migrate --config=drizzle-dev.config.ts",
 		"migrate:new": "drizzle-kit generate --config=drizzle-dev.config.ts",
 		"migrate:prod": "wrangler d1 migrations apply DB --remote",
