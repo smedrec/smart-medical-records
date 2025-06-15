@@ -17,6 +17,10 @@ resourcePolicy:
         - owner
     - actions:
         - read
+      effect: EFFECT_ALLOW
+      roles:
+        - practitioner
+    - actions:
         - update
       effect: EFFECT_ALLOW
       roles:

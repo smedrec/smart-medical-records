@@ -1,9 +1,10 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { admin, apiKey, customSession, openAPI, organization } from 'better-auth/plugins'
+import { admin, apiKey, openAPI, organization } from 'better-auth/plugins'
 import { env } from 'cloudflare:workers'
+import { eq } from 'drizzle-orm'
 
-import { db } from '@repo/db'
+import { db, tenant } from '@repo/db'
 import { email } from '@repo/mailer'
 
 import { getActiveMemberRole, getActiveOrganization, setupOrganizationResource } from './functions'
@@ -170,6 +171,12 @@ export const auth = betterAuth({
 			schema: {
 				organization: {
 					modelName: 'tenant', //map the organization table to tenant
+					additionalFields: {
+						organizationId: {
+							type: 'string',
+							required: false,
+						},
+					},
 				},
 			},
 			ac: orgAc,
@@ -215,9 +222,11 @@ export const auth = betterAuth({
 				afterCreate: async ({ organization, member, user }, request) => {
 					// Run custom logic after organization is created
 					// e.g., create default resources, send notifications
-					// await setupOrganizationResource(organization.id)
+					const id = await setupOrganizationResource(organization.id, organization.name, user.id)
+					await db.update(tenant).set({ organizationId: id }).where(eq(tenant.id, organization.id))
 				},
 			},
+			organizationLimit: 1,
 		}),
 		apiKey({
 			rateLimit: {

@@ -76,29 +76,33 @@ export async function getApiKey(userId: string): Promise<string | null> {
 	}
 }
 
-export async function setupOrganizationResource(organizationId: string): Promise<void> {
+export async function setupOrganizationResource(
+	tenantId: string,
+	name: string,
+	userId: string
+): Promise<string> {
 	try {
-		// Check if the organization already exists
-		const existingOrganization = await db.query.organization.findFirst({
-			where: eq(organization.id, organizationId),
-		})
-
 		const resource: Organization = {
 			resourceType: 'Organization',
 			active: true,
-			id: organizationId,
+			id: tenantId,
 			text: {
 				status: 'generated',
-				div: `<div xmlns="http://www.w3.org/1999/xhtml">\n      \n      <p>${existingOrganization?.name}</p>\n    \n    </div>`,
+				div: `<div xmlns="http://www.w3.org/1999/xhtml">\n      \n      <p>${name}</p>\n    \n    </div>`,
 			},
-			name: existingOrganization?.name,
+			name: name,
 		}
-		await db
-			.update(organization)
-			.set({
+		const org = await db
+			.insert(organization)
+			.values({
+				tenant: tenantId,
+				createdBy: userId,
+				updatedBy: userId,
 				resource: resource,
 			})
-			.where(eq(organization.id, organizationId))
+			.returning()
+
+		return org[0].id
 	} catch (error) {
 		console.error('Error setting up organization resource:', error)
 		throw new Error(

@@ -72,6 +72,7 @@ export const tenant = authSchema.table('tenant', {
 	logo: text('logo'),
 	createdAt: timestamp('created_at').notNull(),
 	metadata: text('metadata'),
+	organizationId: text('organization_id'),
 })
 
 export const member = authSchema.table('member', {
