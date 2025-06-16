@@ -31,6 +31,10 @@ export type SharedHonoEnv = {
 	 */
 	APP_PUBLIC_URL: string
 	/**
+	 * HAPI FHIR api url
+	 */
+	FHIR_API_URL: string
+	/**
 	 * SMTP credentials.
 	 */
 	SMTP_USER: string

@@ -45,7 +45,7 @@ export type CodeSystemGetAllResponse = z.infer<
 
 export const registerCodeSystemGetAll = (app: App) =>
 	app.openapi(route, async (c) => {
-		const { auth, db } = c.get('services')
+		const { fhir, db } = c.get('services')
 		const session = c.get('session')
 		let canReadPractitioner: boolean = false
 
@@ -55,7 +55,7 @@ export const registerCodeSystemGetAll = (app: App) =>
 				message: 'You Need to login first to continue.',
 			})
 
-		if (c.req.header('x-api-key')) {
+		/**if (c.req.header('x-api-key')) {
 			const result = await auth.api.verifyApiKey({
 				body: {
 					key: c.req.header('x-api-key') as string,
@@ -84,7 +84,7 @@ export const registerCodeSystemGetAll = (app: App) =>
 				code: 'FORBIDDEN',
 				message: 'You do not have permissions to read practitioners.',
 			})
-		}
+		} */
 
 		//const organization = session.session.activeOrganizationId as string
 

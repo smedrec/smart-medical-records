@@ -16,7 +16,7 @@
 		"@repo/hono-helpers": "workspace:*",
 		"@solarahealth/fhir-r4": "1.2.0",
 		"drizzle-orm": "0.44.2",
-		"pg": "^8.16.0",
+		"pg": "8.16.0",
 		"postgres": "3.4.7",
 		"zod": "3.25.64"
 	},
@@ -26,7 +26,7 @@
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/pg": "^8.15.4",
+		"@types/pg": "8.15.4",
 		"ts-to-zod": "3.15.0",
 		"vitest": "3.2.3"
 	}

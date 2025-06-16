@@ -1,4 +1,5 @@
 // Practitioner routes
+import { registerCodeSystemFindOne } from '@/routes/fhir/r4/codesystem/findOne'
 import { registerCodeSystemGetAll } from '@/routes/fhir/r4/codesystem/getAll'
 import { registerOrganizationUpdate } from '@/routes/fhir/r4/organization/update'
 import { registerPractitionerCreate } from '@/routes/fhir/r4/practitioner/create'
@@ -86,6 +87,7 @@ registerOrganizationUpdate(app)
 registerValueSetGetAll(app)
 // FHIR CodeSystem routes
 registerCodeSystemGetAll(app)
+registerCodeSystemFindOne(app)
 // ai routes
 registerAiChat(app)
 registerAiStore(app)

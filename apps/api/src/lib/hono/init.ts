@@ -4,6 +4,7 @@ import { createId } from '@paralleldrive/cuid2'
 
 import { auth } from '@repo/auth'
 import { WorkerDb } from '@repo/db'
+import { fhir } from '@repo/fhir'
 
 import { ConsoleLogger } from '../logs'
 
@@ -60,6 +61,7 @@ export function init(): MiddlewareHandler<HonoEnv> {
 		c.set('services', {
 			auth,
 			cerbos,
+			fhir,
 			db,
 			//redis,
 			logger,

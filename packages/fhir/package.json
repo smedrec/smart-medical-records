@@ -1,0 +1,26 @@
+{
+	"name": "@repo/fhir",
+	"version": "0.1.0",
+	"private": true,
+	"sideEffects": false,
+	"type": "module",
+	"main": "src/index.ts",
+	"scripts": {
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"test": "run-vitest"
+	},
+	"dependencies": {
+		"@repo/hono-helpers": "workspace:*",
+		"openapi-fetch": "0.14.0"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "0.8.38",
+		"@cloudflare/workers-types": "4.20250614.0",
+		"@repo/eslint-config": "workspace:*",
+		"@repo/tools": "workspace:*",
+		"@repo/typescript-config": "workspace:*",
+		"openapi-typescript": "7.8.0",
+		"vitest": "3.2.3"
+	}
+}
