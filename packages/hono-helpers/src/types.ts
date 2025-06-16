@@ -26,6 +26,10 @@ export type SharedHonoEnv = {
 	 */
 	BETTER_AUTH_URL: string
 	BETTER_AUTH_SECRET: string
+	/*
+	 * Cerbos api url
+	 */
+	CERBOS_HTTP_API_URL: string
 	/**
 	 * Application environment variables.
 	 */
