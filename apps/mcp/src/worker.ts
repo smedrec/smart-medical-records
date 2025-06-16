@@ -1,4 +1,5 @@
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
+import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js'
 import { toFetchResponse, toReqRes } from 'fetch-to-node'
 import { Hono } from 'hono'
 import { useWorkersLogger } from 'workers-tagged-logger'
@@ -43,7 +44,7 @@ app.post('/sse', async (c) => {
 	if (sessionId && transports[sessionId]) {
 		// Reuse existing transport
 		transport = transports[sessionId]
-	} else if (!sessionId && isInitializeRequest(c.body)) {
+	} else if (!sessionId && isInitializeRequest(await c.req.json())) {
 		// New initialization request
 		transport = new StreamableHTTPServerTransport({
 			sessionIdGenerator: undefined,

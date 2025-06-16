@@ -6,6 +6,13 @@
 	"compatibility_flags": ["nodejs_compat"],
 	"routes": [],
 	"logpush": true,
+	// Local development
+	"dev": {
+		"local_protocol": "http",
+		"upstream_protocol": "https",
+		"ip": "localhost",
+		"port": 8802
+	},
 	"observability": {
 		"enabled": true
 	},

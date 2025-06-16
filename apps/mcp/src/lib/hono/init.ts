@@ -72,14 +72,13 @@ export function init(): MiddlewareHandler<HonoEnv> {
 
 		if (!session) {
 			c.set('session', null)
+		} else {
+			/**if (c.req.header('x-api-key')) {
+				const organization = await getActiveOrganization(session.session?.userId)
+				session.session.activeOrganizationId = organization
+			}*/
+			c.set('session', session)
 		}
-
-		/**if (c.req.header('x-api-key')) {
-			const organization = await getActiveOrganization(session.session?.userId)
-			session.session.activeOrganizationId = organization
-		}*/
-
-		c.set('session', session)
 
 		c.set('services', {
 			auth,

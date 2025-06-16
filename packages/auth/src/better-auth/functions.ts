@@ -4,20 +4,33 @@ import { and, eq } from 'drizzle-orm'
 
 //import { APIError } from 'better-auth/api';
 
-import { apikey, db, member } from '@repo/db'
+import { activeOrganization, apikey, db, member } from '@repo/db'
 import { fhir } from '@repo/fhir'
 
 import type { Organization, Person } from '@solarahealth/fhir-r4'
 
 export async function getActiveOrganization(userId: string): Promise<string | null> {
 	try {
-		const result = await db.query.member.findFirst({
-			where: eq(member.userId, userId),
+		const result = await db.query.activeOrganization.findFirst({
+			where: eq(activeOrganization.userId, userId),
 		})
 		if (result) {
 			return result.organizationId
 		} else {
-			return null
+			const result = await db.query.member.findFirst({
+				where: eq(member.userId, userId),
+			})
+			if (result) {
+				await db
+					.insert(activeOrganization)
+					.values({ userId: userId, organizationId: result.organizationId })
+					.onConflictDoUpdate({
+						target: activeOrganization.userId,
+						set: { organizationId: result.organizationId },
+					})
+			}
+
+			return result?.organizationId || null
 			//throw new HTTPException(404, { message: 'The user is not member.' });
 			/**throw new APIError('BAD_REQUEST', {
         message: 'User must agree to the TOS before signing up.',

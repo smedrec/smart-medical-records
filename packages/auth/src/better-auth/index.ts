@@ -4,7 +4,7 @@ import { admin, apiKey, openAPI, organization } from 'better-auth/plugins'
 import { env } from 'cloudflare:workers'
 import { eq } from 'drizzle-orm'
 
-import { db, organization as organizationDb, user as userDb } from '@repo/db'
+import { activeOrganization, db, organization as organizationDb, user as userDb } from '@repo/db'
 import { email } from '@repo/mailer'
 
 import {

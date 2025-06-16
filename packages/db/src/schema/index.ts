@@ -1,4 +1,11 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import {
+	integer,
+	primaryKey,
+	sqliteTable,
+	text,
+	unique,
+	uniqueIndex,
+} from 'drizzle-orm/sqlite-core'
 
 export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
@@ -140,3 +147,21 @@ export const apikey = sqliteTable('apikey', {
 	permissions: text('permissions'),
 	metadata: text('metadata'),
 })
+
+export const activeOrganization = sqliteTable(
+	'active_organization',
+	{
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		organizationId: text('organization_id')
+			.notNull()
+			.references(() => organization.id, { onDelete: 'cascade' }),
+	},
+	(table) => {
+		return [
+			primaryKey({ columns: [table.userId, table.organizationId] }),
+			uniqueIndex('active_organization_user_id_idx').on(table.userId),
+		]
+	}
+)
