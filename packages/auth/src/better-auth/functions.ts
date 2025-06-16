@@ -4,7 +4,8 @@ import { and, eq } from 'drizzle-orm'
 
 //import { APIError } from 'better-auth/api';
 
-import { apikey, db, member, organization, person } from '@repo/db'
+import { apikey, db, member } from '@repo/db'
+import { fhir } from '@repo/fhir'
 
 import type { Organization, Person } from '@solarahealth/fhir-r4'
 
@@ -76,33 +77,28 @@ export async function getApiKey(userId: string): Promise<string | null> {
 	}
 }
 
-export async function setupOrganizationResource(
-	tenantId: string,
-	name: string,
-	userId: string
-): Promise<string> {
+export async function setupOrganizationResource(name: string, userId: string): Promise<string> {
 	try {
 		const resource: Organization = {
 			resourceType: 'Organization',
 			active: true,
-			id: tenantId,
 			text: {
 				status: 'generated',
 				div: `<div xmlns="http://www.w3.org/1999/xhtml">\n      \n      <p>${name}</p>\n    \n    </div>`,
 			},
 			name: name,
 		}
-		const o = await db
-			.insert(organization)
-			.values({
-				tenant: tenantId,
-				createdBy: userId,
-				updatedBy: userId,
-				resource: resource,
-			})
-			.returning()
+		const {
+			data, // only present if 2XX response
+			error, // only present if 4XX or 5XX response
+		} = await fhir.POST('/Organization', {
+			body: resource,
+			headers: {
+				'Content-Type': 'application/fhir+json',
+			},
+		})
 
-		return o[0].id
+		return data.id
 	} catch (error) {
 		console.error('Error setting up organization resource:', error)
 		throw new Error(
@@ -111,12 +107,11 @@ export async function setupOrganizationResource(
 	}
 }
 
-export async function setupPersonResource(id: string, name: string): Promise<string> {
+export async function setupPersonResource(name: string, email: string): Promise<string> {
 	try {
 		const resource: Person = {
 			resourceType: 'Person',
 			active: true,
-			id: id,
 			text: {
 				status: 'generated',
 				div: `<div xmlns="http://www.w3.org/1999/xhtml">\n      \n      <p>${name}</p>\n    \n    </div>`,
@@ -128,22 +123,29 @@ export async function setupPersonResource(id: string, name: string): Promise<str
 					given: [name.split(' ')[1]],
 				},
 			],
+			telecom: [
+				{
+					system: 'email',
+					value: email,
+					rank: 1,
+				},
+			],
 		}
-		const p = await db
-			.insert(person)
-			.values({
-				user: id,
-				createdBy: id,
-				updatedBy: id,
-				resource: resource,
-			})
-			.returning()
+		const {
+			data, // only present if 2XX response
+			error, // only present if 4XX or 5XX response
+		} = await fhir.POST('/Person', {
+			body: resource,
+			headers: {
+				'Content-Type': 'application/fhir+json',
+			},
+		})
 
-		return p[0].id
+		return data?.id
 	} catch (error) {
-		console.error('Error setting up organization resource:', error)
+		console.error('Error setting up fhir person resource:', error)
 		throw new Error(
-			`Error setting up organization resource: ${error instanceof Error ? error.message : 'Unknown error'}`
+			`Error setting up person resource: ${error instanceof Error ? error.message : 'Unknown error'}`
 		)
 	}
 }

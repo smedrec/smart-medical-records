@@ -1,21 +1,24 @@
 import { env } from 'cloudflare:workers'
-import { drizzle } from 'drizzle-orm/postgres-js'
-import postgres from 'postgres'
+import { drizzle } from 'drizzle-orm/d1'
+
+//import postgres from 'postgres'
 
 //import { drizzle } from 'drizzle-orm/node-postgres'
 //import { Pool } from 'pg'
 
 import * as schema from '../schema'
 
+export const db = drizzle(env.DB, { schema: schema })
+
 //import { drizzle } from 'drizzle-orm/postgres-js'
 //import postgres from 'postgres'
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
+//import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 
 /**const pool = new Pool({
 	connectionString: env.DATABASE_URL!,
 })
 
-export const db: NodePgDatabase<typeof schema> = drizzle(pool, { schema })*/
+export const db: NodePgDatabase<typeof schema> = drizzle(pool, { schema })
 const queryClient = postgres(env.DATABASE_URL, {
 	// Workers limit the number of concurrent external connections, so be sure to limit
 	// the size of the local connection pool that postgres.js may establish.
@@ -50,7 +53,7 @@ export class WorkerDb {
 		})
 		/**
 		 * The following line is to check if the connection is successful.
-		 */
+		 
 		await pg.unsafe('SELECT 1')
 
 		this.instance = drizzle({
@@ -65,4 +68,4 @@ export class WorkerDb {
 			//await this.instance.destroy()
 		}
 	}
-}
+}*/

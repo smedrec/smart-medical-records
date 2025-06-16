@@ -46,6 +46,7 @@ export type SharedHonoEnv = {
 	 * The ...
 	 */
 	DATABASE_URL: string
+	DB: D1Database
 	KV: KVNamespace
 }
 /** Global Hono variables */

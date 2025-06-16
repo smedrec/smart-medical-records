@@ -28,6 +28,15 @@
 		"SENTRY_RELEASE": "unknown" // overridden during deployment
 	},
 
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "smedrec_auth_dev",
+			"database_id": "YOUR_DB_ID",
+			"migrations_dir": "drizzle"
+		}
+	],
+
 	"kv_namespaces": [
 		{
 			"binding": "KV",

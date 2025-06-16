@@ -1,6 +1,6 @@
 import type { cerbos } from '@/lib/cerbos'
 import type { auth, Session } from '@repo/auth'
-import type { DB } from '@repo/db'
+import type { db } from '@repo/db'
 import type { fhir } from '@repo/fhir'
 import type { HonoApp } from '@repo/hono-helpers'
 import type { SharedHonoEnv, SharedHonoVariables } from '@repo/hono-helpers/src/types'
@@ -17,7 +17,7 @@ export type ServiceContext = {
 	fhir: typeof fhir
 	//cache: Cache;
 	//db: { primary: Database; readonly: Database };
-	db: DB
+	db: typeof db
 	//redis:  Redis,
 	logger: Logger
 }

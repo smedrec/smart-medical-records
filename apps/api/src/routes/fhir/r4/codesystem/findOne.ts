@@ -15,7 +15,15 @@ const route = createRoute({
 	path: '/fhir/r4/codesystem/{id}',
 	security: [{ cookieAuth: [] }],
 	request: {
-		params: idParamsSchema,
+		params: z.object({
+			id: z.string().openapi({
+				param: {
+					name: 'id',
+					in: 'path',
+				},
+				example: '453877',
+			}),
+		}),
 	},
 	responses: {
 		200: {
@@ -82,6 +90,8 @@ export const registerCodeSystemFindOne = (app: App) =>
 					path: { id: '1' },
 				},
 			})
+
+			console.log('data: %d', JSON.stringify(data, null, 2))
 
 			return c.json(data, 200)
 		} catch (error) {

@@ -4,7 +4,7 @@ import { admin, apiKey, openAPI, organization } from 'better-auth/plugins'
 import { env } from 'cloudflare:workers'
 import { eq } from 'drizzle-orm'
 
-import { db, tenant, user as userDb, WorkerDb } from '@repo/db'
+import { db, organization as organizationDb, user as userDb } from '@repo/db'
 import { email } from '@repo/mailer'
 
 import {
@@ -50,7 +50,7 @@ export const auth = betterAuth({
 			maxAge: 5 * 60, // Cache duration in seconds
 		},
 	},*/
-	database: drizzleAdapter(db, { provider: 'pg' }),
+	database: drizzleAdapter(db, { provider: 'sqlite' }),
 	baseURL: env.BETTER_AUTH_URL,
 	secret: env.BETTER_AUTH_SECRET,
 
@@ -157,7 +157,7 @@ export const auth = betterAuth({
 				},
 				after: async (user) => {
 					//perform additional actions, like creating a stripe customer or send welcome email
-					const id = await setupPersonResource(user.id, user.name)
+					const id = await setupPersonResource(user.name, user.email)
 					await db.update(userDb).set({ personId: id }).where(eq(userDb.id, user.id))
 				},
 			},
@@ -194,17 +194,6 @@ export const auth = betterAuth({
 			},
 		}),
 		organization({
-			schema: {
-				organization: {
-					modelName: 'tenant', //map the organization table to tenant
-					additionalFields: {
-						organizationId: {
-							type: 'string',
-							required: false,
-						},
-					},
-				},
-			},
 			/**ac: orgAc,
 			roles: {
 				owner,
@@ -233,24 +222,28 @@ export const auth = betterAuth({
 			},
 			organizationCreation: {
 				disabled: false, // Set to true to disable organization creation
-				/**beforeCreate: async ({ organization, user }, request) => {
+				beforeCreate: async ({ organization, user }, request) => {
 					// Run custom logic before organization is created
 					// Optionally modify the organization data
+					const id = await setupOrganizationResource(organization.name, user.id)
 					return {
 						data: {
 							...organization,
 							metadata: {
-								customField: 'value',
+								organizationId: id,
 							},
 						},
 					}
-				},*/
-				afterCreate: async ({ organization, member, user }, request) => {
+				},
+				/**afterCreate: async ({ organization, member, user }, request) => {
 					// Run custom logic after organization is created
 					// e.g., create default resources, send notifications
 					const id = await setupOrganizationResource(organization.id, organization.name, user.id)
-					await db.update(tenant).set({ organizationId: id }).where(eq(tenant.id, organization.id))
-				},
+					await db
+						.update(organizationDb)
+						.set({ metadata: `{ "organizationId": ${id} }` })
+						.where(eq(organizationDb.id, organization.id))
+				},*/
 			},
 			organizationLimit: 1,
 		}),

@@ -441,6 +441,9 @@ importers:
       '@repo/db':
         specifier: workspace:*
         version: link:../db
+      '@repo/fhir':
+        specifier: workspace:*
+        version: link:../fhir
       '@repo/hono-helpers':
         specifier: workspace:*
         version: link:../hono-helpers

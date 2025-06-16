@@ -12,6 +12,7 @@
 	},
 	"dependencies": {
 		"@repo/db": "workspace:*",
+		"@repo/fhir": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
 		"@repo/mailer": "workspace:*",
 		"@solarahealth/fhir-r4": "1.2.0",
