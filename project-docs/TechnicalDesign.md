@@ -4,14 +4,14 @@
 
 ```
 +-------------------+     +-------------------+     +-------------------+
-|   Frontend        |     |   AI Framework     |     |   Backend          |
-| (Tanstack Start)  |<--->| (Mastra)           |<--->| (Hono + Workers)  |
+|   Frontend        |     |   AI Framework    |     |   Backend         |
+| (Tanstack Start)  |<--->|  (Mastra + MCP)   |<--->| (Hono + Workers)  |
 +-------------------+     +-------------------+     +-------------------+
         |                          |                          |
         v                          v                          v
 +-------------------+     +-------------------+     +-------------------+
-| React Components   |    | Cloudflare Vectorize |  | API Routes         |
-| (apps/web/)        |    | (Document Analysis) |   | (apps/api/src/)    |
+| React Components  |     |       RAG         |     |    API Routes     |
+|   (apps/web/)     |     |  (Knowledge Base) |     | (apps/api/src/)   |
 +-------------------+     +-------------------+     +-------------------+
 ```
 
@@ -58,7 +58,8 @@
 	},
 	"backend": {
 		"framework": "Hono with Cloudflare Workers",
-		"database": "PostgreSQL + pgvector",
+		"Auth database": "Cloudflare D1",
+		"fhir database": "PostgreSQL + pgvector",
 		"orm": "Drizzle ORM (see [apps/api/src/db/index.ts](mdc:apps/api/src/db/index.ts))"
 	},
 	"ai": {
