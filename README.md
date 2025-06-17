@@ -4,6 +4,7 @@ A modern, open-source medical records system for registering patient cases with 
 
 ## 🏥 Features
 
+- **FHIR R4/R5**: FHIR is a standard for health care data exchange, published by HL7®.
 - **Patient Case Management**: 📋 Store and organize medical records
 - **Treatment Tracking**: 💉 Document procedures and therapies
 - **Form Integration**: 📄 Support for medical forms and structured data
@@ -13,14 +14,14 @@ A modern, open-source medical records system for registering patient cases with 
 - **Monorepo**: 🧩 Turborepo + pnpm workspaces for efficient development
 - **Holistic View**: 🌍 Support for looking at the whole person, not just medical needs
 - **Interdisciplinary Approach**: 🧠 Combine all branches of medical healthcare knowledge
-- **Therapists**: 🧑‍⚕️ Store professional therapists (internal and/or external)
-- **Assistants**: 🤖 Speed up or delegate client information management
-- **Clients**: 🧑‍🤝‍🧑 Store clients with all healthcare necessities
+- **Practitioners**: 🧑‍⚕️ Store professional practitioners (internal and/or external)
+- **Assistants**: 🤖 Speed up or delegate patient information management
+- **Patients**: 🧑‍🤝‍🧑 Store patients with all healthcare necessities
 - **Custom Forms**: 📋 Design your own questionnaires for next-gen analytics
 - **Internationalization**: 🌐 Translate and adapt to your language
 - **Statistics**: 📊 Access important statistics at a glance
 - **Customise**: 🎨 View what's relevant to you, aggregate info through forms
-- **As Many as Necessary**: 📚 Support for multiple case studies per client
+- **As Many as Necessary**: 📚 Support for multiple case studies per patient
 - **Treatments**: 💉 Track treatments within case studies
 - **Immutable Conclusions**: 📝 Finalize case studies with unchangeable conclusions
 - **Transit Encryption**: 🔒 Data encryption in transit using world-standard protocols
