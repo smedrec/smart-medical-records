@@ -12,6 +12,21 @@ export default defineUserConfig({
 		logo: 'https://vuejs.press/images/hero.png',
 
 		navbar: ['/', '/get-started', '/development/'],
+
+		sidebar: [
+			{
+				text: 'Introduction',
+				children: ['/get-started.md'],
+			},
+			{
+				text: 'Development',
+				children: ['/development/'], // VuePress resolves this to /development/README.md
+			},
+			{
+				text: 'Applications',
+				children: ['/apps/api.md'],
+			},
+		],
 	}),
 
 	bundler: viteBundler(),
