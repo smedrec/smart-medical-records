@@ -1,18 +1,18 @@
+import { viteBundler } from '@vuepress/bundler-vite'
 import { defaultTheme } from '@vuepress/theme-default'
 import { defineUserConfig } from 'vuepress'
-import { viteBundler } from '@vuepress/bundler-vite'
 
 export default defineUserConfig({
-  lang: 'en-US',
+	lang: 'en-US',
 
-  title: 'VuePress',
-  description: 'My first VuePress Site',
+	title: 'SMEDREC',
+	description: 'Smart Medical Records',
 
-  theme: defaultTheme({
-    logo: 'https://vuejs.press/images/hero.png',
+	theme: defaultTheme({
+		logo: 'https://vuejs.press/images/hero.png',
 
-    navbar: ['/', '/get-started'],
-  }),
+		navbar: ['/', '/get-started', '/development/'],
+	}),
 
-  bundler: viteBundler(),
+	bundler: viteBundler(),
 })

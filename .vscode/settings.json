@@ -103,7 +103,8 @@
 		"typecheck",
 		"unenv",
 		"valueset",
-		"vinxi"
+		"vinxi",
+		"vuepress"
 	],
 	"[typescript]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"

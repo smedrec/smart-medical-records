@@ -38,6 +38,9 @@ coverage
 .vinxi
 routeTree.gen.ts
 
+# VuePress
+.vuepress
+
 Mastra
 .mastra
 

@@ -1,22 +1,34 @@
-# Project Documentation
+---
+lang: en-US
+title: Development Resources
+description: Description of this page
+actions:
+  - text: Get Started
+    link: /get-started.html
+    type: primary
+
+  - text: Introduction
+    link: https://vuejs.press/guide/introduction.html
+    type: secondary
+---
+
+## Development Index
 
 This directory contains key documentation for the Smart Medical Records project. All documentation files follow markdown component (mdc) links for easy navigation.
 
-## Documentation Index
-
-1. [Code Style Guidelines](mdc:project-docs/CodeStyleGuidelines.md)
+1. [Code Style Guidelines](./CodeStyleGuidelines.html)
 
    - TypeScript, React, ESLint, and file structure conventions
 
-2. [Technical Design Specification](mdc:project-docs/TechnicalDesign.md)
+2. [Technical Design Specification](./TechnicalDesign.html)
 
    - Architecture overview and technology stack details
 
-3. [Testing Strategy](mdc:project-docs/TestingStrategy.md)
+3. [Testing Strategy](./TestingStrategy.html)
 
    - Unit, integration, and end-to-end testing approach
 
-4. [Security Compliance](mdc:project-docs/SecurityCompliance.md)
+4. [Security Compliance](./SecurityCompliance.html)
    - Authentication, data protection, and regulatory compliance
 
 ## Accessing Documentation
