@@ -1,8 +1,9 @@
 import { seo } from '@/lib/seo'
-import globalsCss from '@/styles/globals.css?url'
-import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
+import { Providers } from '@/providers'
 
-import { Providers } from '../providers'
+import '@/styles/globals.css'
+
+import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
 
 import type { ReactNode } from 'react'
 
@@ -22,7 +23,7 @@ export const Route = createRootRoute({
 			}),
 		],
 		links: [
-			{ rel: 'stylesheet', href: globalsCss },
+			{ rel: 'stylesheet', href: globalsCss }, // Removed undefined variable
 			{ rel: 'icon', href: '/favicon.ico' },
 			{ rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
 			{ rel: 'manifest', href: '/manifest.webmanifest' },

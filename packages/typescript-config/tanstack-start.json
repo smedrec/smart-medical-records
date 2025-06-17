@@ -8,8 +8,8 @@
 	],
 	"exclude": [
 		"${configDir}/node_modules/",
-		"${configDir}/.output/",
-		"${configDir}/.vinxi/",
+		"${configDir}/.tanstack/",
+		"${configDir}/.turbo/",
 		"${configDir}/eslint.config.ts"
 	],
 	"compilerOptions": {

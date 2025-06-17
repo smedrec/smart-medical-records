@@ -1,6 +1,6 @@
 {
 	"name": "mcp",
-	"version": "0.1.0",
+	"version": "1.4.2",
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
@@ -15,20 +15,20 @@
 	},
 	"dependencies": {
 		"@cerbos/http": "0.22.0",
-		"@modelcontextprotocol/sdk": "^1.12.3",
+		"@modelcontextprotocol/sdk": "1.12.3",
 		"@repo/auth": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
-		"fetch-to-node": "^2.1.0",
+		"fetch-to-node": "2.1.0",
 		"hono": "4.7.11",
-		"workers-tagged-logger": "0.12.2",
-		"zod": "3.25.64"
+		"workers-tagged-logger": "0.13.0",
+		"zod": "3.25.67"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "0.8.38",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/node": "24.0.1",
+		"@types/node": "24.0.3",
 		"vitest": "3.2.3",
 		"wrangler": "4.20.0"
 	}

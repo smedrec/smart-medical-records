@@ -1,7 +1,7 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "web",
-	"main": "./.output/server/index.mjs",
+	"main": "./src/worker.ts",
 	"compatibility_date": "2025-04-28",
 	"compatibility_flags": ["nodejs_compat"],
 	"routes": [],
@@ -17,7 +17,7 @@
 		"enabled": true
 	},
 	"assets": {
-		"directory": "./.output/public/"
+		"directory": "./public/"
 	},
 	"vars": {
 		"ENVIRONMENT": "development", // overridden during deployment
