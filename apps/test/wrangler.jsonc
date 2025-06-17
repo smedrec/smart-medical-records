@@ -1,23 +1,13 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "web",
-	"main": "./.output/server/index.mjs",
+	"name": "test",
+	"main": "src/index.ts",
 	"compatibility_date": "2025-04-28",
 	"compatibility_flags": ["nodejs_compat"],
 	"routes": [],
 	"logpush": true,
-	// Local development
-	"dev": {
-		"local_protocol": "http",
-		"upstream_protocol": "https",
-		"ip": "localhost",
-		"port": 3000
-	},
 	"observability": {
 		"enabled": true
-	},
-	"assets": {
-		"directory": "./public/"
 	},
 	"vars": {
 		"ENVIRONMENT": "development", // overridden during deployment

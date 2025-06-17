@@ -1,4 +1,5 @@
-export type Env = {
-	// add Bindings here
-	FHIR_API_URL: string
+import type { SharedHonoEnv } from '@repo/hono-helpers/src/types'
+
+export type Env = SharedHonoEnv & {
+	// add additional Bindings here
 }

@@ -17,7 +17,7 @@
 	},
 	"dependencies": {
 		"@ai-sdk/groq": "1.2.9",
-		"@cloudflare/vitest-pool-workers": "0.8.38",
+		"@cloudflare/vitest-pool-workers": "0.8.39",
 		"@mastra/agui": "1.0.2",
 		"@mastra/cloudflare-d1": "0.10.2",
 		"@mastra/core": "0.10.5",
@@ -40,7 +40,7 @@
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "24.0.3",
 		"mastra": "0.10.5",
-		"wrangler": "4.20.0"
+		"wrangler": "4.20.1"
 	},
 	"engines": {
 		"node": ">=20.9.0"

@@ -21,7 +21,7 @@
 		"worker-mailer": "1.1.4"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.38",
+		"@cloudflare/vitest-pool-workers": "0.8.39",
 		"@cloudflare/workers-types": "4.20250617.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",

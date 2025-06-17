@@ -1,8 +1,5 @@
 import { seo } from '@/lib/seo'
 import { Providers } from '@/providers'
-
-import '@/styles/globals.css'
-
 import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
 
 import type { ReactNode } from 'react'
@@ -23,7 +20,7 @@ export const Route = createRootRoute({
 			}),
 		],
 		links: [
-			{ rel: 'stylesheet', href: globalsCss }, // Removed undefined variable
+			{ rel: 'stylesheet', href: '/public/styles/globals.css' }, // Direct link to public directory
 			{ rel: 'icon', href: '/favicon.ico' },
 			{ rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
 			{ rel: 'manifest', href: '/manifest.webmanifest' },

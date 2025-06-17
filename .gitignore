@@ -34,8 +34,9 @@ coverage
 .vercel
 
 # Tanstack Start
+.tanstack
 .output
-.vinxi
+.nitro
 routeTree.gen.ts
 
 # VuePress

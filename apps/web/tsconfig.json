@@ -1,6 +1,8 @@
 {
-	"extends": "@repo/typescript-config/tanstack-start.json",
+	"extends": "@repo/typescript-config/workers.json",
 	"compilerOptions": {
+		"jsx": "react-jsx",
+		"strictNullChecks": true,
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"],

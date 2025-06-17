@@ -7,14 +7,15 @@
 	],
 	"type": "module",
 	"scripts": {
-		"build": "vite build",
+		"build": "run-vite-build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"deploy": "pnpm build && wrangler deploy",
-		"dev": "vite dev --port 3000",
+		"dev": "run-vite-dev",
 		"fix:workers-types": "run-wrangler-types",
 		"preview": "run-vite-preview",
-		"test": "run-vitest"
+		"test": "run-vitest",
+		"vite:dev": "vite dev --port 3000"
 	},
 	"dependencies": {
 		"@copilotkit/react-core": "1.9.0",
@@ -25,6 +26,7 @@
 		"@repo/fhir": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
 		"@repo/ui": "workspace:*",
+		"@solarahealth/fhir-r4": "1.2.0",
 		"@tailwindcss/vite": "4.1.10",
 		"@tanstack/react-query": "5.80.7",
 		"@tanstack/react-router": "1.121.21",
@@ -37,7 +39,7 @@
 		"lucide-react": "0.516.0",
 		"next-themes": "1.0.0-beta.0",
 		"nitro-cloudflare-dev": "0.2.2",
-		"openapi-react-query": "^0.5.0",
+		"openapi-react-query": "0.5.0",
 		"postcss": "8.5.6",
 		"react": "19.1.0",
 		"react-dom": "19.1.0",
@@ -48,8 +50,8 @@
 		"workers-tagged-logger": "0.13.0"
 	},
 	"devDependencies": {
-		"@cloudflare/vite-plugin": "1.6.0",
-		"@cloudflare/vitest-pool-workers": "0.8.38",
+		"@cloudflare/vite-plugin": "1.7.0",
+		"@cloudflare/vitest-pool-workers": "0.8.39",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
@@ -63,6 +65,6 @@
 		"vite": "6.3.5",
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.2.3",
-		"wrangler": "4.20.0"
+		"wrangler": "4.20.1"
 	}
 }

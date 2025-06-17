@@ -1,5 +1,3 @@
-import { env } from 'cloudflare:workers'
-
 import type { Env } from '@/context'
 
 export default {
