@@ -1,33 +1,28 @@
 ---
 home: true
 title: Home
-heroImage: https://vuejs.press/images/hero.png
+heroText: Smart Medical Records (SMEDREC)
+tagline: Welcome to the documentation for Smart Medical Records (SMEDREC), a modern, open-source medical records system.
 actions:
   - text: Get Started
     link: /get-started.html
     type: primary
 
-  - text: Introduction
-    link: https://vuejs.press/guide/introduction.html
+  - text: Project Overview
+    link: /project-overview.md
     type: secondary
 
 features:
-  - title: Simplicity First
-    details: Minimal setup with markdown-centered project structure helps you focus on writing.
-  - title: Vue-Powered
-    details: Enjoy the dev experience of Vue, use Vue components in markdown, and develop custom themes with Vue.
-  - title: Performant
-    details: VuePress generates pre-rendered static HTML for each page, and runs as an SPA once a page is loaded.
-  - title: Themes
-    details: Providing a default theme out of the box. You can also choose a community theme or create your own one.
-  - title: Plugins
-    details: Flexible plugin API, allowing plugins to provide lots of plug-and-play features for your site.
-  - title: Bundlers
-    details: Default bundler is Vite, while Webpack is also supported. Choose the one you like!
+  - title: Comprehensive Patient Management
+    details: Store and organize medical records, track treatments, forms, and conclusions effectively.
+  - title: Cloud-Native Architecture
+    details: Built with Cloudflare Workers for a scalable, secure, and edge-native solution.
+  - title: Developer Friendly
+    details: Monorepo structure using Turborepo & pnpm for efficient development, and type-safe code with TypeScript.
+  - title: Customizable Data Collection
+    details: Design your own questionnaires and forms for next-generation analytics and tailored client information.
+  - title: Built-in Security
+    details: Features transit encryption, secure isolated networks, and built-in firewalls for data protection.
 
 footer: MIT Licensed | Copyright © 2025-present José Cordeiro
 ---
-
-This is the content of home page. Check [Home Page Docs][default-theme-home] for more details.
-
-[default-theme-home]: https://vuejs.press/reference/default-theme/frontmatter.html#home-page

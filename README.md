@@ -63,15 +63,17 @@ just deploy
 
 ```
 apps/
-├── api/  # Core API worker
-└── web/  # Web app worker
+├── api/  # Core API worker for handling backend logic and data processing.
+└── web/  # Web app worker for the user interface and client-side interactions.
 
 packages/
-├── hono-helpers/     # Shared Hono middleware
-├── typescript-config/ # Shared TypeScript settings
-├── tools/             # Development utilities
-├── app-client/        # Nodejs client
+├── hono-helpers/     # Shared Hono middleware for common API functionalities.
+├── typescript-config/ # Shared TypeScript settings to ensure code consistency.
+├── tools/             # Development utilities for building and maintaining the project.
+├── app-client/        # Node.js client for interacting with the API.
 ```
+
+For more detailed documentation, please refer to the [docs](./apps/docs/docs/README.md) section.
 
 ## 🧪 Testing
 

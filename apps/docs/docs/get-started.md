@@ -1,46 +1,65 @@
 # Get Started
 
-This is a normal page, which contains VuePress basics.
+This guide will walk you through setting up your development environment for SMEDREC and running the project locally.
 
-## Pages
+## Prerequisites
 
-You can add markdown files in your vuepress directory, every markdown file will be converted to a page in your site.
+Before you begin, ensure you have the following installed:
+- [Node.js](https://nodejs.org/) (LTS version recommended)
+- [pnpm](https://pnpm.io/installation)
+- [Just](https://github.com/casey/just#installation) (a command runner)
 
-See [routing][] for more details.
+## Installation
 
-## Content
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git # Replace with actual repo URL
+    cd YOUR_REPOSITORY_NAME
+    ```
+    *Note: If you are a contributor, fork the repository first and clone your fork.*
 
-Every markdown file [will be rendered to HTML, then converted to a Vue SFC][content].
+2.  **Install dependencies:**
+    The project uses `pnpm` for package management and `Just` for running scripts. Install all dependencies using the following command:
+    ```bash
+    just install
+    ```
+    This command will install dependencies for all apps and packages in the monorepo.
 
-VuePress support basic markdown syntax and [some extensions][synatex-extensions], you can also [use Vue features][vue-feature] in it.
+## Running the Development Servers
 
-## Configuration
+To start the development servers for all applications (e.g., API, web frontend), run:
+```bash
+just dev
+```
+This will typically start the API server and the web application, allowing you to interact with SMEDREC in your local environment. Check your terminal output for the specific ports they are running on (e.g., `http://localhost:3000` for the web app, `http://localhost:8787` for the API).
 
-VuePress use a `.vuepress/config.js`(or .ts) file as [site configuration][config], you can use it to config your site.
+## Building for Production
 
-For [client side configuration][client-config], you can create `.vuepress/client.js`(or .ts).
+To build all applications for production, use:
+```bash
+just build
+```
 
-Meanwhile, you can also add configuration per page with [frontmatter][].
+## Running Tests
 
-## Layouts and customization
+To run all tests across the project, use:
+```bash
+just test
+```
+You can also run tests for a specific application or package. For example, to test the API:
+```bash
+pnpm turbo -F api test
+```
 
-Here are common configuration controlling layout of `@vuepress/theme-default`:
+## Deployment
 
-- [navbar][]
-- [sidebar][]
+To deploy the applications (typically to Cloudflare Workers), use:
+```bash
+just deploy
+```
+Ensure you have your Cloudflare account and Wrangler configured correctly. Refer to the Cloudflare Wrangler documentation for more details if needed.
 
-Check [default theme docs][default-theme] for full reference.
+## Next Steps
 
-You can [add extra style][style] with `.vuepress/styles/index.scss` file.
-
-[routing]: https://vuejs.press/guide/page.html#routing
-[content]: https://vuejs.press/guide/page.html#content
-[synatex-extensions]: https://vuejs.press/guide/markdown.html#syntax-extensions
-[vue-feature]: https://vuejs.press/guide/markdown.html#using-vue-in-markdown
-[config]: https://vuejs.press/guide/configuration.html#client-config-file
-[client-config]: https://vuejs.press/guide/configuration.html#client-config-file
-[frontmatter]: https://vuejs.press/guide/page.html#frontmatter
-[navbar]: https://vuejs.press/reference/default-theme/config.html#navbar
-[sidebar]: https://vuejs.press/reference/default-theme/config.html#sidebar
-[default-theme]: https://vuejs.press/reference/default-theme/
-[style]: https://vuejs.press/reference/default-theme/styles.html#style-file
+- Explore the [Project Structure](./project-structure.md)
+- Learn about our [Development Workflow](./development/workflow.md)
