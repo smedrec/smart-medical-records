@@ -10,7 +10,7 @@ declare const Response: typeof globalThis.Response
 const myMiddleware: Middleware = {
 	async onRequest({ request, options }) {
 		// set "x-api-key" header
-		request.headers.set('x-api-key', 'bar')
+		//equest.headers.set('x-api-key', 'bar')
 		return request
 	},
 	async onResponse({ request, response, options }) {

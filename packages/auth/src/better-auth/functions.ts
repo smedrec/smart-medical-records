@@ -123,6 +123,21 @@ export async function setupOrganizationResource(name: string, userId: string): P
 	}
 }
 
+function getLastWord(str: string): string {
+	const words = str.split(' ')
+	return words[words.length - 1]
+}
+
+function removeLastWord(str: string): string[] {
+	const words = str.split(' ')
+	if (words.length > 1) {
+		words.pop()
+		return words
+	} else {
+		return []
+	}
+}
+
 export async function setupPersonResource(name: string, email: string): Promise<string> {
 	try {
 		const resource: Person = {
@@ -135,8 +150,8 @@ export async function setupPersonResource(name: string, email: string): Promise<
 			name: [
 				{
 					use: 'official',
-					family: name.split(' ')[0],
-					given: [name.split(' ')[1]],
+					family: getLastWord(name),
+					given: removeLastWord(name),
 				},
 			],
 			telecom: [

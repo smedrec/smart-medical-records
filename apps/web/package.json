@@ -10,7 +10,7 @@
 		"build": "run-vite-build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
-		"deploy": "pnpm build && wrangler deploy",
+		"deploy": "run-wrangler-deploy",
 		"dev": "run-vite-dev",
 		"fix:workers-types": "run-wrangler-types",
 		"preview": "run-vite-preview",
