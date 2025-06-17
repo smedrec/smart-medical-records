@@ -105,12 +105,15 @@ export async function setupOrganizationResource(name: string, userId: string): P
 			data, // only present if 2XX response
 			error, // only present if 4XX or 5XX response
 		} = await fhir.POST('/Organization', {
-			body: resource,
+			body: resource as any,
 			headers: {
 				'Content-Type': 'application/fhir+json',
 			},
 		})
 
+		if (!data?.id) {
+			throw new Error('Failed to create organization resource: missing id')
+		}
 		return data.id
 	} catch (error) {
 		console.error('Error setting up organization resource:', error)
@@ -148,12 +151,15 @@ export async function setupPersonResource(name: string, email: string): Promise<
 			data, // only present if 2XX response
 			error, // only present if 4XX or 5XX response
 		} = await fhir.POST('/Person', {
-			body: resource,
+			body: resource as any,
 			headers: {
 				'Content-Type': 'application/fhir+json',
 			},
 		})
 
+		if (!data?.id) {
+			throw new Error('Failed to create person resource: missing id')
+		}
 		return data?.id
 	} catch (error) {
 		console.error('Error setting up fhir person resource:', error)

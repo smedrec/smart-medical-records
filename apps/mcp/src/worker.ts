@@ -2,14 +2,16 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js'
 import { toFetchResponse, toReqRes } from 'fetch-to-node'
 import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 import { useWorkersLogger } from 'workers-tagged-logger'
 
 import { useNotFound, useOnError } from '@repo/hono-helpers'
 
+import { zEnv } from './lib/env'
 import { init } from './lib/hono/init'
 import { server } from './server'
 
-import type { Context, HonoEnv } from './lib/hono/context'
+import type { Context, Env, HonoEnv } from './lib/hono/context'
 
 // Map to store transports by session ID
 const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {}
@@ -33,6 +35,18 @@ const app = new Hono<HonoEnv>()
 	})
 
 app.use('*', init())
+// cors
+app.use('*', (c, next) => {
+	const corsMiddleware = cors({
+		origin: c.env.ALLOWED_ORIGINS == '*' ? '*' : c.env.ALLOWED_ORIGINS.split(','), // replace with your origin
+		allowHeaders: ['Content-Type', 'Authorization'],
+		allowMethods: ['POST', 'GET', 'PATCH', 'OPTIONS', 'DELETE'],
+		exposeHeaders: ['Content-Length'],
+		maxAge: 600,
+		credentials: true,
+	})
+	return corsMiddleware(c, next)
+})
 // Handle POST requests for client-to-server communication
 app.post('/sse', async (c) => {
 	const { req, res } = toReqRes(c.req.raw)
@@ -114,4 +128,27 @@ app.get('/sse', handleSessionRequest)
 // Handle DELETE requests for session termination
 app.delete('/sse', handleSessionRequest)
 
-export default app
+const handler = {
+	fetch: (req: Request, env: Env, executionCtx: ExecutionContext) => {
+		const parsedEnv = zEnv.safeParse(env)
+		if (!parsedEnv.success) {
+			/**new ConsoleLogger({
+				requestId: '',
+				environment: env.ENVIRONMENT,
+				application: 'mcp',
+			}).fatal(`BAD_ENVIRONMENT: ${parsedEnv.error.message}`) */
+			return Response.json(
+				{
+					code: 'BAD_ENVIRONMENT',
+					message: 'Some environment variables are missing or are invalid',
+					errors: parsedEnv.error,
+				},
+				{ status: 500 }
+			)
+		}
+		return app.fetch(req, parsedEnv.data, executionCtx)
+	},
+} satisfies ExportedHandler<Env>
+
+// biome-ignore lint/style/noDefaultExport: Wrangler needs that
+export default handler

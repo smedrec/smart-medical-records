@@ -1,4 +1,3 @@
-// Practitioner routes
 import { zEnv } from '@/lib/env'
 import { ConsoleLogger } from '@/lib/logs'
 import { cors } from 'hono/cors'
