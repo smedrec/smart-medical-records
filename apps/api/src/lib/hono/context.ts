@@ -1,5 +1,5 @@
 import type { cerbos } from '@/lib/cerbos'
-import type { auth, Session } from '@repo/auth'
+import type { auth, Session, User } from '@repo/auth'
 import type { db } from '@repo/db'
 import type { fhir } from '@repo/fhir'
 import type { HonoApp } from '@repo/hono-helpers'
@@ -10,6 +10,8 @@ export type Env = SharedHonoEnv & {
 	// add additional Bindings here
 	ALLOWED_ORIGINS: string
 }
+
+type SessionWithRole<T> = T & { activeOrganizationRole: string | null }
 
 export type ServiceContext = {
 	auth: typeof auth
@@ -28,7 +30,10 @@ export type Variables = SharedHonoVariables & {
 	isolateCreatedAt: number
 	requestId: string
 	requestStartedAt: number
-	session: Session | null
+	session: {
+		session: SessionWithRole<Session>
+		user: User
+	} | null
 	services: ServiceContext
 	/**
 	 * IP address or region information

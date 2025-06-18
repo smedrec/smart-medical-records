@@ -8,6 +8,9 @@ import { Toaster } from 'sonner'
 
 import type { ReactNode } from 'react'
 
+// import { env } from 'cloudflare:workers'
+// Use process.env or another config mechanism for environment variables
+
 // Create a client
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -38,6 +41,12 @@ export function Providers({ children }: { children: ReactNode }) {
 						avatar={true}
 						organization={{
 							logo: true,
+						}}
+						apiKey={{
+							metadata: {
+								environment: process.env.ENVIRONMENT!,
+								version: 'v1',
+							},
 						}}
 						navigate={(href) => router.navigate({ href })}
 						replace={(href) => router.navigate({ href, replace: true })}

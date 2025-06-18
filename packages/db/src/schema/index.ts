@@ -35,6 +35,7 @@ export const session = sqliteTable('session', {
 		.references(() => user.id, { onDelete: 'cascade' }),
 	impersonatedBy: text('impersonated_by'),
 	activeOrganizationId: text('active_organization_id'),
+	activeOrganizationRole: text('active_organization_role'),
 })
 
 export const account = sqliteTable('account', {
@@ -150,6 +151,7 @@ export const activeOrganization = sqliteTable(
 		organizationId: text('organization_id')
 			.notNull()
 			.references(() => organization.id, { onDelete: 'cascade' }),
+		role: text('role').notNull(),
 	},
 	(table) => {
 		return [

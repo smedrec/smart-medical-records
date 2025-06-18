@@ -1,7 +1,6 @@
-import { authClient } from '@/lib/auth-client'
 import { GitHubIcon, OrganizationSwitcher } from '@daveyplate/better-auth-ui'
 import { Link, useLocation } from '@tanstack/react-router'
-import { Calendar, Home, Inbox, MessagesSquare, Search, Settings } from 'lucide-react'
+import { Calendar, Home, Inbox, Search, Settings } from 'lucide-react'
 
 import {
 	Sidebar,
@@ -48,27 +47,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const pathname = useLocation({
 		select: (location) => location.pathname,
 	})
-	const { data: activeOrganization } = authClient.useActiveOrganization()
+
 	return (
 		<Sidebar collapsible="none" {...props}>
 			<SidebarHeader>
 				<OrganizationSwitcher />
-				<SidebarMenu>
-					<SidebarMenuItem>
-						<SidebarMenuButton size="lg" asChild>
-							<a href="https://assistant-ui.com" target="_blank">
-								<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-									<MessagesSquare className="size-4" />
-								</div>
-								<div className="flex flex-col gap-0.5 leading-none">
-									<span className="font-semibold">
-										{activeOrganization ? <p>{activeOrganization.name}</p> : null}
-									</span>
-								</div>
-							</a>
-						</SidebarMenuButton>
-					</SidebarMenuItem>
-				</SidebarMenu>
 			</SidebarHeader>
 			<SidebarContent>
 				<SidebarGroup>

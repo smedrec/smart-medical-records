@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { admin, apiKey, openAPI, organization } from 'better-auth/plugins'
+import { admin, apiKey, customSession, openAPI, organization } from 'better-auth/plugins'
 import { env } from 'cloudflare:workers'
 import { eq } from 'drizzle-orm'
 
@@ -135,13 +135,25 @@ export const auth = betterAuth({
 			create: {
 				before: async (session) => {
 					const organizationId = await getActiveOrganization(session.userId)
+					if (!organizationId) {
+						return {
+							data: {
+								...session,
+							},
+						}
+					}
+					const role = await getActiveMemberRole(session.userId, organizationId)
 					return {
 						data: {
 							...session,
 							activeOrganizationId: organizationId,
+							activeOrganizationRole: role,
 						},
 					}
 				},
+			},
+			update: {
+				after: async (session) => {},
 			},
 		},
 		user: {
@@ -255,7 +267,7 @@ export const auth = betterAuth({
 				maxRequests: 10, // 10 requests per day
 			},
 			enableMetadata: true,
-			permissions: {
+			/**permissions: {
 				defaultPermissions: async (userId, ctx) => {
 					let permissions: Permissions = {} // Initialize with empty object
 					// Fetch user role or other data to determine permissions
@@ -275,15 +287,20 @@ export const auth = betterAuth({
 
 					return permissions
 				},
-			},
+			},*/
 		}),
 		/**customSession(async ({ user, session }) => {
+			let role = null
 			const organizationId = await getActiveOrganization(session.userId)
+			if (organizationId) {
+				role = await getActiveMemberRole(session.userId, organizationId)
+			}
 			return {
 				user: user,
 				session: {
 					...session,
 					activeOrganizationId: organizationId,
+					activeOrganizationRole: role,
 				},
 			}
 		}),*/
@@ -304,7 +321,8 @@ export const auth = betterAuth({
 	],
 })
 //}
-export type Session = typeof auth.$Infer.Session
+export type Session = typeof auth.$Infer.Session.session
+export type User = typeof auth.$Infer.Session.user
 
 /**export type Session = {
 	session: {

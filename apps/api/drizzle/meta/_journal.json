@@ -1,27 +1,34 @@
 {
-	"version": "7",
-	"dialect": "sqlite",
-	"entries": [
-		{
-			"idx": 0,
-			"version": "6",
-			"when": 1750088908144,
-			"tag": "0000_regular_kingpin",
-			"breakpoints": true
-		},
-		{
-			"idx": 1,
-			"version": "6",
-			"when": 1750111872554,
-			"tag": "0001_kind_goblin_queen",
-			"breakpoints": true
-		},
-		{
-			"idx": 2,
-			"version": "6",
-			"when": 1750114517271,
-			"tag": "0002_colorful_wallow",
-			"breakpoints": true
-		}
-	]
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1750088908144,
+      "tag": "0000_regular_kingpin",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1750111872554,
+      "tag": "0001_kind_goblin_queen",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1750114517271,
+      "tag": "0002_colorful_wallow",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1750259572562,
+      "tag": "0003_uneven_marvel_zombies",
+      "breakpoints": true
+    }
+  ]
 }
