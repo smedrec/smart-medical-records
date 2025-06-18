@@ -35,6 +35,9 @@ export function Providers({ children }: { children: ReactNode }) {
 				>
 					<AuthUIProviderTanstack
 						authClient={authClient}
+						organization={{
+							logo: true,
+						}}
 						navigate={(href) => router.navigate({ href })}
 						replace={(href) => router.navigate({ href, replace: true })}
 						Link={({ href, ...props }) => <Link to={href} {...props} />}

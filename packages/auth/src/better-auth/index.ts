@@ -75,6 +75,7 @@ export const auth = betterAuth({
 		sendOnSignUp: true,
 		autoSignInAfterVerification: true,
 		sendVerificationEmail: async ({ user, url }) => {
+			// TO DO: redirect to APP
 			await email.send({
 				to: { name: user.name, email: user.email },
 				subject: 'Verify your email address',
@@ -207,7 +208,7 @@ export const auth = betterAuth({
 				allowRemovingAllTeams: false, // Optional: prevent removing the last team
 			},
 			async sendInvitationEmail(data) {
-				const inviteLink = `${env.APP_PUBLIC_URL}/accept-invitation/${data.id}`
+				const inviteLink = `${env.APP_PUBLIC_URL}/auth/accept-invitation?invitationId=${data.id}`
 				await email.send({
 					to: { name: data.email, email: data.email },
 					subject: `Invite to join to the ${data.organization.name} team!`,

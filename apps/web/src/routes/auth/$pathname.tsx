@@ -1,4 +1,4 @@
-import { AuthCard } from '@daveyplate/better-auth-ui'
+import { AcceptInvitationCard, AuthCard } from '@daveyplate/better-auth-ui'
 import { createFileRoute } from '@tanstack/react-router'
 
 import { cn } from '@repo/ui/lib/utils'
@@ -12,7 +12,11 @@ function RouteComponent() {
 
 	return (
 		<main className="flex grow flex-col items-center justify-center gap-4 p-4">
-			<AuthCard pathname={pathname} />
+			{pathname === 'accept-invitation' ? (
+				<AcceptInvitationCard />
+			) : (
+				<AuthCard pathname={pathname} redirectTo="/dashboard" />
+			)}
 
 			<p
 				className={cn(
