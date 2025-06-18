@@ -52,7 +52,7 @@ export const registerPatientFindOne = (app: App) =>
 			headers: c.req.raw.headers,
 			body: {
 				permissions: {
-					patient: ['read'], // This must match the structure in your access control
+					Patient: ['read'], // This must match the structure in your access control
 				},
 			},
 		})

@@ -1,10 +1,6 @@
 import { ApiError, openApiErrorResponses } from '@/lib/errors'
 import { BaseResourceResponseSchema, UserSelectResponseSchema } from '@/lib/utils/responses'
-import { idParamsSchema } from '@/shared/types'
 import { createRoute, z } from '@hono/zod-openapi'
-import { and, eq } from 'drizzle-orm'
-
-import { practitioner, user } from '@repo/db'
 
 import type { App } from '@/lib/hono'
 

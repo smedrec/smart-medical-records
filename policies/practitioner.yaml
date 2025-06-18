@@ -3,7 +3,7 @@
 
 apiVersion: api.cerbos.dev/v1
 resourcePolicy:
-  resource: practitioner
+  resource: Practitioner
   version: default
   rules:
     - actions:

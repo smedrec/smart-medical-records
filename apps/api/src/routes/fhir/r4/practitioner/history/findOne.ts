@@ -1,6 +1,6 @@
 import { ApiError, openApiErrorResponses } from '@/lib/errors'
 import { getOffset, paginatedData, PaginatedResponse, parseQueryInt } from '@/lib/utils/paginated'
-import { BaseResourceResponseSchema, UserSelectResponseSchema } from '@/lib/utils/responses'
+import { BaseResourceResponseSchema } from '@/lib/utils/responses'
 import { idParamsSchema, querySchema } from '@/shared/types'
 import { createRoute, z } from '@hono/zod-openapi'
 import { and, desc, eq } from 'drizzle-orm'

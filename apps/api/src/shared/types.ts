@@ -12,6 +12,23 @@ export const idParamsSchema = z.object({
 	}),
 })
 
+export const ResourceParamsSchema = z.object({
+	resourceType: z.string().openapi({
+		param: {
+			name: 'resourceType',
+			in: 'path',
+		},
+		example: 'Practitioner',
+	}),
+	id: z.string().openapi({
+		param: {
+			name: 'id',
+			in: 'path',
+		},
+		example: '1234',
+	}),
+})
+
 export const querySchema = z.object({
 	limit: z.string().optional().openapi({
 		description: 'The maximum number of results to return',

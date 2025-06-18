@@ -47,7 +47,7 @@ export const registerCodeSystemGetAll = (app: App) =>
 	app.openapi(route, async (c) => {
 		const { fhir, db } = c.get('services')
 		const session = c.get('session')
-		let canReadPractitioner: boolean = false
+		const canReadPractitioner: boolean = false
 
 		if (!session)
 			throw new ApiError({

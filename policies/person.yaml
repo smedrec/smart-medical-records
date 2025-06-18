@@ -3,19 +3,13 @@
 
 apiVersion: api.cerbos.dev/v1
 resourcePolicy:
-  resource: Patient
+  resource: Person
   version: default
   rules:
     - actions:
-        - read
-        - update
         - create
-      effect: EFFECT_ALLOW
-      roles:
-        - admin
-        - practitioner
-        - owner
-    - actions:
+        - update
+        - read
         - delete
       effect: EFFECT_ALLOW
       roles:
@@ -23,10 +17,14 @@ resourcePolicy:
         - owner
     - actions:
         - read
+      effect: EFFECT_ALLOW
+      roles:
+        - practitioner
+    - actions:
         - update
       effect: EFFECT_ALLOW
       roles:
-        - patient
+        - practitioner
       condition:
         match:
           expr: request.resource.id == request.principal.id

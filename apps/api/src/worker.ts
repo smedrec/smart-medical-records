@@ -1,5 +1,7 @@
 import { zEnv } from '@/lib/env'
 import { ConsoleLogger } from '@/lib/logs'
+import { registerResourceReadHistory } from '@/routes/fhir/r4/history'
+import { registerResourceRead } from '@/routes/fhir/r4/read'
 import { registerUploadAvatar } from '@/routes/user/uploadAvatar'
 import { cors } from 'hono/cors'
 
@@ -37,7 +39,7 @@ app.use('*', (c, next) => {
 })
 
 /**
- * Mounts Better Auth on all GET and POST requests under `/api/*`.
+ * Mounts Better Auth on all GET and POST requests under `/auth/*`.
  * Ensure its `basePath` aligns with this route.
  */
 app.on(['GET', 'POST'], '/auth/*', (c) => {
@@ -48,6 +50,9 @@ registerLiveness(app)
 registerWhoiam(app)
 
 registerUploadAvatar(app)
+// FHIR resources routes
+registerResourceRead(app)
+registerResourceReadHistory(app)
 // ai routes
 registerAiChat(app)
 registerAiStore(app)
