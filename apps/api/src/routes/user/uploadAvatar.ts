@@ -76,18 +76,28 @@ export const registerUploadAvatar = (app: App) =>
 			const ext = fullName.split('.').pop()
 			const path = `images/${key}.${ext}`
 			try {
-				const image = await c.env.IMAGES_DEV.put(path, fileBuffer)
+				if (!c.env.IMAGES_DEV) {
+					throw new ApiError({
+						code: 'INTERNAL_SERVER_ERROR',
+						message: 'IMAGES_DEV R2 binding is not configured. Please check the environment configuration.',
+					});
+				}
+				const image = await c.env.IMAGES_DEV.put(path, fileBuffer);
 				return c.json(
 					{
 						key: `${image?.key}`,
 					},
 					201
-				)
+				);
 			} catch (error) {
+				// Handle the ApiError thrown above or other errors
+				if (error instanceof ApiError) {
+					throw error;
+				}
 				throw new ApiError({
 					code: 'INTERNAL_SERVER_ERROR',
 					message: `An error occurred while uploading the avatar. ${error instanceof Error ? error.message : 'Unknown error'}`,
-				})
+				});
 			}
 		} else {
 			throw new ApiError({
