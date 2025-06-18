@@ -6,10 +6,10 @@ The `apps/api` application is the backbone of the SMEDREC system, providing the 
 
 - **Purpose**: Serves as the central API for all client applications (web, mobile, etc.) and external integrations.
 - **Technology Stack**:
-    - Runtime: Cloudflare Workers
-    - Framework: Hono
-    - ORM: Drizzle ORM
-    - Language: TypeScript
+  - Runtime: Cloudflare Workers
+  - Framework: Hono
+  - ORM: Drizzle ORM
+  - Language: TypeScript
 
 ## Key Features
 
@@ -25,6 +25,7 @@ The `apps/api` application is the backbone of the SMEDREC system, providing the 
 ## Major Endpoints
 
 (To be detailed: List key API endpoints, their purpose, request/response formats. For example:)
+
 - `POST /auth/login` - User authentication.
 - `GET /patients` - Retrieve a list of patients.
 - `POST /patients` - Create a new patient.
