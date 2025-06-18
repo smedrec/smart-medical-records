@@ -35,6 +35,7 @@ export function Providers({ children }: { children: ReactNode }) {
 				>
 					<AuthUIProviderTanstack
 						authClient={authClient}
+						avatar={true}
 						organization={{
 							logo: true,
 						}}

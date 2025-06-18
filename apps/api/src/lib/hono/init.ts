@@ -40,12 +40,12 @@ export function init(): MiddlewareHandler<HonoEnv> {
 		}
 		c.set('isolateId', isolateId)
 		c.set('isolateCreatedAt', isolateCreatedAt)
-		const requestId = 'req_' + createId()
+		const requestId = createId()
 		c.set('requestId', requestId)
 
 		c.set('requestStartedAt', Date.now())
 
-		c.res.headers.set('smedrec-Request-Id', requestId)
+		c.res.headers.set('x-smedrec-requestId', requestId)
 
 		const logger = new ConsoleLogger({
 			requestId,

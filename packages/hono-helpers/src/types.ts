@@ -47,11 +47,15 @@ export type SharedHonoEnv = {
 	FROM_NAME: string
 	FROM_EMAIL: string
 	/**
-	 * The ...
+	 * The postgres database url
 	 */
 	DATABASE_URL: string
+
+	CLOUDFLARE_R2_IMAGES_URL: string
+
 	DB: D1Database
 	KV: KVNamespace
+	IMAGES_DEV: R2Bucket
 }
 /** Global Hono variables */
 export type SharedHonoVariables = {

@@ -28,6 +28,13 @@
 		"SENTRY_RELEASE": "unknown" // overridden during deployment
 	},
 
+	"r2_buckets": [
+		{
+			"binding": "IMAGES_DEV",
+			"bucket_name": "smedrec-images-dev"
+		}
+	],
+
 	"d1_databases": [
 		{
 			"binding": "DB",

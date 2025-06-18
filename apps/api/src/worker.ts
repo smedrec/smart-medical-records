@@ -1,5 +1,6 @@
 import { zEnv } from '@/lib/env'
 import { ConsoleLogger } from '@/lib/logs'
+import { registerUploadAvatar } from '@/routes/user/uploadAvatar'
 import { cors } from 'hono/cors'
 
 import { auth } from '@repo/auth'
@@ -46,6 +47,7 @@ app.on(['GET', 'POST'], '/auth/*', (c) => {
 registerLiveness(app)
 registerWhoiam(app)
 
+registerUploadAvatar(app)
 // ai routes
 registerAiChat(app)
 registerAiStore(app)
