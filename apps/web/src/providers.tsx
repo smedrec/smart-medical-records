@@ -41,6 +41,10 @@ export function Providers({ children }: { children: ReactNode }) {
 						avatar={true}
 						organization={{
 							logo: true,
+							customRoles: [
+								{ role: 'practitioner', label: 'Practitioner' },
+								{ role: 'patient', label: 'Patient' },
+							],
 						}}
 						apiKey={{
 							metadata: {

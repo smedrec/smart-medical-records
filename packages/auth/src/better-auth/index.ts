@@ -14,22 +14,23 @@ import {
 	setupPersonResource,
 } from './functions'
 import { betterAuthOptions } from './options'
-import {
+/**import {
 	ac as appAc,
 	admin as appAdmin,
 	owner,
 	patient,
 	practitioner,
 	user,
-} from './permissions/admin'
+} from './permissions/admin'*/
 
-/**import {
+import {
 	member,
 	ac as orgAc,
 	admin as orgAdmin,
 	owner,
+	patient,
 	practitioner,
-} from './permissions/organization'*/
+} from './permissions/organization'
 
 type Permissions = {
 	[resourceType: string]: string[]
@@ -134,26 +135,25 @@ export const auth = betterAuth({
 		session: {
 			create: {
 				before: async (session) => {
-					const organizationId = await getActiveOrganization(session.userId)
-					if (!organizationId) {
+					const activeOrganization = await getActiveOrganization(session.userId)
+					if (!activeOrganization) {
 						return {
 							data: {
 								...session,
+								activeOrganizationId: null,
+								activeOrganizationRole: null,
 							},
 						}
 					}
-					const role = await getActiveMemberRole(session.userId, organizationId)
+
 					return {
 						data: {
 							...session,
-							activeOrganizationId: organizationId,
-							activeOrganizationRole: role,
+							activeOrganizationId: activeOrganization.organizationId,
+							activeOrganizationRole: activeOrganization.role,
 						},
 					}
 				},
-			},
-			update: {
-				after: async (session) => {},
 			},
 		},
 		user: {
@@ -197,23 +197,24 @@ export const auth = betterAuth({
 	plugins: [
 		admin({
 			defaultRole: 'user',
-			ac: appAc,
+			/**ac: appAc,
 			roles: {
 				admin: appAdmin,
 				owner,
 				user,
 				patient,
 				practitioner,
-			},
+			},*/
 		}),
 		organization({
-			/**ac: orgAc,
+			ac: orgAc,
 			roles: {
 				owner,
 				admin: orgAdmin,
 				member,
 				practitioner,
-			},*/
+				patient,
+			},
 			teams: {
 				enabled: true,
 				maximumTeams: 10, // Optional: limit teams per organization

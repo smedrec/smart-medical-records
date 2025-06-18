@@ -9,13 +9,20 @@ import { fhir } from '@repo/fhir'
 
 import type { Organization, Person } from '@solarahealth/fhir-r4'
 
-export async function getActiveOrganization(userId: string): Promise<string | null> {
+export async function getActiveOrganization(userId: string): Promise<
+	| {
+			role: string
+			userId: string
+			organizationId: string
+	  }
+	| undefined
+> {
 	try {
 		const result = await db.query.activeOrganization.findFirst({
 			where: eq(activeOrganization.userId, userId),
 		})
 		if (result) {
-			return result.organizationId
+			return result
 		} else {
 			const result = await db.query.member.findFirst({
 				where: eq(member.userId, userId),
@@ -23,21 +30,21 @@ export async function getActiveOrganization(userId: string): Promise<string | nu
 			if (result) {
 				await db
 					.insert(activeOrganization)
-					.values({ userId: userId, organizationId: result.organizationId })
+					.values({ userId: userId, organizationId: result.organizationId, role: result.role })
 					.onConflictDoUpdate({
 						target: activeOrganization.userId,
-						set: { organizationId: result.organizationId },
+						set: { organizationId: result.organizationId, role: result.role },
 					})
 			}
 
-			return result?.organizationId || null
+			return result
 			//throw new HTTPException(404, { message: 'The user is not member.' });
 			/**throw new APIError('BAD_REQUEST', {
         message: 'User must agree to the TOS before signing up.',
       });*/
 		}
 	} catch (error) {
-		return null
+		return undefined
 		//throw new HTTPException(500, { message: 'A machine readable error.' });
 	}
 }
