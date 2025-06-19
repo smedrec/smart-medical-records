@@ -1,4 +1,4 @@
-import { OrganizationMembersCard } from '@daveyplate/better-auth-ui'
+import { ChartAreaInteractive } from '@/components/dashboard/home/chart-area-interactive'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard/')({
@@ -14,7 +14,7 @@ function RouteComponent() {
 				<div className="bg-muted/50 aspect-video rounded-xl" />
 			</div>
 			<div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min">
-				<OrganizationMembersCard />
+				<ChartAreaInteractive />
 			</div>
 		</div>
 	)

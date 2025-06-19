@@ -37,7 +37,7 @@ const items = [
 	{
 		title: 'Home',
 		tooltip: 'Home',
-		url: '#',
+		url: '/dashboard',
 		icon: Home,
 	},
 	{
@@ -56,14 +56,14 @@ const items = [
 	},
 	{
 		title: 'Calendar',
-		tooltip: 'Calendar',
-		url: '#',
+		tooltip: 'Organization calendar',
+		url: '/dashboard/calendar',
 		icon: Calendar,
 	},
 	{
 		title: 'Search',
-		tooltip: 'Search',
-		url: '#',
+		tooltip: 'Search resources',
+		url: '/dashboard/search',
 		icon: Search,
 	},
 	{
@@ -105,6 +105,7 @@ export function NavMain() {
 	const pathname = useLocation({
 		select: (location) => location.pathname,
 	})
+	// FIXME - const isActive
 	return (
 		<SidebarGroup>
 			<SidebarGroupLabel>Main Menu</SidebarGroupLabel>

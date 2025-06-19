@@ -11,6 +11,7 @@ declare const Response: typeof globalThis.Response
 
 const myMiddleware: Middleware = {
 	async onRequest({ request, options }) {
+		// TODO add authorization verification before call the api
 		/**const session = await auth.api.getSession({
 			query: {
 				disableCookieCache: true,
