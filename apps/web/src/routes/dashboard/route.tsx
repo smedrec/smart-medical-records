@@ -1,7 +1,7 @@
 import { AppSidebar } from '@/components/app-sidebar'
 import { ModeToggle } from '@/components/mode-toggle'
 import { authClient } from '@/lib/auth-client'
-import { UserButton } from '@daveyplate/better-auth-ui'
+import { RedirectToSignIn, UserButton } from '@daveyplate/better-auth-ui'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 
 import {
@@ -24,33 +24,36 @@ function DashboardLayout() {
 	const isMobile = useIsMobile()
 	const { data: activeOrganization } = authClient.useActiveOrganization()
 	return (
-		<SidebarProvider defaultOpen={true}>
-			<AppSidebar />
-			<SidebarInset>
-				<header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-					<div className="flex flex-1 items-center gap-2 px-3">
-						<SidebarTrigger />
-						<Separator orientation="vertical" className="mr-2 h-4" />
-						<Breadcrumb>
-							<BreadcrumbList>
-								<BreadcrumbItem className="hidden md:block">
-									<BreadcrumbLink href="#">{activeOrganization?.name}</BreadcrumbLink>
-								</BreadcrumbItem>
-								<BreadcrumbSeparator className="hidden md:block" />
-								<BreadcrumbItem className="hidden md:block">
-									<BreadcrumbPage>Home</BreadcrumbPage>
-								</BreadcrumbItem>
-							</BreadcrumbList>
-						</Breadcrumb>
-					</div>
+		<>
+			<RedirectToSignIn />
+			<SidebarProvider defaultOpen={true}>
+				<AppSidebar />
+				<SidebarInset>
+					<header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+						<div className="flex flex-1 items-center gap-2 px-3">
+							<SidebarTrigger />
+							<Separator orientation="vertical" className="mr-2 h-4" />
+							<Breadcrumb>
+								<BreadcrumbList>
+									<BreadcrumbItem className="hidden md:block">
+										<BreadcrumbLink href="#">{activeOrganization?.name}</BreadcrumbLink>
+									</BreadcrumbItem>
+									<BreadcrumbSeparator className="hidden md:block" />
+									<BreadcrumbItem className="hidden md:block">
+										<BreadcrumbPage>Home</BreadcrumbPage>
+									</BreadcrumbItem>
+								</BreadcrumbList>
+							</Breadcrumb>
+						</div>
 
-					<div className="ml-auto gap-2 px-3">
-						<ModeToggle />
-						<UserButton size={isMobile ? 'icon' : 'sm'} />
-					</div>
-				</header>
-				<Outlet />
-			</SidebarInset>
-		</SidebarProvider>
+						<div className="ml-auto gap-2 px-3">
+							<ModeToggle />
+							<UserButton size={isMobile ? 'icon' : 'sm'} />
+						</div>
+					</header>
+					<Outlet />
+				</SidebarInset>
+			</SidebarProvider>
+		</>
 	)
 }

@@ -18,6 +18,27 @@ function RouteComponent() {
 				<AuthCard pathname={pathname} redirectTo="/dashboard" />
 			)}
 
+			<p className="text-muted-foreground text-xs">
+				By signing in, you agree to our{' '}
+				<a
+					className="text-warning underline"
+					href="https://better-auth.com"
+					target="_blank"
+					rel="noreferrer"
+				>
+					Terms of Use
+				</a>{' '}
+				and{' '}
+				<a
+					className="text-warning underline"
+					href="https://better-auth.com"
+					target="_blank"
+					rel="noreferrer"
+				>
+					Privacy Policy
+				</a>
+				.
+			</p>
 			<p
 				className={cn(
 					['callback', 'settings', 'sign-out'].includes(pathname) && 'hidden',

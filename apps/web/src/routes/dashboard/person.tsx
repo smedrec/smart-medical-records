@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 
+import { Skeleton } from '@repo/ui/components/ui/skeleton'
+
 import type { Practitioner } from '@solarahealth/fhir-r4'
 
 export const Route = createFileRoute('/dashboard/person')({
@@ -18,7 +20,16 @@ function RouteComponent() {
 		queryKey: ['practitioners'],
 		queryFn: () => getPersons({ data: { resourceType: 'Person' } }),
 	})
-	if (isLoading || !data) return 'Loading...'
+	if (isLoading || !data)
+		return (
+			<div className="flex items-center space-x-4">
+				<div className="space-y-2">
+					<Skeleton className="h-4 w-[250px]" />
+					<Skeleton className="h-4 w-[250px]" />
+					<Skeleton className="h-4 w-[250px]" />
+				</div>
+			</div>
+		)
 	if (error)
 		return `An error occured: ${(error as { message?: string }).message ?? 'Unknown error'}`
 
