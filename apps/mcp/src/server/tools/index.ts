@@ -1,5 +1,4 @@
-import dotenv from 'dotenv'
-import fetch from 'node-fetch'
+import { env } from 'cloudflare:workers'
 import { z } from 'zod'
 
 import { server } from '../index.js'
@@ -7,11 +6,7 @@ import { readMemory, writeMemory } from '../resources/index.js'
 
 import type { MemoryData } from '../resources/index.js'
 
-// Load environment variables from .env file (if it exists)
-// Primarily needed for OPENROUTER_API_KEY
-dotenv.config()
-
-const openRouterApiKey = process.env.OPENROUTER_API_KEY
+const openRouterApiKey = env.OPENROUTER_API_KEY
 
 // Tool 1: Read from Memory
 function registerReadFromMemoryTool() {

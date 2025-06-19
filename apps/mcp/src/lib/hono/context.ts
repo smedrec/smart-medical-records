@@ -7,6 +7,7 @@ import type { cerbos } from '../cerbos'
 export type Env = SharedHonoEnv & {
 	// add additional Bindings here
 	ALLOWED_ORIGINS: string
+	OPENROUTER_API_KEY: string
 }
 
 export type ServiceContext = {
