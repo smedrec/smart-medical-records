@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 
-import { Skeleton } from '@repo/ui/components/ui/skeleton'
+import { Spinner } from '@repo/ui/components/ui/spinner'
 
 import type { Patient } from '@solarahealth/fhir-r4'
 
@@ -22,11 +22,9 @@ function RouteComponent() {
 	})
 	if (isLoading || !data)
 		return (
-			<div className="flex items-center space-x-4">
-				<div className="space-y-2">
-					<Skeleton className="h-4 w-[250px]" />
-					<Skeleton className="h-4 w-[250px]" />
-					<Skeleton className="h-4 w-[250px]" />
+			<div className="min-h-[100vh] flex flex-col gap-10 items-center justify-center pb-4">
+				<div className="flex flex-col gap-5 w-[60%]">
+					<Spinner size={50} />
 				</div>
 			</div>
 		)

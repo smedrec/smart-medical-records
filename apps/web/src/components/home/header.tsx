@@ -18,7 +18,7 @@ import {
 } from '@repo/ui/components/ui/sheet'
 import { useIsMobile } from '@repo/ui/hooks/use-mobile'
 
-import { ModeToggle } from './mode-toggle'
+import { ModeToggle } from '../mode-toggle'
 
 interface RouteProps {
 	href: string
@@ -29,10 +29,6 @@ const routeList: RouteProps[] = [
 	{
 		href: '#features',
 		label: 'Features',
-	},
-	{
-		href: '#testimonials',
-		label: 'Testimonials',
 	},
 	{
 		href: '#pricing',

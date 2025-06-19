@@ -1,9 +1,9 @@
-import { Header } from '@/components/header'
 import { About } from '@/components/home/About'
 import { Cta } from '@/components/home/Cta'
 import { FAQ } from '@/components/home/FAQ'
 import { Features } from '@/components/home/Features'
 import { Footer } from '@/components/home/Footer'
+import { Header } from '@/components/home/header'
 import { Hero } from '@/components/home/Hero'
 import { HowItWorks } from '@/components/home/HowItWorks'
 import { Newsletter } from '@/components/home/Newsletter'
@@ -25,19 +25,12 @@ function App() {
 	return (
 		<div className="flex grow flex-col text-center">
 			<Header />
+			<Hero />
 			<main className="flex grow flex-col items-center justify-center text-[calc(10px+2vmin)]">
-				<Hero />
-				<Sponsors />
-				<About />
-				<HowItWorks />
 				<Features />
-				<Services />
-				<Cta />
-				<Testimonials />
-				<Team />
 				<Pricing />
-				<Newsletter />
 				<FAQ />
+				<Newsletter />
 				<Footer />
 				<ScrollToTop />
 			</main>

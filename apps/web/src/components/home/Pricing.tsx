@@ -1,133 +1,61 @@
-import { Check } from 'lucide-react'
-
-import { Badge } from '@repo/ui/components/ui/badge'
-import { Button } from '@repo/ui/components/ui/button'
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from '@repo/ui/components/ui/card'
-
-enum PopularPlanType {
-	NO = 0,
-	YES = 1,
-}
-
-interface PricingProps {
-	title: string
-	popular: PopularPlanType
-	price: number
-	description: string
-	buttonText: string
-	benefitList: string[]
-}
-
-const pricingList: PricingProps[] = [
-	{
-		title: 'Free',
-		popular: 0,
-		price: 0,
-		description: 'Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.',
-		buttonText: 'Get Started',
-		benefitList: [
-			'1 Team member',
-			'2 GB Storage',
-			'Upto 4 pages',
-			'Community support',
-			'lorem ipsum dolor',
-		],
-	},
-	{
-		title: 'Premium',
-		popular: 1,
-		price: 5,
-		description: 'Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.',
-		buttonText: 'Start Free Trial',
-		benefitList: [
-			'4 Team member',
-			'4 GB Storage',
-			'Upto 6 pages',
-			'Priority support',
-			'lorem ipsum dolor',
-		],
-	},
-	{
-		title: 'Enterprise',
-		popular: 0,
-		price: 40,
-		description: 'Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.',
-		buttonText: 'Contact US',
-		benefitList: [
-			'10 Team member',
-			'8 GB Storage',
-			'Upto 10 pages',
-			'Priority support',
-			'lorem ipsum dolor',
-		],
-	},
-]
+import { PricingCard } from '@/components/home/gradient-pricing'
 
 export const Pricing = () => {
 	return (
-		<section id="pricing" className="container py-24 sm:py-32">
-			<h2 className="text-3xl md:text-4xl font-bold text-center">
-				Get
-				<span className="bg-gradient-to-b from-primary/60 to-primary text-transparent bg-clip-text">
-					{' '}
-					Unlimited{' '}
-				</span>
-				Access
-			</h2>
-			<h3 className="text-xl text-center text-muted-foreground pt-4 pb-8">
-				Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias reiciendis.
-			</h3>
-			<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-				{pricingList.map((pricing: PricingProps) => (
-					<Card
-						key={pricing.title}
-						className={
-							pricing.popular === PopularPlanType.YES
-								? 'drop-shadow-xl shadow-black/10 dark:shadow-white/10'
-								: ''
-						}
-					>
-						<CardHeader>
-							<CardTitle className="flex item-center justify-between">
-								{pricing.title}
-								{pricing.popular === PopularPlanType.YES ? (
-									<Badge variant="secondary" className="text-sm text-primary">
-										Most popular
-									</Badge>
-								) : null}
-							</CardTitle>
-							<div>
-								<span className="text-3xl font-bold">${pricing.price}</span>
-								<span className="text-muted-foreground"> /month</span>
-							</div>
-
-							<CardDescription>{pricing.description}</CardDescription>
-						</CardHeader>
-
-						<CardContent>
-							<Button className="w-full">{pricing.buttonText}</Button>
-						</CardContent>
-
-						<hr className="w-4/5 m-auto mb-4" />
-
-						<CardFooter className="flex">
-							<div className="space-y-4">
-								{pricing.benefitList.map((benefit: string) => (
-									<span key={benefit} className="flex">
-										<Check className="text-green-500" /> <h3 className="ml-2">{benefit}</h3>
-									</span>
-								))}
-							</div>
-						</CardFooter>
-					</Card>
-				))}
+		<section id="pricing" className="relative overflow-hidden bg-background text-foreground">
+			<div className="relative z-10 mx-auto max-w-5xl px-4 py-20 md:px-8">
+				<div className="mb-12 space-y-3">
+					<h2 className="text-center text-3xl font-semibold leading-tight sm:text-4xl sm:leading-tight md:text-5xl md:leading-tight">
+						Pricing
+					</h2>
+					<p className="text-center text-base text-muted-foreground md:text-lg">
+						Use it for free for yourself, upgrade when your team needs advanced control.
+					</p>
+				</div>
+				<div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+					<PricingCard
+						tier="Free"
+						price="$0/mo"
+						bestFor="Best for 1-5 users"
+						CTA="Get started free"
+						benefits={[
+							{ text: 'One workspace', checked: true },
+							{ text: 'Email support', checked: true },
+							{ text: '1 day data retention', checked: false },
+							{ text: 'Custom roles', checked: false },
+							{ text: 'Priority support', checked: false },
+							{ text: 'SSO', checked: false },
+						]}
+					/>
+					<PricingCard
+						tier="Pro"
+						price="$79/mo"
+						bestFor="Best for 5-50 users"
+						CTA="14-day free trial"
+						benefits={[
+							{ text: 'Five workspaces', checked: true },
+							{ text: 'Email support', checked: true },
+							{ text: '7 day data retention', checked: true },
+							{ text: 'Custom roles', checked: true },
+							{ text: 'Priority support', checked: false },
+							{ text: 'SSO', checked: false },
+						]}
+					/>
+					<PricingCard
+						tier="Enterprise"
+						price="Contact us"
+						bestFor="Best for 50+ users"
+						CTA="Contact us"
+						benefits={[
+							{ text: 'Unlimited workspaces', checked: true },
+							{ text: 'Email support', checked: true },
+							{ text: '30 day data retention', checked: true },
+							{ text: 'Custom roles', checked: true },
+							{ text: 'Priority support', checked: true },
+							{ text: 'SSO', checked: true },
+						]}
+					/>
+				</div>
 			</div>
 		</section>
 	)

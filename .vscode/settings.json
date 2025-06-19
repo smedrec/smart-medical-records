@@ -136,6 +136,7 @@
 		},
 		"FIXME": {
 			"icon": "beaker",
+			"type": "line",
 			"iconColour": "red",
 			"foreground": "white",
 			"background": "red"

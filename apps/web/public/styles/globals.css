@@ -110,6 +110,8 @@
 	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
 	--color-sidebar-border: var(--sidebar-border);
 	--color-sidebar-ring: var(--sidebar-ring);
+	--animate-accordion-down: accordion-down 0.2s ease-out;
+	--animate-accordion-up: accordion-up 0.2s ease-out;
 }
 
 @layer base {
@@ -119,4 +121,150 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+}
+
+/* Animation for the pulsing effect */
+@keyframes pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.5;
+	}
+}
+
+/* Animation for the ping effect */
+@keyframes ping {
+	75%,
+	100% {
+		transform: scale(2);
+		opacity: 0;
+	}
+}
+
+@keyframes accordion-down {
+	from {
+		height: 0;
+	}
+	to {
+		height: var(--radix-accordion-content-height);
+	}
+}
+
+@keyframes accordion-up {
+	from {
+		height: var(--radix-accordion-content-height);
+	}
+	to {
+		height: 0;
+	}
+}
+
+/* Custom animations for the orbital timeline */
+.animate-pulse {
+	animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-ping {
+	animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Transitions */
+.transition-all {
+	transition-property: all;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.duration-300 {
+	transition-duration: 300ms;
+}
+
+.duration-700 {
+	transition-duration: 700ms;
+}
+
+.duration-1000 {
+	transition-duration: 1000ms;
+}
+
+/* Backdrop blur */
+.backdrop-blur-lg {
+	backdrop-filter: blur(16px);
+}
+
+/* Custom gradients */
+.bg-gradient-orbital {
+	background: linear-gradient(to bottom right, #6366f1, #3b82f6, #14b8a6);
+}
+
+/* Z-index utilities */
+.z-10 {
+	z-index: 10;
+}
+
+.z-50 {
+	z-index: 50;
+}
+
+/* Custom shadows */
+.shadow-orbital {
+	box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+/* Custom transforms */
+.scale-125 {
+	transform: scale(1.25);
+}
+
+.scale-150 {
+	transform: scale(1.5);
+}
+
+/* Custom opacity values */
+.opacity-70 {
+	opacity: 0.7;
+}
+
+.opacity-50 {
+	opacity: 0.5;
+}
+
+/* Custom border opacity */
+.border-white\/10 {
+	border-color: rgba(255, 255, 255, 0.1);
+}
+
+.border-white\/20 {
+	border-color: rgba(255, 255, 255, 0.2);
+}
+
+.border-white\/30 {
+	border-color: rgba(255, 255, 255, 0.3);
+}
+
+.border-white\/40 {
+	border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Custom background opacity */
+.bg-black\/90 {
+	background-color: rgba(0, 0, 0, 0.9);
+}
+
+.bg-white\/50 {
+	background-color: rgba(255, 255, 255, 0.5);
+}
+
+.bg-white\/80 {
+	background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Custom text opacity */
+.text-white\/70 {
+	color: rgba(255, 255, 255, 0.7);
+}
+
+.text-white\/80 {
+	color: rgba(255, 255, 255, 0.8);
 }

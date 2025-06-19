@@ -1,84 +1,55 @@
-import { Badge } from '@repo/ui/components/ui/badge'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@repo/ui/components/ui/card'
+import { BentoGrid } from '@/components/home/bento-grid'
+import { CheckCircle, Clock, Globe, Star, TrendingUp, Video } from 'lucide-react'
 
-import image from './assets/growth.png'
-import image4 from './assets/looking-ahead.png'
-import image3 from './assets/reflecting.png'
+import type { BentoItem } from '@/components/home/bento-grid'
 
-interface FeatureProps {
-	title: string
-	description: string
-	image: string
-}
-
-const features: FeatureProps[] = [
+const itemsSample: BentoItem[] = [
 	{
-		title: 'Responsive Design',
-		description:
-			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi nesciunt est nostrum omnis ab sapiente.',
-		image: image4,
+		title: 'Analytics Dashboard',
+		meta: 'v2.4.1',
+		description: 'Real-time metrics with AI-powered insights and predictive analytics',
+		icon: <TrendingUp className="w-4 h-4 text-blue-500" />,
+		status: 'Live',
+		tags: ['Statistics', 'Reports', 'AI'],
+		colSpan: 2,
+		hasPersistentHover: true,
 	},
 	{
-		title: 'Intuitive user interface',
-		description:
-			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi nesciunt est nostrum omnis ab sapiente.',
-		image: image3,
+		title: 'Task Manager',
+		meta: '84 completed',
+		description: 'Automated workflow management with priority scheduling',
+		icon: <CheckCircle className="w-4 h-4 text-emerald-500" />,
+		status: 'Updated',
+		tags: ['Productivity', 'Automation'],
 	},
 	{
-		title: 'AI-Powered insights',
-		description:
-			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi nesciunt est nostrum omnis ab sapiente.',
-		image: image,
+		title: 'Media Library',
+		meta: '12GB used',
+		description: 'Cloud storage with intelligent content processing',
+		icon: <Video className="w-4 h-4 text-purple-500" />,
+		tags: ['Storage', 'CDN'],
+		colSpan: 2,
 	},
-]
-
-const featureList: string[] = [
-	'Dark/Light theme',
-	'Reviews',
-	'Features',
-	'Pricing',
-	'Contact form',
-	'Our team',
-	'Responsive design',
-	'Newsletter',
-	'Minimalist',
+	{
+		title: 'Global Network',
+		meta: '6 regions',
+		description: 'Multi-region deployment with edge computing',
+		icon: <Globe className="w-4 h-4 text-sky-500" />,
+		status: 'Beta',
+		tags: ['Infrastructure', 'Edge'],
+	},
 ]
 
 export const Features = () => {
 	return (
-		<section id="features" className="container py-24 sm:py-32 space-y-8">
+		<section id="features" className="container py-24 sm:py-32">
 			<h2 className="text-3xl lg:text-4xl font-bold md:text-center">
 				Many{' '}
 				<span className="bg-gradient-to-b from-primary/60 to-primary text-transparent bg-clip-text">
 					Great Features
 				</span>
 			</h2>
-
-			<div className="flex flex-wrap md:justify-center gap-4">
-				{featureList.map((feature: string) => (
-					<div key={feature}>
-						<Badge variant="secondary" className="text-sm">
-							{feature}
-						</Badge>
-					</div>
-				))}
-			</div>
-
-			<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-				{features.map(({ title, description, image }: FeatureProps) => (
-					<Card key={title}>
-						<CardHeader>
-							<CardTitle>{title}</CardTitle>
-						</CardHeader>
-
-						<CardContent>{description}</CardContent>
-
-						<CardFooter>
-							<img src={image} alt="About feature" className="w-[200px] lg:w-[300px] mx-auto" />
-						</CardFooter>
-					</Card>
-				))}
-			</div>
+			<BentoGrid items={itemsSample} />
 		</section>
 	)
 }
