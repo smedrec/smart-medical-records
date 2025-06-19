@@ -1,3 +1,18 @@
+import { Header } from '@/components/header'
+import { About } from '@/components/home/About'
+import { Cta } from '@/components/home/Cta'
+import { FAQ } from '@/components/home/FAQ'
+import { Features } from '@/components/home/Features'
+import { Footer } from '@/components/home/Footer'
+import { Hero } from '@/components/home/Hero'
+import { HowItWorks } from '@/components/home/HowItWorks'
+import { Newsletter } from '@/components/home/Newsletter'
+import { Pricing } from '@/components/home/Pricing'
+import { ScrollToTop } from '@/components/home/ScrollToTop'
+import { Services } from '@/components/home/Services'
+import { Sponsors } from '@/components/home/Sponsors'
+import { Team } from '@/components/home/Team'
+import { Testimonials } from '@/components/home/Testimonials'
 import { createFileRoute } from '@tanstack/react-router'
 
 import logo from '../logo.svg'
@@ -9,35 +24,23 @@ export const Route = createFileRoute('/')({
 function App() {
 	return (
 		<div className="flex grow flex-col text-center">
-			<header className="flex grow flex-col items-center justify-center text-[calc(10px+2vmin)]">
-				<img
-					src={logo}
-					className="pointer-events-none h-[40vmin] animate-[spin_20s_linear_infinite]"
-					alt="logo"
-				/>
-
-				<p>
-					Edit <code>app/routes/index.tsx</code> and save to reload.
-				</p>
-
-				<a
-					className="text-[#61dafb] hover:underline"
-					href="https://reactjs.org"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					Learn React
-				</a>
-
-				<a
-					className="text-[#61dafb] hover:underline"
-					href="https://tanstack.com"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					Learn TanStack
-				</a>
-			</header>
+			<Header />
+			<main className="flex grow flex-col items-center justify-center text-[calc(10px+2vmin)]">
+				<Hero />
+				<Sponsors />
+				<About />
+				<HowItWorks />
+				<Features />
+				<Services />
+				<Cta />
+				<Testimonials />
+				<Team />
+				<Pricing />
+				<Newsletter />
+				<FAQ />
+				<Footer />
+				<ScrollToTop />
+			</main>
 		</div>
 	)
 }
