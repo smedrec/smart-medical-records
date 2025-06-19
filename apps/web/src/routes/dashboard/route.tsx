@@ -48,7 +48,7 @@ function DashboardLayout() {
 
 						<div className="ml-auto gap-2 px-3">
 							<ModeToggle />
-							<UserButton size={isMobile ? 'icon' : 'sm'} />
+							<UserButton size={isMobile ? 'icon' : 'sm'} className="gap-2 px-3" />
 						</div>
 					</header>
 					<Outlet />

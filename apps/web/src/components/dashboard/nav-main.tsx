@@ -1,7 +1,19 @@
 'use client'
 
 import { Link, useLocation } from '@tanstack/react-router'
-import { Calendar, ChevronRight, Home, Inbox, Search, Settings } from 'lucide-react'
+import {
+	Activity,
+	Calendar,
+	ChevronRight,
+	CircleUser,
+	Fingerprint,
+	Home,
+	Hospital,
+	Key,
+	Search,
+	Settings,
+	Stethoscope,
+} from 'lucide-react'
 
 import {
 	Collapsible,
@@ -26,43 +38,65 @@ import type { LucideIcon } from 'lucide-react'
 const items = [
 	{
 		title: 'Home',
+		tooltip: 'Home',
 		url: '#',
 		icon: Home,
 	},
 	{
-		title: 'Inbox',
-		url: '#',
-		icon: Inbox,
+		title: 'Practitioners',
+		tooltip:
+			'All individuals who are engaged in the healthcare process and healthcare-related services as part of their formal responsibilities.',
+		url: '/dashboard/practitioners',
+		icon: Stethoscope,
+	},
+	{
+		title: 'Patients',
+		tooltip:
+			'Demographics and other administrative information about an individual or animal receiving care or other health-related services.',
+		url: '/dashboard/patients',
+		icon: Activity,
 	},
 	{
 		title: 'Calendar',
+		tooltip: 'Calendar',
 		url: '#',
 		icon: Calendar,
 	},
 	{
 		title: 'Search',
+		tooltip: 'Search',
 		url: '#',
 		icon: Search,
 	},
 	{
 		title: 'Settings',
+		tooltip: 'Settings',
 		url: '#',
 		icon: Settings,
 		items: [
 			{
 				title: 'Account',
+				tooltip: 'Account',
+				icon: CircleUser,
 				url: '/dashboard/settings/account',
 			},
 			{
 				title: 'Security',
+				tooltip: 'Security',
+				icon: Fingerprint,
 				url: '/dashboard/settings/security',
 			},
 			{
 				title: 'Api Keys',
+				tooltip: 'Api Keys',
+				icon: Key,
 				url: '/dashboard/settings/api-keys',
 			},
 			{
 				title: 'Organization',
+				tooltip:
+					'A formally or informally recognized grouping of people or organizations formed for the purpose of achieving some form of collective action.',
+				icon: Hospital,
 				url: '/dashboard/settings/organization',
 			},
 		],
@@ -92,9 +126,9 @@ export function NavMain() {
 										defaultOpen={isActive}
 										className="group/collapsible"
 									>
-										<SidebarMenuItem>
+										<SidebarMenuItem key={`${item.title}-${index}`}>
 											<CollapsibleTrigger asChild>
-												<SidebarMenuButton tooltip={item.title}>
+												<SidebarMenuButton tooltip={item.tooltip}>
 													{item.icon && <item.icon />}
 													<span>{item.title}</span>
 													<ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -102,14 +136,15 @@ export function NavMain() {
 											</CollapsibleTrigger>
 											<CollapsibleContent>
 												<SidebarMenuSub>
-													{item.items?.map((subItem) => (
-														<SidebarMenuSubItem key={subItem.title}>
+													{item.items?.map((subItem, subIndex) => (
+														<SidebarMenuSubItem key={`${subItem.title}-${subIndex}`}>
 															<SidebarMenuSubButton asChild>
 																<Link
 																	className={`group/icon pr-4 ${isActive ? 'text-primary bg-muted/50' : 'text-[#939393]'}`}
 																	to={subItem.url}
 																>
-																	<span>{subItem.title}</span>
+																	<subItem.icon />
+																	<span className="text-[0.8rem] font-normal">{subItem.title}</span>
 																</Link>
 															</SidebarMenuSubButton>
 														</SidebarMenuSubItem>
@@ -120,7 +155,7 @@ export function NavMain() {
 									</Collapsible>
 								) : (
 									<SidebarMenuItem key={`${item.title}-${index}`}>
-										<SidebarMenuButton tooltip={item.title} asChild>
+										<SidebarMenuButton tooltip={item.tooltip} asChild>
 											<Link
 												className={`group/icon pr-4 ${isActive ? 'text-primary bg-muted/50' : 'text-[#939393]'}`}
 												to={item.url}
