@@ -63,6 +63,8 @@ export const registerWhoiam = (app: App) =>
 				emailVerified: session.user.emailVerified,
 				createdAt: session.user.createdAt.toISOString(),
 				updatedAt: session.user.updatedAt.toISOString(),
+				activeOrganizationId: session.session.activeOrganizationId,
+				activeOrganizationRole: session.session.activeOrganizationRole,
 			},
 			200
 		)

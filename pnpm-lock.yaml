@@ -669,6 +669,9 @@ importers:
 
   packages/fhir:
     dependencies:
+      '@repo/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@repo/hono-helpers':
         specifier: workspace:*
         version: link:../hono-helpers

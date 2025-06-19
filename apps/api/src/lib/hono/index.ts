@@ -11,6 +11,7 @@ import type { Context as GenericContext } from 'hono'
 import type { HonoEnv } from './context'
 
 //import { sentry } from '@hono/sentry';
+type SessionWithRole<T> = T & { activeOrganizationRole: string | null }
 
 export function newApp() {
 	const app = new OpenAPIHono<HonoEnv>({
@@ -47,9 +48,11 @@ export function newApp() {
 			return next()
 		}
 
+		// FIXME - solve this session type structure
 		if (c.req.header('x-api-key')) {
 			const organization = await getActiveOrganization(session.session?.userId)
-			session.session.activeOrganizationId = organization
+			session.session.activeOrganizationId = organization?.organizationId
+			session.session.activeOrganizationRole = organization?.role ?? null
 		}
 
 		c.set('session', session)

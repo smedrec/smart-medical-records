@@ -32,8 +32,6 @@ import {
 	SidebarMenuSubItem,
 } from '@repo/ui/components/ui/sidebar'
 
-import type { LucideIcon } from 'lucide-react'
-
 // Menu items.
 const items = [
 	{
@@ -109,6 +107,7 @@ export function NavMain() {
 	})
 	return (
 		<SidebarGroup>
+			<SidebarGroupLabel>Main Menu</SidebarGroupLabel>
 			<SidebarGroupContent>
 				<SidebarMenu>
 					{items.map((item, index) => {

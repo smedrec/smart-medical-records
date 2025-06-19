@@ -110,5 +110,20 @@
 	],
 	"[typescript]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"todo-tree.customHighlight": {
+		"TODO": {
+			"icon": "check",
+			"type": "line",
+			"iconColour": "yellow",
+			"foreground": "red",
+			"background": "yellow"
+		},
+		"FIXME": {
+			"icon": "beaker",
+			"iconColour": "red",
+			"foreground": "white",
+			"background": "red"
+		}
 	}
 }

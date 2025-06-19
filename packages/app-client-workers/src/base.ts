@@ -32,10 +32,7 @@ export class BaseResource {
 					headers: {
 						...headers,
 						...options.headers,
-						// TODO: Bring this back once we figure out what we/users need to do to make this work with cross-origin requests
-						// 'x-smedrec-client-type': 'js',
 					},
-					credentials: 'include',
 					body:
 						options.body instanceof FormData
 							? options.body
