@@ -1,6 +1,6 @@
 {
 	"name": "mcp",
-	"version": "0.1.0",
+	"version": "1.4.2",
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
@@ -16,13 +16,10 @@
 	"dependencies": {
 		"@cerbos/http": "0.22.0",
 		"@modelcontextprotocol/sdk": "1.12.3",
-		"@repo/audit": "workspace:*",
 		"@repo/auth": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
 		"fetch-to-node": "2.1.0",
-		"fhirclient": "2.6.0",
 		"hono": "4.7.11",
-		"openapi-fetch": "0.14.0",
 		"workers-tagged-logger": "0.13.0",
 		"zod": "3.25.67"
 	},

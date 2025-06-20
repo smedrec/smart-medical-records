@@ -1,0 +1,126 @@
+diff --git a/lib/Client.js b/lib/Client.js
+index ba874df52e218b6953ab44fbfcb246599ddcdc41..696de7e4dcd0dcda28f9fefed467fd21c6793791 100644
+--- a/lib/Client.js
++++ b/lib/Client.js
+@@ -13,7 +13,11 @@ const {
+   Response
+ } = typeof FHIRCLIENT_PURE !== "undefined" ? window : require("cross-fetch");
+ // $lab:coverage:on$
+-const debug = lib_1.debug.extend("client");
++
++// Patch: Get the debug creator function, handling potential default export
++const __debug_creator = (require("debug").default || require("debug"));
++const debug = __debug_creator(lib_1.debug.namespace + ":client"); // Recreate with extended namespace
++
+ /**
+  * Adds patient context to requestOptions object to be used with [[Client.request]]
+  * @param requestOptions Can be a string URL (relative to the serviceUrl), or an
+@@ -335,7 +339,8 @@ class Client extends FhirClient_1.default {
+    */
+   async request(requestOptions, fhirOptions = {}, _resolvedRefs = {}) {
+     var _a;
+-    const debugRequest = lib_1.debug.extend("client:request");
++    // Patch: Use __debug_creator for namespacing
++    const debugRequest = __debug_creator(lib_1.debug.namespace + ":client:request");
+     (0, lib_1.assert)(requestOptions, "request requires an url or request options as argument");
+     // url -----------------------------------------------------------------
+     let url;
+@@ -518,7 +523,8 @@ class Client extends FhirClient_1.default {
+    */
+   refresh(requestOptions = {}) {
+     var _a, _b;
+-    const debugRefresh = lib_1.debug.extend("client:refresh");
++    // Patch: Use __debug_creator for namespacing
++    const debugRefresh = __debug_creator(lib_1.debug.namespace + ":client:refresh");
+     debugRefresh("Attempting to refresh with refresh_token...");
+     const refreshToken = (_b = (_a = this.state) === null || _a === void 0 ? void 0 : _a.tokenResponse) === null || _b === void 0 ? void 0 : _b.refresh_token;
+     (0, lib_1.assert)(refreshToken, "Unable to refresh. No refresh_token found.");
+diff --git a/lib/FhirClient.js b/lib/FhirClient.js
+index d50ea5685be3772d25e9f9d01377c7565615c7a1..37d74c2d41cbcf1b2f28405e01b803eb2059c465 100644
+--- a/lib/FhirClient.js
++++ b/lib/FhirClient.js
+@@ -74,7 +74,11 @@ Object.defineProperty(exports, "__esModule", {
+ });
+ const settings_1 = require("./settings");
+ const lib_1 = require("./lib");
+-const debug = lib_1.debug.extend("FhirClient");
++
++// Patch: Get the debug creator function, handling potential default export
++const __debug_creator = (require("debug").default || require("debug"));
++const debug = __debug_creator(lib_1.debug.namespace + ":FhirClient"); // Recreate with extended namespace
++
+ /**
+  * This is a basic FHIR client for making basic FHIR API calls
+  */
+@@ -219,7 +223,14 @@ class FhirClient {
+     // 2. Remove duplicates
+     paths = paths.reduce((prev, cur) => {
+       if (prev.includes(cur)) {
+-        debug("Duplicated reference path \"%s\"", cur);
++        // Patch: Check if debug (the instance) is callable before calling it
++        if (typeof debug === 'function') {
++          debug("Duplicated reference path \"%s\"", cur);
++        } else {
++          // console.log might be an alternative if debug instance is not a function directly
++          // Or, ensure debug instances from the shim are directly callable.
++          // For now, this condition handles if 'debug' is not a function.
++        }
+       } else {
+         prev.push(cur);
+       }
+diff --git a/lib/lib.js b/lib/lib.js
+index 39db4878dfc827b205c508a0b3c1b27f4ec163a9..167ebaaf8d059a9a1a1f7bee772ff9b8e7bd51c3 100644
+--- a/lib/lib.js
++++ b/lib/lib.js
+@@ -18,14 +18,19 @@ Object.defineProperty(exports, "__esModule", {
+ exports.assertJsonPatch = exports.assert = exports.getTargetWindow = exports.getPatientParam = exports.byCodes = exports.byCode = exports.getAccessTokenExpiration = exports.getTimeInFuture = exports.jwtDecode = exports.randomString = exports.absolute = exports.makeArray = exports.setPath = exports.getPath = exports.fetchConformanceStatement = exports.getAndCache = exports.request = exports.loweCaseKeys = exports.responseToJSON = exports.checkResponse = exports.units = exports.debug = void 0;
+ const HttpError_1 = require("./HttpError");
+ const settings_1 = require("./settings");
+-const debug = require("debug");
++
++// Patched section for debug import
++let debugImport = require("debug");
++const debugCreatorFunc = debugImport.default || debugImport; // Handle ESM default export if shim is ESM
++// End Patched section
++
+ // $lab:coverage:off$
+ // @ts-ignore
+ const {
+   fetch
+ } = typeof FHIRCLIENT_PURE !== "undefined" ? window : require("cross-fetch");
+ // $lab:coverage:on$
+-const _debug = debug("FHIR");
++const _debug = debugCreatorFunc("FHIR"); // Use the potentially unwrapped creator function
+ exports.debug = _debug;
+ /**
+  * The cache for the `getAndCache` function
+diff --git a/lib/smart.js b/lib/smart.js
+index 5e5ee773183bb87456afba2e1e10dcbbcb4c998d..dfd54b82d8b347d683448259ef53e519fcef54ac 100644
+--- a/lib/smart.js
++++ b/lib/smart.js
+@@ -14,7 +14,11 @@ Object.defineProperty(exports, "KEY", {
+     return settings_1.SMART_KEY;
+   }
+ });
+-const debug = lib_1.debug.extend("oauth2");
++
++// Patch: Get the debug creator function, handling potential default export
++const __debug_creator = (require("debug").default || require("debug"));
++const debug = __debug_creator(lib_1.debug.namespace + ":oauth2"); // Recreate with extended namespace
++
+ function isBrowser() {
+   return typeof window === "object";
+ }
+diff --git a/package.json b/package.json
+index 6eb8f1ab90c0248257663b25cced0d053648aaf2..851e3a9753c5622f8b4b9ff73c94f6e506d708fd 100644
+--- a/package.json
++++ b/package.json
+@@ -15,7 +15,7 @@
+   ],
+   "license": "Apache-2.0",
+   "main": "lib/entry/node.js",
+-  "browser": "lib/entry/browser.js",
++  "browser": "lib/entry/node.js",
+   "modules.root": "lib",
+   "types": "index.d.ts",
+   "dependencies": {

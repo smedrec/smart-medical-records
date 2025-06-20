@@ -1,15 +1,15 @@
-export type AuditEventStatus = 'attempt' | 'success' | 'failure'
+export type AuditEventStatus = 'attempt' | 'success' | 'failure';
 
 export interface AuditLogEvent {
-	timestamp: string
-	principalId?: string
-	action: string // e.g., fhirPatientRead, cerbosAuthCheck
-	targetResourceType?: string // e.g., Patient, Practitioner, CerbosResource
-	targetResourceId?: string
-	status: AuditEventStatus
-	outcomeDescription?: string // e.g., "Successfully read Patient resource", "Authorization denied by Cerbos", "FHIR API error"
-	// Additional context specific to the event
-	[key: string]: any
+  timestamp: string;
+  principalId?: string;
+  action: string; // e.g., fhirPatientRead, cerbosAuthCheck
+  targetResourceType?: string; // e.g., Patient, Practitioner, CerbosResource
+  targetResourceId?: string;
+  status: AuditEventStatus;
+  outcomeDescription?: string; // e.g., "Successfully read Patient resource", "Authorization denied by Cerbos", "FHIR API error"
+  // Additional context specific to the event
+  [key: string]: any;
 }
 
 /**
@@ -17,17 +17,15 @@ export interface AuditLogEvent {
  * In a real application, this would likely send logs to a dedicated audit service or secure log storage.
  * @param eventDetails Partial details of the event. Timestamp is added automatically.
  */
-export function logAuditEvent(
-	eventDetails: Omit<AuditLogEvent, 'timestamp'> & { action: string; status: AuditEventStatus }
-): void {
-	const event: AuditLogEvent = {
-		timestamp: new Date().toISOString(),
-		...eventDetails,
-	}
+export function logAuditEvent(eventDetails: Omit<AuditLogEvent, 'timestamp'>): void {
+  const event: AuditLogEvent = {
+    timestamp: new Date().toISOString(),
+    ...eventDetails,
+  };
 
-	// For now, logging as JSON string to console.
-	// In a worker environment, console.log/info often go to the Cloudflare dashboard or configured log destinations.
-	console.info(JSON.stringify(event))
+  // For now, logging as JSON string to console.
+  // In a worker environment, console.log/info often go to the Cloudflare dashboard or configured log destinations.
+  console.info(JSON.stringify(event));
 }
 
 // Example Usage (for illustration, not part of the actual file logic):

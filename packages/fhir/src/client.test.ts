@@ -52,11 +52,6 @@ const mockCrypto = {
 		}),
 	},
 }
-
-// Vitest doesn't automatically provide `crypto` in globalThis for Node env unless configured.
-// For Cloudflare Workers, `crypto` is global.
-// Let's ensure our mock is used if global.crypto is not fully there or for predictability.
-if (!globalThis.crypto || !globalThis.crypto.subtle) {
 	// @ts-ignore
 	globalThis.crypto = mockCrypto
 } else {
@@ -321,3 +316,4 @@ describe('FHIR Client - Unit Tests', () => {
 		})
 	})
 })
+
