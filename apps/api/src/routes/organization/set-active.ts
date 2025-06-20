@@ -52,17 +52,21 @@ export const registerOrganizationSetActive = (app: App) =>
 		try {
 			const result = await db
 				.insert(activeOrganization)
-				.values({ userId: session.session.userId, organizationId: id })
+				.values({
+					userId: session.session.userId,
+					organizationId: id,
+					role: session.session.activeOrganizationRole!,
+				})
 				.onConflictDoUpdate({
 					target: activeOrganization.userId,
-					set: { organizationId: id },
+					set: { organizationId: id, role: session.session.activeOrganizationRole! },
 				})
 				.returning()
 
 			if (result.length < 1)
 				throw new ApiError({
 					code: 'NOT_FOUND',
-					message: 'Practitioner not found.',
+					message: 'Organization not found.',
 				})
 
 			await authClient.organization.setActive({

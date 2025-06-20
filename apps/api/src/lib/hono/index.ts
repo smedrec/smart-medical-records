@@ -11,7 +11,6 @@ import type { Context as GenericContext } from 'hono'
 import type { HonoEnv } from './context'
 
 //import { sentry } from '@hono/sentry';
-type SessionWithRole<T> = T & { activeOrganizationRole: string | null }
 
 export function newApp() {
 	const app = new OpenAPIHono<HonoEnv>({

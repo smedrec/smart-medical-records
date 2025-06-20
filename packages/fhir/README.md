@@ -4,20 +4,21 @@ This package provides a client for interacting with FHIR R4 servers, including r
 
 ## Features
 
-*   FHIR R4 compatible client powered by `openapi-fetch`.
-*   SMART on FHIR v1/v2 authentication flow:
-    *   Authorization Code Grant with PKCE (Proof Key for Code Exchange).
-    *   Manual PKCE code generation and authorization URL construction for server-side redirect control.
-    *   Token exchange and client initialization.
-*   Typed FHIR operations based on an R4 OpenAPI specification (via `openapi-fetch` and `r4.d.ts`).
+- FHIR R4 compatible client powered by `openapi-fetch`.
+- SMART on FHIR v1/v2 authentication flow:
+  - Authorization Code Grant with PKCE (Proof Key for Code Exchange).
+  - Manual PKCE code generation and authorization URL construction for server-side redirect control.
+  - Token exchange and client initialization.
+- Typed FHIR operations based on an R4 OpenAPI specification (via `openapi-fetch` and `r4.d.ts`).
 
 ## Configuration and Usage
 
 For comprehensive documentation on:
-*   **Configuration:** Required environment variables (e.g., `SMART_CLIENT_ID`, `SMART_REDIRECT_URI`, `SMART_ISS`, `SMART_SCOPE`, and `FHIR_BASE_URL` as a fallback for `SMART_ISS`) and dynamic options passed to the client functions.
-*   **Authentication Flow:** Detailed explanation of the `authorizeSmartClient` and `createSmartFhirClient` functions.
-*   **Client Usage:** How to use the initialized client to make FHIR API calls.
-*   **Error Handling.**
+
+- **Configuration:** Required environment variables (e.g., `SMART_CLIENT_ID`, `SMART_REDIRECT_URI`, `SMART_ISS`, `SMART_SCOPE`, and `FHIR_BASE_URL` as a fallback for `SMART_ISS`) and dynamic options passed to the client functions.
+- **Authentication Flow:** Detailed explanation of the `authorizeSmartClient` and `createSmartFhirClient` functions.
+- **Client Usage:** How to use the initialized client to make FHIR API calls.
+- **Error Handling.**
 
 Please refer to the main **[MCP FHIR Server documentation on the FHIR Client](/mcp-fhir-server/fhir-client.md)**.
 
@@ -26,6 +27,7 @@ Please refer to the main **[MCP FHIR Server documentation on the FHIR Client](/m
 The core authentication flow involves two steps, typically handled by different routes in your application:
 
 1.  **Initiating Login (e.g., in a `/login` route):**
+
     ```typescript
     // import { authorizeSmartClient, SmartFhirClientOptions } from '@repo/fhir';
     // // Assuming 'c.env' aligns with SmartFhirClientEnvOptions from '@repo/fhir'
@@ -50,12 +52,12 @@ The core authentication flow involves two steps, typically handled by different 
     ```
 
 2.  **Handling Callback (e.g., in your `/auth/callback` route):**
+
     ```typescript
     // import { createSmartFhirClient, SmartFhirClientOptions } from '@repo/fhir';
     // // Assuming 'c.env' aligns with SmartFhirClientEnvOptions from '@repo/fhir'
     // // import type { Context } from 'hono';
     // // import type { YourHonoEnv } from './your-hono-env-setup';
-
 
     // export async function handleCallback(c: Context<YourHonoEnv>) {
     //   // 1. Retrieve code and state from URL query parameters

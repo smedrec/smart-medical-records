@@ -1,14 +1,4 @@
-import { relations } from 'drizzle-orm'
-import {
-	index,
-	integer,
-	jsonb,
-	pgSchema,
-	primaryKey,
-	text,
-	timestamp,
-	uniqueIndex,
-} from 'drizzle-orm/pg-core'
+import { index, integer, jsonb, pgSchema, primaryKey, text, timestamp } from 'drizzle-orm/pg-core'
 
 import { generateId } from '../utils/id'
 import { tenant, user } from './auth'
