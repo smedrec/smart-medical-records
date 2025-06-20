@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 import { server } from '../index.js'
 import { readMemory, writeMemory } from '../resources/index.js'
+import { allFhirTools } from './fhir-tools.js' // Import FHIR tools
 
 import type { MemoryData } from '../resources/index.js'
 
@@ -167,4 +168,17 @@ export function registerTools() {
 	registerReadFromMemoryTool()
 	registerWriteToMemoryTool()
 	registerGetLatestUpdatesTool() // This will only register if API key is present
+
+	// Register all FHIR tools
+	allFhirTools.forEach((tool) => {
+		server.tool(
+			tool.name,
+			{
+				description: tool.description,
+				inputSchema: tool.inputSchema || {}, // Ensure inputSchema is at least an empty object
+				outputSchema: tool.outputSchema || {}, // Ensure outputSchema is at least an empty object
+			},
+			tool.handler,
+		)
+	})
 }

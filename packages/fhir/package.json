@@ -12,6 +12,7 @@
 	},
 	"dependencies": {
 		"@repo/hono-helpers": "workspace:*",
+		"fhirclient": "^2.6.0",
 		"openapi-fetch": "0.14.0"
 	},
 	"devDependencies": {
