@@ -11,6 +11,8 @@ export type Env = SharedHonoEnv & {
 	OPENROUTER_API_KEY: string
 }
 
+type SessionWithRole<T> = T & { activeOrganizationRole: string | null }
+
 export type ServiceContext = {
 	auth: typeof auth
 	cerbos: typeof cerbos
@@ -28,7 +30,7 @@ export type Variables = SharedHonoVariables & {
 	isolateCreatedAt: number
 	requestId?: string
 	requestStartedAt: number
-	session: Session | null
+	session: SessionWithRole<Session> | null
 	services: ServiceContext
 	/**
 	 * IP address or region information

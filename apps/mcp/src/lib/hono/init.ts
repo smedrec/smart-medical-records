@@ -77,7 +77,7 @@ export function init(): MiddlewareHandler<HonoEnv> {
 				const organization = await getActiveOrganization(session.session?.userId)
 				session.session.activeOrganizationId = organization
 			}*/
-			c.set('session', session)
+			c.set('session', session.session)
 		}
 
 		c.set('services', {
