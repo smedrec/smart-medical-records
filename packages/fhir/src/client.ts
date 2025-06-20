@@ -37,6 +37,14 @@ const myMiddleware: Middleware = {
 	},
 }
 
+export const fhirClient = (baseUrl: string): Client<paths, `${string}/${string}`> => {
+	const fhir: Client<paths, `${string}/${string}`> = createClient<paths>({
+		baseUrl: baseUrl,
+	})
+	fhir.use(myMiddleware)
+	return fhir
+}
+
 const fhir: Client<paths, `${string}/${string}`> = createClient<paths>({
 	baseUrl: 'http://joseantcordeiro.hopto.org:8080/fhir/',
 })
