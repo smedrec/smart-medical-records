@@ -1,15 +1,6 @@
 {
 	"name": "@repo/mailer",
 	"version": "0.1.0",
-	"private": true,
-	"sideEffects": false,
-	"type": "module",
-	"main": "src/index.ts",
-	"scripts": {
-		"check:lint": "run-eslint",
-		"check:types": "run-tsc",
-		"test": "run-vitest"
-	},
 	"dependencies": {
 		"@repo/hono-helpers": "workspace:*",
 		"worker-mailer": "1.1.4"
@@ -21,5 +12,14 @@
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"vitest": "3.2.3"
-	}
+	},
+	"main": "src/index.ts",
+	"private": true,
+	"scripts": {
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"test": "run-vitest"
+	},
+	"sideEffects": false,
+	"type": "module"
 }

@@ -1,22 +1,6 @@
 {
 	"name": "web",
 	"version": "0.1.0",
-	"private": true,
-	"sideEffects": [
-		"**/*.css"
-	],
-	"type": "module",
-	"scripts": {
-		"build": "run-vite-build",
-		"check:lint": "run-eslint",
-		"check:types": "run-tsc",
-		"deploy": "run-wrangler-deploy",
-		"dev": "run-vite-dev",
-		"fix:workers-types": "run-wrangler-types",
-		"preview": "run-vite-preview",
-		"test": "run-vitest",
-		"vite:dev": "vite dev --port 3000"
-	},
 	"dependencies": {
 		"@copilotkit/react-core": "1.9.0",
 		"@copilotkit/react-ui": "1.9.0",
@@ -80,5 +64,21 @@
 		"vite-tsconfig-paths": "5.1.4",
 		"vitest": "3.2.3",
 		"wrangler": "4.20.1"
-	}
+	},
+	"private": true,
+	"scripts": {
+		"build": "run-vite-build",
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"deploy": "run-wrangler-deploy",
+		"dev": "run-vite-dev",
+		"fix:workers-types": "run-wrangler-types",
+		"preview": "run-vite-preview",
+		"test": "run-vitest",
+		"vite:dev": "vite dev --port 3000"
+	},
+	"sideEffects": [
+		"**/*.css"
+	],
+	"type": "module"
 }

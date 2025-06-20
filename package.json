@@ -1,30 +1,9 @@
 {
 	"name": "smart-medical-records",
 	"version": "0.1.0",
-	"private": true,
 	"author": {
 		"name": "José Cordeiro",
 		"email": "joseantcordeiro@gmail.com"
-	},
-	"sideEffects": false,
-	"scripts": {
-		"build:workspace": "turbo -F @repo/workspace-dependencies build",
-		"changeset:new": "run-changeset-new",
-		"check": "runx check",
-		"check:ci": "run-s check:deps check:format check:turbo",
-		"check:deps": "syncpack lint",
-		"check:format": "prettier . --check --cache",
-		"check:lint:all": "run-eslint",
-		"check:turbo": "turbo check",
-		"fix": "runx fix",
-		"fix:deps": "run-fix-deps",
-		"fix:format": "prettier . --write --cache",
-		"fix:lint": "FIX_ESLINT=1 run-eslint",
-		"fix:workers-types": "turbo fix:workers-types",
-		"new-worker": "run-turbo-gen",
-		"test": "vitest",
-		"test:ci": "run-vitest-ci",
-		"update-deps": "run-update-deps"
 	},
 	"devDependencies": {
 		"@changesets/cli": "2.29.4",
@@ -50,5 +29,27 @@
 		"patchedDependencies": {
 			"fhirclient@2.6.0": "patches/fhirclient@2.6.0.patch"
 		}
-	}
+	},
+	"private": true,
+	"scripts": {
+		"build:workspace": "turbo -F @repo/workspace-dependencies build",
+		"changeset:new": "run-changeset-new",
+		"check": "runx check",
+		"check:ci": "run-s check:deps check:format check:turbo",
+		"check:deps": "syncpack lint",
+		"check:format": "prettier . --check --cache",
+		"check:lint:all": "run-eslint",
+		"check:turbo": "turbo check",
+		"fix": "runx fix",
+		"fix:deps": "run-fix-deps",
+		"fix:format": "prettier . --write --cache",
+		"fix:lint": "FIX_ESLINT=1 run-eslint",
+		"fix:workers-types": "turbo fix:workers-types",
+		"format:dependency": "syncpack format",
+		"new-worker": "run-turbo-gen",
+		"test": "vitest",
+		"test:ci": "run-vitest-ci",
+		"update-deps": "run-update-deps"
+	},
+	"sideEffects": false
 }

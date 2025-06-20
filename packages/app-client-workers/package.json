@@ -1,15 +1,6 @@
 {
 	"name": "@repo/app-client-workers",
 	"version": "0.1.0",
-	"private": true,
-	"sideEffects": false,
-	"type": "module",
-	"main": "./src/index.ts",
-	"scripts": {
-		"check:lint": "run-eslint",
-		"check:types": "run-tsc",
-		"te st": "run-vitest"
-	},
 	"dependencies": {},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "0.8.39",
@@ -18,5 +9,14 @@
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"vitest": "3.2.3"
-	}
+	},
+	"main": "./src/index.ts",
+	"private": true,
+	"scripts": {
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"te st": "run-vitest"
+	},
+	"sideEffects": false,
+	"type": "module"
 }

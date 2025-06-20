@@ -1,19 +1,6 @@
 {
 	"name": "test",
 	"version": "3.3.0",
-	"private": true,
-	"sideEffects": false,
-	"type": "module",
-	"scripts": {
-		"build": "run-vite-build",
-		"check:lint": "run-eslint",
-		"check:types": "run-tsc",
-		"deploy": "run-wrangler-deploy",
-		"dev": "run-vite-dev",
-		"fix:workers-types": "run-wrangler-types",
-		"preview": "run-vite-preview",
-		"test": "run-vitest"
-	},
 	"dependencies": {
 		"@repo/hono-helpers": "workspace:*",
 		"hono": "4.7.11",
@@ -29,5 +16,18 @@
 		"vite": "6.3.5",
 		"vitest": "3.2.3",
 		"wrangler": "4.20.1"
-	}
+	},
+	"private": true,
+	"scripts": {
+		"build": "run-vite-build",
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"deploy": "run-wrangler-deploy",
+		"dev": "run-vite-dev",
+		"fix:workers-types": "run-wrangler-types",
+		"preview": "run-vite-preview",
+		"test": "run-vitest"
+	},
+	"sideEffects": false,
+	"type": "module"
 }

@@ -1,19 +1,6 @@
 {
 	"name": "@repo/ui",
 	"version": "0.1.0",
-	"license": "MIT",
-	"type": "module",
-	"exports": {
-		"./globals.css": "./src/styles/globals.css",
-		"./postcss.config": "./postcss.config.mjs",
-		"./lib/*": "./src/lib/*.ts",
-		"./components/*": "./src/components/*.tsx",
-		"./hooks/*": "./src/hooks/*.ts"
-	},
-	"scripts": {
-		"check:lint": "run-eslint",
-		"check:types": "run-tsc"
-	},
 	"dependencies": {
 		"@platejs/basic-nodes": "49.0.0",
 		"@radix-ui/react-accordion": "1.2.11",
@@ -46,5 +33,18 @@
 		"@types/react": "19.1.8",
 		"@types/react-dom": "19.1.6",
 		"tailwindcss": "4.1.10"
-	}
+	},
+	"exports": {
+		"./globals.css": "./src/styles/globals.css",
+		"./postcss.config": "./postcss.config.mjs",
+		"./lib/*": "./src/lib/*.ts",
+		"./components/*": "./src/components/*.tsx",
+		"./hooks/*": "./src/hooks/*.ts"
+	},
+	"license": "MIT",
+	"scripts": {
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc"
+	},
+	"type": "module"
 }
