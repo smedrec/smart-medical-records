@@ -14,7 +14,8 @@ import {
 	FHIR_AUTH_STATE_COOKIE,
 	FHIR_PKCE_VERIFIER_COOKIE,
 	FHIR_SESSION_COOKIE,
-} from './lib/auth-constants' // Import shared constants
+} from './lib/auth-constants'
+// Import shared constants
 
 import { zEnv } from './lib/env'
 import { init } from './lib/hono/init'
@@ -26,6 +27,10 @@ import type { Context, Env, HonoEnv } from './lib/hono/context'
 
 // Map to store transports by session ID
 const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {}
+const transportContext = new WeakMap<
+	StreamableHTTPServerTransport,
+	{ fhirClient: any; fhirSessionData: any }
+>()
 
 const app = new Hono<HonoEnv>()
 	.use(
@@ -169,7 +174,7 @@ app.post('/sse', async (c) => {
 	const fhirSessionData = c.get('fhirSessionData') // FHIR session data from fhirAuthMiddleware
 
 	// Check for existing session ID
-	const sessionId = session?.session.id
+	const sessionId = session?.id
 	let transport: StreamableHTTPServerTransport
 	const requestBody = await c.req.json() // Parse JSON body once
 
@@ -210,9 +215,16 @@ app.post('/sse', async (c) => {
 		)
 	}
 
-	// Inject fhirClient and fhirSessionData into the transport's callContext
-	// This context will be passed to MCP tool handlers by the McpServer
-	transport.callContext = {
+	// Inject fhirClient and fhirSessionData into the transport instance for later use.
+	// If you control the StreamableHTTPServerTransport class, you can extend it to add a context property.
+	// Otherwise, you can use a WeakMap or similar approach to associate context with transport instances.
+	// Example using a WeakMap (add this WeakMap at the top of your file):
+
+	// At the top of the file, add:
+	// const transportContext = new WeakMap<StreamableHTTPServerTransport, { fhirClient: any, fhirSessionData: any }>();
+
+	// Here:
+	;(transport as any).context = {
 		fhirClient,
 		fhirSessionData,
 		// Potentially other Hono context items if needed by tools

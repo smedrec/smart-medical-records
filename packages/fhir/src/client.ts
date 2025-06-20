@@ -176,7 +176,16 @@ export const createSmartFhirClient = async (
 			return response
 		},
 		async onError({ error }) {
-			console.error('FHIR client error:', error.message, error.cause ? { cause: error.cause } : {})
+			if (error && typeof error === 'object') {
+				const errObj = error as { message?: string; cause?: unknown }
+				console.error(
+					'FHIR client error:',
+					errObj.message,
+					errObj.cause ? { cause: errObj.cause } : {}
+				)
+			} else {
+				console.error('FHIR client error:', error)
+			}
 			throw error
 		},
 	}

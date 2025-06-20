@@ -1,4 +1,7 @@
-import { logAuditEvent } from '../../lib/audit' // Import audit logger
+import { createPatientSchema, createPractitionerSchema } from '@solarahealth/fhir-r4'
+
+import { logAuditEvent } from '@repo/audit' // Import audit logger
+
 import { cerbos } from '../../lib/cerbos'
 
 import type {
@@ -271,6 +274,22 @@ export const patientCreateTool = {
 			targetResourceType: resourceType,
 			status: 'success',
 		})
+		// add validation to params.resource
+		const patientSchema = createPatientSchema()
+		const valid = patientSchema.safeParse(params.resource)
+
+		if (!valid.success) {
+			const desc = `${valid.error.message} to ${cerbosAction} ${resourceType}`
+			logAuditEvent({
+				principalId,
+				action: `cerbos:${cerbosAction}`,
+				targetResourceType: resourceType,
+				status: 'failure',
+				outcomeDescription: desc,
+			})
+			throw new Error(desc)
+		}
+
 		try {
 			const { data, error, response } = await context.fhirClient.POST('/Patient', {
 				body: params.resource,
@@ -637,6 +656,22 @@ export const practitionerCreateTool = {
 			})
 			throw new Error(desc)
 		}
+		// add validation to params.resource
+		const practitionerSchema = createPractitionerSchema()
+		const valid = practitionerSchema.safeParse(params.resource)
+
+		if (!valid.success) {
+			const desc = `${valid.error.message} to ${cerbosAction} ${resourceType}`
+			logAuditEvent({
+				principalId,
+				action: `cerbos:${cerbosAction}`,
+				targetResourceType: resourceType,
+				status: 'failure',
+				outcomeDescription: desc,
+			})
+			throw new Error(desc)
+		}
+
 		logAuditEvent({
 			principalId,
 			action: `cerbos:${cerbosAction}`,

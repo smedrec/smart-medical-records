@@ -1,6 +1,6 @@
 {
 	"name": "mcp",
-	"version": "1.4.2",
+	"version": "0.1.0",
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
@@ -16,6 +16,7 @@
 	"dependencies": {
 		"@cerbos/http": "0.22.0",
 		"@modelcontextprotocol/sdk": "1.12.3",
+		"@repo/audit": "workspace:*",
 		"@repo/auth": "workspace:*",
 		"@repo/fhir": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
