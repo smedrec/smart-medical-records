@@ -246,12 +246,18 @@ importers:
       '@repo/hono-helpers':
         specifier: workspace:*
         version: link:../../packages/hono-helpers
+      '@solarahealth/fhir-r4':
+        specifier: 1.2.0
+        version: 1.2.0
       fetch-to-node:
         specifier: 2.1.0
         version: 2.1.0
       hono:
         specifier: 4.7.11
         version: 4.7.11
+      openapi-fetch:
+        specifier: 0.14.0
+        version: 0.14.0
       workers-tagged-logger:
         specifier: 0.13.0
         version: 0.13.0
