@@ -165,9 +165,9 @@ function registerGetLatestUpdatesTool() {
 
 // Function called by src/index.ts to register all tools for this server.
 export function registerTools() {
-	registerReadFromMemoryTool()
-	registerWriteToMemoryTool()
-	registerGetLatestUpdatesTool() // This will only register if API key is present
+	//registerReadFromMemoryTool()
+	//registerWriteToMemoryTool()
+	//registerGetLatestUpdatesTool() // This will only register if API key is present
 
 	// Register all FHIR tools
 	allFhirTools.forEach((tool) => {
@@ -178,7 +178,7 @@ export function registerTools() {
 				inputSchema: tool.inputSchema || {}, // Ensure inputSchema is at least an empty object
 				outputSchema: tool.outputSchema || {}, // Ensure outputSchema is at least an empty object
 			},
-			tool.handler,
+			tool.handler
 		)
 	})
 }

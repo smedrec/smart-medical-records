@@ -2,17 +2,24 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js'
 import { toFetchResponse, toReqRes } from 'fetch-to-node'
 import { Hono } from 'hono'
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { cors } from 'hono/cors'
-import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import { useWorkersLogger } from 'workers-tagged-logger'
 
 import { authorizeSmartClient, createSmartFhirClient, SmartFhirClientOptions } from '@repo/fhir' // Keep this if needed directly in worker.ts for other purposes
 import { useNotFound, useOnError } from '@repo/hono-helpers'
 
-import { FHIR_PKCE_VERIFIER_COOKIE, FHIR_AUTH_STATE_COOKIE, FHIR_SESSION_COOKIE, defaultCookieOptions } from './lib/auth-constants' // Import shared constants
-import { fhirAuthMiddleware } from './lib/hono/middleware/fhir-auth' // Import the new middleware
+import {
+	defaultCookieOptions,
+	FHIR_AUTH_STATE_COOKIE,
+	FHIR_PKCE_VERIFIER_COOKIE,
+	FHIR_SESSION_COOKIE,
+} from './lib/auth-constants' // Import shared constants
+
 import { zEnv } from './lib/env'
 import { init } from './lib/hono/init'
+import { fhirAuthMiddleware } from './lib/hono/middleware/fhir-auth' // Import the new middleware
+
 import { server } from './server'
 
 import type { Context, Env, HonoEnv } from './lib/hono/context'
@@ -42,102 +49,104 @@ const app = new Hono<HonoEnv>()
 // Constants are now imported from './lib/auth-constants'
 
 const authRoutes = new Hono<HonoEnv>()
-  .get('/login', async (c) => {
-    const redirectUri = new URL(c.req.url).origin + '/auth/callback'; // Ensure this matches SMART_REDIRECT_URI if that's fixed
-    try {
-      const { authorizeUrl, codeVerifier, stateValue } = await authorizeSmartClient({
-        env: c.env, // Pass the worker env containing SMART_CLIENT_ID etc.
-        redirectUri,
-        // Scope might be in env (SMART_SCOPE) or passed explicitly if needed
-      });
+	.get('/login', async (c) => {
+		const redirectUri = new URL(c.req.url).origin + '/auth/callback' // Ensure this matches SMART_REDIRECT_URI if that's fixed
+		try {
+			const { authorizeUrl, codeVerifier, stateValue } = await authorizeSmartClient({
+				env: c.env, // Pass the worker env containing SMART_CLIENT_ID etc.
+				redirectUri,
+				// Scope might be in env (SMART_SCOPE) or passed explicitly if needed
+			})
 
-      setCookie(c, FHIR_PKCE_VERIFIER_COOKIE, codeVerifier, defaultCookieOptions);
-      setCookie(c, FHIR_AUTH_STATE_COOKIE, stateValue, defaultCookieOptions);
+			setCookie(c, FHIR_PKCE_VERIFIER_COOKIE, codeVerifier, defaultCookieOptions)
+			setCookie(c, FHIR_AUTH_STATE_COOKIE, stateValue, defaultCookieOptions)
 
-      return c.redirect(authorizeUrl);
-    } catch (error: any) {
-      console.error("Login failed:", error.message);
-      return c.json({ error: 'FHIR Login initiation failed', details: error.message }, 500);
-    }
-  })
-  .get('/callback', async (c) => {
-    const code = c.req.query('code');
-    const stateFromCallback = c.req.query('state');
+			return c.redirect(authorizeUrl)
+		} catch (error: any) {
+			console.error('Login failed:', error.message)
+			return c.json({ error: 'FHIR Login initiation failed', details: error.message }, 500)
+		}
+	})
+	.get('/callback', async (c) => {
+		const code = c.req.query('code')
+		const stateFromCallback = c.req.query('state')
 
-    const pkceCodeVerifier = getCookie(c, FHIR_PKCE_VERIFIER_COOKIE);
-    const expectedState = getCookie(c, FHIR_AUTH_STATE_COOKIE);
+		const pkceCodeVerifier = getCookie(c, FHIR_PKCE_VERIFIER_COOKIE)
+		const expectedState = getCookie(c, FHIR_AUTH_STATE_COOKIE)
 
-    deleteCookie(c, FHIR_PKCE_VERIFIER_COOKIE, { path: defaultCookieOptions.path });
-    deleteCookie(c, FHIR_AUTH_STATE_COOKIE, { path: defaultCookieOptions.path });
+		deleteCookie(c, FHIR_PKCE_VERIFIER_COOKIE, { path: defaultCookieOptions.path })
+		deleteCookie(c, FHIR_AUTH_STATE_COOKIE, { path: defaultCookieOptions.path })
 
-    if (!code || !stateFromCallback) {
-      return c.json({ error: 'Missing code or state from callback' }, 400);
-    }
-    if (!pkceCodeVerifier) {
-      return c.json({ error: 'Missing PKCE verifier cookie' }, 400);
-    }
-    if (!expectedState) {
-      return c.json({ error: 'Missing state cookie' }, 400);
-    }
+		if (!code || !stateFromCallback) {
+			return c.json({ error: 'Missing code or state from callback' }, 400)
+		}
+		if (!pkceCodeVerifier) {
+			return c.json({ error: 'Missing PKCE verifier cookie' }, 400)
+		}
+		if (!expectedState) {
+			return c.json({ error: 'Missing state cookie' }, 400)
+		}
 
-    try {
-      // createSmartFhirClient will validate stateFromCallback against expectedState internally
-      const fhirClient = await createSmartFhirClient({
-        request: c.req.raw, // Pass the raw Request object
-        env: c.env,         // Pass the worker env
-        pkceCodeVerifier,
-        expectedState,
-        // `code` and `state` are parsed from request by createSmartFhirClient
-      });
+		try {
+			// createSmartFhirClient will validate stateFromCallback against expectedState internally
+			const fhirClient = await createSmartFhirClient({
+				request: c.req.raw, // Pass the raw Request object
+				env: c.env, // Pass the worker env
+				pkceCodeVerifier,
+				expectedState,
+				// `code` and `state` are parsed from request by createSmartFhirClient
+			})
 
-      // @ts-ignore TODO: fhirclient.Client type doesn't directly expose 'state' in this way. Need to check actual structure.
-      const clientState = fhirClient.state as { tokenResponse: any, serverUrl: string, idToken?: any };
+			// @ts-ignore TODO: fhirclient.Client type doesn't directly expose 'state' in this way. Need to check actual structure.
+			const clientState = fhirClient.state as {
+				tokenResponse: any
+				serverUrl: string
+				idToken?: any
+			}
 
+			if (!clientState.tokenResponse || !clientState.tokenResponse.access_token) {
+				return c.json({ error: 'Failed to obtain access token from FHIR client' }, 500)
+			}
 
-      if (!clientState.tokenResponse || !clientState.tokenResponse.access_token) {
-        return c.json({ error: 'Failed to obtain access token from FHIR client' }, 500);
-      }
+			// TODO: In a real scenario, parse clientState.idToken (JWT) to get actual userId and roles
+			// For now, using placeholders. These roles should align with roles in Cerbos policies.
+			const placeholderUserId = clientState.idToken?.sub || 'test-user-placeholder' // 'sub' is standard OIDC subject
+			const placeholderRoles = ['practitioner', 'admin'] // Example roles
 
-      // TODO: In a real scenario, parse clientState.idToken (JWT) to get actual userId and roles
-      // For now, using placeholders. These roles should align with roles in Cerbos policies.
-      const placeholderUserId = clientState.idToken?.sub || 'test-user-placeholder'; // 'sub' is standard OIDC subject
-      const placeholderRoles = ['practitioner', 'admin']; // Example roles
+			const sessionData = {
+				tokenResponse: clientState.tokenResponse,
+				serverUrl: clientState.serverUrl,
+				userId: placeholderUserId,
+				roles: placeholderRoles,
+			}
 
-      const sessionData = {
-        tokenResponse: clientState.tokenResponse,
-        serverUrl: clientState.serverUrl,
-        userId: placeholderUserId,
-        roles: placeholderRoles,
-      };
+			const cookieExpiry = clientState.tokenResponse.expires_in
+				? new Date(Date.now() + clientState.tokenResponse.expires_in * 1000)
+				: new Date(Date.now() + 3600 * 1000) // Default to 1 hour if no expires_in
 
-      const cookieExpiry = clientState.tokenResponse.expires_in
-        ? new Date(Date.now() + clientState.tokenResponse.expires_in * 1000)
-        : new Date(Date.now() + 3600 * 1000); // Default to 1 hour if no expires_in
+			setCookie(c, FHIR_SESSION_COOKIE, JSON.stringify(sessionData), {
+				...defaultCookieOptions,
+				expires: cookieExpiry,
+			})
 
-      setCookie(c, FHIR_SESSION_COOKIE, JSON.stringify(sessionData), {
-        ...defaultCookieOptions,
-        expires: cookieExpiry,
-      });
+			return c.redirect('/') // Redirect to a protected area or dashboard
+		} catch (error: any) {
+			console.error('FHIR Callback failed:', error.message, error.stack)
+			return c.json({ error: 'FHIR callback processing failed', details: error.message }, 500)
+		}
+	})
+	.get('/logout', async (c) => {
+		deleteCookie(c, FHIR_SESSION_COOKIE, { path: defaultCookieOptions.path })
+		return c.redirect('/') // Or a specific logged-out page
+	})
 
-      return c.redirect('/'); // Redirect to a protected area or dashboard
-    } catch (error: any) {
-      console.error("FHIR Callback failed:", error.message, error.stack);
-      return c.json({ error: 'FHIR callback processing failed', details: error.message }, 500);
-    }
-  })
-  .get('/logout', async (c) => {
-    deleteCookie(c, FHIR_SESSION_COOKIE, { path: defaultCookieOptions.path });
-    return c.redirect('/'); // Or a specific logged-out page
-  });
-
-app.route('/auth', authRoutes);
+app.route('/auth', authRoutes)
 // --- End Auth Routes ---
 
 // Apply FHIR auth middleware before init and SSE routes
 // if FHIR client might be needed by init or SSE setup.
 // Or apply specifically to /sse if only SSE handlers need it.
-app.use('/sse', fhirAuthMiddleware);
-
+app.use('/sse', fhirAuthMiddleware)
 
 app.use('*', init()) // This should ideally be after specific routes or ensure it doesn't interfere.
 // cors
@@ -160,9 +169,9 @@ app.post('/sse', async (c) => {
 	const fhirSessionData = c.get('fhirSessionData') // FHIR session data from fhirAuthMiddleware
 
 	// Check for existing session ID
-	const sessionId = session?.session.id
+	const sessionId = session?.id
 	let transport: StreamableHTTPServerTransport
-	const requestBody = await c.req.json(); // Parse JSON body once
+	const requestBody = await c.req.json() // Parse JSON body once
 
 	if (sessionId && transports[sessionId]) {
 		// Reuse existing transport
@@ -208,7 +217,7 @@ app.post('/sse', async (c) => {
 		fhirSessionData,
 		// Potentially other Hono context items if needed by tools
 		// e.g., mcpSession: session
-	};
+	}
 
 	// Handle the request
 	await transport.handleRequest(req, res, requestBody)

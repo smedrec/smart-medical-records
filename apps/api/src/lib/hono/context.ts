@@ -9,9 +9,13 @@ import type { Logger } from '../logs'
 export type Env = SharedHonoEnv & {
 	// add additional Bindings here
 	ALLOWED_ORIGINS: string
-}
 
-type SessionWithRole<T> = T & { activeOrganizationRole: string | null }
+	CLOUDFLARE_R2_IMAGES_URL: string
+
+	DB: D1Database
+	KV: KVNamespace
+	IMAGES_DEV: R2Bucket
+}
 
 export type ServiceContext = {
 	auth: typeof auth
@@ -31,7 +35,7 @@ export type Variables = SharedHonoVariables & {
 	requestId: string
 	requestStartedAt: number
 	session: {
-		session: SessionWithRole<Session>
+		session: Session
 		user: User
 	} | null
 	services: ServiceContext

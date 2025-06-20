@@ -9,7 +9,7 @@ overrides:
 
 patchedDependencies:
   fhirclient@2.6.0:
-    hash: 8e886ba3d73e53f724d9bfe764b3a471f01096f53a85f92b0174e5a7e300a73d
+    hash: 9933e6cffbb4e471f68f9910a79dce5461ae03fc6fd38d1361c85f19068cd220
     path: patches/fhirclient@2.6.0.patch
 
 importers:
@@ -715,7 +715,7 @@ importers:
         version: link:../hono-helpers
       fhirclient:
         specifier: ^2.6.0
-        version: 2.6.0(patch_hash=8e886ba3d73e53f724d9bfe764b3a471f01096f53a85f92b0174e5a7e300a73d)(@types/node@24.0.3)(expo@53.0.12(@babel/core@7.27.4)(graphql@16.11.0)(react-native@0.80.0(@babel/core@7.27.4)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@types/react@19.1.8)(react@19.1.0))
+        version: 2.6.0(patch_hash=9933e6cffbb4e471f68f9910a79dce5461ae03fc6fd38d1361c85f19068cd220)(@types/node@24.0.3)(expo@53.0.12(@babel/core@7.27.4)(graphql@16.11.0)(react-native@0.80.0(@babel/core@7.27.4)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@types/react@19.1.8)(react@19.1.0))
       openapi-fetch:
         specifier: 0.14.0
         version: 0.14.0
@@ -735,6 +735,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/node':
+        specifier: 24.0.3
+        version: 24.0.3
       openapi-typescript:
         specifier: 7.8.0
         version: 7.8.0(typescript@5.8.2)
@@ -25319,7 +25322,7 @@ snapshots:
 
   fflate@0.8.2: {}
 
-  fhirclient@2.6.0(patch_hash=8e886ba3d73e53f724d9bfe764b3a471f01096f53a85f92b0174e5a7e300a73d)(@types/node@24.0.3)(expo@53.0.12(@babel/core@7.27.4)(graphql@16.11.0)(react-native@0.80.0(@babel/core@7.27.4)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@types/react@19.1.8)(react@19.1.0)):
+  fhirclient@2.6.0(patch_hash=9933e6cffbb4e471f68f9910a79dce5461ae03fc6fd38d1361c85f19068cd220)(@types/node@24.0.3)(expo@53.0.12(@babel/core@7.27.4)(graphql@16.11.0)(react-native@0.80.0(@babel/core@7.27.4)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@types/react@19.1.8)(react@19.1.0)):
     dependencies:
       '@types/node': 24.0.3
       abortcontroller-polyfill: 1.7.8

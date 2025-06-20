@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { admin, apiKey, customSession, openAPI, organization } from 'better-auth/plugins'
+import { admin, apiKey, mcp, oidcProvider, openAPI, organization } from 'better-auth/plugins'
 import { env } from 'cloudflare:workers'
 import { eq } from 'drizzle-orm'
 
@@ -35,6 +35,8 @@ import {
 type Permissions = {
 	[resourceType: string]: string[]
 }
+
+type SessionWithRole<T> = T & { activeOrganizationRole: string | null }
 
 /**
  * Better Auth Instance
@@ -261,6 +263,19 @@ export const auth = betterAuth({
 			},
 			organizationLimit: 1,
 		}),
+		oidcProvider({
+			allowDynamicClientRegistration: true,
+			loginPage: `${env.APP_PUBLIC_URL}/auth/sign-in`,
+			metadata: {
+				issuer: `${env.APP_PUBLIC_URL}`,
+				authorization_endpoint: '/auth/oauth2/authorize',
+				token_endpoint: '/auth/oauth2/token',
+				// ...other custom metadata
+			},
+		}),
+		mcp({
+			loginPage: `${env.APP_PUBLIC_URL}/auth/sign-in`,
+		}),
 		apiKey({
 			rateLimit: {
 				enabled: true,
@@ -322,7 +337,8 @@ export const auth = betterAuth({
 	],
 })
 //}
-export type Session = typeof auth.$Infer.Session.session
+
+export type Session = SessionWithRole<typeof auth.$Infer.Session.session>
 export type User = typeof auth.$Infer.Session.user
 
 /**export type Session = {
