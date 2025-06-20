@@ -1,3 +1,16 @@
+/**
+ * AuditLogEvent function.
+ *
+ * @repo/audit
+ *
+ * Use from other apps/packages:
+ *
+ * ```ts
+ * import { logAuditEvent } from '@repo/audit'
+ *
+ * logAuditEvent()
+ * ```
+ */
 export type AuditEventStatus = 'attempt' | 'success' | 'failure'
 
 export interface AuditLogEvent {

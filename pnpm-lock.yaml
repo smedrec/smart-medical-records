@@ -232,6 +232,9 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: 1.12.3
         version: 1.12.3
+      '@repo/audit':
+        specifier: workspace:*
+        version: link:../../packages/audit
       '@repo/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -241,9 +244,15 @@ importers:
       fetch-to-node:
         specifier: 2.1.0
         version: 2.1.0
+      fhirclient:
+        specifier: 2.6.0
+        version: 2.6.0(@types/node@24.0.3)(expo@53.0.12(@babel/core@7.27.4)(graphql@16.11.0)(react-native@0.80.0(@babel/core@7.27.4)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@types/react@19.1.8)(react@19.1.0))
       hono:
         specifier: 4.7.11
         version: 4.7.11
+      openapi-fetch:
+        specifier: 0.14.0
+        version: 0.14.0
       workers-tagged-logger:
         specifier: 0.13.0
         version: 0.13.0
@@ -334,7 +343,7 @@ importers:
         specifier: 1.3.2
         version: 1.3.2(react@19.1.0)
       '@radix-ui/react-tabs':
-        specifier: ^1.1.12
+        specifier: 1.1.12
         version: 1.1.12(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@repo/app-client-workers':
         specifier: workspace:*
@@ -352,7 +361,7 @@ importers:
         specifier: 1.2.0
         version: 1.2.0
       '@tabler/icons-react':
-        specifier: ^3.34.0
+        specifier: 3.34.0
         version: 3.34.0(react@19.1.0)
       '@tailwindcss/vite':
         specifier: 4.1.10
@@ -376,31 +385,31 @@ importers:
         specifier: 1.2.9
         version: 1.2.9
       canvas-confetti:
-        specifier: ^1.9.3
+        specifier: 1.9.3
         version: 1.9.3
       cmdk:
         specifier: 1.1.1
         version: 1.1.1(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       date-fns:
-        specifier: ^4.1.0
+        specifier: 4.1.0
         version: 4.1.0
       dotenv:
         specifier: 16.5.0
         version: 16.5.0
       framer-motion:
-        specifier: ^12.18.1
+        specifier: 12.18.1
         version: 12.18.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       install:
         specifier: 0.13.0
         version: 0.13.0
       little-date:
-        specifier: ^1.0.0
+        specifier: 1.0.0
         version: 1.0.0
       lucide-react:
         specifier: 0.516.0
         version: 0.516.0(react@19.1.0)
       motion:
-        specifier: ^12.18.1
+        specifier: 12.18.1
         version: 12.18.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       next-themes:
         specifier: 1.0.0-beta.0
@@ -464,7 +473,7 @@ importers:
         specifier: 4.1.10
         version: 4.1.10
       '@types/canvas-confetti':
-        specifier: ^1.9.0
+        specifier: 1.9.0
         version: 1.9.0
       '@types/node':
         specifier: 24.0.3
@@ -519,6 +528,27 @@ importers:
         version: 3.2.3(@types/debug@4.1.12)(@types/node@24.0.3)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.40.0)(tsx@4.20.3)(yaml@2.8.0)
 
   packages/app-client-workers:
+    devDependencies:
+      '@cloudflare/vitest-pool-workers':
+        specifier: 0.8.39
+        version: 0.8.39(@cloudflare/workers-types@4.20250617.0)(@vitest/runner@3.2.3)(@vitest/snapshot@3.2.3)(vitest@3.2.3(@types/debug@4.1.12)(@types/node@24.0.3)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.40.0)(tsx@4.20.3)(yaml@2.8.0))
+      '@cloudflare/workers-types':
+        specifier: 4.20250617.0
+        version: 4.20250617.0
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@repo/tools':
+        specifier: workspace:*
+        version: link:../tools
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      vitest:
+        specifier: 3.2.3
+        version: 3.2.3(@types/debug@4.1.12)(@types/node@24.0.3)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.40.0)(tsx@4.20.3)(yaml@2.8.0)
+
+  packages/audit:
     devDependencies:
       '@cloudflare/vitest-pool-workers':
         specifier: 0.8.39
@@ -706,7 +736,7 @@ importers:
         specifier: workspace:*
         version: link:../hono-helpers
       fhirclient:
-        specifier: ^2.6.0
+        specifier: 2.6.0
         version: 2.6.0(@types/node@24.0.3)(expo@53.0.12(@babel/core@7.27.4)(graphql@16.11.0)(react-native@0.80.0(@babel/core@7.27.4)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@types/react@19.1.8)(react@19.1.0))
       openapi-fetch:
         specifier: 0.14.0
@@ -856,7 +886,7 @@ importers:
         specifier: 49.0.0
         version: 49.0.0(platejs@49.0.5(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-accordion':
-        specifier: ^1.2.11
+        specifier: 1.2.11
         version: 1.2.11(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-avatar':
         specifier: 1.1.10
@@ -871,7 +901,7 @@ importers:
         specifier: 2.1.15
         version: 2.1.15(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-navigation-menu':
-        specifier: ^1.2.13
+        specifier: 1.2.13
         version: 1.2.13(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-select':
         specifier: 2.2.5
@@ -26601,7 +26631,7 @@ snapshots:
       isstream: 0.1.2
       jsonwebtoken: 9.0.2
       mime-types: 2.1.35
-      retry-axios: 2.6.0(axios@1.9.0(debug@4.4.1))
+      retry-axios: 2.6.0(axios@1.9.0)
       tough-cookie: 4.1.4
     transitivePeerDependencies:
       - supports-color
@@ -30551,7 +30581,7 @@ snapshots:
       onetime: 7.0.0
       signal-exit: 4.1.0
 
-  retry-axios@2.6.0(axios@1.9.0(debug@4.4.1)):
+  retry-axios@2.6.0(axios@1.9.0):
     dependencies:
       axios: 1.9.0(debug@4.4.1)
 
