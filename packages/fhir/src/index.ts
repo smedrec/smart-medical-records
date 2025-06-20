@@ -1,2 +1,3 @@
-export * from './client'
-export * from './r4.d'
+export * from './client';
+export { _internalDefaultFhirClient as fhir } from './client'; // Export the basic client as 'fhir'Add commentMore actions
+export * from './r4.d';
