@@ -67,6 +67,7 @@ export async function generatePkceChallenge(verifier: string): Promise<string> {
 	return btoa(hashString).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
 }
 
+
 // Reads config from the env object (Cloudflare Worker context)
 const getSmartConfigFromEnv = (
 	env?: SmartFhirClientEnvOptions
