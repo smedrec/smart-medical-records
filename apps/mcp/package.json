@@ -21,6 +21,7 @@
 		"@repo/hono-helpers": "workspace:*",
 		"@solarahealth/fhir-r4": "1.2.0",
 		"fetch-to-node": "2.1.0",
+		"fhirclient": "^2.6.0",
 		"hono": "4.7.11",
 		"workers-tagged-logger": "0.13.0",
 		"zod": "3.25.67"
