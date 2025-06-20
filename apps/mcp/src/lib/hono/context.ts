@@ -2,7 +2,6 @@ import type { Context as GenericContext } from 'hono'
 import type { auth, Session } from '@repo/auth'
 import type { HonoApp } from '@repo/hono-helpers'
 import type { SharedHonoEnv, SharedHonoVariables } from '@repo/hono-helpers/src/types'
-
 import type { cerbos } from '../cerbos'
 import type { FhirApiClient, FhirSessionData } from './middleware/fhir-auth' // Added import
 
@@ -37,8 +36,8 @@ export type Variables = SharedHonoVariables & {
 	location: string
 	userAgent?: string
 	// FHIR client and session data added to context
-	fhirClient?: FhirApiClient | null;
-	fhirSessionData?: FhirSessionData | null;
+	fhirClient?: FhirApiClient | null
+	fhirSessionData?: FhirSessionData | null
 }
 
 export interface HonoEnv extends HonoApp {
