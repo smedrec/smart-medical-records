@@ -235,15 +235,9 @@ importers:
       '@repo/auth':
         specifier: workspace:*
         version: link:../../packages/auth
-      '@repo/fhir':
-        specifier: workspace:*
-        version: link:../../packages/fhir
       '@repo/hono-helpers':
         specifier: workspace:*
         version: link:../../packages/hono-helpers
-      '@solarahealth/fhir-r4':
-        specifier: 1.2.0
-        version: 1.2.0
       fetch-to-node:
         specifier: 2.1.0
         version: 2.1.0

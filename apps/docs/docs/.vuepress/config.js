@@ -22,6 +22,18 @@ export default defineUserConfig({
 				text: 'Development',
 				children: ['/development/'], // VuePress resolves this to /development/README.md
 			},
+      {
+        title: 'MCP FHIR Server', // Title for the sidebar group
+        collapsable: false, // Optional: whether the group is collapsable
+        children: [
+          '/mcp-fhir-server/', // Link to README.md in mcp-fhir-server
+          '/mcp-fhir-server/authentication.md',
+          '/mcp-fhir-server/fhir-client.md',
+          '/mcp-fhir-server/mcp-tools.md',
+          '/mcp-fhir-server/security.md',
+          '/mcp-fhir-server/deployment.md',
+        ]
+      },
 			{
 				text: 'Applications',
 				children: ['/apps/api.md'],

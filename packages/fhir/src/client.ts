@@ -72,6 +72,7 @@ export async function generatePkceChallenge(verifier: string): Promise<string> {
     .replace(/=/g, '');
 }
 
+
 // Reads config from the env object (Cloudflare Worker context)
 const getSmartConfigFromEnv = (env?: SmartFhirClientEnvOptions): Omit<SmartFhirClientOptions, 'request' | 'env' | 'expectedState' | 'pkceCodeVerifier'> => {
   const config: Omit<SmartFhirClientOptions, 'request' | 'env' | 'expectedState' | 'pkceCodeVerifier'> = {};

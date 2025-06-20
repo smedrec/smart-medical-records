@@ -39,25 +39,6 @@ function registerCssTutorPrompt() {
 	)
 }
 
-function registerFHIRAssistantPrompt() {
-	server.prompt(
-		'fhir-assistant-guidance',
-		'Provides guidance on how to use the fhir tools and resources.',
-		{},
-		async () => ({
-			messages: [
-				{
-					role: 'assistant',
-					content: {
-						type: 'text',
-						text: fhirAssistantPromptText,
-					},
-				},
-			],
-		})
-	)
-}
-
 // Function called by src/index.ts to register all prompts for this server.
 export function registerPrompts() {
 	registerCssTutorPrompt()
