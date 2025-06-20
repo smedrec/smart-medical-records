@@ -1,7 +1,6 @@
 import { Link } from '@tanstack/react-router'
 
 import { Icons } from '@repo/ui/components/icons'
-import { Button } from '@repo/ui/components/ui/button'
 
 export function Footer() {
 	return (
@@ -17,19 +16,18 @@ export function Footer() {
 						<h1 className="dark:text-gray-300 mt-4">
 							Build by{' '}
 							<span className="dark:text-[#039ee4]">
-								<a href="https://x.com/joseantcordeiro">@joseantcordeiro</a>
+								<a href="https://github.com/joseantcordeiro" target="_blank" rel="noreferrer">
+									@joseantcordeiro
+								</a>
 							</span>
 						</h1>
-						<div className="mt-2">
-							<a href="https://x.com/compose/tweet?text=I%27ve%20been%20using%20%23SpectrumUI%20 share%20yourtought%20%40arihantCodes%20">
-								<Button variant="secondary">
-									Share Your Thoughts On
-									<Icons.twitter className="icon-class ml-1 w-3.5 " />
-								</Button>
-							</a>
-						</div>
+
 						<p className="text-sm dark:text-gray-400 mt-5">
-							© {new Date().getFullYear()} Spectrum UI. All rights reserved.
+							© {new Date().getFullYear()} José Cordeiro. All rights reserved.
+						</p>
+						<p className="text-sm dark:text-gray-400 mt-5">
+							Licensed under the MIT License (MIT). See LICENSE in the repo root for license
+							information.
 						</p>
 					</div>
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -70,7 +68,7 @@ export function Footer() {
 								</li>
 								<li>
 									<a
-										href="https://blog.arihant.us/"
+										href="#"
 										className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white"
 									>
 										Blog
@@ -85,6 +83,8 @@ export function Footer() {
 									<a
 										href="https://github.com/joseantcordeiro/smart-medical-record"
 										className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white"
+										target="_blank"
+										rel="noreferrer"
 									>
 										Github
 									</a>
@@ -93,6 +93,8 @@ export function Footer() {
 									<a
 										href="https://www.linkedin.com/in/joseantcordeiro"
 										className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white"
+										target="_blank"
+										rel="noreferrer"
 									>
 										LinkedIn
 									</a>
@@ -101,6 +103,8 @@ export function Footer() {
 									<a
 										href="https://x.com/joseantcordeiro"
 										className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white"
+										target="_blank"
+										rel="noreferrer"
 									>
 										X
 									</a>
@@ -114,6 +118,8 @@ export function Footer() {
 									<Link
 										to="/privacy-policy"
 										className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white"
+										target="_blank"
+										rel="noreferrer"
 									>
 										Privacy Policy
 									</Link>
@@ -122,6 +128,8 @@ export function Footer() {
 									<Link
 										to="/tos"
 										className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white"
+										target="_blank"
+										rel="noreferrer"
 									>
 										Terms of Service
 									</Link>

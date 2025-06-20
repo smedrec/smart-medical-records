@@ -1,12 +1,13 @@
+import { fhirClient } from '@/lib/fhir'
 import { createServerFn } from '@tanstack/react-start'
 import { getHeaders } from '@tanstack/react-start/server'
-
-import { fhir } from '@repo/fhir'
 
 type GetResourceParams = {
 	resourceType: string
 	id: string
 }
+
+const fhir = fhirClient('http://joseantcordeiro.hopto.org:8080/fhir/')
 
 export const getResource = createServerFn({ method: 'GET' })
 	.validator((params: GetResourceParams) => params)

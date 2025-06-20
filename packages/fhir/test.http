@@ -1,0 +1,5 @@
+### REST Client
+@fhirurl =http://joseantcordeiro.hopto.org:8080/fhir
+
+### GET Patient
+GET {{fhirurl}}/Patient/152

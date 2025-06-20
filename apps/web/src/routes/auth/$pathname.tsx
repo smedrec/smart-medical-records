@@ -1,5 +1,5 @@
 import { AcceptInvitationCard, AuthCard } from '@daveyplate/better-auth-ui'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 
 import { cn } from '@repo/ui/lib/utils'
 
@@ -20,23 +20,18 @@ function RouteComponent() {
 
 			<p className="text-muted-foreground text-xs">
 				By signing in, you agree to our{' '}
-				<a
-					className="text-warning underline"
-					href="https://better-auth.com"
-					target="_blank"
-					rel="noreferrer"
-				>
+				<Link className="text-warning underline" to="/tos" target="_blank" rel="noreferrer">
 					Terms of Use
-				</a>{' '}
+				</Link>{' '}
 				and{' '}
-				<a
+				<Link
 					className="text-warning underline"
-					href="https://better-auth.com"
+					to="/privacy-policy"
 					target="_blank"
 					rel="noreferrer"
 				>
 					Privacy Policy
-				</a>
+				</Link>
 				.
 			</p>
 			<p

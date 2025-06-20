@@ -408,6 +408,9 @@ importers:
       nitro-cloudflare-dev:
         specifier: 0.2.2
         version: 0.2.2
+      openapi-fetch:
+        specifier: 0.14.0
+        version: 0.14.0
       openapi-react-query:
         specifier: 0.5.0
         version: 0.5.0(@tanstack/react-query@5.80.7(react@19.1.0))(openapi-fetch@0.14.0)

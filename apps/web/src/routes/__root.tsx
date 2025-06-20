@@ -15,8 +15,8 @@ export const Route = createRootRoute({
 				content: 'width=device-width, initial-scale=1',
 			},
 			...seo({
-				title: 'TanStack Start | Type-Safe, Client-First, Full-Stack React Framework',
-				description: `TanStack Start is a type-safe, client-first, full-stack React framework. `,
+				title: 'Smart Medical Record | Opensource FHIR compatible',
+				description: `Smart Medical Record is a type-safe, client-first, full-stack FHIR framework. `,
 			}),
 		],
 		links: [
@@ -50,11 +50,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
 
 			<body>
 				<Providers>
-					<div className="flex min-h-svh flex-col">
-						{/**<Header />*/}
-
-						{children}
-					</div>
+					<div className="flex min-h-svh flex-col">{children}</div>
 				</Providers>
 
 				<Scripts />
