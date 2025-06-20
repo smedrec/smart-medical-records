@@ -39,8 +39,10 @@ coverage
 .nitro
 routeTree.gen.ts
 
-# VuePress
-.vuepress
+# VuePress files
+apps/docs/docs/.vuepress/.temp/
+apps/docs/docs/.vuepress/.cache/
+apps/docs/docs/.vuepress/dist/
 
 # Mastra
 .mastra
@@ -58,6 +60,9 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Log files
+*.log
 
 # Agents
 .claude/settings.local.json
