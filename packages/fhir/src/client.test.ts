@@ -7,9 +7,9 @@ import {
 	createSmartFhirClient,
 	generatePkceChallenge,
 	generateRandomString,
-} from '../../client'
-
-import type { SmartFhirClientEnvOptions, SmartFhirClientOptions } from '../../client'
+	SmartFhirClientEnvOptions,
+	SmartFhirClientOptions,
+} from './client'
 
 // Mock fhirclient parts
 vi.mock('fhirclient', async (importOriginal) => {
