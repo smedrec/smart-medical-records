@@ -10,13 +10,13 @@
 		"check:types": "run-tsc",
 		"test": "run-vitest"
 	},
-	"dependencies": {},
 	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "0.8.39",
+		"@cloudflare/workers-types": "4.20250617.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"vitest": "3.2.3",
-		"@cloudflare/vitest-pool-workers": "0.8.39",
-		"@cloudflare/workers-types": "4.20250617.0"
+		"@types/node": "24.0.3",
+		"vitest": "3.2.3"
 	}
 }
