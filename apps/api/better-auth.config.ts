@@ -5,7 +5,7 @@
  */
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { admin, apiKey, openAPI, organization } from 'better-auth/plugins'
+import { admin, apiKey, mcp, openAPI, organization } from 'better-auth/plugins'
 import { drizzle } from 'drizzle-orm/d1'
 
 import type { Env } from './src/lib/hono/context'
@@ -46,6 +46,9 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
 				maxRequests: 10, // 10 requests per day
 			},
 			enableMetadata: true,
+		}),
+		mcp({
+			loginPage: `/auth/sign-in`, // path to your login page
 		}),
 		openAPI(),
 	],

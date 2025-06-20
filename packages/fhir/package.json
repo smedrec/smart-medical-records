@@ -21,6 +21,7 @@
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
+		"@types/node": "24.0.3",
 		"openapi-typescript": "7.8.0",
 		"vitest": "3.2.3"
 	}

@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { admin, apiKey, openAPI, organization } from 'better-auth/plugins'
+import { admin, apiKey, mcp, oidcProvider, openAPI, organization } from 'better-auth/plugins'
 import { env } from 'cloudflare:workers'
 import { eq } from 'drizzle-orm'
 
@@ -289,6 +289,19 @@ export const auth = betterAuth({
 					return permissions
 				},
 			},*/
+		}),
+		oidcProvider({
+			allowDynamicClientRegistration: true,
+			loginPage: `${env.APP_PUBLIC_URL}/auth/sign-in`, // path to your login page
+			metadata: {
+				issuer: `${env.APP_PUBLIC_URL}`,
+				authorization_endpoint: '/auth/oauth2/authorize',
+				token_endpoint: '/auth/oauth2/token',
+				// ...other custom metadata
+			},
+		}),
+		mcp({
+			loginPage: `${env.APP_PUBLIC_URL}/auth/sign-in`, // path to your login page
 		}),
 		/**customSession(async ({ user, session }) => {
 			let role = null

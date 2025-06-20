@@ -1,5 +1,5 @@
 // Import env from Cloudflare Workers runtime
-//import { env } from 'cloudflare:workers'
+import { env } from 'cloudflare:workers'
 import FHIR from 'fhirclient' // Added fhirclient import
 import createClient from 'openapi-fetch'
 
@@ -256,10 +256,9 @@ export const authorizeSmartClient = async (
 }
 
 // Export fhir client only in development environment
-//export const fhir =
-//env.ENVIRONMENT === 'development'
-//	? createClient<paths>({ baseUrl: 'http://joseantcordeiro.hopto.org:8080/fhir/' })
-//	: undefined
-export const fhir = createClient<paths>({ baseUrl: 'http://joseantcordeiro.hopto.org:8080/fhir/' })
+export const fhir =
+	env.ENVIRONMENT === 'development'
+		? createClient<paths>({ baseUrl: 'http://joseantcordeiro.hopto.org:8080/fhir/' })
+		: undefined
 // export { SmartFhirClientEnvOptions }
 // Previous export: export { createSmartFhirClient, authorizeSmartClient };
