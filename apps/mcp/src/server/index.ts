@@ -1,19 +1,26 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 
-import { allFhirTools } from './tools/fhir-tools.js'
+import { registerPrompts } from './prompts/index.js'
+import { registerResources } from './resources/index.js'
+import { registerTools } from './tools/index.js'
 
 // Initialize the MCP Server instance
 export const server = new McpServer({
-	name: 'smedrec-fhir-mcp', // Unique name for this server
-	version: '0.1.0', // Server version
+	name: 'css-tutor', // Unique name for this server
+	version: '0.0.1', // Server version
 	// Declare the types of capabilities the server will offer
 	capabilities: {
 		prompts: {}, // Will be populated by registerPrompts
 		resources: {}, // Will be populated by registerResources
-		tools: allFhirTools, // Will be populated by registerTools
+		tools: {}, // Will be populated by registerTools
 	},
 })
+
+// Load and register all defined prompts, resources, and tools
+registerPrompts()
+registerResources()
+registerTools()
 
 // Main entry point for the server application
 async function main(): Promise<void> {

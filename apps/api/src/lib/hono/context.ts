@@ -9,12 +9,6 @@ import type { Logger } from '../logs'
 export type Env = SharedHonoEnv & {
 	// add additional Bindings here
 	ALLOWED_ORIGINS: string
-
-	CLOUDFLARE_R2_IMAGES_URL: string
-
-	DB: D1Database
-	KV: KVNamespace
-	IMAGES_DEV: R2Bucket
 }
 
 type SessionWithRole<T> = T & { activeOrganizationRole: string | null }

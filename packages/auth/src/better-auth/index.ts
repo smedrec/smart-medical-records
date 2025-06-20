@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { admin, apiKey, openAPI, organization } from 'better-auth/plugins'
+import { admin, apiKey, customSession, openAPI, organization } from 'better-auth/plugins'
 import { env } from 'cloudflare:workers'
 import { eq } from 'drizzle-orm'
 

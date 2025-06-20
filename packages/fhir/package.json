@@ -12,7 +12,7 @@
 	},
 	"dependencies": {
 		"@repo/hono-helpers": "workspace:*",
-		"fhirclient": "2.6.0",
+		"fhirclient": "^2.6.0",
 		"openapi-fetch": "0.14.0"
 	},
 	"devDependencies": {
@@ -23,5 +23,10 @@
 		"@repo/typescript-config": "workspace:*",
 		"openapi-typescript": "7.8.0",
 		"vitest": "3.2.3"
+	},
+	"pnpm": {
+		"overrides": {
+			"debug": "4.3.5"
+		}
 	}
 }
