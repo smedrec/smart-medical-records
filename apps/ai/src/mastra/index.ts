@@ -3,8 +3,7 @@ import { Mastra } from '@mastra/core/mastra'
 import { CloudflareDeployer } from '@mastra/deployer-cloudflare'
 import { PinoLogger } from '@mastra/loggers'
 import createClient from 'openapi-fetch'
-
-import { auth } from '@repo/auth'
+import { fetch, request } from 'undici'
 
 import { assistantAgent } from './agents/assistant-agent'
 import { fhirMCPServer } from './mcp'
@@ -12,6 +11,7 @@ import { pgStorage, pgVector } from './stores/pgvector'
 import { weatherWorkflow } from './workflows/weather-workflow'
 
 import type { RuntimeContext } from '@mastra/core/di'
+import type { Session, User } from '@repo/auth'
 import type { FhirApiClient, FhirSessionData } from '../hono/middleware/fhir-auth'
 
 type McpFhirToolCallContext = {
@@ -79,6 +79,7 @@ export const mastra = new Mastra({
 					if (!session) {
 						return new Response('Unauthorized', { status: 401 })
 					}*/
+
 				const sessionData: FhirSessionData = {
 					tokenResponse: {},
 					serverUrl: 'http://joseantcordeiro.hopto.org:8080/fhir/',
@@ -100,14 +101,30 @@ export const mastra = new Mastra({
 			registerCopilotKit({
 				path: '/copilotkit',
 				resourceId: 'assistantAgent',
-				setContext: (c, runtimeContext) => {
+				setContext: async (c, runtimeContext) => {
 					const { userId, role } = c.req.param()
 					// Add whatever you need to the runtimeContext
+					// Get session data from auth endpoint with proper error handling
+					const res = await fetch('http://localhost:8801/auth/get-session', {
+						headers: c.req.raw.headers,
+						method: 'GET',
+					})
+
+					// Parse JSON once and validate response
+					const json = await res.json()
+					console.log(JSON.stringify(json, null, 2))
+
+					// Type guard for runtime validation
+					const sessionAuth: { session: Session; user: User } | null =
+						json && typeof json === 'object'
+							? (json as { session: Session; user: User } | null)
+							: null
+
 					const sessionData: FhirSessionData = {
 						tokenResponse: {},
 						serverUrl: 'http://joseantcordeiro.hopto.org:8080/fhir/',
-						userId: '1RnE9Braod6DUi0b0EfqBgaTcRoWYwHz', // Added for Cerbos Principal ID
-						roles: ['owner'],
+						userId: sessionAuth?.session.userId || '1RnE9Braod6DUi0b0EfqBgaTcRoWYwHz', // Added for Cerbos Principal ID
+						roles: [sessionAuth?.session.activeOrganizationRole || 'owner'],
 					}
 					const fhirApiClient: FhirApiClient = createClient({ baseUrl: sessionData.serverUrl })
 					runtimeContext.set('fhirSessionData', sessionData)

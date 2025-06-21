@@ -261,7 +261,7 @@ export const patientCreateTool = createTool({
 		}
 
 		const principal = { id: principalId, roles }
-		const cerbosResource = { kind: resourceType, attributes: context.resource }
+		const cerbosResource = { id: 'create', kind: resourceType, attributes: {} }
 		const cerbosAction = 'create'
 		const allowed = await cerbos.isAllowed({
 			principal,
@@ -378,7 +378,7 @@ export const patientUpdateTool = createTool({
 			throw new Error('FHIR client not available.')
 		}
 		const principal = { id: principalId, roles }
-		const cerbosResource = { kind: resourceType, id: resourceId, attributes: params.resource }
+		const cerbosResource = { id: resourceId, kind: resourceType, attributes: {} }
 		const cerbosAction = 'update'
 		const allowed = await cerbos.isAllowed({
 			principal,

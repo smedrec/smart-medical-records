@@ -34,8 +34,10 @@
 		"@repo/fhir": "workspace:*",
 		"ai": "4.3.16",
 		"hono": "4.7.11",
+		"nodemailer": "^7.0.3",
 		"ollama-ai-provider": "1.2.0",
 		"openapi-fetch": "0.14.0",
+		"undici": "^7.10.0",
 		"zod": "3.25.67"
 	},
 	"devDependencies": {
@@ -43,6 +45,7 @@
 		"@repo/eslint-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "24.0.3",
+		"@types/nodemailer": "^6.4.17",
 		"mastra": "0.10.5",
 		"wrangler": "4.20.1"
 	},

@@ -4,6 +4,7 @@ import { Memory } from '@mastra/memory'
 import { ollama } from 'ollama-ai-provider'
 
 import { pgStorage, pgVector } from '../stores/pgvector'
+import { emailSendTool } from '../tools/email-tools'
 import { allFhirTools } from '../tools/fhir-tools'
 
 // Initialize memory with PostgreSQL storage and vector search
@@ -21,6 +22,9 @@ export const assistantAgent = new Agent({
     You are an Agent that helps users to manage the Patient, Practitioner and Organization FHIR resources.
   `,
 	model: groq('llama-3.3-70b-versatile'),
-	tools: Object.fromEntries(allFhirTools.map((tool) => [tool.id, tool])),
+	tools: {
+		...Object.fromEntries(allFhirTools.map((tool) => [tool.id, tool])),
+		emailSendTool,
+	},
 	memory,
 })
