@@ -1,15 +1,9 @@
 {
 	"name": "@repo/app-client",
 	"version": "0.1.0",
-	"dependencies": {},
-	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.39",
-		"@cloudflare/workers-types": "4.20250617.0",
-		"@repo/eslint-config": "workspace:*",
-		"@repo/tools": "workspace:*",
-		"@repo/typescript-config": "workspace:*",
-		"vitest": "3.2.3"
-	},
+	"private": true,
+	"sideEffects": false,
+	"type": "module",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
@@ -18,13 +12,19 @@
 		"./package.json": "./package.json"
 	},
 	"main": "./dist/index.mjs",
-	"private": true,
 	"scripts": {
 		"build": "runx build lib index.ts -d src -f cjs --platform node",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"te st": "run-vitest"
 	},
-	"sideEffects": false,
-	"type": "module"
+	"dependencies": {},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "0.8.39",
+		"@cloudflare/workers-types": "4.20250617.0",
+		"@repo/eslint-config": "workspace:*",
+		"@repo/tools": "workspace:*",
+		"@repo/typescript-config": "workspace:*",
+		"vitest": "3.2.3"
+	}
 }

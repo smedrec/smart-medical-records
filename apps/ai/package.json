@@ -1,8 +1,20 @@
 {
 	"name": "ai-api",
-	"description": "",
 	"version": "0.1.0",
+	"description": "",
+	"keywords": [],
+	"license": "MIT",
 	"author": "",
+	"type": "module",
+	"main": "index.js",
+	"scripts": {
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"deploy": "pnpm mastra:build && wrangler  --cwd .mastra/output/ deploy",
+		"mastra:build": "mastra build",
+		"mastra:dev": "mastra dev",
+		"worker:dev": "pnpm mastra:build && wrangler  --cwd .mastra/output/ dev"
+	},
 	"dependencies": {
 		"@ai-sdk/groq": "1.2.9",
 		"@cerbos/http": "0.22.0",
@@ -36,17 +48,5 @@
 	},
 	"engines": {
 		"node": ">=20.9.0"
-	},
-	"keywords": [],
-	"license": "MIT",
-	"main": "index.js",
-	"scripts": {
-		"check:lint": "run-eslint",
-		"check:types": "run-tsc",
-		"deploy": "pnpm mastra:build && wrangler  --cwd .mastra/output/ deploy",
-		"mastra:build": "mastra build",
-		"mastra:dev": "mastra dev",
-		"worker:dev": "pnpm mastra:build && wrangler  --cwd .mastra/output/ dev"
-	},
-	"type": "module"
+	}
 }

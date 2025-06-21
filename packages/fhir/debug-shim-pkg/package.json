@@ -1,6 +1,6 @@
 {
-  "name": "debug-shim-internal",
-  "version": "1.0.0",
-  "main": "index.ts",
-  "type": "module"
+	"name": "debug-shim-internal",
+	"version": "1.0.0",
+	"type": "module",
+	"main": "index.ts"
 }

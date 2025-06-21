@@ -12,9 +12,9 @@ import { chefAgent } from './agents/chef-agent'
 
 import { researchAgent } from './agents/research-agent'
 import { weatherAgent } from './agents/weather-agent'
+import { fhirMCPServer } from './mcp'
 import { pgStorage, pgVector } from './stores/pgvector'
 import { weatherWorkflow } from './workflows/weather-workflow'
-import { fhirMCPServer } from './mcp'
 
 export const mastra = new Mastra({
 	deployer: new CloudflareDeployer({
@@ -101,8 +101,8 @@ export const mastra = new Mastra({
 	//}),
 	storage: pgStorage,
 	mcpServers: {
-    fhirMCPServer,
-  },
+		fhirMCPServer,
+	},
 	logger: new PinoLogger({
 		name: 'Mastra',
 		level: 'info',

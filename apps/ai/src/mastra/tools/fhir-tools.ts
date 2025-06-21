@@ -1,19 +1,19 @@
+import { createTool } from '@mastra/core'
+import { RuntimeContext } from '@mastra/core/di'
+import { createPatientSchema, createPractitionerSchema } from '@solarahealth/fhir-r4'
+import z from 'zod'
+
 import { logAuditEvent } from '../../audit' // Import audit logger
 import { cerbos } from '../../cerbos'
 
-import {
-	createPatientSchema,
-	createPractitionerSchema,
-	type Bundle,
-	type OperationOutcome,
-	type Organization,
-	type Patient,
-	type Practitioner,
+import type {
+	Bundle,
+	OperationOutcome,
+	Organization,
+	Patient,
+	Practitioner,
 } from '@solarahealth/fhir-r4'
 import type { FhirApiClient, FhirSessionData } from '../../hono/middleware/fhir-auth'
-import { createTool } from '@mastra/core'
-import z from 'zod'
-import { RuntimeContext } from '@mastra/core/di'
 
 export type McpFhirToolCallContext = {
 	fhirClient?: FhirApiClient | null
@@ -147,7 +147,7 @@ export const patientSearchTool = createTool({
 	id: 'fhirPatientSearch',
 	description: 'Searches for Patient FHIR resources.',
 	inputSchema: z.object({
-		params: z.unknown().describe('The patient search parameters')
+		params: z.unknown().describe('The patient search parameters'),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<Bundle<Patient>> => {
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -238,7 +238,7 @@ export const patientCreateTool = createTool({
 	id: 'fhirPatientCreate',
 	description: 'Creates a new Patient FHIR resource.',
 	inputSchema: z.object({
-		resource: z.unknown().describe('The Patient fhir resource')
+		resource: z.unknown().describe('The Patient fhir resource'),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<Patient> => {
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -355,7 +355,7 @@ export const patientUpdateTool = createTool({
 	description: 'Updates an existing Patient FHIR resource.',
 	inputSchema: z.object({
 		id: z.string().describe('Patient id'),
-		resource: z.unknown().describe('')
+		resource: z.unknown().describe(''),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<Patient> => {
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -461,7 +461,7 @@ export const practitionerReadTool = createTool({
 	id: 'fhirPractitionerRead',
 	description: 'Reads a Practitioner FHIR resource by ID.',
 	inputSchema: z.object({
-		id: z.string().describe('Practitioner ID')
+		id: z.string().describe('Practitioner ID'),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<Practitioner> => {
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -547,7 +547,7 @@ export const practitionerSearchTool = createTool({
 	id: 'fhirPractitionerSearch',
 	description: 'Searches for Practitioner FHIR resources.',
 	inputSchema: z.object({
-		params: z.unknown().describe('The practitioner search parameters')
+		params: z.unknown().describe('The practitioner search parameters'),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<Bundle<Practitioner>> => {
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -630,7 +630,7 @@ export const practitionerCreateTool = createTool({
 	id: 'fhirPractitionerCreate',
 	description: 'Creates a new Practitioner FHIR resource.',
 	inputSchema: z.object({
-		resource: z.unknown().describe('The Practitioner FHIR resource.')
+		resource: z.unknown().describe('The Practitioner FHIR resource.'),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<Practitioner> => {
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -719,7 +719,7 @@ export const practitionerUpdateTool = createTool({
 	description: 'Updates an existing Practitioner FHIR resource.',
 	inputSchema: z.object({
 		id: z.string().describe('Practitioner id'),
-		resource: z.unknown().describe('')
+		resource: z.unknown().describe(''),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<Practitioner> => {
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -899,7 +899,7 @@ export const organizationSearchTool = createTool({
 	id: 'fhirOrganizationSearch',
 	description: 'Searches for Organization FHIR resources.',
 	inputSchema: z.object({
-		params: z.unknown().describe('The organization search parameters')
+		params: z.unknown().describe('The organization search parameters'),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<Bundle<Organization>> => {
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -982,7 +982,7 @@ export const organizationCreateTool = createTool({
 	id: 'fhirOrganizationCreate',
 	description: 'Creates a new Organization FHIR resource.',
 	inputSchema: z.object({
-		resource: z.unknown().describe('The Organization FHIR resource.')
+		resource: z.unknown().describe('The Organization FHIR resource.'),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<Organization> => {
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -1071,9 +1071,9 @@ export const organizationUpdateTool = createTool({
 	description: 'Updates an existing Organization FHIR resource.',
 	inputSchema: z.object({
 		id: z.string().describe('The Organization ID'),
-		resource: z.unknown().describe('The Organization FHIR resource.')
+		resource: z.unknown().describe('The Organization FHIR resource.'),
 	}),
-	execute: async({ context, runtimeContext }): Promise<Organization> => {
+	execute: async ({ context, runtimeContext }): Promise<Organization> => {
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
 		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
 		const toolName = 'fhirOrganizationUpdate'

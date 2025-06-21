@@ -1,6 +1,24 @@
 {
 	"name": "api",
 	"version": "0.1.0",
+	"private": true,
+	"sideEffects": false,
+	"type": "module",
+	"scripts": {
+		"better-auth:generate": "pnpm dlx @better-auth/cli@latest generate --config ./better-auth.config.ts --output /home/jose/Documents/workspace/smedrec/smart-medical-records/packages/db/src/schema/auth.ts",
+		"build:wrangler": "run-wrangler-build",
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"deploy": "run-wrangler-deploy",
+		"dev": "run-wrangler-dev",
+		"fix:workers-types": "run-wrangler-types",
+		"migrate:custom": "drizzle-kit generate --custom --config=drizzle-dev.config.ts",
+		"migrate:dev": "wrangler d1 migrations apply DB --local",
+		"migrate:new": "drizzle-kit generate --config=drizzle-dev.config.ts",
+		"migrate:prod": "wrangler d1 migrations apply DB --remote",
+		"studio": "drizzle-kit studio --config=drizzle-dev.config.ts",
+		"test": "run-vitest"
+	},
 	"dependencies": {
 		"@cerbos/http": "0.22.0",
 		"@hono/zod-openapi": "0.19.8",
@@ -30,23 +48,5 @@
 		"drizzle-kit": "0.31.1",
 		"vitest": "3.2.3",
 		"wrangler": "4.20.1"
-	},
-	"private": true,
-	"scripts": {
-		"better-auth:generate": "pnpm dlx @better-auth/cli@latest generate --config ./better-auth.config.ts --output /home/jose/Documents/workspace/smedrec/smart-medical-records/packages/db/src/schema/auth.ts",
-		"build:wrangler": "run-wrangler-build",
-		"check:lint": "run-eslint",
-		"check:types": "run-tsc",
-		"deploy": "run-wrangler-deploy",
-		"dev": "run-wrangler-dev",
-		"fix:workers-types": "run-wrangler-types",
-		"migrate:custom": "drizzle-kit generate --custom --config=drizzle-dev.config.ts",
-		"migrate:dev": "wrangler d1 migrations apply DB --local",
-		"migrate:new": "drizzle-kit generate --config=drizzle-dev.config.ts",
-		"migrate:prod": "wrangler d1 migrations apply DB --remote",
-		"studio": "drizzle-kit studio --config=drizzle-dev.config.ts",
-		"test": "run-vitest"
-	},
-	"sideEffects": false,
-	"type": "module"
+	}
 }

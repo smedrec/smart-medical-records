@@ -1,25 +1,26 @@
-import { fhirclient } from "./types";
-declare const _debug: any;
-export { _debug as debug };
+import { fhirclient } from './types'
+
+declare const _debug: any
+export { _debug as debug }
 /**
  * A namespace with functions for converting between different measurement units
  */
 export declare const units: {
-    cm({ code, value }: fhirclient.CodeValue): number;
-    kg({ code, value }: fhirclient.CodeValue): number;
-    any(pq: fhirclient.CodeValue): number;
-};
+	cm({ code, value }: fhirclient.CodeValue): number
+	kg({ code, value }: fhirclient.CodeValue): number
+	any(pq: fhirclient.CodeValue): number
+}
 /**
  * Used in fetch Promise chains to reject if the "ok" property is not true
  */
-export declare function checkResponse(resp: Response): Promise<Response>;
+export declare function checkResponse(resp: Response): Promise<Response>
 /**
  * Used in fetch Promise chains to return the JSON version of the response.
  * Note that `resp.json()` will throw on empty body so we use resp.text()
  * instead.
  */
-export declare function responseToJSON(resp: Response): Promise<object | string>;
-export declare function loweCaseKeys<T = Record<string, any> | any[] | undefined>(obj: T): T;
+export declare function responseToJSON(resp: Response): Promise<object | string>
+export declare function loweCaseKeys<T = Record<string, any> | any[] | undefined>(obj: T): T
 /**
  * This is our built-in request function. It does a few things by default
  * (unless told otherwise):
@@ -30,7 +31,10 @@ export declare function loweCaseKeys<T = Record<string, any> | any[] | undefined
  * - If the response is text return the result text
  * - Otherwise return the response object on which we call stuff like `.blob()`
  */
-export declare function request<T = fhirclient.FetchResult>(url: string | Request, requestOptions?: fhirclient.FetchOptions): Promise<T>;
+export declare function request<T = fhirclient.FetchResult>(
+	url: string | Request,
+	requestOptions?: fhirclient.FetchOptions
+): Promise<T>
 /**
  * Makes a request using `fetch` and stores the result in internal memory cache.
  * The cache is cleared when the page is unloaded.
@@ -39,7 +43,11 @@ export declare function request<T = fhirclient.FetchResult>(url: string | Reques
  * @param force If true, reload from source and update the cache, even if it has
  * already been cached.
  */
-export declare function getAndCache(url: string, requestOptions?: RequestInit, force?: boolean): Promise<any>;
+export declare function getAndCache(
+	url: string,
+	requestOptions?: RequestInit,
+	force?: boolean
+): Promise<any>
 /**
  * Fetches the conformance statement from the given base URL.
  * Note that the result is cached in memory (until the page is reloaded in the
@@ -47,7 +55,10 @@ export declare function getAndCache(url: string, requestOptions?: RequestInit, f
  * @param baseUrl The base URL of the FHIR server
  * @param [requestOptions] Any options passed to the fetch call
  */
-export declare function fetchConformanceStatement(baseUrl?: string, requestOptions?: RequestInit): Promise<fhirclient.FHIR.CapabilityStatement>;
+export declare function fetchConformanceStatement(
+	baseUrl?: string,
+	requestOptions?: RequestInit
+): Promise<fhirclient.FHIR.CapabilityStatement>
 /**
  * Walks through an object (or array) and returns the value found at the
  * provided path. This function is very simple so it intentionally does not
@@ -57,7 +68,7 @@ export declare function fetchConformanceStatement(baseUrl?: string, requestOptio
  * @param path The path (eg. "a.b.4.c")
  * @returns {*} Whatever is found in the path or undefined
  */
-export declare function getPath(obj: Record<string, any>, path?: string): any;
+export declare function getPath(obj: Record<string, any>, path?: string): any
 /**
  * Like getPath, but if the node is found, its value is set to @value
  * @param obj The object (or Array) to walk through
@@ -66,21 +77,26 @@ export declare function getPath(obj: Record<string, any>, path?: string): any;
  * @param createEmpty If true, create missing intermediate objects or arrays
  * @returns The modified object
  */
-export declare function setPath(obj: Record<string, any>, path: string, value: any, createEmpty?: boolean): Record<string, any>;
+export declare function setPath(
+	obj: Record<string, any>,
+	path: string,
+	value: any,
+	createEmpty?: boolean
+): Record<string, any>
 /**
  * If the argument is an array returns it as is. Otherwise puts it in an array
  * (`[arg]`) and returns the result
  * @param arg The element to test and possibly convert to array
  * @category Utility
  */
-export declare function makeArray<T = any>(arg: any): T[];
+export declare function makeArray<T = any>(arg: any): T[]
 /**
  * Given a path, converts it to absolute url based on the `baseUrl`. If baseUrl
  * is not provided, the result would be a rooted path (one that starts with `/`).
  * @param path The path to convert
  * @param baseUrl The base URL
  */
-export declare function absolute(path: string, baseUrl?: string): string;
+export declare function absolute(path: string, baseUrl?: string): string
 /**
  * Generates random strings. By default this returns random 8 characters long
  * alphanumeric strings.
@@ -89,21 +105,24 @@ export declare function absolute(path: string, baseUrl?: string): string;
  *     Defaults to all the upper and lower-case letters plus digits.
  * @category Utility
  */
-export declare function randomString(strLength?: number, charSet?: string): string;
+export declare function randomString(strLength?: number, charSet?: string): string
 /**
  * Decodes a JWT token and returns it's body.
  * @param token The token to read
  * @param env An `Adapter` or any other object that has an `atob` method
  * @category Utility
  */
-export declare function jwtDecode(token: string, env: fhirclient.Adapter): Record<string, any> | null;
+export declare function jwtDecode(
+	token: string,
+	env: fhirclient.Adapter
+): Record<string, any> | null
 /**
  * Add a supplied number of seconds to the supplied Date, returning
  * an integer number of seconds since the epoch
  * @param secondsAhead How far ahead, in seconds (defaults to 120 seconds)
  * @param from Initial time (defaults to current time)
  */
-export declare function getTimeInFuture(secondsAhead?: number, from?: Date | number): number;
+export declare function getTimeInFuture(secondsAhead?: number, from?: Date | number): number
 /**
  * Given a token response, computes and returns the expiresAt timestamp.
  * Note that this should only be used immediately after an access token is
@@ -111,7 +130,10 @@ export declare function getTimeInFuture(secondsAhead?: number, from?: Date | num
  * @param tokenResponse
  * @param env
  */
-export declare function getAccessTokenExpiration(tokenResponse: fhirclient.TokenResponse, env: fhirclient.Adapter): number;
+export declare function getAccessTokenExpiration(
+	tokenResponse: fhirclient.TokenResponse,
+	env: fhirclient.Adapter
+): number
 /**
  * Groups the observations by code. Returns a map that will look like:
  * ```js
@@ -124,7 +146,10 @@ export declare function getAccessTokenExpiration(tokenResponse: fhirclient.Token
  * @param observations Array of observations
  * @param property The name of a CodeableConcept property to group by
  */
-export declare function byCode(observations: fhirclient.FHIR.Observation | fhirclient.FHIR.Observation[], property: string): fhirclient.ObservationMap;
+export declare function byCode(
+	observations: fhirclient.FHIR.Observation | fhirclient.FHIR.Observation[],
+	property: string
+): fhirclient.ObservationMap
 /**
  * First groups the observations by code using `byCode`. Then returns a function
  * that accepts codes as arguments and will return a flat array of observations
@@ -138,12 +163,18 @@ export declare function byCode(observations: fhirclient.FHIR.Observation | fhirc
  * @param observations Array of observations
  * @param property The name of a CodeableConcept property to group by
  */
-export declare function byCodes(observations: fhirclient.FHIR.Observation | fhirclient.FHIR.Observation[], property: string): (...codes: string[]) => any[];
+export declare function byCodes(
+	observations: fhirclient.FHIR.Observation | fhirclient.FHIR.Observation[],
+	property: string
+): (...codes: string[]) => any[]
 /**
  * Given a conformance statement and a resource type, returns the name of the
  * URL parameter that can be used to scope the resource type by patient ID.
  */
-export declare function getPatientParam(conformance: fhirclient.FHIR.CapabilityStatement, resourceType: string): string;
+export declare function getPatientParam(
+	conformance: fhirclient.FHIR.CapabilityStatement,
+	resourceType: string
+): string
 /**
  * Resolves a reference to target window. It may also open new window or tab if
  * the `target = "popup"` or `target = "_blank"`.
@@ -151,6 +182,10 @@ export declare function getPatientParam(conformance: fhirclient.FHIR.CapabilityS
  * @param width Only used when `target = "popup"`
  * @param height Only used when `target = "popup"`
  */
-export declare function getTargetWindow(target: fhirclient.WindowTarget, width?: number, height?: number): Promise<Window>;
-export declare function assert(condition: any, message: string): asserts condition;
-export declare function assertJsonPatch(patch: fhirclient.JsonPatch): asserts patch;
+export declare function getTargetWindow(
+	target: fhirclient.WindowTarget,
+	width?: number,
+	height?: number
+): Promise<Window>
+export declare function assert(condition: any, message: string): asserts condition
+export declare function assertJsonPatch(patch: fhirclient.JsonPatch): asserts patch

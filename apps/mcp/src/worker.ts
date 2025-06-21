@@ -14,7 +14,8 @@ import {
 	FHIR_AUTH_STATE_COOKIE,
 	FHIR_PKCE_VERIFIER_COOKIE,
 	FHIR_SESSION_COOKIE,
-} from './lib/auth-constants' // Import shared constants
+} from './lib/auth-constants'
+// Import shared constants
 
 import { zEnv } from './lib/env'
 import { init } from './lib/hono/init'

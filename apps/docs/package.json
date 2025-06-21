@@ -1,20 +1,20 @@
 {
 	"name": "docs",
-	"description": "Smart Medical Record Docs",
 	"version": "0.3.2-canary.0",
-	"devDependencies": {
-		"@vuepress/bundler-vite": "2.0.0-rc.20",
-		"@vuepress/theme-default": "2.0.0-rc.88",
-		"sass-embedded": "1.89.2",
-		"vue": "3.5.16",
-		"vuepress": "2.0.0-rc.20"
-	},
+	"description": "Smart Medical Record Docs",
 	"license": "MIT",
+	"type": "module",
 	"scripts": {
 		"docs:build": "vuepress build docs",
 		"docs:clean-dev": "vuepress dev docs --clean-cache",
 		"docs:dev": "vuepress dev docs",
 		"docs:update-package": "pnpm dlx vp-update"
 	},
-	"type": "module"
+	"devDependencies": {
+		"@vuepress/bundler-vite": "2.0.0-rc.20",
+		"@vuepress/theme-default": "2.0.0-rc.88",
+		"sass-embedded": "1.89.2",
+		"vue": "3.5.16",
+		"vuepress": "2.0.0-rc.20"
+	}
 }

@@ -1,6 +1,16 @@
 {
 	"name": "@repo/db",
 	"version": "0.1.0",
+	"private": true,
+	"sideEffects": false,
+	"type": "module",
+	"main": "src/index.ts",
+	"scripts": {
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"test": "run-vitest",
+		"zod:generate": "ts-to-zod src/schema/r5.d.ts src/schema/r5.ts"
+	},
 	"dependencies": {
 		"@better-auth/utils": "0.2.5",
 		"@repo/hono-helpers": "workspace:*",
@@ -19,15 +29,5 @@
 		"@types/pg": "8.15.4",
 		"ts-to-zod": "3.15.0",
 		"vitest": "3.2.3"
-	},
-	"main": "src/index.ts",
-	"private": true,
-	"scripts": {
-		"check:lint": "run-eslint",
-		"check:types": "run-tsc",
-		"test": "run-vitest",
-		"zod:generate": "ts-to-zod src/schema/r5.d.ts src/schema/r5.ts"
-	},
-	"sideEffects": false,
-	"type": "module"
+	}
 }

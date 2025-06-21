@@ -1,13 +1,13 @@
 import { MCPServer } from '@mastra/mcp'
 
-import { allFhirTools } from '../tools/fhir-tools'
 import { assistantAgent } from '../agents/assistant-agent'
+import { allFhirTools } from '../tools/fhir-tools'
 
 // Your Mastra Workflow
 export const fhirMCPServer = new MCPServer({
 	name: 'FHIR MCP Server',
 	version: '1.0.0',
-	tools: Object.fromEntries(allFhirTools.map(tool => [tool.id, tool])),
+	tools: Object.fromEntries(allFhirTools.map((tool) => [tool.id, tool])),
 	// Provide your tool(s) here
 	agents: { assistantAgent },
 	// Provide your agent(s) here

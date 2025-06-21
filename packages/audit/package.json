@@ -1,6 +1,15 @@
 {
 	"name": "@repo/audit",
 	"version": "0.1.0",
+	"private": true,
+	"sideEffects": false,
+	"type": "module",
+	"main": "src/index.ts",
+	"scripts": {
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"test": "run-vitest"
+	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "0.8.39",
 		"@cloudflare/workers-types": "4.20250617.0",
@@ -9,14 +18,5 @@
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "24.0.3",
 		"vitest": "3.2.3"
-	},
-	"main": "src/index.ts",
-	"private": true,
-	"scripts": {
-		"check:lint": "run-eslint",
-		"check:types": "run-tsc",
-		"test": "run-vitest"
-	},
-	"sideEffects": false,
-	"type": "module"
+	}
 }

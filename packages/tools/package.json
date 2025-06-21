@@ -1,6 +1,21 @@
 {
 	"name": "@repo/tools",
 	"version": "0.3.2",
+	"private": true,
+	"sideEffects": false,
+	"type": "module",
+	"exports": {
+		".": "./src/lib/index.ts",
+		"./zx": "./src/lib/zx.ts"
+	},
+	"directories": {
+		"bin": "bin"
+	},
+	"scripts": {
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"test": "run-vitest"
+	},
 	"dependencies": {
 		"@commander-js/extra-typings": "14.0.0",
 		"@jahands/cli-tools": "0.10.11",
@@ -19,20 +34,5 @@
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",
 		"vitest": "3.2.3"
-	},
-	"directories": {
-		"bin": "bin"
-	},
-	"exports": {
-		".": "./src/lib/index.ts",
-		"./zx": "./src/lib/zx.ts"
-	},
-	"private": true,
-	"scripts": {
-		"check:lint": "run-eslint",
-		"check:types": "run-tsc",
-		"test": "run-vitest"
-	},
-	"sideEffects": false,
-	"type": "module"
+	}
 }

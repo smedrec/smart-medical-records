@@ -9,5 +9,5 @@ export const assistantAgent = new Agent({
     You are an Agent that helps users to manage the Patient, Practitioner and Organization FHIR resources.
   `,
 	model: groq('llama-3.3-70b-versatile'),
-	tools: Object.fromEntries(allFhirTools.map(tool => [tool.id, tool])),
+	tools: Object.fromEntries(allFhirTools.map((tool) => [tool.id, tool])),
 })

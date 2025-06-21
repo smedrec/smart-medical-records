@@ -50,7 +50,10 @@ export const fhirAuthMiddleware: MiddlewareHandler = async (c, next) => {
 
 				const authHeaderMiddleware: OpenApiFetchMiddleware = {
 					onRequest(req) {
-						req.request.headers.set('Authorization', `Bearer ${sessionData.tokenResponse.access_token}`)
+						req.request.headers.set(
+							'Authorization',
+							`Bearer ${sessionData.tokenResponse.access_token}`
+						)
 					},
 					// Optional: Add basic onResponse/onError for this client if needed
 					// async onResponse(res) { return res; },
