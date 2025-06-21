@@ -1,5 +1,6 @@
 'use client'
 
+import { AgentIcon } from '@/components/icons/agent-icon'
 import { Link, useLocation } from '@tanstack/react-router'
 import {
 	Activity,
@@ -39,6 +40,12 @@ const items = [
 		tooltip: 'Home',
 		url: '/dashboard',
 		icon: Home,
+	},
+	{
+		title: 'AI Assistant',
+		tooltip: 'Talk with our Assistant',
+		url: '/dashboard/ai/chat',
+		icon: AgentIcon,
 	},
 	{
 		title: 'Practitioners',

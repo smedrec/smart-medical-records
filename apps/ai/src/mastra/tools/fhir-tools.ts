@@ -39,7 +39,7 @@ export const patientReadTool = createTool({
 		const resourceId = context.id
 		const principalId = fhirSessionData.userId || defaultPrincipalId
 		const roles = fhirSessionData.roles || defaultRoles
-		const principal = { id: principalId, roles }
+		const principal = { id: principalId, roles: roles, attributes: {} }
 		const cerbosResource = { kind: resourceType, id: resourceId, attributes: {} }
 		const cerbosAction = 'read'
 
@@ -168,7 +168,7 @@ export const patientSearchTool = createTool({
 			throw new Error('FHIR client not available.')
 		}
 		const principal = { id: principalId, roles }
-		const cerbosResource = { kind: resourceType, attributes: context.params }
+		const cerbosResource = { id: 'all', kind: resourceType, attributes: {} }
 		const cerbosAction = 'search'
 		const allowed = await cerbos.isAllowed({
 			principal,
@@ -567,7 +567,7 @@ export const practitionerSearchTool = createTool({
 			throw new Error('FHIR client not available.')
 		}
 		const principal = { id: principalId, roles }
-		const cerbosResource = { id: '', kind: resourceType, attributes: context.params }
+		const cerbosResource = { id: 'all', kind: resourceType, attributes: {} }
 		const cerbosAction = 'search'
 		const allowed = await cerbos.isAllowed({
 			principal,
@@ -919,7 +919,7 @@ export const organizationSearchTool = createTool({
 			throw new Error('FHIR client not available.')
 		}
 		const principal = { id: principalId, roles }
-		const cerbosResource = { kind: resourceType, attributes: context.params }
+		const cerbosResource = { id: 'all', kind: resourceType, attributes: {} }
 		const cerbosAction = 'search'
 		const allowed = await cerbos.isAllowed({
 			principal,

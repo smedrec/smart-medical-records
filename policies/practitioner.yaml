@@ -10,6 +10,7 @@ resourcePolicy:
         - create
         - update
         - read
+        - search
         - delete
       effect: EFFECT_ALLOW
       roles:
