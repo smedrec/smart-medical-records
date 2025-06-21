@@ -5,6 +5,7 @@
 	"author": "",
 	"dependencies": {
 		"@ai-sdk/groq": "1.2.9",
+		"@cerbos/http": "0.22.0",
 		"@cloudflare/vitest-pool-workers": "0.8.39",
 		"@mastra/agui": "1.0.2",
 		"@mastra/cloudflare-d1": "0.10.2",
@@ -18,6 +19,7 @@
 		"@mastra/rag": "0.10.3",
 		"@repo/app-client": "workspace:*",
 		"@repo/auth": "workspace:*",
+		"@solarahealth/fhir-r4": "1.2.0",
 		"ai": "4.3.16",
 		"ollama-ai-provider": "1.2.0",
 		"zod": "3.25.67"

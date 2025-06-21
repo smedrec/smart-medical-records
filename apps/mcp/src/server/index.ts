@@ -7,8 +7,8 @@ import { registerTools } from './tools/index.js'
 
 // Initialize the MCP Server instance
 export const server = new McpServer({
-	name: 'css-tutor', // Unique name for this server
-	version: '0.0.1', // Server version
+	name: 'mcp-fhir-smedrec', // Unique name for this server
+	version: '0.1.0', // Server version
 	// Declare the types of capabilities the server will offer
 	capabilities: {
 		prompts: {}, // Will be populated by registerPrompts

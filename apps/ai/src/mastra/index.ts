@@ -14,6 +14,7 @@ import { researchAgent } from './agents/research-agent'
 import { weatherAgent } from './agents/weather-agent'
 import { pgStorage, pgVector } from './stores/pgvector'
 import { weatherWorkflow } from './workflows/weather-workflow'
+import { fhirMCPServer } from './mcp'
 
 export const mastra = new Mastra({
 	deployer: new CloudflareDeployer({
@@ -92,13 +93,16 @@ export const mastra = new Mastra({
 		],
 	},
 	workflows: { weatherWorkflow },
-	agents: { researchAgent, weatherAgent, chefAgent, assistantAgent },
+	agents: { assistantAgent },
 	vectors: { pgVector },
 	//storage: new D1Store({
 	//  binding: DB, // D1Database binding provided by the Workers runtime
 	//  tablePrefix: "dev_", // Optional: isolate tables per environment
 	//}),
 	storage: pgStorage,
+	mcpServers: {
+    fhirMCPServer,
+  },
 	logger: new PinoLogger({
 		name: 'Mastra',
 		level: 'info',
