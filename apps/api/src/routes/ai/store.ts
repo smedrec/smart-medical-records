@@ -5,7 +5,7 @@ import { ollama } from 'ollama-ai-provider'
 
 import { aiClient } from '../../lib/ai'
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
-import { idParamsSchema } from '../../shared/types'
+import { idVectorSchema } from '../../shared/types'
 import { AiStoreSchema } from './types'
 
 import type { App } from '../../lib/hono'
@@ -17,7 +17,7 @@ const route = createRoute({
 	path: '/ai/store/{id}',
 	security: [{ cookieAuth: [] }],
 	request: {
-		params: idParamsSchema,
+		params: idVectorSchema,
 		body: {
 			required: true,
 			description: 'Index and data to store',

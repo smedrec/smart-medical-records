@@ -69,7 +69,7 @@ importers:
         version: 0.8.39(@cloudflare/workers-types@4.20250617.0)(@vitest/runner@3.2.3)(@vitest/snapshot@3.2.3)(vitest@3.2.3(@types/debug@4.1.12)(@types/node@24.0.3)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.40.0)(tsx@4.20.3)(yaml@2.8.0))
       '@mastra/agui':
         specifier: 1.0.2
-        version: 1.0.2(@ag-ui/core@0.0.28)(@ag-ui/encoder@0.0.28)(@ag-ui/proto@0.0.28)(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-provider-node@3.823.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.52.0)(deepmerge@4.3.1)(dotenv@16.5.0)(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(zod@3.25.67))(@ibm-cloud/watsonx-ai@1.6.7)(@mastra/core@0.10.5(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.67))(@smithy/util-utf8@2.3.0)(@upstash/redis@1.35.0)(axios@1.9.0)(better-sqlite3@11.10.0)(cheerio@1.1.0)(cohere-ai@7.17.1)(fast-xml-parser@4.4.1)(google-auth-library@8.9.0)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.0)(ignore@5.3.2)(ioredis@5.6.1)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mongodb@6.17.0(@aws-sdk/credential-providers@3.823.0)(gcp-metadata@5.3.0)(socks@2.8.4))(pg@8.14.1)(playwright@1.52.0)(react@19.1.0)(redis@4.7.1)(weaviate-client@3.6.0)(ws@8.18.0)(zod@3.25.67)
+        version: 1.0.2(@ag-ui/core@0.0.28)(@ag-ui/encoder@0.0.28)(@ag-ui/proto@0.0.28)(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-provider-node@3.823.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.52.0)(deepmerge@4.3.1)(dotenv@16.5.0)(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(zod@3.25.67))(@ibm-cloud/watsonx-ai@1.6.7)(@mastra/core@0.10.5(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.67))(@opensearch-project/opensearch@3.5.1)(@smithy/util-utf8@2.3.0)(@upstash/redis@1.35.0)(axios@1.9.0)(better-sqlite3@11.10.0)(cheerio@1.1.0)(cohere-ai@7.17.1)(fast-xml-parser@4.4.1)(google-auth-library@8.9.0)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.0)(ignore@5.3.2)(ioredis@5.6.1)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mongodb@6.17.0(@aws-sdk/credential-providers@3.823.0)(gcp-metadata@5.3.0)(socks@2.8.4))(pg@8.14.1)(playwright@1.52.0)(react@19.1.0)(redis@4.7.1)(weaviate-client@3.6.0)(ws@8.18.0)(zod@3.25.67)
       '@mastra/cloudflare-d1':
         specifier: 0.10.2
         version: 0.10.2(@mastra/core@0.10.5(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.67))
@@ -91,6 +91,9 @@ importers:
       '@mastra/mongodb':
         specifier: 0.10.3
         version: 0.10.3(@aws-sdk/credential-providers@3.823.0)(@mastra/core@0.10.5(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.67))(gcp-metadata@5.3.0)(socks@2.8.4)
+      '@mastra/opensearch':
+        specifier: ^0.10.3
+        version: 0.10.3(@mastra/core@0.10.5(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.67))
       '@mastra/pg':
         specifier: 0.10.3
         version: 0.10.3(@mastra/core@0.10.5(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.67))(pg-query-stream@4.8.1(pg@8.14.1))
@@ -3774,6 +3777,11 @@ packages:
     peerDependencies:
       '@mastra/core': '>=0.10.4-0 <0.11.0'
 
+  '@mastra/opensearch@0.10.3':
+    resolution: {integrity: sha512-GR85gH699Jl9FYcX+K9DdzpzjXCiKJaytqbtLa9XU2Aii5ZQMq0jtvmNAI1Szr+sBAjz3o+AfXNrU65GB0tEtg==}
+    peerDependencies:
+      '@mastra/core': '>=0.10.4-0 <0.11.0'
+
   '@mastra/pg@0.10.3':
     resolution: {integrity: sha512-iQNXO+/mSuGfh+VEfG1wVEakTIpCBUrpN3YoaDhU/6QFbmhOHLJJfnyCQ1e7NfdQUiQyMuDQtzDs20OcqS/JOw==}
     peerDependencies:
@@ -3996,6 +4004,10 @@ packages:
   '@oozcitak/util@8.3.8':
     resolution: {integrity: sha512-T8TbSnGsxo6TDBJx/Sgv/BlVJL3tshxZP7Aq5R1mSnM5OcHY2dQaxLMu2+E8u3gN0MLOzdjurqN4ZRVuzQycOQ==}
     engines: {node: '>=8.0'}
+
+  '@opensearch-project/opensearch@3.5.1':
+    resolution: {integrity: sha512-6bf+HcuERzAtHZxrm6phjref54ABse39BpkDie/YO3AUFMCBrb3SK5okKSdT5n3+nDRuEEQLhQCl0RQV3s1qpA==}
+    engines: {node: '>=14', yarn: ^1.22.10}
 
   '@opentelemetry/api-logs@0.201.1':
     resolution: {integrity: sha512-IxcFDP1IGMDemVFG2by/AMK+/o6EuBQ8idUq3xZ6MxgQGeumYZuX5OwR0h9HuvcUc/JPjQGfU5OHKIKYDJcXeA==}
@@ -7369,6 +7381,9 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
+  aws4@1.13.2:
+    resolution: {integrity: sha512-lHe62zvbTB5eEABUVi/AwVh0ZKY9rMMDhmm+eeyuuUQbQ3+J+fONVQOZyj+DdrvD4BY33uYniyRJ4UJIaSKAfw==}
+
   axe-core@4.10.3:
     resolution: {integrity: sha512-Xm7bpRXnDSX2YE2YFfBk2FnF0ep6tmG7xPh8iHee8MIcrgq762Nkce856dYtJYLkuIoYZvGfTs/PbZhideTcEg==}
     engines: {node: '>=4'}
@@ -9893,6 +9908,10 @@ packages:
     resolution: {integrity: sha512-sYKnA7eGln5ov8T8gnYlkSOxFJvywzEx9BueN6xo/GKO8PGiI6uK6xx+DIGe45T3bdVjLAQDQW1aicT8z8JwQg==}
     engines: {node: ^18.17.0 || >=20.5.0}
 
+  hpagent@1.2.0:
+    resolution: {integrity: sha512-A91dYTeIB6NoXG+PxTQpCCDDnfHsW9kc06Lvpu1TEe9gnd6ZFeiBoRO9JvzEv6xK7EX97/dUE8g/vBMTqTS3CA==}
+    engines: {node: '>=14'}
+
   html-entities@2.6.0:
     resolution: {integrity: sha512-kig+rMn/QOVRvr7c86gQ8lWXq+Hkv6CbAH1hLu+RG338StTpE8Z0b44SDVaqVu7HGKf27frdmUYEs9hTUX/cLQ==}
 
@@ -10631,6 +10650,10 @@ packages:
 
   json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
+
+  json11@2.0.2:
+    resolution: {integrity: sha512-HIrd50UPYmP6sqLuLbFVm75g16o0oZrVfxrsY0EEys22klz8mRoWlX9KAEDOSOR9Q34rcxsyC8oDveGrCz5uLQ==}
+    hasBin: true
 
   json5@1.0.2:
     resolution: {integrity: sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA==}
@@ -16826,7 +16849,7 @@ snapshots:
       - encoding
       - graphql
 
-  '@copilotkit/runtime@1.8.14(@ag-ui/client@0.0.28)(@ag-ui/core@0.0.28)(@ag-ui/encoder@0.0.28)(@ag-ui/proto@0.0.28)(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-provider-node@3.823.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.52.0)(deepmerge@4.3.1)(dotenv@16.5.0)(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(zod@3.25.67))(@ibm-cloud/watsonx-ai@1.6.7)(@smithy/util-utf8@2.3.0)(@upstash/redis@1.35.0)(axios@1.9.0)(better-sqlite3@11.10.0)(cheerio@1.1.0)(cohere-ai@7.17.1)(fast-xml-parser@4.4.1)(google-auth-library@8.9.0)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.0)(ignore@5.3.2)(ioredis@5.6.1)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mongodb@6.17.0(@aws-sdk/credential-providers@3.823.0)(gcp-metadata@5.3.0)(socks@2.8.4))(pg@8.14.1)(playwright@1.52.0)(react@19.1.0)(redis@4.7.1)(weaviate-client@3.6.0)(ws@8.18.0)':
+  '@copilotkit/runtime@1.8.14(@ag-ui/client@0.0.28)(@ag-ui/core@0.0.28)(@ag-ui/encoder@0.0.28)(@ag-ui/proto@0.0.28)(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-provider-node@3.823.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.52.0)(deepmerge@4.3.1)(dotenv@16.5.0)(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(zod@3.25.67))(@ibm-cloud/watsonx-ai@1.6.7)(@opensearch-project/opensearch@3.5.1)(@smithy/util-utf8@2.3.0)(@upstash/redis@1.35.0)(axios@1.9.0)(better-sqlite3@11.10.0)(cheerio@1.1.0)(cohere-ai@7.17.1)(fast-xml-parser@4.4.1)(google-auth-library@8.9.0)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.0)(ignore@5.3.2)(ioredis@5.6.1)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mongodb@6.17.0(@aws-sdk/credential-providers@3.823.0)(gcp-metadata@5.3.0)(socks@2.8.4))(pg@8.14.1)(playwright@1.52.0)(react@19.1.0)(redis@4.7.1)(weaviate-client@3.6.0)(ws@8.18.0)':
     dependencies:
       '@ag-ui/client': 0.0.28
       '@ag-ui/core': 0.0.28
@@ -16835,7 +16858,7 @@ snapshots:
       '@anthropic-ai/sdk': 0.27.3
       '@copilotkit/shared': 1.8.14
       '@graphql-yoga/plugin-defer-stream': 3.13.5(graphql-yoga@5.13.5(graphql@16.11.0))(graphql@16.11.0)
-      '@langchain/community': 0.3.45(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-provider-node@3.823.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.52.0)(deepmerge@4.3.1)(dotenv@16.5.0)(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(zod@3.25.67))(@ibm-cloud/watsonx-ai@1.6.7)(@langchain/core@0.3.57(openai@4.104.0(ws@8.18.0)(zod@3.25.67)))(@smithy/util-utf8@2.3.0)(@upstash/redis@1.35.0)(axios@1.9.0)(better-sqlite3@11.10.0)(cheerio@1.1.0)(cohere-ai@7.17.1)(fast-xml-parser@4.4.1)(google-auth-library@8.9.0)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.0)(ignore@5.3.2)(ioredis@5.6.1)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mongodb@6.17.0(@aws-sdk/credential-providers@3.823.0)(gcp-metadata@5.3.0)(socks@2.8.4))(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(pg@8.14.1)(playwright@1.52.0)(redis@4.7.1)(weaviate-client@3.6.0)(ws@8.18.0)
+      '@langchain/community': 0.3.45(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-provider-node@3.823.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.52.0)(deepmerge@4.3.1)(dotenv@16.5.0)(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(zod@3.25.67))(@ibm-cloud/watsonx-ai@1.6.7)(@langchain/core@0.3.57(openai@4.104.0(ws@8.18.0)(zod@3.25.67)))(@opensearch-project/opensearch@3.5.1)(@smithy/util-utf8@2.3.0)(@upstash/redis@1.35.0)(axios@1.9.0)(better-sqlite3@11.10.0)(cheerio@1.1.0)(cohere-ai@7.17.1)(fast-xml-parser@4.4.1)(google-auth-library@8.9.0)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.0)(ignore@5.3.2)(ioredis@5.6.1)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mongodb@6.17.0(@aws-sdk/credential-providers@3.823.0)(gcp-metadata@5.3.0)(socks@2.8.4))(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(pg@8.14.1)(playwright@1.52.0)(redis@4.7.1)(weaviate-client@3.6.0)(ws@8.18.0)
       '@langchain/core': 0.3.57(openai@4.104.0(ws@8.18.0)(zod@3.25.67))
       '@langchain/google-gauth': 0.1.8(@langchain/core@0.3.57(openai@4.104.0(ws@8.18.0)(zod@3.25.67)))(zod@3.25.67)
       '@langchain/langgraph-sdk': 0.0.70(@langchain/core@0.3.57(openai@4.104.0(ws@8.18.0)(zod@3.25.67)))(react@19.1.0)
@@ -18229,7 +18252,7 @@ snapshots:
 
   '@juggle/resize-observer@3.4.0': {}
 
-  '@langchain/community@0.3.45(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-provider-node@3.823.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.52.0)(deepmerge@4.3.1)(dotenv@16.5.0)(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(zod@3.25.67))(@ibm-cloud/watsonx-ai@1.6.7)(@langchain/core@0.3.57(openai@4.104.0(ws@8.18.0)(zod@3.25.67)))(@smithy/util-utf8@2.3.0)(@upstash/redis@1.35.0)(axios@1.9.0)(better-sqlite3@11.10.0)(cheerio@1.1.0)(cohere-ai@7.17.1)(fast-xml-parser@4.4.1)(google-auth-library@8.9.0)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.0)(ignore@5.3.2)(ioredis@5.6.1)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mongodb@6.17.0(@aws-sdk/credential-providers@3.823.0)(gcp-metadata@5.3.0)(socks@2.8.4))(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(pg@8.14.1)(playwright@1.52.0)(redis@4.7.1)(weaviate-client@3.6.0)(ws@8.18.0)':
+  '@langchain/community@0.3.45(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-provider-node@3.823.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.52.0)(deepmerge@4.3.1)(dotenv@16.5.0)(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(zod@3.25.67))(@ibm-cloud/watsonx-ai@1.6.7)(@langchain/core@0.3.57(openai@4.104.0(ws@8.18.0)(zod@3.25.67)))(@opensearch-project/opensearch@3.5.1)(@smithy/util-utf8@2.3.0)(@upstash/redis@1.35.0)(axios@1.9.0)(better-sqlite3@11.10.0)(cheerio@1.1.0)(cohere-ai@7.17.1)(fast-xml-parser@4.4.1)(google-auth-library@8.9.0)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.0)(ignore@5.3.2)(ioredis@5.6.1)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mongodb@6.17.0(@aws-sdk/credential-providers@3.823.0)(gcp-metadata@5.3.0)(socks@2.8.4))(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(pg@8.14.1)(playwright@1.52.0)(redis@4.7.1)(weaviate-client@3.6.0)(ws@8.18.0)':
     dependencies:
       '@browserbasehq/stagehand': 1.14.0(@playwright/test@1.52.0)(deepmerge@4.3.1)(dotenv@16.5.0)(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(zod@3.25.67)
       '@ibm-cloud/watsonx-ai': 1.6.7
@@ -18251,6 +18274,7 @@ snapshots:
       '@aws-crypto/sha256-js': 5.2.0
       '@aws-sdk/credential-provider-node': 3.823.0
       '@browserbasehq/sdk': 2.6.0
+      '@opensearch-project/opensearch': 3.5.1
       '@smithy/util-utf8': 2.3.0
       '@upstash/redis': 1.35.0
       better-sqlite3: 11.10.0
@@ -18398,11 +18422,11 @@ snapshots:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
-  '@mastra/agui@1.0.2(@ag-ui/core@0.0.28)(@ag-ui/encoder@0.0.28)(@ag-ui/proto@0.0.28)(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-provider-node@3.823.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.52.0)(deepmerge@4.3.1)(dotenv@16.5.0)(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(zod@3.25.67))(@ibm-cloud/watsonx-ai@1.6.7)(@mastra/core@0.10.5(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.67))(@smithy/util-utf8@2.3.0)(@upstash/redis@1.35.0)(axios@1.9.0)(better-sqlite3@11.10.0)(cheerio@1.1.0)(cohere-ai@7.17.1)(fast-xml-parser@4.4.1)(google-auth-library@8.9.0)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.0)(ignore@5.3.2)(ioredis@5.6.1)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mongodb@6.17.0(@aws-sdk/credential-providers@3.823.0)(gcp-metadata@5.3.0)(socks@2.8.4))(pg@8.14.1)(playwright@1.52.0)(react@19.1.0)(redis@4.7.1)(weaviate-client@3.6.0)(ws@8.18.0)(zod@3.25.67)':
+  '@mastra/agui@1.0.2(@ag-ui/core@0.0.28)(@ag-ui/encoder@0.0.28)(@ag-ui/proto@0.0.28)(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-provider-node@3.823.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.52.0)(deepmerge@4.3.1)(dotenv@16.5.0)(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(zod@3.25.67))(@ibm-cloud/watsonx-ai@1.6.7)(@mastra/core@0.10.5(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.67))(@opensearch-project/opensearch@3.5.1)(@smithy/util-utf8@2.3.0)(@upstash/redis@1.35.0)(axios@1.9.0)(better-sqlite3@11.10.0)(cheerio@1.1.0)(cohere-ai@7.17.1)(fast-xml-parser@4.4.1)(google-auth-library@8.9.0)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.0)(ignore@5.3.2)(ioredis@5.6.1)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mongodb@6.17.0(@aws-sdk/credential-providers@3.823.0)(gcp-metadata@5.3.0)(socks@2.8.4))(pg@8.14.1)(playwright@1.52.0)(react@19.1.0)(redis@4.7.1)(weaviate-client@3.6.0)(ws@8.18.0)(zod@3.25.67)':
     dependencies:
       '@ag-ui/client': 0.0.28
       '@ai-sdk/ui-utils': 1.2.11(zod@3.25.67)
-      '@copilotkit/runtime': 1.8.14(@ag-ui/client@0.0.28)(@ag-ui/core@0.0.28)(@ag-ui/encoder@0.0.28)(@ag-ui/proto@0.0.28)(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-provider-node@3.823.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.52.0)(deepmerge@4.3.1)(dotenv@16.5.0)(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(zod@3.25.67))(@ibm-cloud/watsonx-ai@1.6.7)(@smithy/util-utf8@2.3.0)(@upstash/redis@1.35.0)(axios@1.9.0)(better-sqlite3@11.10.0)(cheerio@1.1.0)(cohere-ai@7.17.1)(fast-xml-parser@4.4.1)(google-auth-library@8.9.0)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.0)(ignore@5.3.2)(ioredis@5.6.1)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mongodb@6.17.0(@aws-sdk/credential-providers@3.823.0)(gcp-metadata@5.3.0)(socks@2.8.4))(pg@8.14.1)(playwright@1.52.0)(react@19.1.0)(redis@4.7.1)(weaviate-client@3.6.0)(ws@8.18.0)
+      '@copilotkit/runtime': 1.8.14(@ag-ui/client@0.0.28)(@ag-ui/core@0.0.28)(@ag-ui/encoder@0.0.28)(@ag-ui/proto@0.0.28)(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/credential-provider-node@3.823.0)(@browserbasehq/sdk@2.6.0)(@browserbasehq/stagehand@1.14.0(@playwright/test@1.52.0)(deepmerge@4.3.1)(dotenv@16.5.0)(openai@4.104.0(ws@8.18.0)(zod@3.25.67))(zod@3.25.67))(@ibm-cloud/watsonx-ai@1.6.7)(@opensearch-project/opensearch@3.5.1)(@smithy/util-utf8@2.3.0)(@upstash/redis@1.35.0)(axios@1.9.0)(better-sqlite3@11.10.0)(cheerio@1.1.0)(cohere-ai@7.17.1)(fast-xml-parser@4.4.1)(google-auth-library@8.9.0)(handlebars@4.7.8)(html-to-text@9.0.5)(ibm-cloud-sdk-core@5.4.0)(ignore@5.3.2)(ioredis@5.6.1)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mongodb@6.17.0(@aws-sdk/credential-providers@3.823.0)(gcp-metadata@5.3.0)(socks@2.8.4))(pg@8.14.1)(playwright@1.52.0)(react@19.1.0)(redis@4.7.1)(weaviate-client@3.6.0)(ws@8.18.0)
       '@mastra/core': 0.10.5(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.67)
       hono: 4.7.11
       rxjs: 7.8.1
@@ -18745,6 +18769,13 @@ snapshots:
       - snappy
       - socks
 
+  '@mastra/opensearch@0.10.3(@mastra/core@0.10.5(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.67))':
+    dependencies:
+      '@mastra/core': 0.10.5(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.67)
+      '@opensearch-project/opensearch': 3.5.1
+    transitivePeerDependencies:
+      - supports-color
+
   '@mastra/pg@0.10.3(@mastra/core@0.10.5(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.67))(pg-query-stream@4.8.1(pg@8.14.1))':
     dependencies:
       '@mastra/core': 0.10.5(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.67)
@@ -19065,6 +19096,17 @@ snapshots:
       '@oozcitak/util': 8.3.8
 
   '@oozcitak/util@8.3.8': {}
+
+  '@opensearch-project/opensearch@3.5.1':
+    dependencies:
+      aws4: 1.13.2
+      debug: 4.4.1(supports-color@10.0.0)
+      hpagent: 1.2.0
+      json11: 2.0.2
+      ms: 2.1.3
+      secure-json-parse: 2.7.0
+    transitivePeerDependencies:
+      - supports-color
 
   '@opentelemetry/api-logs@0.201.1':
     dependencies:
@@ -23464,6 +23506,8 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.0.0
 
+  aws4@1.13.2: {}
+
   axe-core@4.10.3: {}
 
   axios@1.9.0(debug@4.4.1):
@@ -26564,6 +26608,8 @@ snapshots:
     dependencies:
       lru-cache: 10.4.3
 
+  hpagent@1.2.0: {}
+
   html-entities@2.6.0: {}
 
   html-to-text@9.0.5:
@@ -26661,7 +26707,7 @@ snapshots:
       isstream: 0.1.2
       jsonwebtoken: 9.0.2
       mime-types: 2.1.35
-      retry-axios: 2.6.0(axios@1.9.0(debug@4.4.1))
+      retry-axios: 2.6.0(axios@1.9.0)
       tough-cookie: 4.1.4
     transitivePeerDependencies:
       - supports-color
@@ -27345,6 +27391,8 @@ snapshots:
   json-schema@0.4.0: {}
 
   json-stable-stringify-without-jsonify@1.0.1: {}
+
+  json11@2.0.2: {}
 
   json5@1.0.2:
     dependencies:
@@ -30613,7 +30661,7 @@ snapshots:
       onetime: 7.0.0
       signal-exit: 4.1.0
 
-  retry-axios@2.6.0(axios@1.9.0(debug@4.4.1)):
+  retry-axios@2.6.0(axios@1.9.0):
     dependencies:
       axios: 1.9.0(debug@4.4.1)
 

@@ -27,6 +27,7 @@
 		"@mastra/mcp": "0.10.3",
 		"@mastra/memory": "0.10.3",
 		"@mastra/mongodb": "0.10.3",
+		"@mastra/opensearch": "^0.10.3",
 		"@mastra/pg": "0.10.3",
 		"@mastra/rag": "0.10.3",
 		"@repo/app-client": "workspace:*",

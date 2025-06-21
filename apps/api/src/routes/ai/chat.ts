@@ -2,7 +2,6 @@ import { createRoute, z } from '@hono/zod-openapi'
 
 import { aiClient } from '../../lib/ai'
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
-import { idParamsSchema } from '../../shared/types'
 import { AiChatSchema } from './types'
 
 import type { App } from '../../lib/hono'
@@ -14,7 +13,15 @@ const route = createRoute({
 	path: '/ai/chat/{id}',
 	security: [{ cookieAuth: [] }],
 	request: {
-		params: idParamsSchema,
+		params: z.object({
+			id: z.string().openapi({
+				param: {
+					name: 'id',
+					in: 'path',
+				},
+				example: 'opensearch',
+			}),
+		}),
 		body: {
 			required: true,
 			description: 'Chat message',

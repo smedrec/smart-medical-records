@@ -7,6 +7,7 @@ import { fetch, request } from 'undici'
 
 import { assistantAgent } from './agents/assistant-agent'
 import { fhirMCPServer } from './mcp'
+import { opensearch } from './stores/opensearch'
 import { pgStorage, pgVector } from './stores/pgvector'
 import { weatherWorkflow } from './workflows/weather-workflow'
 
@@ -145,7 +146,7 @@ export const mastra = new Mastra({
 	},
 	workflows: { weatherWorkflow },
 	agents: { assistantAgent },
-	vectors: { pgVector },
+	vectors: { pgVector, opensearch },
 	//storage: new D1Store({
 	//  binding: DB, // D1Database binding provided by the Workers runtime
 	//  tablePrefix: "dev_", // Optional: isolate tables per environment

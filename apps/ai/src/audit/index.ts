@@ -1,3 +1,7 @@
+import { PinoLogger } from '@mastra/loggers'
+
+const logger = new PinoLogger({ name: 'Audit', level: 'info' })
+
 export type AuditEventStatus = 'attempt' | 'success' | 'failure'
 
 export interface AuditLogEvent {
@@ -27,7 +31,8 @@ export function logAuditEvent(
 
 	// For now, logging as JSON string to console.
 	// In a worker environment, console.log/info often go to the Cloudflare dashboard or configured log destinations.
-	console.info(JSON.stringify(event))
+	logger.info(JSON.stringify(event))
+	//console.info(JSON.stringify(event))
 }
 
 // Example Usage (for illustration, not part of the actual file logic):

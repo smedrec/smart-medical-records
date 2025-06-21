@@ -2,7 +2,7 @@ import { createRoute, z } from '@hono/zod-openapi'
 
 import { aiClient } from '../../lib/ai'
 import { ApiError, openApiErrorResponses } from '../../lib/errors'
-import { idParamsSchema } from '../../shared/types'
+import { idVectorSchema } from '../../shared/types'
 import { AiCreateIndexSchema } from './types'
 
 import type { App } from '../../lib/hono'
@@ -14,7 +14,7 @@ const route = createRoute({
 	path: '/ai/create-index/{id}',
 	security: [{ cookieAuth: [] }],
 	request: {
-		params: idParamsSchema,
+		params: idVectorSchema,
 		body: {
 			required: true,
 			description: 'Create Vector Index',

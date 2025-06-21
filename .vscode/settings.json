@@ -87,6 +87,7 @@
 		"ollama",
 		"onsessioninitialized",
 		"OPENROUTER",
+		"opensearch",
 		"opentelemetry",
 		"otel",
 		"paralleldrive",
