@@ -2,13 +2,12 @@ import { createTool } from '@mastra/core'
 import { RuntimeContext } from '@mastra/core/di'
 import z from 'zod'
 
-import { createPatientSchema, createPractitionerSchema } from '@repo/fhir'
-
 import { logAuditEvent } from '../../audit' // Import audit logger
 import { cerbos } from '../../cerbos'
+import { createPatientSchema, createPractitionerSchema } from '../../v4.0.1'
 
-import type { Bundle, OperationOutcome, Organization, Patient, Practitioner } from '@repo/fhir'
 import type { FhirApiClient, FhirSessionData } from '../../hono/middleware/fhir-auth'
+import type { Bundle, OperationOutcome, Organization, Patient, Practitioner } from '../../v4.0.1'
 
 export type McpFhirToolCallContext = {
 	fhirClient?: FhirApiClient | null

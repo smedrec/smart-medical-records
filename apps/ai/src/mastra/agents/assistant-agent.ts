@@ -5,6 +5,7 @@ import { allFhirTools } from '../tools/fhir-tools'
 
 export const assistantAgent = new Agent({
 	name: 'assistant-agent',
+	description: 'A assistant to manage FHIR',
 	instructions: `
     You are an Agent that helps users to manage the Patient, Practitioner and Organization FHIR resources.
   `,

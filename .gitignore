@@ -46,6 +46,7 @@ apps/docs/docs/.vuepress/dist/
 
 # Mastra
 .mastra
+apps/ai/src/v4.0.1/
 
 # Build Outputs
 .next/

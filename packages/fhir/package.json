@@ -13,7 +13,8 @@
 	"dependencies": {
 		"@repo/hono-helpers": "workspace:*",
 		"fhirclient": "2.6.0",
-		"openapi-fetch": "0.14.0"
+		"openapi-fetch": "0.14.0",
+		"zod": "3.25.67"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "0.8.39",
