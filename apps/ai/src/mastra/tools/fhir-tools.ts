@@ -1,18 +1,13 @@
 import { createTool } from '@mastra/core'
 import { RuntimeContext } from '@mastra/core/di'
-import { createPatientSchema, createPractitionerSchema } from '@solarahealth/fhir-r4'
 import z from 'zod'
+
+import { createPatientSchema, createPractitionerSchema } from '@repo/fhir'
 
 import { logAuditEvent } from '../../audit' // Import audit logger
 import { cerbos } from '../../cerbos'
 
-import type {
-	Bundle,
-	OperationOutcome,
-	Organization,
-	Patient,
-	Practitioner,
-} from '@solarahealth/fhir-r4'
+import type { Bundle, OperationOutcome, Organization, Patient, Practitioner } from '@repo/fhir'
 import type { FhirApiClient, FhirSessionData } from '../../hono/middleware/fhir-auth'
 
 export type McpFhirToolCallContext = {
