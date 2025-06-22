@@ -11,6 +11,7 @@ import { opensearch } from './stores/opensearch'
 import { pgStorage, pgVector } from './stores/pgvector'
 import { weatherWorkflow } from './workflows/weather-workflow'
 
+import type { OtelConfig } from '@mastra/core'
 import type { RuntimeContext } from '@mastra/core/di'
 import type { Session, User } from '@repo/auth'
 import type { FhirApiClient, FhirSessionData } from '../hono/middleware/fhir-auth'
@@ -18,6 +19,25 @@ import type { FhirApiClient, FhirSessionData } from '../hono/middleware/fhir-aut
 type McpFhirToolCallContext = {
 	fhirClient?: FhirApiClient | null
 	fhirSessionData?: FhirSessionData | null
+}
+
+// FIXME The traces does not working
+const otelConfig: OtelConfig = {
+	serviceName: 'smedrec-ai-dev',
+	enabled: true,
+	tracerName: 'mastra',
+	sampling: {
+		type: 'ratio',
+		probability: 0.5,
+	},
+	export: {
+		type: 'otlp',
+		protocol: 'grpc',
+		endpoint: 'http://joseantcordeiro.hopto.org:4317',
+		headers: {
+			//Authorization: "Bearer YOUR_TOKEN_HERE",
+		},
+	},
 }
 
 export const mastra = new Mastra({
@@ -159,15 +179,5 @@ export const mastra = new Mastra({
 		name: 'Mastra',
 		level: 'info',
 	}),
-	telemetry: {
-		serviceName: 'smedrec-ai-dev',
-		enabled: true,
-		sampling: {
-			type: 'always_on',
-		},
-		export: {
-			type: 'otlp',
-			endpoint: 'http://joseantcordeiro.hopto.org:4318',
-		},
-	},
+	telemetry: otelConfig,
 })

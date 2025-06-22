@@ -649,7 +649,7 @@ export const practitionerCreateTool = createTool({
 			throw new Error('FHIR client not available.')
 		}
 		const principal = { id: principalId, roles }
-		const cerbosResource = { kind: resourceType, attributes: context.resource }
+		const cerbosResource = { id: 'create', kind: resourceType, attributes: {} }
 		const cerbosAction = 'create'
 		const allowed = await cerbos.isAllowed({
 			principal,
@@ -740,7 +740,7 @@ export const practitionerUpdateTool = createTool({
 			throw new Error('FHIR client not available.')
 		}
 		const principal = { id: principalId, roles }
-		const cerbosResource = { kind: resourceType, id: resourceId, attributes: context.resource }
+		const cerbosResource = { kind: resourceType, id: resourceId, attributes: {} }
 		const cerbosAction = 'update'
 		const allowed = await cerbos.isAllowed({
 			principal,
@@ -1001,7 +1001,7 @@ export const organizationCreateTool = createTool({
 			throw new Error('FHIR client not available.')
 		}
 		const principal = { id: principalId, roles }
-		const cerbosResource = { kind: resourceType, attributes: context.resource }
+		const cerbosResource = { id: 'create', kind: resourceType, attributes: {} }
 		const cerbosAction = 'create'
 		const allowed = await cerbos.isAllowed({
 			principal,
@@ -1092,7 +1092,7 @@ export const organizationUpdateTool = createTool({
 			throw new Error('FHIR client not available.')
 		}
 		const principal = { id: principalId, roles }
-		const cerbosResource = { kind: resourceType, id: resourceId, attributes: context.resource }
+		const cerbosResource = { kind: resourceType, id: resourceId, attributes: {} }
 		const cerbosAction = 'update'
 		const allowed = await cerbos.isAllowed({
 			principal,

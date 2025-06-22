@@ -1,10 +1,32 @@
 //import { PinoLogger } from '@mastra/loggers'
 import pino from 'pino'
 
+import type { Options } from 'pino-opentelemetry-transport'
+
 //const logger = new PinoLogger({ name: 'Audit', level: 'info' })
 
 const transport = pino.transport({
 	target: 'pino-opentelemetry-transport',
+	options: {
+		logRecordProcessorOptions: [
+			{ recordProcessorType: 'batch', exporterOptions: { protocol: 'http' } },
+			{
+				recordProcessorType: 'batch',
+				exporterOptions: {
+					protocol: 'grpc',
+					grpcExporterOptions: {
+						//headers: { foo: 'some custom header' }
+					},
+				},
+			},
+			{
+				recordProcessorType: 'simple',
+				exporterOptions: { protocol: 'console' },
+			},
+		],
+		loggerName: 'smedrec-audit-dev',
+		serviceVersion: '1.0.0',
+	},
 })
 
 const logger = pino(transport)
@@ -41,9 +63,13 @@ export function logAuditEvent(
 
 	// For now, logging as JSON string to console.
 	// In a worker environment, console.log/info often go to the Cloudflare dashboard or configured log destinations.
-	if (event.status === 'failure') logger.error(JSON.stringify(event))
-	else logger.info(JSON.stringify(event))
-	console.info(JSON.stringify(event))
+	// FIXME - This do not work
+	if (event.status === 'failure') {
+		logger.error(event)
+	} else {
+		logger.info(event)
+	}
+	console.info(event)
 }
 
 // Example Usage (for illustration, not part of the actual file logic):
