@@ -38,6 +38,8 @@
 		"nodemailer": "^7.0.3",
 		"ollama-ai-provider": "1.2.0",
 		"openapi-fetch": "0.14.0",
+		"pino": "^9.7.0",
+		"pino-opentelemetry-transport": "^1.0.1",
 		"undici": "^7.10.0",
 		"zod": "3.25.67"
 	},

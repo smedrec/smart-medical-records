@@ -1,6 +1,13 @@
-import { PinoLogger } from '@mastra/loggers'
+//import { PinoLogger } from '@mastra/loggers'
+import pino from 'pino'
 
-const logger = new PinoLogger({ name: 'Audit', level: 'info' })
+//const logger = new PinoLogger({ name: 'Audit', level: 'info' })
+
+const transport = pino.transport({
+	target: 'pino-opentelemetry-transport',
+})
+
+const logger = pino(transport)
 
 export type AuditEventStatus = 'attempt' | 'success' | 'failure'
 
@@ -22,7 +29,10 @@ export interface AuditLogEvent {
  * @param eventDetails Partial details of the event. Timestamp is added automatically.
  */
 export function logAuditEvent(
-	eventDetails: Omit<AuditLogEvent, 'timestamp'> & { action: string; status: AuditEventStatus }
+	eventDetails: Omit<AuditLogEvent, 'timestamp'> & {
+		action: string
+		status: AuditEventStatus
+	}
 ): void {
 	const event: AuditLogEvent = {
 		timestamp: new Date().toISOString(),
@@ -31,8 +41,9 @@ export function logAuditEvent(
 
 	// For now, logging as JSON string to console.
 	// In a worker environment, console.log/info often go to the Cloudflare dashboard or configured log destinations.
-	logger.info(JSON.stringify(event))
-	//console.info(JSON.stringify(event))
+	if (event.status === 'failure') logger.error(JSON.stringify(event))
+	else logger.info(JSON.stringify(event))
+	console.info(JSON.stringify(event))
 }
 
 // Example Usage (for illustration, not part of the actual file logic):

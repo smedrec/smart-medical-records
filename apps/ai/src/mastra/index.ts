@@ -159,4 +159,15 @@ export const mastra = new Mastra({
 		name: 'Mastra',
 		level: 'info',
 	}),
+	telemetry: {
+		serviceName: 'smedrec-ai-dev',
+		enabled: true,
+		sampling: {
+			type: 'always_on',
+		},
+		export: {
+			type: 'otlp',
+			endpoint: 'http://joseantcordeiro.hopto.org:4318',
+		},
+	},
 })
