@@ -1,12 +1,23 @@
+import {
+	ChatBubble,
+	ChatBubbleAction,
+	ChatBubbleAvatar,
+	ChatBubbleMessage,
+} from '@/components/ai/chat-bubble'
 import { ChatInput } from '@/components/ai/chat-input'
+import { ChatMessageList } from '@/components/ai/chat-message-list'
+import CodeDisplayBlock from '@/components/ai/code-display-block'
 import { AppSidebar } from '@/components/app-sidebar'
 import { ModeToggle } from '@/components/mode-toggle'
 import { authClient } from '@/lib/auth-client'
 import { useChat } from '@ai-sdk/react'
 import { RedirectToSignIn, UserButton } from '@daveyplate/better-auth-ui'
+import { CheckIcon, CopyIcon } from '@radix-ui/react-icons'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
-import { CornerDownLeft, Mic, Paperclip } from 'lucide-react'
+import { CornerDownLeft, Mic, Paperclip, RefreshCcw, Volume2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 import {
 	Breadcrumb,
@@ -21,6 +32,21 @@ import { Separator } from '@repo/ui/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@repo/ui/components/ui/sidebar'
 import { useIsMobile } from '@repo/ui/hooks/use-mobile'
 
+const ChatAiIcons = [
+	{
+		icon: CopyIcon,
+		label: 'Copy',
+	},
+	{
+		icon: RefreshCcw,
+		label: 'Refresh',
+	},
+	{
+		icon: Volume2,
+		label: 'Volume',
+	},
+]
+
 export const Route = createFileRoute('/dashboard')({
 	component: DashboardLayout,
 })
@@ -32,6 +58,7 @@ function DashboardLayout() {
 	const [isGenerating, setIsGenerating] = useState(false)
 	const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading, reload } =
 		useChat({
+			api: 'http://localhost:8801/ai/chat/assistantAgent',
 			onResponse(response) {
 				if (response) {
 					console.log(response)
@@ -65,7 +92,7 @@ function DashboardLayout() {
 			e.preventDefault()
 			if (isGenerating || isLoading || !input) return
 			setIsGenerating(true)
-			onSubmit(e as unknown as React.FormEvent<HTMLFormElement>)
+			void onSubmit(e as unknown as React.FormEvent<HTMLFormElement>)
 		}
 	}
 
@@ -118,6 +145,64 @@ function DashboardLayout() {
 							<UserButton size={isMobile ? 'icon' : 'sm'} className="gap-2 px-3" />
 						</div>
 					</header>
+
+					<div className="w-full px-4 pb-4">
+						<ChatMessageList>
+							{/* Messages */}
+							{messages &&
+								messages.map((message, index) => (
+									<ChatBubble key={index} variant={message.role == 'user' ? 'sent' : 'received'}>
+										<ChatBubbleAvatar src="" fallback={message.role == 'user' ? '👨🏽' : '🤖'} />
+										<ChatBubbleMessage>
+											{message.content.split('```').map((part: string, index: number) => {
+												if (index % 2 === 0) {
+													return (
+														<Markdown key={index} remarkPlugins={[remarkGfm]}>
+															{part}
+														</Markdown>
+													)
+												} else {
+													return (
+														<pre className="whitespace-pre-wrap pt-2" key={index}>
+															<CodeDisplayBlock code={part} lang="" />
+														</pre>
+													)
+												}
+											})}
+
+											{message.role === 'assistant' && messages.length - 1 === index && (
+												<div className="flex items-center mt-1.5 gap-1">
+													{!isGenerating && (
+														<>
+															{ChatAiIcons.map((icon, iconIndex) => {
+																const Icon = icon.icon
+																return (
+																	<ChatBubbleAction
+																		variant="outline"
+																		className="size-5"
+																		key={iconIndex}
+																		icon={<Icon className="size-3" />}
+																		onClick={() => handleActionClick(icon.label, index)}
+																	/>
+																)
+															})}
+														</>
+													)}
+												</div>
+											)}
+										</ChatBubbleMessage>
+									</ChatBubble>
+								))}
+
+							{/* Loading */}
+							{isGenerating && (
+								<ChatBubble variant="received">
+									<ChatBubbleAvatar src="" fallback="🤖" />
+									<ChatBubbleMessage isLoading />
+								</ChatBubble>
+							)}
+						</ChatMessageList>
+					</div>
 					{/* Form and Footer fixed at the bottom */}
 					<div className="w-full px-4 pb-4">
 						<form
@@ -129,7 +214,7 @@ function DashboardLayout() {
 								value={input}
 								onKeyDown={onKeyDown}
 								onChange={handleInputChange}
-								placeholder="Type your message here..."
+								placeholder="Hi! 👋 How can I assist you today?"
 								className="rounded-lg bg-background border-0 shadow-none focus-visible:ring-0"
 							/>
 							<div className="flex items-center p-3 pt-0">
@@ -155,6 +240,7 @@ function DashboardLayout() {
 							</div>
 						</form>
 					</div>
+
 					<Outlet />
 				</SidebarInset>
 			</SidebarProvider>

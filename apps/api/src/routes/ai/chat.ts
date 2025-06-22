@@ -27,7 +27,12 @@ const route = createRoute({
 			description: 'Chat message',
 			content: {
 				'application/json': {
-					schema: AiChatSchema,
+					schema: z.object({
+						messages: z.object({
+							role: z.string(),
+							content: z.string(),
+						}),
+					}),
 				},
 			},
 		},
@@ -79,21 +84,31 @@ export const registerAiChat = (app: App) =>
 			})
 		} */
 
+		console.log(JSON.stringify(await c.req.json()))
 		const { id } = c.req.valid('param')
-		const data = c.req.valid('json')
+		const { messages } = await c.req.json()
+		//const data = c.req.valid('json')
 
 		try {
 			const agent = aiClient.getAgent(id)
 			const response = await agent.generate({
-				messages: [{ role: data.role, content: data.content }],
+				messages: messages,
 				memoryOptions: {
 					workingMemory: {
 						enabled: true,
 					},
 				},
 			})
-			//console.log('Response:', response)
-			return c.json({ text: response.text }, 200)
+			// Extract the assistant's text from the response
+			/**const lastMessage = Array.isArray(response.response.messages)
+				? response.response.messages.find((msg: any) => msg.role === 'assistant')
+				: null
+			const text =
+				typeof lastMessage?.content === 'string'
+					? lastMessage.content
+					: (lastMessage?.content?.text ?? '')*/
+
+			return c.json(response.response.messages, 200)
 		} catch (error) {
 			console.error('Development error:', error)
 			throw new ApiError({ code: 'INTERNAL_SERVER_ERROR', message: error as string })
