@@ -1,9 +1,9 @@
-//import { PinoLogger } from '@mastra/loggers'
+import { PinoLogger } from '@mastra/loggers'
 import pino from 'pino'
 
 import type { Options } from 'pino-opentelemetry-transport'
 
-//const logger = new PinoLogger({ name: 'Audit', level: 'info' })
+const log = new PinoLogger({ name: 'Audit', level: 'info' })
 
 const transport = pino.transport({
 	target: 'pino-opentelemetry-transport',
@@ -69,7 +69,7 @@ export function logAuditEvent(
 	} else {
 		logger.info(event)
 	}
-	console.info(event)
+	log.info(JSON.stringify(event))
 }
 
 // Example Usage (for illustration, not part of the actual file logic):
