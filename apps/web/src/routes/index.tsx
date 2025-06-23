@@ -1,4 +1,5 @@
 import { About } from '@/components/home/About'
+import ChatSupport from '@/components/home/chat-support'
 import { Cta } from '@/components/home/Cta'
 import { FAQ } from '@/components/home/FAQ'
 import { Features } from '@/components/home/Features'
@@ -33,6 +34,7 @@ function App() {
 				<Newsletter />
 				<Footer />
 				<ScrollToTop />
+				<ChatSupport />
 			</main>
 		</div>
 	)
