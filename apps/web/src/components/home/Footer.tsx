@@ -81,7 +81,7 @@ export function Footer() {
 							<ul className="space-y-2">
 								<li>
 									<a
-										href="https://github.com/joseantcordeiro/smart-medical-record"
+										href="https://github.com/smedrec/smart-medical-record"
 										className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white"
 										target="_blank"
 										rel="noreferrer"

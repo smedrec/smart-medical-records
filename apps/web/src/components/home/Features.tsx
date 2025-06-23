@@ -1,33 +1,35 @@
 import { BentoGrid } from '@/components/home/bento-grid'
-import { CheckCircle, Clock, Globe, Star, TrendingUp, Video } from 'lucide-react'
+import { CheckCircle, Clock, Globe, Star, TrendingUp } from 'lucide-react'
 
 import type { BentoItem } from '@/components/home/bento-grid'
 
-const itemsSample: BentoItem[] = [
+const smedrecFeatures: BentoItem[] = [
 	{
-		title: 'Analytics Dashboard',
-		meta: 'v2.4.1',
-		description: 'Real-time metrics with AI-powered insights and predictive analytics',
-		icon: <TrendingUp className="w-4 h-4 text-blue-500" />,
-		status: 'Live',
-		tags: ['Statistics', 'Reports', 'AI'],
+		title: 'Task Manager',
+		meta: '84 completed',
+		description: 'Automated workflow management by AI assistants',
+		icon: <CheckCircle className="w-4 h-4 text-emerald-500" />,
+		status: 'Updated',
+		tags: ['Productivity', 'Automation'],
 		colSpan: 2,
 		hasPersistentHover: true,
 	},
 	{
-		title: 'Task Manager',
-		meta: '84 completed',
-		description: 'Automated workflow management with priority scheduling',
-		icon: <CheckCircle className="w-4 h-4 text-emerald-500" />,
-		status: 'Updated',
-		tags: ['Productivity', 'Automation'],
+		title: 'Analytics Dashboard',
+		meta: 'v0.4.1',
+		description: 'Real-time metrics with AI-powered insights and predictive analytics',
+		icon: <TrendingUp className="w-4 h-4 text-blue-500" />,
+		status: 'Live',
+		tags: ['Statistics', 'Reports', 'AI'],
 	},
+
 	{
-		title: 'Media Library',
-		meta: '12GB used',
-		description: 'Cloud storage with intelligent content processing',
-		icon: <Video className="w-4 h-4 text-purple-500" />,
-		tags: ['Storage', 'CDN'],
+		title: 'FHIR Compatibility',
+		meta: 'Versions R4 and R5',
+		description:
+			'Open source FHIR standard provides you an robust data model covering most important healthcare domains.',
+		icon: <Star className="w-4 h-4 text-purple-500" />,
+		tags: ['healthcare', 'standard'],
 		colSpan: 2,
 	},
 	{
@@ -49,7 +51,7 @@ export const Features = () => {
 					Great Features
 				</span>
 			</h2>
-			<BentoGrid items={itemsSample} />
+			<BentoGrid items={smedrecFeatures} />
 		</section>
 	)
 }

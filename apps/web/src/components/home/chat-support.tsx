@@ -11,6 +11,8 @@ import { Send } from 'lucide-react'
 
 import { Button } from '@repo/ui/components/ui/button'
 
+// TODO - improve the layout and add the support agent
+
 export default function ChatSupport() {
 	const message = {
 		role: 'assistant',
