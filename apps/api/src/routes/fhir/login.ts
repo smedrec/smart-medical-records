@@ -2,6 +2,7 @@ import { ApiError, openApiErrorResponses } from '@/lib/errors'
 import { createRoute, z } from '@hono/zod-openapi'
 import { eq } from 'drizzle-orm'
 import { setCookie } from 'hono/cookie'
+import { replaceProtocol } from 'replace-url-protocol'
 
 import { smartFhirClient } from '@repo/db'
 import {
@@ -65,17 +66,21 @@ export const registerFhirLogin = (app: App) =>
 		const redirectUri = new URL(c.req.url).origin + '/fhir/callback' // Ensure this matches SMART_REDIRECT_URI if that's fixed
 		try {
 			const { authorizeUrl, codeVerifier, stateValue } = await authorizeSmartClient({
-				env: {
-					clientId: smartFhirClientConfig[0].clientId,
-					scope: smartFhirClientConfig[0].scope,
-					iss: smartFhirClientConfig[0].iss,
-				}, // Pass the worker env containing SMART_CLIENT_ID etc.
+				clientId: smartFhirClientConfig[0].clientId,
+				scope: smartFhirClientConfig[0].scope,
+				iss: smartFhirClientConfig[0].iss,
 				redirectUri,
 				// Scope might be in env (SMART_SCOPE) or passed explicitly if needed
 			})
 
 			setCookie(c, FHIR_PKCE_VERIFIER_COOKIE, codeVerifier, defaultCookieOptions)
 			setCookie(c, FHIR_AUTH_STATE_COOKIE, stateValue, defaultCookieOptions)
+
+			if (smartFhirClientConfig[0].environment === 'development') {
+				const insureAuthorizeUrl = authorizeUrl.replaceAll('https', 'http')
+				console.log(insureAuthorizeUrl)
+				return c.redirect(insureAuthorizeUrl)
+			}
 
 			return c.redirect(authorizeUrl)
 		} catch (error: any) {

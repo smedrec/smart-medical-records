@@ -216,7 +216,7 @@ export const smartFhirClient = sqliteTable(
 		expectedState: text('expected_state'), // State originally generated and stored by caller
 		pkceCodeVerifier: text('pkce_code_verifier').notNull(), // PKCE code verifier stored by caller*/
 		provider: text('provider').default('demo').notNull(), // demo azure aws gcp
-		environment: text('provider').default('development').notNull(), // development production
+		environment: text('environment').default('development').notNull(), // development production
 		createdBy: text('created_by')
 			.notNull()
 			.references(() => user.id),

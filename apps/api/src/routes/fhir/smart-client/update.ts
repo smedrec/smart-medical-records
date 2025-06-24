@@ -27,7 +27,7 @@ const route = createRoute({
 		},
 	},
 	responses: {
-		201: {
+		200: {
 			description: 'The smart fhir client',
 			content: {
 				'application/json': {
@@ -95,5 +95,5 @@ export const registerSmartFhirClientUpdate = (app: App) =>
 				message: 'A machine readable error when updating the smart fhir client.',
 			})
 
-		return c.json(result[0], 201)
+		return c.json(result[0], 200)
 	})

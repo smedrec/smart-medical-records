@@ -57,6 +57,13 @@
       "when": 1750781312916,
       "tag": "0007_spicy_wild_pack",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1750785891380,
+      "tag": "0008_hard_sentinel",
+      "breakpoints": true
     }
   ]
 }

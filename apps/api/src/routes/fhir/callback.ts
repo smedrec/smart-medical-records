@@ -5,11 +5,11 @@ import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 
 import { smartFhirClient } from '@repo/db'
 import {
-	createSmartFhirClient,
 	defaultCookieOptions,
 	FHIR_AUTH_STATE_COOKIE,
 	FHIR_PKCE_VERIFIER_COOKIE,
 	FHIR_SESSION_COOKIE,
+	getSmartFhirAccessToken,
 } from '@repo/fhir'
 
 import type { App } from '@/lib/hono'
@@ -102,13 +102,11 @@ export const registerFhirCallback = (app: App) =>
 
 		try {
 			// createSmartFhirClient will validate stateFromCallback against expectedState internally
-			const fhirClient = await createSmartFhirClient({
+			const accessToken = await getSmartFhirAccessToken({
 				request: c.req.raw, // Pass the raw Request object
-				env: {
-					clientId: smartFhirClientConfig[0].clientId,
-					scope: smartFhirClientConfig[0].scope,
-					iss: smartFhirClientConfig[0].iss,
-				},
+				clientId: smartFhirClientConfig[0].clientId,
+				scope: smartFhirClientConfig[0].scope,
+				iss: smartFhirClientConfig[0].iss,
 				pkceCodeVerifier,
 				expectedState,
 				// `code` and `state` are parsed from request by createSmartFhirClient
@@ -144,7 +142,16 @@ export const registerFhirCallback = (app: App) =>
 				expires: cookieExpiry,
 			})
 
-			return c.redirect(smartFhirClientConfig[0].redirectUri as string) // Redirect to a protected area or dashboard
+			//if (smartFhirClientConfig[0].environment === 'development') {
+			return c.json(
+				{
+					sessionData,
+					accessToken: accessToken,
+				},
+				200
+			)
+			//}
+			//return c.redirect(smartFhirClientConfig[0].redirectUri as string) // Redirect to a protected area or dashboard
 		} catch (error: any) {
 			console.error('FHIR Callback failed:', error.message, error.stack)
 			throw new ApiError({

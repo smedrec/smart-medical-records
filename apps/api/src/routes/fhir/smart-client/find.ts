@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm'
 
 import { smartFhirClient } from '@repo/db'
 
-import { AssistantSelectSchema, SmartFhirClientInsertSchema } from './types'
+import { AssistantSelectSchema } from './types'
 
 import type { App } from '@/lib/hono'
 import type { z } from '@hono/zod-openapi'
@@ -17,7 +17,7 @@ const route = createRoute({
 	security: [{ cookieAuth: [] }],
 	request: {},
 	responses: {
-		201: {
+		200: {
 			description: 'The smart fhir client',
 			content: {
 				'application/json': {
@@ -75,5 +75,5 @@ export const registerSmartFhirClientFind = (app: App) =>
 				message: 'The organization does not have the smart fhir client configured.',
 			})
 
-		return c.json(result[0], 201)
+		return c.json(result[0], 200)
 	})

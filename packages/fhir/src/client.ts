@@ -87,6 +87,83 @@ const getSmartConfigFromEnv = (
 	return config
 }
 
+export const getSmartFhirAccessToken = async (options: SmartFhirClientOptions): Promise<string> => {
+	if (!options.request) {
+		throw new Error("Worker 'request' object must be provided in options for FHIR.oauth2.ready().")
+	}
+	if (!options.pkceCodeVerifier) {
+		throw new Error('PKCE code_verifier must be provided in options for FHIR.oauth2.ready().')
+	}
+	if (!options.expectedState) {
+		throw new Error('Expected state must be provided in options for FHIR.oauth2.ready().')
+	}
+
+	//const envConfig = getSmartConfigFromEnv(options.env)
+	const mergedConfig: SmartFhirClientOptions = {
+		//...envConfig,
+		...options,
+		pkceCode: options.pkceCodeVerifier, // fhirclient uses 'pkceCode' for the verifier
+	}
+
+	if (!mergedConfig.clientId) throw new Error('SMART Client ID is required.')
+	if (!mergedConfig.scope) throw new Error('SMART Scope is required.')
+	if (!mergedConfig.iss) throw new Error('SMART ISS (FHIR Server URL) is required.')
+
+	const requestUrl = new URL(options.request.url)
+	mergedConfig.code = requestUrl.searchParams.get('code') || undefined
+	const receivedState = requestUrl.searchParams.get('state') || undefined
+
+	if (receivedState !== mergedConfig.expectedState) {
+		throw new Error(
+			`Invalid state parameter received. Expected ${mergedConfig.expectedState} but got ${receivedState}. CSRF attack suspected.`
+		)
+	}
+	mergedConfig.state = receivedState // Pass received state to ready() for some validation checks it might do
+
+	// Ensure redirectUri in config matches the current request's base URL for ready()
+	// This is critical for PKCE validation and token exchange by fhirclient.
+	mergedConfig.redirectUri = `${requestUrl.origin}${requestUrl.pathname}`
+
+	if (!mergedConfig.code) {
+		throw new Error(
+			'Authorization code not found in request URL. Cannot proceed with FHIR.oauth2.ready().'
+		)
+	}
+
+	try {
+		// `fhirclient` will use `mergedConfig.iss` to fetch server metadata.
+		// It needs `mergedConfig.code`, `mergedConfig.state`, `mergedConfig.redirectUri`,
+		// `mergedConfig.clientId`, and `mergedConfig.pkceCode` (the verifier) for token exchange.
+		const smartClient = await FHIR.oauth2.ready(mergedConfig)
+
+		const baseUrl = smartClient.state.serverUrl
+		if (!baseUrl) {
+			throw new Error('Could not determine FHIR server URL from SMART client state after ready().')
+		}
+
+		const accessToken = smartClient.state.tokenResponse?.access_token
+		if (!accessToken) {
+			console.warn(
+				'No access token available from SMART client despite successful ready(). Potentially an issue with token response.',
+				smartClient.state.tokenResponse
+			)
+			throw new Error('Failed to obtain access token from SMART client after ready().')
+		}
+
+		return accessToken as string
+	} catch (error: any) {
+		console.error(
+			'FHIR.oauth2.ready() failed:',
+			error.message || error,
+			error.response?.data ? { data: error.response.data } : ''
+		)
+		if (error.stack) console.error(error.stack)
+		throw new Error(
+			`SMART on FHIR authentication failed during ready(): ${error.message || 'Unknown error'}`
+		)
+	}
+}
+
 export const createSmartFhirClient = async (
 	options: SmartFhirClientOptions
 ): Promise<Client<paths, `${string}/${string}`>> => {
@@ -100,9 +177,9 @@ export const createSmartFhirClient = async (
 		throw new Error('Expected state must be provided in options for FHIR.oauth2.ready().')
 	}
 
-	const envConfig = getSmartConfigFromEnv(options.env)
+	//const envConfig = getSmartConfigFromEnv(options.env)
 	const mergedConfig: SmartFhirClientOptions = {
-		...envConfig,
+		//...envConfig,
 		...options,
 		pkceCode: options.pkceCodeVerifier, // fhirclient uses 'pkceCode' for the verifier
 	}
@@ -189,10 +266,11 @@ export const createSmartFhirClient = async (
 export const authorizeSmartClient = async (
 	options: SmartFhirClientOptions
 ): Promise<{ authorizeUrl: string; codeVerifier: string; stateValue: string }> => {
-	const envConfig = getSmartConfigFromEnv(options.env)
+	/**const envConfig = getSmartConfigFromEnv(options.env)
 	const mergedConfig = { ...envConfig, ...options }
 
-	const { clientId, scope, iss, redirectUri, launch } = mergedConfig
+	const { clientId, scope, iss, redirectUri, launch } = mergedConfig*/
+	const { clientId, scope, iss, redirectUri, launch } = options
 
 	if (!clientId) throw new Error('SMART Client ID is required for authorize.')
 	if (!scope) throw new Error('SMART Scope is required for authorize.')
@@ -204,17 +282,24 @@ export const authorizeSmartClient = async (
 	const stateValue = generateRandomString(16)
 
 	let authorizationEndpoint: string
+	const smartConfigurationEndpoint: string = `${iss}/.well-known/smart-configuration`
 	try {
 		// Use fhirclient utility to get SMART configuration, which includes the authorization_endpoint
-		const smartConfig = await FHIR.oauth2.utils.getWellKnownSMARTConfig(iss)
+		//const smartConfig = await FHIR.oauth2.utils.getWellKnownSMARTConfig(smartConfigurationEndpoint)
+		const res = await fetch(smartConfigurationEndpoint)
+		const smartConfig = (await res.json()) as fhirclient.WellKnownSmartConfiguration
 		if (!smartConfig.authorization_endpoint) {
 			throw new Error('Authorization endpoint not found in SMART configuration.')
 		}
 		authorizationEndpoint = smartConfig.authorization_endpoint
 	} catch (error: any) {
-		console.error(`Failed to fetch SMART configuration from ${iss}: ${error.message}`)
+		console.error(
+			`Failed to fetch SMART configuration from ${smartConfigurationEndpoint} - ${error.message}`
+		)
 		// Fallback or rethrow - for now, rethrow as it's critical
-		throw new Error(`Failed to fetch SMART configuration from ${iss}: ${error.message}`)
+		throw new Error(
+			`Failed to fetch SMART configuration from ${smartConfigurationEndpoint} - ${error.message}`
+		)
 	}
 
 	const authUrl = new URL(authorizationEndpoint)
