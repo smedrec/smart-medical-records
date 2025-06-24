@@ -117,7 +117,10 @@ export const registerFhirCallback = (app: App) =>
 				headers,
 				// body: ... // Only if needed
 			})
-			console.log(`REQUEST: ${JSON.stringify(request, null, 2)}`)
+			console.log(`REQUEST: ${request.method} ${request.url}`)
+			for (const [key, value] of request.headers.entries()) {
+				console.log(`  ${key}: ${value}`)
+			}
 			const accessToken = await getSmartFhirAccessToken({
 				// FIXME - the request raw is empty
 				request: request, // Pass the raw Request object

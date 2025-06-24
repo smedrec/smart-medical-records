@@ -34,7 +34,6 @@ export interface SmartFhirClientOptions {
 	redirectUri?: string
 	launch?: string | boolean
 	request?: Request // CF Worker's Request object
-	env?: SmartFhirClientEnvOptions // CF Worker's env object
 	// For manually passing code and state if needed by ready()
 	code?: string // Authorization code from callback
 	state?: string // State from callback
@@ -69,28 +68,7 @@ export async function generatePkceChallenge(verifier: string): Promise<string> {
 	return btoa(hashString).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
 }
 
-// Reads config from the env object (Cloudflare Worker context)
-const getSmartConfigFromEnv = (
-	env?: SmartFhirClientEnvOptions
-): Omit<SmartFhirClientOptions, 'request' | 'env' | 'expectedState' | 'pkceCodeVerifier'> => {
-	const config: Omit<
-		SmartFhirClientOptions,
-		'request' | 'env' | 'expectedState' | 'pkceCodeVerifier'
-	> = {}
-	if (env?.SMART_CLIENT_ID) config.clientId = env.SMART_CLIENT_ID
-	if (env?.SMART_SCOPE) config.scope = env.SMART_SCOPE
-	if (env?.SMART_ISS) config.iss = env.SMART_ISS
-	if (env?.SMART_REDIRECT_URI) config.redirectUri = env.SMART_REDIRECT_URI
-	if (env?.SMART_LAUNCH_TOKEN) config.launch = env.SMART_LAUNCH_TOKEN
-
-	if (!config.iss && env?.FHIR_BASE_URL) {
-		config.iss = env.FHIR_BASE_URL
-	}
-	return config
-}
-
 export const getSmartFhirAccessToken = async (options: SmartFhirClientOptions): Promise<string> => {
-	console.log(`Request: ${JSON.stringify(options.request, null, 2)}`)
 	if (!options.request) {
 		throw new Error("Worker 'request' object must be provided in options for FHIR.oauth2.ready().")
 	}
@@ -181,9 +159,7 @@ export const createSmartFhirClient = async (
 		throw new Error('Expected state must be provided in options for FHIR.oauth2.ready().')
 	}
 
-	//const envConfig = getSmartConfigFromEnv(options.env)
 	const mergedConfig: SmartFhirClientOptions = {
-		//...envConfig,
 		...options,
 		pkceCode: options.pkceCodeVerifier, // fhirclient uses 'pkceCode' for the verifier
 	}
@@ -270,10 +246,6 @@ export const createSmartFhirClient = async (
 export const authorizeSmartClient = async (
 	options: SmartFhirClientOptions
 ): Promise<{ authorizeUrl: string; codeVerifier: string; stateValue: string }> => {
-	/**const envConfig = getSmartConfigFromEnv(options.env)
-	const mergedConfig = { ...envConfig, ...options }
-
-	const { clientId, scope, iss, redirectUri, launch } = mergedConfig*/
 	const { clientId, scope, iss, redirectUri, launch } = options
 
 	if (!clientId) throw new Error('SMART Client ID is required for authorize.')
