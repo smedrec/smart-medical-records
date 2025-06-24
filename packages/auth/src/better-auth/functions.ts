@@ -5,7 +5,7 @@ import { and, eq } from 'drizzle-orm'
 //import { APIError } from 'better-auth/api';
 
 import { activeOrganization, apikey, db, member } from '@repo/db'
-import { fhir } from '@repo/fhir'
+import { createSmartFhirClient, fhir } from '@repo/fhir'
 
 import type { Organization, Person } from '@solarahealth/fhir-r4'
 
@@ -189,4 +189,8 @@ export async function setupPersonResource(name: string, email: string): Promise<
 			`Error setting up person resource: ${error instanceof Error ? error.message : 'Unknown error'}`
 		)
 	}
+}
+
+export async function authorizeSmartClient(userId: string): Promise<string> {
+	return await createSmartFhirClient({})
 }

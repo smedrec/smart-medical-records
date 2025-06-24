@@ -8,7 +8,8 @@
 		"DEV",
 		"ENVIRONMENT",
 		"POSTGRES_DB_URL",
-		"DATABASE_URL"
+		"DATABASE_URL",
+		"BETTER_AUTH_URL"
 	],
 	"globalPassThroughEnv": ["WRANGLER_LOG", "FORCE_COLOR"],
 	"remoteCache": {

@@ -22,8 +22,8 @@ const myMiddleware: Middleware = {
 		if (!session) {
 			throw new Error('You need to login first')
 		}*/
-		// set "x-api-key" header
-		//equest.headers.set('x-api-key', 'bar')
+
+		//request.headers.set('Authorization', `Bearer ${accessToken}`)
 		return request
 	},
 	async onResponse({ request, response, options }) {

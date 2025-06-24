@@ -198,3 +198,30 @@ export const activeOrganization = sqliteTable(
 		]
 	}
 )
+
+export const smartFhirClient = sqliteTable(
+	'smart_fhir_client',
+	{
+		organizationId: text('organization_id')
+			.notNull()
+			.references(() => organization.id, { onDelete: 'cascade' }),
+		clientId: text('client_id').notNull(),
+		scope: text('scope').notNull(),
+		iss: text('iss').notNull(),
+		redirectUri: text('redirect_uri'),
+		launchToken: text('launch_token'),
+		fhirBaseUrl: text('fhir_base_url').notNull(),
+		code: text('code'), // Authorization code from callback
+		state: text('state'), // State from callback
+		expectedState: text('expected_state'), // State originally generated and stored by caller
+		pkceCodeVerifier: text('pkce_code_verifier').notNull(), // PKCE code verifier stored by caller
+		provider: text('provider').default('demo').notNull(), // demo azure aws gcp
+		environment: text('provider').default('development').notNull(), // development production
+	},
+	(table) => {
+		return [
+			primaryKey({ columns: [table.organizationId] }),
+			uniqueIndex('client_id_idx').on(table.clientId),
+		]
+	}
+)

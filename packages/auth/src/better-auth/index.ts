@@ -8,6 +8,7 @@ import { activeOrganization, db, organization as organizationDb, user as userDb 
 import { email } from '@repo/mailer'
 
 import {
+	authorizeSmartClient,
 	getActiveMemberRole,
 	getActiveOrganization,
 	setupOrganizationResource,
@@ -36,7 +37,10 @@ type Permissions = {
 	[resourceType: string]: string[]
 }
 
-type SessionWithRole<T> = T & { activeOrganizationRole: string | null }
+type SessionWithRole<T> = T & {
+	activeOrganizationRole: string | null
+	smartClientAccessToken: string | null
+}
 
 /**
  * Better Auth Instance
@@ -138,12 +142,14 @@ export const auth = betterAuth({
 			create: {
 				before: async (session) => {
 					const activeOrganization = await getActiveOrganization(session.userId)
+					const smartClientAccessToken = await authorizeSmartClient(session.userId)
 					if (!activeOrganization) {
 						return {
 							data: {
 								...session,
 								activeOrganizationId: null,
 								activeOrganizationRole: null,
+								smartClientAccessToken: null,
 							},
 						}
 					}
@@ -153,6 +159,7 @@ export const auth = betterAuth({
 							...session,
 							activeOrganizationId: activeOrganization.organizationId,
 							activeOrganizationRole: activeOrganization.role,
+							smartClientAccessToken: smartClientAccessToken || null,
 						},
 					}
 				},

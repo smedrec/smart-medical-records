@@ -80,7 +80,12 @@ export const mastra = new Mastra({
 		middleware: [
 			{
 				handler: async (c, next) => {
-					/**const session = await auth.api.getSession({ headers: c.req.raw.headers })
+					/**const response = await fetch(`${process.env.BETTER_AUTH_URL}/auth/oauth2/userinfo`, {
+						headers: {
+							Authorization: `Bearer ACCESS_TOKEN`,
+						},
+					})
+					const session = await auth.api.getSession({ headers: c.req.raw.headers })
 
 					if (!session) {
 						return new Response('Unauthorized', { status: 401 })
