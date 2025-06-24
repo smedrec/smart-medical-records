@@ -1,11 +1,10 @@
 import { env } from 'cloudflare:workers'
 import FHIR from 'fhirclient' // Added fhirclient import
 
-import fetch, { Headers } from 'node-fetch'
 import createClient from 'openapi-fetch'
 
 import type { fhirclient } from 'fhirclient/lib/types' // Import types
-import type { Request } from 'node-fetch'
+
 //import { auth } from '@repo/auth'
 
 import type { Client, Middleware } from 'openapi-fetch'
