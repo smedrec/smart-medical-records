@@ -3,3 +3,6 @@
 
 ### GET Patient
 GET {{fhirurl}}/Patient/152
+
+### GET Metadata
+GET {{fhirurl}}/metadata

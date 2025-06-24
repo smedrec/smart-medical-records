@@ -6,6 +6,7 @@ import createClient from 'openapi-fetch'
 import { fetch, request } from 'undici'
 
 import { assistantAgent } from './agents/assistant-agent'
+import { fhirAgent } from './agents/fhir-test'
 import { fhirMCPServer } from './mcp'
 import { opensearch } from './stores/opensearch'
 import { pgStorage, pgVector } from './stores/pgvector'
@@ -165,7 +166,7 @@ export const mastra = new Mastra({
 		],
 	},
 	workflows: { weatherWorkflow },
-	agents: { assistantAgent },
+	agents: { assistantAgent, fhirAgent },
 	vectors: { pgVector, opensearch },
 	//storage: new D1Store({
 	//  binding: DB, // D1Database binding provided by the Workers runtime
