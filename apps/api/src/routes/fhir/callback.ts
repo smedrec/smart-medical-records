@@ -103,6 +103,7 @@ export const registerFhirCallback = (app: App) =>
 
 		try {
 			// createSmartFhirClient will validate stateFromCallback against expectedState internally
+			/** Test with node-fetch Request, also not working
 			const url = new URL(c.req.url)
 			url.pathname = '/fhir/callback'
 			url.search = `?code=${code}&state=${stateFromCallback}`
@@ -117,13 +118,14 @@ export const registerFhirCallback = (app: App) =>
 				headers,
 				// body: ... // Only if needed
 			})
-			console.log(`REQUEST: ${request.method} ${request.url}`)
+			
+			console.log(`REQUEST: ${request.method} ${raw.url}`)
 			for (const [key, value] of request.headers.entries()) {
 				console.log(`  ${key}: ${value}`)
-			}
+			}*/
 			const accessToken = await getSmartFhirAccessToken({
 				// FIXME - the request raw is empty
-				request: request, // Pass the raw Request object
+				request: c.req.raw, // Pass the raw Request object
 				clientId: smartFhirClientConfig[0].clientId,
 				scope: smartFhirClientConfig[0].scope,
 				iss: smartFhirClientConfig[0].iss,

@@ -16,17 +16,6 @@ declare const Response: typeof globalThis.Response
 // @ts-ignore: crypto is available in Cloudflare Workers
 declare const crypto: Crypto
 
-// Exporting for testing purposes
-export interface SmartFhirClientEnvOptions {
-	SMART_CLIENT_ID?: string
-	SMART_SCOPE?: string
-	SMART_ISS?: string
-	SMART_REDIRECT_URI?: string
-	SMART_LAUNCH_TOKEN?: string
-	FHIR_BASE_URL?: string // Fallback for ISS
-	[key: string]: string | undefined // Allow other env vars
-}
-
 export interface SmartFhirClientOptions {
 	clientId?: string
 	scope?: string
@@ -189,12 +178,50 @@ export const createSmartFhirClient = async (
 		)
 	}
 
-	let smartClient: fhirclient.Client
 	try {
 		// `fhirclient` will use `mergedConfig.iss` to fetch server metadata.
 		// It needs `mergedConfig.code`, `mergedConfig.state`, `mergedConfig.redirectUri`,
 		// `mergedConfig.clientId`, and `mergedConfig.pkceCode` (the verifier) for token exchange.
-		smartClient = await FHIR.oauth2.ready(mergedConfig)
+		const smartClient = await FHIR.oauth2.ready(mergedConfig)
+
+		const baseUrl = smartClient.state.serverUrl
+		if (!baseUrl) {
+			throw new Error('Could not determine FHIR server URL from SMART client state after ready().')
+		}
+
+		const accessToken = smartClient.state.tokenResponse?.access_token
+		if (!accessToken) {
+			console.warn(
+				'No access token available from SMART client despite successful ready(). Potentially an issue with token response.',
+				smartClient.state.tokenResponse
+			)
+			throw new Error('Failed to obtain access token from SMART client after ready().')
+		}
+
+		const authMiddleware: Middleware = {
+			async onRequest({ request: req }) {
+				req.headers.set('Authorization', `Bearer ${accessToken}`)
+				return req
+			},
+			async onResponse({ response }) {
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`)
+				}
+				return response
+			},
+			async onError({ error }) {
+				console.error(
+					'FHIR client error:',
+					error.message,
+					error.cause ? { cause: error.cause } : {}
+				)
+				throw error
+			},
+		}
+
+		const client = createClient<paths>({ baseUrl })
+		client.use(authMiddleware)
+		return client
 	} catch (error: any) {
 		console.error(
 			'FHIR.oauth2.ready() failed:',
@@ -206,41 +233,6 @@ export const createSmartFhirClient = async (
 			`SMART on FHIR authentication failed during ready(): ${error.message || 'Unknown error'}`
 		)
 	}
-
-	const baseUrl = smartClient.state.serverUrl
-	if (!baseUrl) {
-		throw new Error('Could not determine FHIR server URL from SMART client state after ready().')
-	}
-
-	const accessToken = smartClient.state.tokenResponse?.access_token
-	if (!accessToken) {
-		console.warn(
-			'No access token available from SMART client despite successful ready(). Potentially an issue with token response.',
-			smartClient.state.tokenResponse
-		)
-		throw new Error('Failed to obtain access token from SMART client after ready().')
-	}
-
-	const authMiddleware: Middleware = {
-		async onRequest({ request: req }) {
-			req.headers.set('Authorization', `Bearer ${accessToken}`)
-			return req
-		},
-		async onResponse({ response }) {
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`)
-			}
-			return response
-		},
-		async onError({ error }) {
-			console.error('FHIR client error:', error.message, error.cause ? { cause: error.cause } : {})
-			throw error
-		},
-	}
-
-	const client = createClient<paths>({ baseUrl })
-	client.use(authMiddleware)
-	return client
 }
 
 export const authorizeSmartClient = async (
