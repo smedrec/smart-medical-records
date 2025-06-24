@@ -78,7 +78,6 @@ export const registerFhirLogin = (app: App) =>
 
 			if (smartFhirClientConfig[0].environment === 'development') {
 				const insureAuthorizeUrl = authorizeUrl.replaceAll('https', 'http')
-				console.log(insureAuthorizeUrl)
 				return c.redirect(insureAuthorizeUrl)
 			}
 

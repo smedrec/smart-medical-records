@@ -2,6 +2,7 @@ import { ApiError, openApiErrorResponses } from '@/lib/errors'
 import { createRoute, z } from '@hono/zod-openapi'
 import { eq } from 'drizzle-orm'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
+import fetch, { Headers, Request } from 'node-fetch'
 
 import { smartFhirClient } from '@repo/db'
 import {
@@ -102,8 +103,24 @@ export const registerFhirCallback = (app: App) =>
 
 		try {
 			// createSmartFhirClient will validate stateFromCallback against expectedState internally
+			const url = new URL(c.req.url)
+			url.pathname = '/fhir/callback'
+			url.search = `?code=${code}&state=${stateFromCallback}`
+
+			const headers = new Headers()
+			for (const [key, value] of Object.entries(c.req.header())) {
+				if (value !== undefined) headers.set(key, value)
+			}
+
+			const request = new Request(url.toString(), {
+				method: c.req.method,
+				headers,
+				// body: ... // Only if needed
+			})
+			console.log(`REQUEST: ${JSON.stringify(request, null, 2)}`)
 			const accessToken = await getSmartFhirAccessToken({
-				request: c.req.raw, // Pass the raw Request object
+				// FIXME - the request raw is empty
+				request: request, // Pass the raw Request object
 				clientId: smartFhirClientConfig[0].clientId,
 				scope: smartFhirClientConfig[0].scope,
 				iss: smartFhirClientConfig[0].iss,

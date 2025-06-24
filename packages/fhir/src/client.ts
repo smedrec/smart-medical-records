@@ -1,9 +1,11 @@
 import { env } from 'cloudflare:workers'
 import FHIR from 'fhirclient' // Added fhirclient import
+
+import fetch, { Headers } from 'node-fetch'
 import createClient from 'openapi-fetch'
 
 import type { fhirclient } from 'fhirclient/lib/types' // Import types
-
+import type { Request } from 'node-fetch'
 //import { auth } from '@repo/auth'
 
 import type { Client, Middleware } from 'openapi-fetch'
@@ -88,6 +90,7 @@ const getSmartConfigFromEnv = (
 }
 
 export const getSmartFhirAccessToken = async (options: SmartFhirClientOptions): Promise<string> => {
+	console.log(`Request: ${JSON.stringify(options.request, null, 2)}`)
 	if (!options.request) {
 		throw new Error("Worker 'request' object must be provided in options for FHIR.oauth2.ready().")
 	}
@@ -134,6 +137,7 @@ export const getSmartFhirAccessToken = async (options: SmartFhirClientOptions): 
 		// `fhirclient` will use `mergedConfig.iss` to fetch server metadata.
 		// It needs `mergedConfig.code`, `mergedConfig.state`, `mergedConfig.redirectUri`,
 		// `mergedConfig.clientId`, and `mergedConfig.pkceCode` (the verifier) for token exchange.
+		console.log(JSON.stringify(mergedConfig, null, 2))
 		const smartClient = await FHIR.oauth2.ready(mergedConfig)
 
 		const baseUrl = smartClient.state.serverUrl
@@ -330,7 +334,7 @@ export const authorizeSmartClient = async (
 	}
 }
 
-export { SmartFhirClientEnvOptions }
+//export { SmartFhirClientEnvOptions }
 // Previous export: export { createSmartFhirClient, authorizeSmartClient };
 
 // Basic client for internal/system use where SMART auth flow is not applicable.
