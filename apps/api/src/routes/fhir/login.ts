@@ -38,7 +38,7 @@ export type FhirLoginResponse = z.infer<
 	(typeof route.responses)[200]['content']['application/json']['schema']
 >
 
-export const registerResourceReadHistory = (app: App) =>
+export const registerFhirLogin = (app: App) =>
 	app.openapi(route, async (c) => {
 		const { cerbos, db } = c.get('services')
 		const session = c.get('session')

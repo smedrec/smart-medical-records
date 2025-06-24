@@ -3,7 +3,7 @@
 
 apiVersion: api.cerbos.dev/v1
 resourcePolicy:
-  resource: Fhir
+  resource: SmartFhirClient
   version: default
   rules:
     - actions:
@@ -16,10 +16,3 @@ resourcePolicy:
       roles:
         - admin
         - owner
-    - actions:
-        - read
-      effect: EFFECT_ALLOW
-      roles:
-        - member
-        - practitioner
-        - patient

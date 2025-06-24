@@ -211,12 +211,20 @@ export const smartFhirClient = sqliteTable(
 		redirectUri: text('redirect_uri'),
 		launchToken: text('launch_token'),
 		fhirBaseUrl: text('fhir_base_url').notNull(),
-		code: text('code'), // Authorization code from callback
+		/**code: text('code'), // Authorization code from callback
 		state: text('state'), // State from callback
 		expectedState: text('expected_state'), // State originally generated and stored by caller
-		pkceCodeVerifier: text('pkce_code_verifier').notNull(), // PKCE code verifier stored by caller
+		pkceCodeVerifier: text('pkce_code_verifier').notNull(), // PKCE code verifier stored by caller*/
 		provider: text('provider').default('demo').notNull(), // demo azure aws gcp
 		environment: text('provider').default('development').notNull(), // development production
+		createdBy: text('created_by')
+			.notNull()
+			.references(() => user.id),
+		updatedBy: text('updated_by').references(() => user.id),
+		createdAt: integer('created_at', { mode: 'timestamp' })
+			.notNull()
+			.$defaultFn(() => /* @__PURE__ */ new Date()),
+		updatedAt: integer('updated_at', { mode: 'timestamp' }), // last updated time
 	},
 	(table) => {
 		return [

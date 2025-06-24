@@ -1,7 +1,13 @@
 import { zEnv } from '@/lib/env'
 import { ConsoleLogger } from '@/lib/logs'
+import { registerFhirCallback } from '@/routes/fhir/callback'
+import { registerFhirLogin } from '@/routes/fhir/login'
 import { registerResourceReadHistory } from '@/routes/fhir/r4/history'
 import { registerResourceRead } from '@/routes/fhir/r4/read'
+import { registerSmartFhirClientCreate } from '@/routes/fhir/smart-client/create'
+import { registerSmartFhirClientDelete } from '@/routes/fhir/smart-client/delete'
+import { registerSmartFhirClientFind } from '@/routes/fhir/smart-client/find'
+import { registerSmartFhirClientUpdate } from '@/routes/fhir/smart-client/update'
 import { registerUploadAvatar } from '@/routes/user/uploadAvatar'
 import { cors } from 'hono/cors'
 
@@ -50,6 +56,13 @@ registerLiveness(app)
 registerWhoiam(app)
 
 registerUploadAvatar(app)
+// FHIR routes
+registerFhirLogin(app)
+registerFhirCallback(app)
+registerSmartFhirClientFind(app)
+registerSmartFhirClientCreate(app)
+registerSmartFhirClientUpdate(app)
+registerSmartFhirClientDelete(app)
 // FHIR resources routes
 registerResourceRead(app)
 registerResourceReadHistory(app)

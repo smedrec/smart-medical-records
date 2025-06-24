@@ -48,7 +48,7 @@ export type FhirCallbackResponse = z.infer<
 	(typeof route.responses)[200]['content']['application/json']['schema']
 >
 
-export const registerFhirCallbackRoute = (app: App) =>
+export const registerFhirCallback = (app: App) =>
 	app.openapi(route, async (c) => {
 		const { cerbos, db } = c.get('services')
 		const session = c.get('session')

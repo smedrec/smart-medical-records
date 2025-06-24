@@ -142,7 +142,7 @@ export const auth = betterAuth({
 			create: {
 				before: async (session) => {
 					const activeOrganization = await getActiveOrganization(session.userId)
-					const smartClientAccessToken = await authorizeSmartClient(session.userId)
+					//const smartClientAccessToken = await authorizeSmartClient(session.userId)
 					if (!activeOrganization) {
 						return {
 							data: {
@@ -159,7 +159,7 @@ export const auth = betterAuth({
 							...session,
 							activeOrganizationId: activeOrganization.organizationId,
 							activeOrganizationRole: activeOrganization.role,
-							smartClientAccessToken: smartClientAccessToken || null,
+							//smartClientAccessToken: smartClientAccessToken || null,
 						},
 					}
 				},
