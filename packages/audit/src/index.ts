@@ -37,6 +37,7 @@ export interface AuditLogEvent {
 	timestamp: string
 	ttl?: string
 	principalId?: string
+	organizationId?: string
 	action: string // e.g., fhirPatientRead, cerbosAuthCheck
 	targetResourceType?: string // e.g., Patient, Practitioner, CerbosResource
 	targetResourceId?: string
@@ -124,6 +125,7 @@ import { auditResource } from '@repo/audit'
 const audit = new AuditResource('audit')
 audit.log({
   principalId: 'user-123',
+	organizationId: 'org-123',
   action: 'fhirPatientReadAttempt',
   targetResourceType: 'Patient',
   targetResourceId: 'pat-456',
@@ -132,6 +134,7 @@ audit.log({
 
 audit.log({
   principalId: 'user-123',
+	organizationId: 'org-123',
   action: 'fhirPatientReadSuccess',
   targetResourceType: 'Patient',
   targetResourceId: 'pat-456',
@@ -142,6 +145,7 @@ audit.log({
 
 audit.log({
   principalId: 'user-123',
+	organizationId: 'org-123',
   action: 'fhirPatientReadFailure',
   targetResourceType: 'Patient',
   targetResourceId: 'pat-456',

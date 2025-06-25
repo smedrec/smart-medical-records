@@ -69,6 +69,7 @@ async function main() {
 			timestamp,
 			ttl,
 			principalId,
+			organizationId,
 			action,
 			targetResourceType,
 			targetResourceId,
@@ -82,6 +83,7 @@ async function main() {
 				timestamp, // This comes from the event, should be an ISO string
 				ttl,
 				principalId,
+				organizationId,
 				action,
 				targetResourceType,
 				targetResourceId,

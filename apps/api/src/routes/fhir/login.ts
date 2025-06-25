@@ -69,6 +69,7 @@ export const registerFhirLogin = (app: App) =>
 			const outcomeDescription = `Forbidden: User ${principalId} with roles [${roles.join(', ')}] not authorized to perform '${cerbosAction}' on ${cerbosResource.kind}/${cerbosResource.id}.`
 			await audit.log({
 				principalId,
+				organizationId: activeOrganizationId,
 				action: `cerbos:${cerbosAction}`,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -82,6 +83,7 @@ export const registerFhirLogin = (app: App) =>
 		}
 		await audit.log({
 			principalId,
+			organizationId: activeOrganizationId,
 			action: `cerbos:${cerbosAction}`,
 			targetResourceType: resourceType,
 			targetResourceId: resourceId,
