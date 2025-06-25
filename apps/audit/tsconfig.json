@@ -3,6 +3,7 @@
 	"compilerOptions": {
 		"outDir": "./dist",
 		"rootDir": "src",
+		"noEmit": false, // Override the inherited noEmit: true
 		"module": "NodeNext", // or "CommonJS" if you prefer, but NodeNext is more modern for ESModules
 		"moduleResolution": "NodeNext",
 		"baseUrl": "./src",
