@@ -36,7 +36,11 @@ export default defineUserConfig({
 			},
 			{
 				text: 'Applications',
-				children: ['/apps/api.md'],
+				children: ['/apps/api.md', '/apps/audit.md'],
+			},
+			{
+				text: 'Packages',
+				children: ['/packages/audit.md'],
 			},
 		],
 	}),
