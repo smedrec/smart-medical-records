@@ -1,30 +1,20 @@
-import { AuditEventStatus } from '@repo/audit';
-import {
-	pgTable,
-	serial,
-	text,
-	timestamp,
-	varchar,
-	jsonb,
-} from 'drizzle-orm/pg-core';
+import { jsonb, pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core'
+
+import type { AuditEventStatus } from '@repo/audit'
 
 export const auditLog = pgTable('audit_log', {
 	id: serial('id').primaryKey(),
-	timestamp: timestamp('timestamp', { withTimezone: true, mode: 'string' })
-		.notNull()
-		.defaultNow(),
+	timestamp: timestamp('timestamp', { withTimezone: true, mode: 'string' }).notNull().defaultNow(),
 	ttl: varchar('ttl'), // Assuming ttl might be a string like "30d" or similar, adjust if it's numeric seconds
 	principalId: varchar('principal_id', { length: 255 }),
 	action: varchar('action', { length: 255 }).notNull(),
 	targetResourceType: varchar('target_resource_type', { length: 255 }),
 	targetResourceId: varchar('target_resource_id', { length: 255 }),
-	status: varchar('status', { length: 50 })
-		.$type<AuditEventStatus>()
-		.notNull(),
+	status: varchar('status', { length: 50 }).$type<AuditEventStatus>().notNull(),
 	outcomeDescription: text('outcome_description'),
 	details: jsonb('details'), // For additional context
 	// Consider adding an index for frequently queried columns like timestamp, principalId, action, or status
-});
+})
 
 // Example of how you might import AuditLogEvent if needed for type checking,
 // though for schema definition, referencing AuditEventStatus is more direct.
@@ -84,7 +74,7 @@ export const auditLog = pgTable('audit_log', {
 // - outcomeDescription?: string -> text - OK (nullable)
 // - [key: string]: any -> jsonb 'details' - OK (nullable)
 // This looks good.```typescript
-import { AuditEventStatus } from '@repo/audit';
+/**import { AuditEventStatus } from '@repo/audit';
 import {
 	pgTable,
 	serial,
@@ -125,3 +115,4 @@ export const auditLog = pgTable('audit_log', {
 //   e.g., CREATE INDEX idx_audit_log_timestamp ON audit_log (timestamp DESC);
 //   e.g., CREATE INDEX idx_audit_log_principal_action ON audit_log (principal_id, action);
 ```
+*/

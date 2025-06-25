@@ -15,11 +15,11 @@
 		"worker-mailer": "1.1.4"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.39",
-		"@cloudflare/workers-types": "4.20250617.0",
+		"@cloudflare/vitest-pool-workers": "0.8.46",
+		"@cloudflare/workers-types": "4.20250620.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"vitest": "3.2.3"
+		"vitest": "3.2.4"
 	}
 }
