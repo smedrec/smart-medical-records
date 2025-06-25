@@ -40,8 +40,10 @@ export type FhirLoginResponse = z.infer<
 
 export const registerFhirLogin = (app: App) =>
 	app.openapi(route, async (c) => {
-		const { cerbos, db } = c.get('services')
+		const { cerbos, db, audit } = c.get('services')
 		const session = c.get('session')
+		const resourceType = 'fhirSmartClient'
+		const resourceId = 'fhir-smart-client-login'
 
 		if (!session)
 			throw new ApiError({
@@ -49,7 +51,43 @@ export const registerFhirLogin = (app: App) =>
 				message: 'You Need to login the app first to continue.',
 			})
 
+		const principalId = session.session.userId as string
 		const activeOrganizationId = session.session.activeOrganizationId as string
+
+		const cerbosResource = { kind: resourceType, id: resourceId, attributes: {} }
+		const cerbosAction = 'login'
+		const roles = [session.session.activeOrganizationRole as string]
+		const principal = { id: principalId, roles }
+
+		const allowed = await cerbos.isAllowed({
+			principal,
+			resource: cerbosResource,
+			action: cerbosAction,
+		})
+
+		if (!allowed) {
+			const outcomeDescription = `Forbidden: User ${principalId} with roles [${roles.join(', ')}] not authorized to perform '${cerbosAction}' on ${cerbosResource.kind}/${cerbosResource.id}.`
+			await audit.log({
+				principalId,
+				action: `cerbos:${cerbosAction}`,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'failure',
+				outcomeDescription,
+			})
+			throw new ApiError({
+				code: 'UNAUTHORIZED',
+				message: outcomeDescription,
+			})
+		}
+		await audit.log({
+			principalId,
+			action: `cerbos:${cerbosAction}`,
+			targetResourceType: resourceType,
+			targetResourceId: resourceId,
+			status: 'success',
+			outcomeDescription: 'Authorization granted by Cerbos.',
+		})
 
 		const smartFhirClientConfig = await db
 			.select()
@@ -85,25 +123,4 @@ export const registerFhirLogin = (app: App) =>
 			console.error('Login failed:', error.message)
 			return c.json({ error: 'FHIR Login initiation failed', details: error.message }, 500)
 		}
-
-		/**const decision = await cerbos.checkResource({
-			principal: {
-				id: session.session.userId,
-				roles: [session.session.activeOrganizationRole as string],
-				attributes: {},
-			},
-			resource: {
-				kind: resourceType,
-				id: id,
-				attributes: {},
-			},
-			actions: ['read'],
-		})
-
-		if (!decision.isAllowed('read')) {
-			throw new ApiError({
-				code: 'FORBIDDEN',
-				message: `You do not have permissions to read a ${resourceType}.`,
-			})
-		}*/
 	})

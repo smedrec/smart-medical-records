@@ -57,30 +57,42 @@
 // - [key: string]: any -> jsonb 'details' - OK (nullable)
 // This looks good.
 
-import { jsonb, pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core'
+import { index, jsonb, pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core'
 
 import type { AuditEventStatus } from '@repo/audit'
 
-export const auditLog = pgTable('audit_log', {
-	id: serial('id').primaryKey(),
-	// The timestamp from the AuditLogEvent is an ISO string.
-	// Storing it as 'timestamp with time zone' is appropriate.
-	// mode: 'string' ensures Drizzle treats it as a string when reading/writing,
-	// which is compatible with the ISO string format.
-	timestamp: timestamp('timestamp', { withTimezone: true, mode: 'string' }).notNull(),
-	ttl: varchar('ttl', { length: 255 }), // Assuming ttl might be a string like "30d" or an interval string
-	principalId: varchar('principal_id', { length: 255 }),
-	action: varchar('action', { length: 255 }).notNull(),
-	targetResourceType: varchar('target_resource_type', { length: 255 }),
-	targetResourceId: varchar('target_resource_id', { length: 255 }),
-	status: varchar('status', { length: 50 })
-		.$type<AuditEventStatus>() // Enforces the type against AuditEventStatus
-		.notNull(),
-	outcomeDescription: text('outcome_description'),
-	// The 'details' column will store any additional properties from the AuditLogEvent
-	// that are not explicitly mapped to other columns.
-	details: jsonb('details'),
-})
+export const auditLog = pgTable(
+	'audit_log',
+	{
+		id: serial('id').primaryKey(),
+		// The timestamp from the AuditLogEvent is an ISO string.
+		// Storing it as 'timestamp with time zone' is appropriate.
+		// mode: 'string' ensures Drizzle treats it as a string when reading/writing,
+		// which is compatible with the ISO string format.
+		timestamp: timestamp('timestamp', { withTimezone: true, mode: 'string' }).notNull(),
+		ttl: varchar('ttl', { length: 255 }), // Assuming ttl might be a string like "30d" or an interval string
+		principalId: varchar('principal_id', { length: 255 }),
+		organizationId: varchar('organization_id', { length: 255 }),
+		action: varchar('action', { length: 255 }).notNull(),
+		targetResourceType: varchar('target_resource_type', { length: 255 }),
+		targetResourceId: varchar('target_resource_id', { length: 255 }),
+		status: varchar('status', { length: 50 })
+			.$type<AuditEventStatus>() // Enforces the type against AuditEventStatus
+			.notNull(),
+		outcomeDescription: text('outcome_description'),
+		// The 'details' column will store any additional properties from the AuditLogEvent
+		// that are not explicitly mapped to other columns.
+		details: jsonb('details'),
+	},
+	(table) => {
+		return [
+			index('audit_log_timestamp_idx').on(table.timestamp),
+			index('audit_log_principal_id_idx').on(table.principalId),
+			index('audit_log_organization_id_idx').on(table.organizationId),
+			index('audit_log_action_idx').on(table.action),
+		]
+	}
+)
 
 // Notes for implementation:
 // - When inserting data, the `timestamp` field of the `AuditLogEvent` (which is a string)

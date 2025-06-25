@@ -1,4 +1,5 @@
 import type { cerbos } from '@/lib/cerbos'
+import type { Audit } from '@repo/audit'
 import type { auth, Session, User } from '@repo/auth'
 import type { db } from '@repo/db'
 import type { fhir } from '@repo/fhir'
@@ -25,6 +26,7 @@ export type ServiceContext = {
 	//db: { primary: Database; readonly: Database };
 	db: typeof db
 	//redis:  Redis,
+	audit: Audit
 	logger: Logger
 }
 

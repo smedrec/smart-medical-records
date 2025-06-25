@@ -20,6 +20,8 @@ export const zEnv = z.object({
 	CLOUDFLARE_API_KEY: z.string().optional(),
 	CLOUDFLARE_ZONE_ID: z.string().optional(),
 
+	AUDIT_REDIS_URL: z.string(),
+
 	NAME: z.string(),
 	ENVIRONMENT: z.enum(['VITEST', 'development', 'staging', 'production']).default('development'),
 

@@ -2,6 +2,7 @@
 import { cerbos } from '@/lib/cerbos'
 import { createId } from '@paralleldrive/cuid2'
 
+import { Audit } from '@repo/audit'
 import { auth } from '@repo/auth'
 import { db } from '@repo/db'
 import { fhir } from '@repo/fhir'
@@ -54,6 +55,8 @@ export function init(): MiddlewareHandler<HonoEnv> {
 			defaultFields: { environment: c.env.ENVIRONMENT },
 		})
 
+		const audit = new Audit('audit', c.env.AUDIT_REDIS_URL)
+
 		//const cache = initCache(c);
 		//const cache = null
 
@@ -63,6 +66,7 @@ export function init(): MiddlewareHandler<HonoEnv> {
 			fhir,
 			db,
 			//redis,
+			audit,
 			logger,
 			//cache,
 		})
