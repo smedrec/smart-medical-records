@@ -12,12 +12,14 @@
  * ```
  */
 import { Queue } from 'bullmq'
+import { env } from 'cloudflare:workers'
 import IORedis from 'ioredis'
 
 export type AuditEventStatus = 'attempt' | 'success' | 'failure'
 
 export interface AuditLogEvent {
 	timestamp: string
+	ttl?: string
 	principalId?: string
 	action: string // e.g., fhirPatientRead, cerbosAuthCheck
 	targetResourceType?: string // e.g., Patient, Practitioner, CerbosResource
@@ -28,14 +30,14 @@ export interface AuditLogEvent {
 	[key: string]: any
 }
 
-export class AuditResource {
+export class Audit {
 	private connection: IORedis
 	private queue: string
 	private q
 
 	constructor(queue: string) {
 		this.queue = queue
-		this.connection = new IORedis({ maxRetriesPerRequest: null })
+		this.connection = new IORedis(env.AUDIT_REDIS_URL, { maxRetriesPerRequest: null })
 		this.q = new Queue(this.queue)
 
 		//this.connection.connect().catch(console.error)
@@ -51,8 +53,8 @@ export class AuditResource {
 			throw new Error("Missing required properties: 'action' and/or 'status'")
 		}
 		const event: AuditLogEvent = {
-			...eventDetails,
 			timestamp: new Date().toISOString(),
+			...eventDetails,
 		}
 
 		await this.q.add('audit', event, { removeOnComplete: true, removeOnFail: true })

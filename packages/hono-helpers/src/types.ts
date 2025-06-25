@@ -51,6 +51,10 @@ export type SharedHonoEnv = {
 	 */
 	DATABASE_URL: string
 	/**
+	 * REDIS instance to audit queues
+	 */
+	AUDIT_REDIS_URL: string
+	/**
 	 * Smart FHIR Client
 	 */
 	SMART_ISS: string
