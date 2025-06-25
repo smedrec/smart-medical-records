@@ -20,7 +20,7 @@ A modern, open-source medical records system for registering patient cases with 
 - **Custom Forms**: 📋 Design your own questionnaires for next-gen analytics
 - **Internationalization**: 🌐 Translate and adapt to your language
 - **Statistics**: 📊 Access important statistics at a glance
-- **Customise**: 🎨 View what's relevant to you, aggregate info through forms
+- **Customize**: 🎨 View what's relevant to you, aggregate info through forms
 - **As Many as Necessary**: 📚 Support for multiple case studies per patient
 - **Treatments**: 💉 Track treatments within case studies
 - **Immutable Conclusions**: 📝 Finalize case studies with unchangeable conclusions

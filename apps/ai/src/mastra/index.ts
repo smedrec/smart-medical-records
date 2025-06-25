@@ -5,6 +5,8 @@ import { PinoLogger } from '@mastra/loggers'
 import createClient from 'openapi-fetch'
 import { fetch, request } from 'undici'
 
+import { Audit } from '@repo/audit'
+
 import { assistantAgent } from './agents/assistant-agent'
 import { fhirAgent } from './agents/fhir-test'
 import { fhirMCPServer } from './mcp'
@@ -18,6 +20,7 @@ import type { Session, User } from '@repo/auth'
 import type { FhirApiClient, FhirSessionData } from '../hono/middleware/fhir-auth'
 
 type McpFhirToolCallContext = {
+	audit: Audit
 	fhirClient?: FhirApiClient | null
 	fhirSessionData?: FhirSessionData | null
 }
@@ -107,6 +110,8 @@ export const mastra = new Mastra({
 						return new Response('Unauthorized', { status: 401 })
 					}*/
 
+				const audit = new Audit('audit', process.env.AUDIT_REDIS_URL!)
+
 				const sessionData: FhirSessionData = {
 					tokenResponse: {},
 					serverUrl: 'https://hapi.teachhowtofish.org/fhir/',
@@ -115,6 +120,7 @@ export const mastra = new Mastra({
 				}
 				const fhirApiClient: FhirApiClient = createClient({ baseUrl: sessionData.serverUrl })
 				const runtimeContext = c.get('runtimeContext')
+				runtimeContext.set('audit', audit)
 				runtimeContext.set('fhirSessionData', sessionData)
 				runtimeContext.set('fhirClient', fhirApiClient)
 				await next()

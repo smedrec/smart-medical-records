@@ -1,15 +1,16 @@
 import { createTool } from '@mastra/core'
-import { RuntimeContext } from '@mastra/core/di'
 import z from 'zod'
 
 import { logAuditEvent } from '../../audit' // Import audit logger
 import { cerbos } from '../../cerbos'
 import { createPatientSchema, createPractitionerSchema } from '../../v4.0.1'
 
+import type { Audit } from '@repo/audit'
 import type { FhirApiClient, FhirSessionData } from '../../hono/middleware/fhir-auth'
 import type { Bundle, OperationOutcome, Organization, Patient, Practitioner } from '../../v4.0.1'
 
 export type McpFhirToolCallContext = {
+	audit: Audit
 	fhirClient?: FhirApiClient | null
 	fhirSessionData?: FhirSessionData | null
 }
@@ -17,12 +18,577 @@ export type McpFhirToolCallContext = {
 const patientSchema = createPatientSchema()
 const practitionerSchema = createPractitionerSchema()
 
-const runtimeContext = new RuntimeContext<McpFhirToolCallContext>()
-runtimeContext.set('fhirClient', null)
-runtimeContext.set('fhirSessionData', null)
-
 const defaultPrincipalId = 'anonymous'
 const defaultRoles = ['anonymous']
+
+// -- FHIR Resource Tools
+
+export const fhirResourceReadTool = createTool({
+	id: 'fhirResourceRead',
+	description: 'Reads a FHIR resource by ID.',
+	inputSchema: z.object({
+		resourceType: z
+			.string()
+			.describe('Resource type, ex: Patient, Practitioner, Organization, etc'),
+		id: z.string().describe('Resource id'),
+	}),
+	execute: async ({ context, runtimeContext }): Promise<Patient> => {
+		const audit = runtimeContext.get('audit') as Audit
+		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
+		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
+		const toolName = 'fhirResourceRead'
+		const resourceType = context.resourceType
+		const resourceId = context.id
+		const principalId = fhirSessionData.userId || defaultPrincipalId
+		const roles = fhirSessionData.roles || defaultRoles
+		const principal = { id: principalId, roles: roles, attributes: {} }
+		const cerbosResource = { kind: resourceType, id: resourceId, attributes: {} }
+		const cerbosAction = 'read'
+
+		await audit.log({
+			principalId,
+			action: `${toolName}Attempt`,
+			targetResourceType: resourceType,
+			targetResourceId: resourceId,
+			status: 'attempt',
+		})
+
+		if (!fhirClient) {
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'failure',
+				outcomeDescription: 'FHIR client not available.',
+			})
+			throw new Error('FHIR client not available.')
+		}
+
+		const allowed = await cerbos.isAllowed({
+			principal,
+			resource: cerbosResource,
+			action: cerbosAction,
+		})
+		if (!allowed) {
+			const outcomeDescription = `Forbidden: User ${principalId} with roles [${roles.join(', ')}] not authorized to perform '${cerbosAction}' on ${cerbosResource.kind}/${cerbosResource.id}.`
+			await audit.log({
+				principalId,
+				action: `cerbos:${cerbosAction}`,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'failure',
+				outcomeDescription,
+			})
+			throw new Error(outcomeDescription)
+		}
+		await audit.log({
+			principalId,
+			action: `cerbos:${cerbosAction}`,
+			targetResourceType: resourceType,
+			targetResourceId: resourceId,
+			status: 'success',
+			outcomeDescription: 'Authorization granted by Cerbos.',
+		})
+
+		try {
+			const { data, error, response } = await fhirClient.GET(`/${resourceType}/{id}`, {
+				params: { path: { id: context.id } },
+			})
+			if (error) {
+				const rText = await response.text()
+				const outcomeDescription = `FHIR ${resourceType} read failed: Status ${response.status}`
+				await audit.log({
+					principalId,
+					action: toolName,
+					targetResourceType: resourceType,
+					targetResourceId: resourceId,
+					status: 'failure',
+					outcomeDescription,
+					details: {
+						responseStatus: response.status,
+						responseBody: rText,
+					},
+				})
+				console.error(
+					`FHIR ${resourceType} read error (ID: ${context.id}): Status ${response.status}`,
+					await response.text()
+				)
+				throw new Error(outcomeDescription)
+			}
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'success',
+				outcomeDescription: `Successfully read ${resourceType} resource.`,
+			})
+			return data as Patient
+		} catch (e: any) {
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'failure',
+				outcomeDescription: e.message,
+			})
+			throw e
+		}
+	},
+})
+
+// TODO - Simplified audit logging for other tools for brevity in this example.
+// TODO - In a real implementation, each tool would have detailed logging similar to ReadTool.
+
+export const fhirResourceSearchTool = createTool({
+	id: 'fhirResourceSearch',
+	description: 'Searches for on FHIR resources.',
+	inputSchema: z.object({
+		resourceType: z
+			.string()
+			.describe('Resource type, ex: Patient, Practitioner, Organization, etc'),
+		params: z.unknown().describe('The fhir resource search parameters'),
+	}),
+	execute: async ({ context, runtimeContext }): Promise<Bundle<Patient>> => {
+		const audit = runtimeContext.get('audit') as Audit
+		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
+		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
+		const toolName = 'fhirResourceSearch'
+		const resourceType = context.resourceType
+		const principalId = fhirSessionData.userId || defaultPrincipalId
+		const roles = fhirSessionData.roles || defaultRoles
+		await audit.log({
+			principalId,
+			action: `${toolName}Attempt`,
+			targetResourceType: resourceType,
+			status: 'attempt',
+			searchParams: context.params,
+		})
+		if (!fhirClient) {
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				status: 'failure',
+				outcomeDescription: 'FHIR client not available.',
+			})
+			throw new Error('FHIR client not available.')
+		}
+		const principal = { id: principalId, roles }
+		const cerbosResource = { id: 'all', kind: resourceType, attributes: {} }
+		const cerbosAction = 'search'
+		const allowed = await cerbos.isAllowed({
+			principal,
+			resource: cerbosResource,
+			action: cerbosAction,
+		})
+		if (!allowed) {
+			const desc = `Forbidden to ${cerbosAction} ${resourceType}`
+			await audit.log({
+				principalId,
+				action: `cerbos:${cerbosAction}`,
+				targetResourceType: resourceType,
+				status: 'failure',
+				outcomeDescription: desc,
+			})
+			throw new Error(desc)
+		}
+		await audit.log({
+			principalId,
+			action: `cerbos:${cerbosAction}`,
+			targetResourceType: resourceType,
+			status: 'success',
+		})
+		try {
+			const { data, error, response } = await fhirClient.GET(`/${resourceType}`, {
+				params: { query: context.params },
+			})
+			if (error) {
+				const desc = `FHIR ${resourceType} search failed: Status ${response.status}`
+				await audit.log({
+					principalId,
+					action: toolName,
+					targetResourceType: resourceType,
+					status: 'failure',
+					outcomeDescription: desc,
+					details: {
+						responseStatus: response.status,
+					},
+				})
+				throw new Error(desc)
+			}
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				status: 'success',
+			})
+			return data as Bundle<any>
+		} catch (e: any) {
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				status: 'failure',
+				outcomeDescription: e.message,
+			})
+			throw e
+		}
+	},
+})
+
+export const fhirResourceCreateTool = createTool({
+	id: 'fhirResourceCreate',
+	description: 'Creates a new FHIR resource.',
+	inputSchema: z.object({
+		resourceType: z
+			.string()
+			.describe('Resource type, ex: Patient, Practitioner, Organization, etc'),
+		resource: z.unknown().describe('The FHIR resource'),
+	}),
+	execute: async ({ context, runtimeContext }): Promise<unknown> => {
+		const audit = runtimeContext.get('audit') as Audit
+		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
+		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
+		const toolName = 'fhirResourceCreate'
+		const resourceType = context.resourceType
+		const principalId = fhirSessionData.userId || defaultPrincipalId
+		const roles = fhirSessionData.roles || defaultRoles
+
+		await audit.log({
+			principalId,
+			action: `${toolName}Attempt`,
+			targetResourceType: resourceType,
+			status: 'attempt',
+		})
+
+		if (!fhirClient) {
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				status: 'failure',
+				outcomeDescription: 'FHIR client not available.',
+			})
+			throw new Error('FHIR client not available.')
+		}
+
+		const principal = { id: principalId, roles }
+		const cerbosResource = { id: 'create', kind: resourceType, attributes: {} }
+		const cerbosAction = 'create'
+		const allowed = await cerbos.isAllowed({
+			principal,
+			resource: cerbosResource,
+			action: cerbosAction,
+		})
+
+		if (!allowed) {
+			const desc = `Forbidden to ${cerbosAction} ${resourceType}`
+			await audit.log({
+				principalId,
+				action: `cerbos:${cerbosAction}`,
+				targetResourceType: resourceType,
+				status: 'failure',
+				outcomeDescription: desc,
+			})
+			throw new Error(desc)
+		}
+
+		await audit.log({
+			principalId,
+			action: `cerbos:${cerbosAction}`,
+			targetResourceType: resourceType,
+			status: 'success',
+		})
+
+		const valid = patientSchema.safeParse(context.resource)
+		if (!valid.success) {
+			const desc = `${valid.error.message} to ${cerbosAction} ${resourceType}`
+			await audit.log({
+				principalId,
+				action: `cerbos:${cerbosAction}`,
+				targetResourceType: resourceType,
+				status: 'failure',
+				outcomeDescription: desc,
+			})
+			throw new Error(desc)
+		}
+
+		try {
+			const { data, error, response } = await fhirClient.POST(`/${resourceType}`, {
+				body: context.resource,
+			})
+			if (error) {
+				const rText = await response.text()
+				const desc = `FHIR ${resourceType} create failed: Status ${response.status}`
+				await audit.log({
+					principalId,
+					action: toolName,
+					targetResourceType: resourceType,
+					status: 'failure',
+					outcomeDescription: desc,
+					details: {
+						responseStatus: response.status,
+						responseBody: rText,
+					},
+				})
+				try {
+					const o = JSON.parse(rText) as OperationOutcome
+					if (o?.issue?.length > 0) throw new Error(o.issue[0].diagnostics)
+				} catch (e) {}
+				throw new Error(desc)
+			}
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				targetResourceId: data.id,
+				status: 'success',
+			})
+			return data as Patient
+		} catch (e: any) {
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				status: 'failure',
+				outcomeDescription: e.message,
+			})
+			throw e
+		}
+	},
+})
+
+export const fhirResourceUpdateTool = createTool({
+	id: 'fhirResourceUpdate',
+	description: 'Updates an existing FHIR resource.',
+	inputSchema: z.object({
+		resourceType: z
+			.string()
+			.describe('Resource type, ex: Patient, Practitioner, Organization, etc'),
+		id: z.string().describe('Resource id'),
+		resource: z.unknown().describe(''),
+	}),
+	execute: async ({ context, runtimeContext }): Promise<unknown> => {
+		const audit = runtimeContext.get('audit') as Audit
+		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
+		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
+		const toolName = 'fhirResourceUpdate'
+		const resourceType = context.resourceType
+		const resourceId = context.id
+		const principalId = fhirSessionData.userId || defaultPrincipalId
+		const roles = fhirSessionData.roles || defaultRoles
+
+		await audit.log({
+			principalId,
+			action: `${toolName}Attempt`,
+			targetResourceType: resourceType,
+			targetResourceId: resourceId,
+			status: 'attempt',
+		})
+		if (!fhirClient) {
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'failure',
+				outcomeDescription: 'FHIR client not available.',
+			})
+			throw new Error('FHIR client not available.')
+		}
+		const principal = { id: principalId, roles }
+		const cerbosResource = { id: resourceId, kind: resourceType, attributes: {} }
+		const cerbosAction = 'update'
+		const allowed = await cerbos.isAllowed({
+			principal,
+			resource: cerbosResource,
+			action: cerbosAction,
+		})
+		if (!allowed) {
+			const desc = `Forbidden to ${cerbosAction} ${resourceType}/${resourceId}`
+			await audit.log({
+				principalId,
+				action: `cerbos:${cerbosAction}`,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'failure',
+				outcomeDescription: desc,
+			})
+			throw new Error(desc)
+		}
+		await audit.log({
+			principalId,
+			action: `cerbos:${cerbosAction}`,
+			targetResourceType: resourceType,
+			targetResourceId: resourceId,
+			status: 'success',
+		})
+		try {
+			const { data, error, response } = await fhirClient.PUT(`/${resourceType}/{id}`, {
+				params: { path: { id: context.id } },
+				body: context.resource,
+			})
+			if (error) {
+				const rText = await response.text()
+				const desc = `FHIR ${resourceType} update failed: Status ${response.status}`
+				await audit.log({
+					principalId,
+					action: toolName,
+					targetResourceType: resourceType,
+					targetResourceId: resourceId,
+					status: 'failure',
+					outcomeDescription: desc,
+					details: {
+						responseStatus: response.status,
+						responseBody: rText,
+					},
+				})
+				try {
+					const o = JSON.parse(rText) as OperationOutcome
+					if (o?.issue?.length > 0) throw new Error(o.issue[0].diagnostics)
+				} catch (e) {}
+				throw new Error(desc)
+			}
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'success',
+			})
+			return data
+		} catch (e: any) {
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'failure',
+				outcomeDescription: e.message,
+			})
+			throw e
+		}
+	},
+})
+
+export const fhirResourceDeleteTool = createTool({
+	id: 'fhirResourceDelete',
+	description: 'Deletes a FHIR resource by ID.',
+	inputSchema: z.object({
+		resourceType: z
+			.string()
+			.describe('Resource type, ex: Patient, Practitioner, Organization, etc'),
+		id: z.string().describe('Resource id'),
+	}),
+	execute: async ({ context, runtimeContext }): Promise<unknown> => {
+		const audit = runtimeContext.get('audit') as Audit
+		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
+		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
+		const toolName = 'fhirResourceDelete'
+		const resourceType = context.resourceType
+		const resourceId = context.id
+		const principalId = fhirSessionData.userId || defaultPrincipalId
+		const roles = fhirSessionData.roles || defaultRoles
+		const principal = { id: principalId, roles: roles, attributes: {} }
+		const cerbosResource = { kind: resourceType, id: resourceId, attributes: {} }
+		const cerbosAction = 'delete'
+
+		await audit.log({
+			principalId,
+			action: `${toolName}Attempt`,
+			targetResourceType: resourceType,
+			targetResourceId: resourceId,
+			status: 'attempt',
+		})
+
+		if (!fhirClient) {
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'failure',
+				outcomeDescription: 'FHIR client not available.',
+			})
+			throw new Error('FHIR client not available.')
+		}
+
+		const allowed = await cerbos.isAllowed({
+			principal,
+			resource: cerbosResource,
+			action: cerbosAction,
+		})
+		if (!allowed) {
+			const outcomeDescription = `Forbidden: User ${principalId} with roles [${roles.join(', ')}] not authorized to perform '${cerbosAction}' on ${cerbosResource.kind}/${cerbosResource.id}.`
+			await audit.log({
+				principalId,
+				action: `cerbos:${cerbosAction}`,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'failure',
+				outcomeDescription,
+			})
+			throw new Error(outcomeDescription)
+		}
+		await audit.log({
+			principalId,
+			action: `cerbos:${cerbosAction}`,
+			targetResourceType: resourceType,
+			targetResourceId: resourceId,
+			status: 'success',
+			outcomeDescription: 'Authorization granted by Cerbos.',
+		})
+
+		try {
+			const { data, error, response } = await fhirClient.DELETE(`/${resourceType}/{id}`, {
+				params: { path: { id: context.id } },
+			})
+			if (error) {
+				const rText = await response.text()
+				const outcomeDescription = `FHIR ${resourceType} delete failed: Status ${response.status}`
+				await audit.log({
+					principalId,
+					action: toolName,
+					targetResourceType: resourceType,
+					targetResourceId: resourceId,
+					status: 'failure',
+					outcomeDescription,
+					details: {
+						responseStatus: response.status,
+						responseBody: rText,
+					},
+				})
+				console.error(
+					`FHIR ${resourceType} delete error (ID: ${context.id}): Status ${response.status}`,
+					await response.text()
+				)
+				throw new Error(outcomeDescription)
+			}
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'success',
+				outcomeDescription: `Successfully delete ${resourceType} resource.`,
+			})
+			return data
+		} catch (e: any) {
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'failure',
+				outcomeDescription: e.message,
+			})
+			throw e
+		}
+	},
+})
 
 // --- Patient Tools ---
 export const patientReadTool = createTool({
@@ -1173,8 +1739,12 @@ export const fhirOrganizationTools = [
 	organizationUpdateTool,
 ]
 
-export const allFhirTools = [
-	...fhirPatientTools,
-	...fhirPractitionerTools,
-	...fhirOrganizationTools,
+export const fhirResourceTools = [
+	fhirResourceReadTool,
+	fhirResourceSearchTool,
+	fhirResourceCreateTool,
+	fhirResourceUpdateTool,
+	fhirResourceDeleteTool,
 ]
+
+export const allFhirTools = [...fhirResourceTools]

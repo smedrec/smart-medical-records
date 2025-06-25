@@ -2,12 +2,13 @@
 	"compilerOptions": {
 		"target": "ES2022",
 		"module": "ES2022",
-		"moduleResolution": "bundler",
+		"moduleResolution": "node",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"strict": true,
 		"skipLibCheck": true,
-		"noEmit": true
+		"allowImportingTsExtensions": true,
+		"noEmit": false
 	},
 	"include": ["src/**/*", "env.d.ts"],
 	"exclude": ["node_modules", "dist", ".mastra", ".turbo", ".vscode"]
