@@ -33,6 +33,7 @@
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "24.0.4",
 		"@types/pg": "8.15.4",
+		"concurrently": "^9.2.0",
 		"drizzle-kit": "0.31.2",
 		"nodemon": "3.1.4",
 		"typescript": "5.5.4",
