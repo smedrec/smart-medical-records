@@ -1,0 +1,123 @@
+# Stage 1: Builder
+# This stage installs all dependencies (including dev) and builds the application.
+FROM node:20-slim AS builder
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+WORKDIR /app
+
+# Copy workspace configuration files
+COPY pnpm-lock.yaml ./
+COPY pnpm-workspace.yaml ./
+COPY package.json ./
+COPY tsconfig.json ./ # Root tsconfig
+COPY turbo.jsonc ./   # Turborepo config
+
+# Copy package.json for all workspaces to allow pnpm to resolve them
+# A more optimized approach might involve using `pnpm deploy` or similar features
+# if available and suitable for creating a pruned workspace for the specific app.
+COPY apps/audit/package.json ./apps/audit/
+COPY apps/ai/package.json ./apps/ai/
+COPY apps/api/package.json ./apps/api/
+COPY apps/docs/package.json ./apps/docs/
+COPY apps/mcp/package.json ./apps/mcp/
+COPY apps/test/package.json ./apps/test/
+COPY apps/web/package.json ./apps/web/
+
+COPY packages/app-client/package.json ./packages/app-client/
+COPY packages/app-client-workers/package.json ./packages/app-client-workers/
+COPY packages/audit/package.json ./packages/audit/ # This is a workspace package, not the app
+COPY packages/auth/package.json ./packages/auth/
+COPY packages/db/package.json ./packages/db/
+COPY packages/eslint-config/package.json ./packages/eslint-config/
+COPY packages/fhir/package.json ./packages/fhir/
+COPY packages/hono-helpers/package.json ./packages/hono-helpers/
+COPY packages/mailer/package.json ./packages/mailer/
+COPY packages/tools/package.json ./packages/tools/
+COPY packages/typescript-config/package.json ./packages/typescript-config/
+COPY packages/ui/package.json ./packages/ui/
+COPY packages/workspace-dependencies/package.json ./packages/workspace-dependencies/
+
+# Install all dependencies (includes devDependencies needed for build)
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --strict-peer
+
+# Copy source code for the audit app and its direct local dependencies
+COPY apps/audit ./apps/audit
+COPY packages/audit ./packages/audit # Source for @repo/audit
+COPY packages/typescript-config ./packages/typescript-config # Source for @repo/typescript-config
+
+# If @repo/audit has its own build step that audit-worker relies on,
+# ensure it's also built. Turborepo should handle this with a root build.
+# We are building only the audit-worker and its dependencies.
+# The --filter flag targets the specific app 'audit-worker' (name from its package.json)
+# and `...^` includes its workspace dependencies.
+RUN pnpm --filter "audit-worker...^" build
+
+# Stage 2: Production Runner
+# This stage takes only the necessary artifacts for running the application.
+FROM node:20-alpine AS runner
+
+ENV NODE_ENV production
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+# RUN corepack enable # Not strictly needed if we use npm/node directly unless pnpm is used for `npm start`
+
+WORKDIR /app
+
+# Create a non-root user for security
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 audituser
+USER audituser
+
+# Copy necessary files from the builder stage
+# We need package.json of the app to run `npm start` and for Node to find modules.
+COPY --from=builder /app/apps/audit/package.json ./apps/audit/package.json
+COPY --from=builder /app/apps/audit/dist ./apps/audit/dist
+
+# To install *only* production dependencies for the audit-worker,
+# we can try to construct a minimal package.json or copy the full node_modules
+# from a pruned installation in the builder stage.
+# For simplicity and robustness with pnpm workspaces, we copy the relevant built packages.
+
+# Copy production node_modules.
+# A more optimized way is to use `pnpm install --prod` in a pruned environment.
+# For now, we'll copy the built dependencies from the builder stage's node_modules.
+# This requires careful handling of pnpm's symlinking.
+# A safer bet for pnpm workspaces is to copy the relevant packages from the build stage's
+# output and the app's direct production node_modules.
+
+# Option 1: Copy only the app's dist and its package.json, then run `pnpm install --prod`
+# This is cleaner if the app's package.json lists all direct prod dependencies correctly.
+WORKDIR /app/apps/audit
+COPY --from=builder /app/pnpm-lock.yaml ./ # May need this for --prod install consistency
+COPY --from=builder /app/package.json ../../package.json # Root package.json for workspace context
+COPY --from=builder /app/pnpm-workspace.yaml ../../pnpm-workspace.yaml # For workspace context
+
+# To install only production dependencies for `audit-worker`:
+# 1. Copy its `package.json`
+# 2. Copy its direct workspace dependencies' `package.json` and their built output.
+# 3. Run `pnpm install --prod --filter audit-worker`
+
+# Simpler approach for now: Copy the built output and the necessary node_modules
+# from the builder stage. This is less optimal in size but more straightforward.
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/audit/node_modules ./apps/audit/node_modules
+COPY --from=builder /app/packages/audit ./packages/audit # Built @repo/audit
+
+# If @repo/audit has its own node_modules, copy them if they are not hoisted.
+# This structure assumes that dependencies are mostly hoisted to the root node_modules.
+
+# Correct working directory for the application
+WORKDIR /app/apps/audit
+
+# The `start` script is `node dist/index.js`
+CMD ["node", "dist/index.js"]
+
+# Healthcheck (optional, depends on your orchestration)
+# HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
+#  CMD node -e "require('http').get('http://localhost:YOUR_HEALTH_PORT/healthz', (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
+# This worker doesn't have an HTTP server, so a different health check would be needed if any.
+# e.g., check if the process is running or if BullMQ worker is connected.
+# For now, no healthcheck.
