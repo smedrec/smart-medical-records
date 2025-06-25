@@ -2,7 +2,6 @@ import { ApiError, openApiErrorResponses } from '@/lib/errors'
 import { createRoute, z } from '@hono/zod-openapi'
 import { eq } from 'drizzle-orm'
 import { setCookie } from 'hono/cookie'
-import { replaceProtocol } from 'replace-url-protocol'
 
 import { smartFhirClient } from '@repo/db'
 import {

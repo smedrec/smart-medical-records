@@ -109,7 +109,7 @@ export const mastra = new Mastra({
 
 				const sessionData: FhirSessionData = {
 					tokenResponse: {},
-					serverUrl: 'http://joseantcordeiro.hopto.org:8080/fhir/',
+					serverUrl: 'https://hapi.teachhowtofish.org/fhir/',
 					userId: '1RnE9Braod6DUi0b0EfqBgaTcRoWYwHz', // Added for Cerbos Principal ID
 					roles: ['owner'],
 				}

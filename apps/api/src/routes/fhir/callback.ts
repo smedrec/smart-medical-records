@@ -134,6 +134,13 @@ export const registerFhirCallback = (app: App) =>
 				// `code` and `state` are parsed from request by createSmartFhirClient
 			})
 
+			console.log('c.req.raw type:', typeof c.req.raw)
+			console.log(
+				'c.req.raw keys:',
+				c.req.raw ? Object.keys(c.req.raw) : 'c.req.raw is null/undefined'
+			)
+			console.log('c.req.url:', c.req.url) // Hono's parsed UR
+
 			// @ts-ignore TODO: fhirclient.Client type doesn't directly expose 'state' in this way. Need to check actual structure.
 			const clientState = fhirClient.state as {
 				tokenResponse: any
