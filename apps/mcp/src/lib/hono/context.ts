@@ -1,4 +1,5 @@
 import type { Context as GenericContext } from 'hono'
+import type { Audit } from '@repo/audit'
 import type { auth, Session } from '@repo/auth'
 import type { HonoApp } from '@repo/hono-helpers'
 import type { SharedHonoEnv, SharedHonoVariables } from '@repo/hono-helpers/src/types'
@@ -14,6 +15,7 @@ export type Env = SharedHonoEnv & {
 export type ServiceContext = {
 	auth: typeof auth
 	cerbos: typeof cerbos
+	audit: Audit
 	//fhir: typeof fhir
 	//cache: Cache;
 	//db: { primary: Database; readonly: Database };

@@ -1,3 +1,6 @@
+import { env } from 'cloudflare:workers'
+
+import { Audit } from '@repo/audit'
 import { auth } from '@repo/auth'
 
 import { cerbos } from '../cerbos'
@@ -80,9 +83,12 @@ export function init(): MiddlewareHandler<HonoEnv> {
 			c.set('session', session)
 		}
 
+		const audit = new Audit('audit', env.AUDIT_REDIS_URL)
+
 		c.set('services', {
 			auth,
 			cerbos,
+			audit,
 			//redis,
 			//logger,
 			//cache,
