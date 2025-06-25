@@ -1,217 +1,217 @@
 import type {
-  Meta,
-  Element,
-  Extension,
-  Address,
-  Age,
-  Annotation,
-  Attachment,
-  CodeableConcept,
-  Coding,
-  ContactPoint,
-  Count,
-  Distance,
-  Duration,
-  HumanName,
-  Identifier,
-  Money,
-  Period,
-  Quantity,
-  Range,
-  Ratio,
-  Reference,
-  SampledData,
-  Signature,
-  Timing,
-  ContactDetail,
-  Contributor,
-  DataRequirement,
-  Expression,
-  ParameterDefinition,
-  RelatedArtifact,
-  TriggerDefinition,
-  UsageContext,
-  Dosage,
-} from "../core/types";
-import type { ResourceList } from "../resourcelist/types";
+	Address,
+	Age,
+	Annotation,
+	Attachment,
+	CodeableConcept,
+	Coding,
+	ContactDetail,
+	ContactPoint,
+	Contributor,
+	Count,
+	DataRequirement,
+	Distance,
+	Dosage,
+	Duration,
+	Element,
+	Expression,
+	Extension,
+	HumanName,
+	Identifier,
+	Meta,
+	Money,
+	ParameterDefinition,
+	Period,
+	Quantity,
+	Range,
+	Ratio,
+	Reference,
+	RelatedArtifact,
+	SampledData,
+	Signature,
+	Timing,
+	TriggerDefinition,
+	UsageContext,
+} from '../core/types'
+import type { ResourceList } from '../resourcelist/types'
 
 /* Generated from FHIR JSON Schema */
 
 /** This resource is a non-persisted resource used to pass information into and back from an [operation](operations.html). It has no other use, and there is no RESTful endpoint associated with it. */
 
 export interface Parameters {
-  resourceType: `Parameters`;
-  /** The logical id of the resource, as used in the URL for the resource. Once assigned, this value never changes. */
-  id?: string;
-  /** The metadata about the resource. This is content that is maintained by the infrastructure. Changes to the content might not always be associated with version changes to the resource. */
-  meta?: Meta;
-  /** A reference to a set of rules that were followed when the resource was constructed, and which must be understood when processing the content. Often, this is a reference to an implementation guide that defines the special rules along with other profiles etc. */
-  implicitRules?: string;
+	resourceType: `Parameters`
+	/** The logical id of the resource, as used in the URL for the resource. Once assigned, this value never changes. */
+	id?: string
+	/** The metadata about the resource. This is content that is maintained by the infrastructure. Changes to the content might not always be associated with version changes to the resource. */
+	meta?: Meta
+	/** A reference to a set of rules that were followed when the resource was constructed, and which must be understood when processing the content. Often, this is a reference to an implementation guide that defines the special rules along with other profiles etc. */
+	implicitRules?: string
 
-  _implicitRules?: Element;
-  /** The base language in which the resource is written. */
-  language?: string;
+	_implicitRules?: Element
+	/** The base language in which the resource is written. */
+	language?: string
 
-  _language?: Element;
+	_language?: Element
 
-  parameter?: ParametersParameter[];
+	parameter?: ParametersParameter[]
 }
 
 /** This resource is a non-persisted resource used to pass information into and back from an [operation](operations.html). It has no other use, and there is no RESTful endpoint associated with it. */
 
 export interface ParametersParameter {
-  /** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
-  id?: string;
-  /** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
-  extension?: Extension[];
-  /** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
+	/** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
+	id?: string
+	/** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
+	extension?: Extension[]
+	/** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
 
 Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself). */
-  modifierExtension?: Extension[];
-  /** The name of the parameter (reference to the operation definition). */
-  name: string;
+	modifierExtension?: Extension[]
+	/** The name of the parameter (reference to the operation definition). */
+	name: string
 
-  _name?: Element;
+	_name?: Element
 
-  valueBase64Binary?: string;
+	valueBase64Binary?: string
 
-  _valueBase64Binary?: Element;
+	_valueBase64Binary?: Element
 
-  valueBoolean?: boolean;
+	valueBoolean?: boolean
 
-  _valueBoolean?: Element;
+	_valueBoolean?: Element
 
-  valueCanonical?: string;
+	valueCanonical?: string
 
-  _valueCanonical?: Element;
+	_valueCanonical?: Element
 
-  valueCode?: string;
+	valueCode?: string
 
-  _valueCode?: Element;
+	_valueCode?: Element
 
-  valueDate?: string;
+	valueDate?: string
 
-  _valueDate?: Element;
+	_valueDate?: Element
 
-  valueDateTime?: string;
+	valueDateTime?: string
 
-  _valueDateTime?: Element;
+	_valueDateTime?: Element
 
-  valueDecimal?: number;
+	valueDecimal?: number
 
-  _valueDecimal?: Element;
+	_valueDecimal?: Element
 
-  valueId?: string;
+	valueId?: string
 
-  _valueId?: Element;
+	_valueId?: Element
 
-  valueInstant?: string;
+	valueInstant?: string
 
-  _valueInstant?: Element;
+	_valueInstant?: Element
 
-  valueInteger?: number;
+	valueInteger?: number
 
-  _valueInteger?: Element;
+	_valueInteger?: Element
 
-  valueMarkdown?: string;
+	valueMarkdown?: string
 
-  _valueMarkdown?: Element;
+	_valueMarkdown?: Element
 
-  valueOid?: string;
+	valueOid?: string
 
-  _valueOid?: Element;
+	_valueOid?: Element
 
-  valuePositiveInt?: number;
+	valuePositiveInt?: number
 
-  _valuePositiveInt?: Element;
+	_valuePositiveInt?: Element
 
-  valueString?: string;
+	valueString?: string
 
-  _valueString?: Element;
+	_valueString?: Element
 
-  valueTime?: string;
+	valueTime?: string
 
-  _valueTime?: Element;
+	_valueTime?: Element
 
-  valueUnsignedInt?: number;
+	valueUnsignedInt?: number
 
-  _valueUnsignedInt?: Element;
+	_valueUnsignedInt?: Element
 
-  valueUri?: string;
+	valueUri?: string
 
-  _valueUri?: Element;
+	_valueUri?: Element
 
-  valueUrl?: string;
+	valueUrl?: string
 
-  _valueUrl?: Element;
+	_valueUrl?: Element
 
-  valueUuid?: string;
+	valueUuid?: string
 
-  _valueUuid?: Element;
+	_valueUuid?: Element
 
-  valueAddress?: Address;
+	valueAddress?: Address
 
-  valueAge?: Age;
+	valueAge?: Age
 
-  valueAnnotation?: Annotation;
+	valueAnnotation?: Annotation
 
-  valueAttachment?: Attachment;
+	valueAttachment?: Attachment
 
-  valueCodeableConcept?: CodeableConcept;
+	valueCodeableConcept?: CodeableConcept
 
-  valueCoding?: Coding;
+	valueCoding?: Coding
 
-  valueContactPoint?: ContactPoint;
+	valueContactPoint?: ContactPoint
 
-  valueCount?: Count;
+	valueCount?: Count
 
-  valueDistance?: Distance;
+	valueDistance?: Distance
 
-  valueDuration?: Duration;
+	valueDuration?: Duration
 
-  valueHumanName?: HumanName;
+	valueHumanName?: HumanName
 
-  valueIdentifier?: Identifier;
+	valueIdentifier?: Identifier
 
-  valueMoney?: Money;
+	valueMoney?: Money
 
-  valuePeriod?: Period;
+	valuePeriod?: Period
 
-  valueQuantity?: Quantity;
+	valueQuantity?: Quantity
 
-  valueRange?: Range;
+	valueRange?: Range
 
-  valueRatio?: Ratio;
+	valueRatio?: Ratio
 
-  valueReference?: Reference;
+	valueReference?: Reference
 
-  valueSampledData?: SampledData;
+	valueSampledData?: SampledData
 
-  valueSignature?: Signature;
+	valueSignature?: Signature
 
-  valueTiming?: Timing;
+	valueTiming?: Timing
 
-  valueContactDetail?: ContactDetail;
+	valueContactDetail?: ContactDetail
 
-  valueContributor?: Contributor;
+	valueContributor?: Contributor
 
-  valueDataRequirement?: DataRequirement;
+	valueDataRequirement?: DataRequirement
 
-  valueExpression?: Expression;
+	valueExpression?: Expression
 
-  valueParameterDefinition?: ParameterDefinition;
+	valueParameterDefinition?: ParameterDefinition
 
-  valueRelatedArtifact?: RelatedArtifact;
+	valueRelatedArtifact?: RelatedArtifact
 
-  valueTriggerDefinition?: TriggerDefinition;
+	valueTriggerDefinition?: TriggerDefinition
 
-  valueUsageContext?: UsageContext;
+	valueUsageContext?: UsageContext
 
-  valueDosage?: Dosage;
+	valueDosage?: Dosage
 
-  valueMeta?: Meta;
-  /** If the parameter is a whole resource. */
-  resource?: ResourceList;
+	valueMeta?: Meta
+	/** If the parameter is a whole resource. */
+	resource?: ResourceList
 
-  part?: ParametersParameter[];
+	part?: ParametersParameter[]
 }

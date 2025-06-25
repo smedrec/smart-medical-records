@@ -1,602 +1,595 @@
 import type {
-  Meta,
-  Element,
-  Extension,
-  Identifier,
-  ContactDetail,
-  UsageContext,
-  CodeableConcept,
-  Reference,
-  Coding,
-} from "../core/types";
-import type { Narrative } from "../narrative/types";
-import type { ResourceList } from "../resourcelist/types";
+	CodeableConcept,
+	Coding,
+	ContactDetail,
+	Element,
+	Extension,
+	Identifier,
+	Meta,
+	Reference,
+	UsageContext,
+} from '../core/types'
+import type { Narrative } from '../narrative/types'
+import type { ResourceList } from '../resourcelist/types'
 
 /* Generated from FHIR JSON Schema */
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScript<Contained = ResourceList> {
-  resourceType: `TestScript`;
-  /** The logical id of the resource, as used in the URL for the resource. Once assigned, this value never changes. */
-  id?: string;
-  /** The metadata about the resource. This is content that is maintained by the infrastructure. Changes to the content might not always be associated with version changes to the resource. */
-  meta?: Meta;
-  /** A reference to a set of rules that were followed when the resource was constructed, and which must be understood when processing the content. Often, this is a reference to an implementation guide that defines the special rules along with other profiles etc. */
-  implicitRules?: string;
+	resourceType: `TestScript`
+	/** The logical id of the resource, as used in the URL for the resource. Once assigned, this value never changes. */
+	id?: string
+	/** The metadata about the resource. This is content that is maintained by the infrastructure. Changes to the content might not always be associated with version changes to the resource. */
+	meta?: Meta
+	/** A reference to a set of rules that were followed when the resource was constructed, and which must be understood when processing the content. Often, this is a reference to an implementation guide that defines the special rules along with other profiles etc. */
+	implicitRules?: string
 
-  _implicitRules?: Element;
-  /** The base language in which the resource is written. */
-  language?: string;
+	_implicitRules?: Element
+	/** The base language in which the resource is written. */
+	language?: string
 
-  _language?: Element;
-  /** A human-readable narrative that contains a summary of the resource and can be used to represent the content of the resource to a human. The narrative need not encode all the structured data, but is required to contain sufficient detail to make it "clinically safe" for a human to just read the narrative. Resource definitions may define what content should be represented in the narrative to ensure clinical safety. */
-  text?: Narrative;
-  contained?: Contained[];
-  /** May be used to represent additional information that is not part of the basic definition of the resource. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
-  extension?: Extension[];
-  /** May be used to represent additional information that is not part of the basic definition of the resource and that modifies the understanding of the element that contains it and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer is allowed to define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
+	_language?: Element
+	/** A human-readable narrative that contains a summary of the resource and can be used to represent the content of the resource to a human. The narrative need not encode all the structured data, but is required to contain sufficient detail to make it "clinically safe" for a human to just read the narrative. Resource definitions may define what content should be represented in the narrative to ensure clinical safety. */
+	text?: Narrative
+	contained?: Contained[]
+	/** May be used to represent additional information that is not part of the basic definition of the resource. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
+	extension?: Extension[]
+	/** May be used to represent additional information that is not part of the basic definition of the resource and that modifies the understanding of the element that contains it and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer is allowed to define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
 
 Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself). */
-  modifierExtension?: Extension[];
-  /** An absolute URI that is used to identify this test script when it is referenced in a specification, model, design or an instance; also called its canonical identifier. This SHOULD be globally unique and SHOULD be a literal address at which at which an authoritative instance of this test script is (or will be) published. This URL can be the target of a canonical reference. It SHALL remain the same when the test script is stored on different servers. */
-  url: string;
+	modifierExtension?: Extension[]
+	/** An absolute URI that is used to identify this test script when it is referenced in a specification, model, design or an instance; also called its canonical identifier. This SHOULD be globally unique and SHOULD be a literal address at which at which an authoritative instance of this test script is (or will be) published. This URL can be the target of a canonical reference. It SHALL remain the same when the test script is stored on different servers. */
+	url: string
 
-  _url?: Element;
-  /** A formal identifier that is used to identify this test script when it is represented in other formats, or referenced in a specification, model, design or an instance. */
-  identifier?: Identifier;
-  /** The identifier that is used to identify this version of the test script when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the test script author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence. */
-  version?: string;
+	_url?: Element
+	/** A formal identifier that is used to identify this test script when it is represented in other formats, or referenced in a specification, model, design or an instance. */
+	identifier?: Identifier
+	/** The identifier that is used to identify this version of the test script when it is referenced in a specification, model, design or instance. This is an arbitrary value managed by the test script author and is not expected to be globally unique. For example, it might be a timestamp (e.g. yyyymmdd) if a managed version is not available. There is also no expectation that versions can be placed in a lexicographical sequence. */
+	version?: string
 
-  _version?: Element;
-  /** A natural language name identifying the test script. This name should be usable as an identifier for the module by machine processing applications such as code generation. */
-  name: string;
+	_version?: Element
+	/** A natural language name identifying the test script. This name should be usable as an identifier for the module by machine processing applications such as code generation. */
+	name: string
 
-  _name?: Element;
-  /** A short, descriptive, user-friendly title for the test script. */
-  title?: string;
+	_name?: Element
+	/** A short, descriptive, user-friendly title for the test script. */
+	title?: string
 
-  _title?: Element;
-  /** The status of this test script. Enables tracking the life-cycle of the content. */
-  status: "draft" | "active" | "retired" | "unknown";
+	_title?: Element
+	/** The status of this test script. Enables tracking the life-cycle of the content. */
+	status: 'draft' | 'active' | 'retired' | 'unknown'
 
-  _status?: Element;
-  /** A Boolean value to indicate that this test script is authored for testing purposes (or education/evaluation/marketing) and is not intended to be used for genuine usage. */
-  experimental?: boolean;
+	_status?: Element
+	/** A Boolean value to indicate that this test script is authored for testing purposes (or education/evaluation/marketing) and is not intended to be used for genuine usage. */
+	experimental?: boolean
 
-  _experimental?: Element;
-  /** The date  (and optionally time) when the test script was published. The date must change when the business version changes and it must change if the status code changes. In addition, it should change when the substantive content of the test script changes. */
-  date?: string;
+	_experimental?: Element
+	/** The date  (and optionally time) when the test script was published. The date must change when the business version changes and it must change if the status code changes. In addition, it should change when the substantive content of the test script changes. */
+	date?: string
 
-  _date?: Element;
-  /** The name of the organization or individual that published the test script. */
-  publisher?: string;
+	_date?: Element
+	/** The name of the organization or individual that published the test script. */
+	publisher?: string
 
-  _publisher?: Element;
-  /** Contact details to assist a user in finding and communicating with the publisher. */
-  contact?: ContactDetail[];
-  /** A free text natural language description of the test script from a consumer's perspective. */
-  description?: string;
+	_publisher?: Element
+	/** Contact details to assist a user in finding and communicating with the publisher. */
+	contact?: ContactDetail[]
+	/** A free text natural language description of the test script from a consumer's perspective. */
+	description?: string
 
-  _description?: Element;
-  /** The content was developed with a focus and intent of supporting the contexts that are listed. These contexts may be general categories (gender, age, ...) or may be references to specific programs (insurance plans, studies, ...) and may be used to assist with indexing and searching for appropriate test script instances. */
-  useContext?: UsageContext[];
-  /** A legal or geographic region in which the test script is intended to be used. */
-  jurisdiction?: CodeableConcept[];
-  /** Explanation of why this test script is needed and why it has been designed as it has. */
-  purpose?: string;
+	_description?: Element
+	/** The content was developed with a focus and intent of supporting the contexts that are listed. These contexts may be general categories (gender, age, ...) or may be references to specific programs (insurance plans, studies, ...) and may be used to assist with indexing and searching for appropriate test script instances. */
+	useContext?: UsageContext[]
+	/** A legal or geographic region in which the test script is intended to be used. */
+	jurisdiction?: CodeableConcept[]
+	/** Explanation of why this test script is needed and why it has been designed as it has. */
+	purpose?: string
 
-  _purpose?: Element;
-  /** A copyright statement relating to the test script and/or its contents. Copyright statements are generally legal restrictions on the use and publishing of the test script. */
-  copyright?: string;
+	_purpose?: Element
+	/** A copyright statement relating to the test script and/or its contents. Copyright statements are generally legal restrictions on the use and publishing of the test script. */
+	copyright?: string
 
-  _copyright?: Element;
+	_copyright?: Element
 
-  origin?: TestScriptOrigin[];
+	origin?: TestScriptOrigin[]
 
-  destination?: TestScriptDestination[];
+	destination?: TestScriptDestination[]
 
-  metadata?: TestScriptMetadata;
+	metadata?: TestScriptMetadata
 
-  fixture?: TestScriptFixture[];
-  /** Reference to the profile to be used for validation. */
-  profile?: Reference[];
+	fixture?: TestScriptFixture[]
+	/** Reference to the profile to be used for validation. */
+	profile?: Reference[]
 
-  variable?: TestScriptVariable[];
+	variable?: TestScriptVariable[]
 
-  setup?: TestScriptSetup;
+	setup?: TestScriptSetup
 
-  test?: TestScriptTest[];
+	test?: TestScriptTest[]
 
-  teardown?: TestScriptTeardown;
+	teardown?: TestScriptTeardown
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptOrigin {
-  /** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
-  id?: string;
-  /** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
-  extension?: Extension[];
-  /** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
+	/** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
+	id?: string
+	/** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
+	extension?: Extension[]
+	/** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
 
 Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself). */
-  modifierExtension?: Extension[];
-  /** Abstract name given to an origin server in this test script.  The name is provided as a number starting at 1. */
-  index: number;
+	modifierExtension?: Extension[]
+	/** Abstract name given to an origin server in this test script.  The name is provided as a number starting at 1. */
+	index: number
 
-  _index?: Element;
-  /** The type of origin profile the test system supports. */
-  profile: Coding;
+	_index?: Element
+	/** The type of origin profile the test system supports. */
+	profile: Coding
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptDestination {
-  /** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
-  id?: string;
-  /** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
-  extension?: Extension[];
-  /** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
+	/** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
+	id?: string
+	/** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
+	extension?: Extension[]
+	/** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
 
 Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself). */
-  modifierExtension?: Extension[];
-  /** Abstract name given to a destination server in this test script.  The name is provided as a number starting at 1. */
-  index: number;
+	modifierExtension?: Extension[]
+	/** Abstract name given to a destination server in this test script.  The name is provided as a number starting at 1. */
+	index: number
 
-  _index?: Element;
-  /** The type of destination profile the test system supports. */
-  profile: Coding;
+	_index?: Element
+	/** The type of destination profile the test system supports. */
+	profile: Coding
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptMetadata {
-  /** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
-  id?: string;
-  /** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
-  extension?: Extension[];
-  /** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
+	/** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
+	id?: string
+	/** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
+	extension?: Extension[]
+	/** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
 
 Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself). */
-  modifierExtension?: Extension[];
+	modifierExtension?: Extension[]
 
-  link?: TestScriptLink[];
+	link?: TestScriptLink[]
 
-  capability: TestScriptCapability[];
+	capability: TestScriptCapability[]
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptLink {
-  id?: string;
+	id?: string
 
-  extension?: Extension[];
+	extension?: Extension[]
 
-  modifierExtension?: Extension[];
+	modifierExtension?: Extension[]
 
-  url?: string;
+	url?: string
 
-  _url?: Element;
+	_url?: Element
 
-  description?: string;
+	description?: string
 
-  _description?: Element;
+	_description?: Element
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptCapability {
-  id?: string;
+	id?: string
 
-  extension?: Extension[];
+	extension?: Extension[]
 
-  modifierExtension?: Extension[];
+	modifierExtension?: Extension[]
 
-  required?: boolean;
+	required?: boolean
 
-  _required?: Element;
+	_required?: Element
 
-  validated?: boolean;
+	validated?: boolean
 
-  _validated?: Element;
+	_validated?: Element
 
-  description?: string;
+	description?: string
 
-  _description?: Element;
+	_description?: Element
 
-  origin?: number[];
+	origin?: number[]
 
-  _origin?: Element[];
+	_origin?: Element[]
 
-  destination?: number;
+	destination?: number
 
-  _destination?: Element;
+	_destination?: Element
 
-  link?: string[];
+	link?: string[]
 
-  _link?: Element[];
+	_link?: Element[]
 
-  capabilities: string;
+	capabilities: string
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptFixture {
-  /** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
-  id?: string;
-  /** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
-  extension?: Extension[];
-  /** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
+	/** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
+	id?: string
+	/** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
+	extension?: Extension[]
+	/** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
 
 Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself). */
-  modifierExtension?: Extension[];
-  /** Whether or not to implicitly create the fixture during setup. If true, the fixture is automatically created on each server being tested during setup, therefore no create operation is required for this fixture in the TestScript.setup section. */
-  autocreate: boolean;
+	modifierExtension?: Extension[]
+	/** Whether or not to implicitly create the fixture during setup. If true, the fixture is automatically created on each server being tested during setup, therefore no create operation is required for this fixture in the TestScript.setup section. */
+	autocreate: boolean
 
-  _autocreate?: Element;
-  /** Whether or not to implicitly delete the fixture during teardown. If true, the fixture is automatically deleted on each server being tested during teardown, therefore no delete operation is required for this fixture in the TestScript.teardown section. */
-  autodelete: boolean;
+	_autocreate?: Element
+	/** Whether or not to implicitly delete the fixture during teardown. If true, the fixture is automatically deleted on each server being tested during teardown, therefore no delete operation is required for this fixture in the TestScript.teardown section. */
+	autodelete: boolean
 
-  _autodelete?: Element;
-  /** Reference to the resource (containing the contents of the resource needed for operations). */
-  resource?: Reference;
+	_autodelete?: Element
+	/** Reference to the resource (containing the contents of the resource needed for operations). */
+	resource?: Reference
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptVariable {
-  /** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
-  id?: string;
-  /** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
-  extension?: Extension[];
-  /** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
+	/** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
+	id?: string
+	/** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
+	extension?: Extension[]
+	/** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
 
 Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself). */
-  modifierExtension?: Extension[];
-  /** Descriptive name for this variable. */
-  name: string;
+	modifierExtension?: Extension[]
+	/** Descriptive name for this variable. */
+	name: string
 
-  _name?: Element;
-  /** A default, hard-coded, or user-defined value for this variable. */
-  defaultValue?: string;
+	_name?: Element
+	/** A default, hard-coded, or user-defined value for this variable. */
+	defaultValue?: string
 
-  _defaultValue?: Element;
-  /** A free text natural language description of the variable and its purpose. */
-  description?: string;
+	_defaultValue?: Element
+	/** A free text natural language description of the variable and its purpose. */
+	description?: string
 
-  _description?: Element;
-  /** The FHIRPath expression to evaluate against the fixture body. When variables are defined, only one of either expression, headerField or path must be specified. */
-  expression?: string;
+	_description?: Element
+	/** The FHIRPath expression to evaluate against the fixture body. When variables are defined, only one of either expression, headerField or path must be specified. */
+	expression?: string
 
-  _expression?: Element;
-  /** Will be used to grab the HTTP header field value from the headers that sourceId is pointing to. */
-  headerField?: string;
+	_expression?: Element
+	/** Will be used to grab the HTTP header field value from the headers that sourceId is pointing to. */
+	headerField?: string
 
-  _headerField?: Element;
-  /** Displayable text string with hint help information to the user when entering a default value. */
-  hint?: string;
+	_headerField?: Element
+	/** Displayable text string with hint help information to the user when entering a default value. */
+	hint?: string
 
-  _hint?: Element;
-  /** XPath or JSONPath to evaluate against the fixture body.  When variables are defined, only one of either expression, headerField or path must be specified. */
-  path?: string;
+	_hint?: Element
+	/** XPath or JSONPath to evaluate against the fixture body.  When variables are defined, only one of either expression, headerField or path must be specified. */
+	path?: string
 
-  _path?: Element;
-  /** Fixture to evaluate the XPath/JSONPath expression or the headerField  against within this variable. */
-  sourceId?: string;
+	_path?: Element
+	/** Fixture to evaluate the XPath/JSONPath expression or the headerField  against within this variable. */
+	sourceId?: string
 
-  _sourceId?: Element;
+	_sourceId?: Element
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptSetup {
-  /** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
-  id?: string;
-  /** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
-  extension?: Extension[];
-  /** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
+	/** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
+	id?: string
+	/** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
+	extension?: Extension[]
+	/** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
 
 Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself). */
-  modifierExtension?: Extension[];
+	modifierExtension?: Extension[]
 
-  action: TestScriptAction[];
+	action: TestScriptAction[]
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptAction {
-  id?: string;
+	id?: string
 
-  extension?: Extension[];
+	extension?: Extension[]
 
-  modifierExtension?: Extension[];
+	modifierExtension?: Extension[]
 
-  operation?: TestScriptOperation;
+	operation?: TestScriptOperation
 
-  assert?: TestScriptAssert;
+	assert?: TestScriptAssert
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptOperation {
-  id?: string;
+	id?: string
 
-  extension?: Extension[];
+	extension?: Extension[]
 
-  modifierExtension?: Extension[];
+	modifierExtension?: Extension[]
 
-  type?: Coding;
+	type?: Coding
 
-  resource?: string;
+	resource?: string
 
-  _resource?: Element;
+	_resource?: Element
 
-  label?: string;
+	label?: string
 
-  _label?: Element;
+	_label?: Element
 
-  description?: string;
+	description?: string
 
-  _description?: Element;
+	_description?: Element
 
-  accept?: string;
+	accept?: string
 
-  _accept?: Element;
+	_accept?: Element
 
-  contentType?: string;
+	contentType?: string
 
-  _contentType?: Element;
+	_contentType?: Element
 
-  destination?: number;
+	destination?: number
 
-  _destination?: Element;
+	_destination?: Element
 
-  encodeRequestUrl?: boolean;
+	encodeRequestUrl?: boolean
 
-  _encodeRequestUrl?: Element;
+	_encodeRequestUrl?: Element
 
-  method?: "delete" | "get" | "options" | "patch" | "post" | "put" | "head";
+	method?: 'delete' | 'get' | 'options' | 'patch' | 'post' | 'put' | 'head'
 
-  _method?: Element;
+	_method?: Element
 
-  origin?: number;
+	origin?: number
 
-  _origin?: Element;
+	_origin?: Element
 
-  params?: string;
+	params?: string
 
-  _params?: Element;
+	_params?: Element
 
-  requestHeader?: TestScriptRequestHeader[];
+	requestHeader?: TestScriptRequestHeader[]
 
-  requestId?: string;
+	requestId?: string
 
-  _requestId?: Element;
+	_requestId?: Element
 
-  responseId?: string;
+	responseId?: string
 
-  _responseId?: Element;
+	_responseId?: Element
 
-  sourceId?: string;
+	sourceId?: string
 
-  _sourceId?: Element;
+	_sourceId?: Element
 
-  targetId?: string;
+	targetId?: string
 
-  _targetId?: Element;
+	_targetId?: Element
 
-  url?: string;
+	url?: string
 
-  _url?: Element;
+	_url?: Element
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptRequestHeader {
-  id?: string;
+	id?: string
 
-  extension?: Extension[];
+	extension?: Extension[]
 
-  modifierExtension?: Extension[];
+	modifierExtension?: Extension[]
 
-  field?: string;
+	field?: string
 
-  _field?: Element;
+	_field?: Element
 
-  value?: string;
+	value?: string
 
-  _value?: Element;
+	_value?: Element
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptAssert {
-  id?: string;
+	id?: string
 
-  extension?: Extension[];
+	extension?: Extension[]
 
-  modifierExtension?: Extension[];
+	modifierExtension?: Extension[]
 
-  label?: string;
+	label?: string
 
-  _label?: Element;
+	_label?: Element
 
-  description?: string;
+	description?: string
 
-  _description?: Element;
+	_description?: Element
 
-  direction?: "response" | "request";
+	direction?: 'response' | 'request'
 
-  _direction?: Element;
+	_direction?: Element
 
-  compareToSourceId?: string;
+	compareToSourceId?: string
 
-  _compareToSourceId?: Element;
+	_compareToSourceId?: Element
 
-  compareToSourceExpression?: string;
+	compareToSourceExpression?: string
 
-  _compareToSourceExpression?: Element;
+	_compareToSourceExpression?: Element
 
-  compareToSourcePath?: string;
+	compareToSourcePath?: string
 
-  _compareToSourcePath?: Element;
+	_compareToSourcePath?: Element
 
-  contentType?: string;
+	contentType?: string
 
-  _contentType?: Element;
+	_contentType?: Element
 
-  expression?: string;
+	expression?: string
 
-  _expression?: Element;
+	_expression?: Element
 
-  headerField?: string;
+	headerField?: string
 
-  _headerField?: Element;
+	_headerField?: Element
 
-  minimumId?: string;
+	minimumId?: string
 
-  _minimumId?: Element;
+	_minimumId?: Element
 
-  navigationLinks?: boolean;
+	navigationLinks?: boolean
 
-  _navigationLinks?: Element;
+	_navigationLinks?: Element
 
-  operator?:
-    | "equals"
-    | "notEquals"
-    | "in"
-    | "notIn"
-    | "greaterThan"
-    | "lessThan"
-    | "empty"
-    | "notEmpty"
-    | "contains"
-    | "notContains"
-    | "eval";
+	operator?:
+		| 'equals'
+		| 'notEquals'
+		| 'in'
+		| 'notIn'
+		| 'greaterThan'
+		| 'lessThan'
+		| 'empty'
+		| 'notEmpty'
+		| 'contains'
+		| 'notContains'
+		| 'eval'
 
-  _operator?: Element;
+	_operator?: Element
 
-  path?: string;
+	path?: string
 
-  _path?: Element;
+	_path?: Element
 
-  requestMethod?:
-    | "delete"
-    | "get"
-    | "options"
-    | "patch"
-    | "post"
-    | "put"
-    | "head";
+	requestMethod?: 'delete' | 'get' | 'options' | 'patch' | 'post' | 'put' | 'head'
 
-  _requestMethod?: Element;
+	_requestMethod?: Element
 
-  requestURL?: string;
+	requestURL?: string
 
-  _requestURL?: Element;
+	_requestURL?: Element
 
-  resource?: string;
+	resource?: string
 
-  _resource?: Element;
+	_resource?: Element
 
-  response?:
-    | "okay"
-    | "created"
-    | "noContent"
-    | "notModified"
-    | "bad"
-    | "forbidden"
-    | "notFound"
-    | "methodNotAllowed"
-    | "conflict"
-    | "gone"
-    | "preconditionFailed"
-    | "unprocessable";
+	response?:
+		| 'okay'
+		| 'created'
+		| 'noContent'
+		| 'notModified'
+		| 'bad'
+		| 'forbidden'
+		| 'notFound'
+		| 'methodNotAllowed'
+		| 'conflict'
+		| 'gone'
+		| 'preconditionFailed'
+		| 'unprocessable'
 
-  _response?: Element;
+	_response?: Element
 
-  responseCode?: string;
+	responseCode?: string
 
-  _responseCode?: Element;
+	_responseCode?: Element
 
-  sourceId?: string;
+	sourceId?: string
 
-  _sourceId?: Element;
+	_sourceId?: Element
 
-  validateProfileId?: string;
+	validateProfileId?: string
 
-  _validateProfileId?: Element;
+	_validateProfileId?: Element
 
-  value?: string;
+	value?: string
 
-  _value?: Element;
+	_value?: Element
 
-  warningOnly?: boolean;
+	warningOnly?: boolean
 
-  _warningOnly?: Element;
+	_warningOnly?: Element
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptTest {
-  /** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
-  id?: string;
-  /** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
-  extension?: Extension[];
-  /** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
+	/** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
+	id?: string
+	/** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
+	extension?: Extension[]
+	/** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
 
 Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself). */
-  modifierExtension?: Extension[];
-  /** The name of this test used for tracking/logging purposes by test engines. */
-  name?: string;
+	modifierExtension?: Extension[]
+	/** The name of this test used for tracking/logging purposes by test engines. */
+	name?: string
 
-  _name?: Element;
-  /** A short description of the test used by test engines for tracking and reporting purposes. */
-  description?: string;
+	_name?: Element
+	/** A short description of the test used by test engines for tracking and reporting purposes. */
+	description?: string
 
-  _description?: Element;
+	_description?: Element
 
-  action: TestScriptAction1[];
+	action: TestScriptAction1[]
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptAction1 {
-  id?: string;
+	id?: string
 
-  extension?: Extension[];
+	extension?: Extension[]
 
-  modifierExtension?: Extension[];
+	modifierExtension?: Extension[]
 
-  operation?: TestScriptOperation;
+	operation?: TestScriptOperation
 
-  assert?: TestScriptAssert;
+	assert?: TestScriptAssert
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptTeardown {
-  /** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
-  id?: string;
-  /** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
-  extension?: Extension[];
-  /** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
+	/** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces. */
+	id?: string
+	/** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. */
+	extension?: Extension[]
+	/** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
 
 Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself). */
-  modifierExtension?: Extension[];
+	modifierExtension?: Extension[]
 
-  action: TestScriptAction2[];
+	action: TestScriptAction2[]
 }
 
 /** A structured set of tests against a FHIR server or client implementation to determine compliance against the FHIR specification. */
 
 export interface TestScriptAction2 {
-  id?: string;
+	id?: string
 
-  extension?: Extension[];
+	extension?: Extension[]
 
-  modifierExtension?: Extension[];
+	modifierExtension?: Extension[]
 
-  operation: TestScriptOperation;
+	operation: TestScriptOperation
 }

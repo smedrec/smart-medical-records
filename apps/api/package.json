@@ -34,7 +34,7 @@
 		"better-auth": "1.2.9",
 		"drizzle-orm": "0.44.2",
 		"hono": "4.7.11",
-		"node-fetch": "^3.3.2",
+		"node-fetch": "3.3.2",
 		"ollama-ai-provider": "1.2.0",
 		"worker-mailer": "1.1.4",
 		"workers-tagged-logger": "0.13.0",

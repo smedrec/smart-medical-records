@@ -6,11 +6,14 @@
  * Use from other apps/packages:
  *
  * ```ts
- * import { AuditLogEvent } from '@repo/audit'
+ * import { Audit } from '@repo/audit'
  *
- * AuditLogEvent()
+ * const audit = new Audit(queueName)
  * ```
  */
+import { Queue } from 'bullmq'
+import IORedis from 'ioredis'
+
 export type AuditEventStatus = 'attempt' | 'success' | 'failure'
 
 export interface AuditLogEvent {
@@ -25,36 +28,50 @@ export interface AuditLogEvent {
 	[key: string]: any
 }
 
-/**
- * Logs an audit event to the console.
- * In a real application, this would likely send logs to a dedicated audit service or secure log storage.
- * @param eventDetails Partial details of the event. Timestamp is added automatically.
- */
-export function logAuditEvent(eventDetails: Omit<AuditLogEvent, 'timestamp'>): void {
-	if (!eventDetails.action || !eventDetails.status) {
-		throw new Error("Missing required properties: 'action' and/or 'status'")
-	}
-	const event: AuditLogEvent = {
-		...eventDetails,
-		timestamp: new Date().toISOString(),
+export class AuditResource {
+	private connection: IORedis
+	private queue: string
+	private q
+
+	constructor(queue: string) {
+		this.queue = queue
+		this.connection = new IORedis({ maxRetriesPerRequest: null })
+		this.q = new Queue(this.queue)
+
+		//this.connection.connect().catch(console.error)
 	}
 
-	// For now, logging as JSON string to console.
-	// In a worker environment, console.log/info often go to the Cloudflare dashboard or configured log destinations.
-	console.info(JSON.stringify(event))
+	/**
+	 * Logs an audit event to the queue.
+	 * In a real application, this would likely send logs to a dedicated audit service or secure log storage.
+	 * @param eventDetails Partial details of the event. Timestamp is added automatically.
+	 */
+	async log(eventDetails: Omit<AuditLogEvent, 'timestamp'>): Promise<void> {
+		if (!eventDetails.action || !eventDetails.status) {
+			throw new Error("Missing required properties: 'action' and/or 'status'")
+		}
+		const event: AuditLogEvent = {
+			...eventDetails,
+			timestamp: new Date().toISOString(),
+		}
+
+		await this.q.add('audit', event, { removeOnComplete: true, removeOnFail: true })
+	}
 }
-
 // Example Usage (for illustration, not part of the actual file logic):
 /*
-logAuditEvent({
+import { auditResource } from '@repo/audit'
+
+const audit = new AuditResource('audit')
+audit.log({
   principalId: 'user-123',
   action: 'fhirPatientReadAttempt',
   targetResourceType: 'Patient',
   targetResourceId: 'pat-456',
   status: 'attempt',
-});
+})
 
-logAuditEvent({
+audit.log({
   principalId: 'user-123',
   action: 'fhirPatientReadSuccess',
   targetResourceType: 'Patient',
@@ -64,7 +81,7 @@ logAuditEvent({
   dataSize: 1024 // Example of additional context
 });
 
-logAuditEvent({
+audit.log({
   principalId: 'user-123',
   action: 'fhirPatientReadFailure',
   targetResourceType: 'Patient',
