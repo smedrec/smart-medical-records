@@ -1,3 +1,17 @@
 {
-	"extends": "@repo/typescript-config/workers.json"
+	"extends": "@repo/typescript-config/base.json",
+	"compilerOptions": {
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"module": "NodeNext", // or "CommonJS" if you prefer, but NodeNext is more modern for ESModules
+		"moduleResolution": "NodeNext",
+		"baseUrl": "./src",
+		"paths": {
+			"@/*": ["*"]
+		},
+		"types": ["node"], // Remove worker-specific types if any were implicitly included by workers.json
+		"lib": ["ES2022"] // Ensure appropriate ES version
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules", "dist"]
 }
