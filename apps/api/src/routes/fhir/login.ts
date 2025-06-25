@@ -42,8 +42,8 @@ export const registerFhirLogin = (app: App) =>
 	app.openapi(route, async (c) => {
 		const { cerbos, db, audit } = c.get('services')
 		const session = c.get('session')
-		const resourceType = 'fhirSmartClient'
-		const resourceId = 'fhir-smart-client-login'
+		const resourceType = 'SmartFhirClient'
+		const resourceId = 'smart-fhir-client'
 
 		if (!session)
 			throw new ApiError({

@@ -12,7 +12,14 @@ resourcePolicy:
         - read
         - search
         - delete
+        - login
       effect: EFFECT_ALLOW
       roles:
         - admin
         - owner
+    - actions:
+        - login
+      effect: EFFECT_ALLOW
+      roles:
+        - practitioner
+        - patient

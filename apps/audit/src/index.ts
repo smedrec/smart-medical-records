@@ -2,6 +2,7 @@ import 'dotenv/config'
 
 import { Worker } from 'bullmq'
 import { Redis } from 'ioredis'
+import { pino } from 'pino'
 
 import { checkDbConnection, db } from './db/index.js'
 import { auditLog as auditLogTableSchema } from './db/schema.js'
@@ -22,8 +23,7 @@ if (!REDIS_URL) {
 	process.exit(1)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const logger = require('pino')('AuditWorker', LOG_LEVEL)
+const logger = pino({ name: 'AuditWorker', level: LOG_LEVEL })
 
 // Initialize Redis connection for BullMQ
 // BullMQ recommends not using maxRetriesPerRequest: null in newer versions,
