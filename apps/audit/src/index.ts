@@ -1,17 +1,15 @@
 import 'dotenv/config'
 
 import { Worker } from 'bullmq'
-import IORedis from 'ioredis'
-import { TaggedLogger } from 'workers-tagged-logger' // Assuming this can be used in Node.js
+import { Redis } from 'ioredis'
 
 import { checkDbConnection, db } from './db/index.js'
 import { auditLog as auditLogTableSchema } from './db/schema.js'
 
 import type { Job } from 'bullmq'
+import type { RedisOptions } from 'ioredis'
 import type { LogLevel } from 'workers-tagged-logger'
-// or replace with another logger like pino or winston
-
-import type { AuditEventStatus, AuditLogEvent } from '@repo/audit'
+import type { AuditLogEvent } from '@repo/audit'
 
 const LOG_LEVEL = (process.env.LOG_LEVEL || 'info') as LogLevel
 const AUDIT_QUEUE_NAME = process.env.AUDIT_QUEUE_NAME || 'audit'
@@ -24,14 +22,16 @@ if (!REDIS_URL) {
 	process.exit(1)
 }
 
-const logger = new TaggedLogger('AuditWorker', LOG_LEVEL)
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const logger = require('pino')('AuditWorker', LOG_LEVEL)
 
 // Initialize Redis connection for BullMQ
 // BullMQ recommends not using maxRetriesPerRequest: null in newer versions,
 // but rather relying on built-in retry mechanisms or handling errors appropriately.
 // For now, keeping it simple as per existing patterns in the repo.
-const connection = new IORedis(REDIS_URL!, {
-	maxRetriesPerRequest: null, // Consistent with package/audit but consider BullMQ best practices
+const defaultOptions: RedisOptions = { maxRetriesPerRequest: null }
+const connection = new Redis(REDIS_URL!, {
+	...defaultOptions, // Consistent with package/audit but consider BullMQ best practices
 	// enableReadyCheck: false, // May be needed depending on Redis setup/version
 })
 
@@ -141,5 +141,5 @@ async function main() {
 // Start the application
 main().catch((error) => {
 	logger.error('💥 Unhandled error in main application scope:', error)
-	connection.quit().finally(() => process.exit(1))
+	void connection.quit().finally(() => process.exit(1))
 })

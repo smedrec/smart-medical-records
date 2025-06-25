@@ -12,7 +12,7 @@
  * ```
  */
 import { Queue } from 'bullmq'
-import IORedis from 'ioredis'
+import { Redis } from 'ioredis'
 
 import type { RedisOptions } from 'ioredis'
 
@@ -47,7 +47,7 @@ export interface AuditLogEvent {
 }
 
 export class Audit {
-	private connection: IORedis
+	private connection: Redis
 	private queueName: string
 	private bullmq_queue: Queue // Renamed to avoid conflict with constructor param
 
@@ -69,7 +69,7 @@ export class Audit {
 		}
 
 		const defaultOptions: RedisOptions = { maxRetriesPerRequest: null }
-		this.connection = new IORedis(effectiveRedisUrl, {
+		this.connection = new Redis(effectiveRedisUrl, {
 			...defaultOptions,
 			...redisConnectionOptions,
 		})
@@ -92,8 +92,11 @@ export class Audit {
 		if (!eventDetails.action || !eventDetails.status) {
 			throw new Error("Missing required properties: 'action' and/or 'status'")
 		}
+		const timestamp = new Date().toISOString()
 		const event: AuditLogEvent = {
-			timestamp: new Date().toISOString(),
+			timestamp,
+			action: eventDetails.action,
+			status: eventDetails.status,
 			...eventDetails,
 		}
 
