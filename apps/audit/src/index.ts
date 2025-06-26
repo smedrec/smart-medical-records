@@ -4,8 +4,9 @@ import { Worker } from 'bullmq'
 import { Redis } from 'ioredis'
 import { pino } from 'pino'
 
-import { checkDbConnection, db } from './db/index.js'
-import { auditLog as auditLogTableSchema } from './db/schema.js'
+import { auditLog as auditLogTableSchema } from '@repo/auditdb'
+//import { checkDbConnection, db } from './db/index.js'
+import { AuditDb } from '@repo/auditdb/dist/db/index.js'
 
 import type { Job } from 'bullmq'
 import type { RedisOptions } from 'ioredis'
@@ -45,12 +46,16 @@ connection.on('error', (err) => {
 	// For now, this will prevent the worker from starting or stop it if the connection is lost later.
 })
 
+// Using environment variable AUDIT_DB_URL
+const auditDbService = new AuditDb()
+const db = auditDbService.getDrizzleInstance()
+
 // Main function to start the worker
 async function main() {
 	logger.info('🏁 Audit worker starting...')
 
 	// 1. Check database connection
-	const dbConnected = await checkDbConnection()
+	const dbConnected = await auditDbService.checkAuditDbConnection()
 	if (!dbConnected) {
 		logger.error('🔴 Halting worker start due to database connection failure.')
 		// Optionally, implement retry logic here or ensure process exits.

@@ -17,7 +17,6 @@
 		"build": "tsc --build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
-		"dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
 		"test": "run-vitest"
 	},
 	"dependencies": {
