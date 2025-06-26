@@ -1,31 +1,44 @@
-import { WorkerMailer } from 'worker-mailer'
+import { WorkerMailer, Email } from 'worker-mailer';
+import type { WorkerMailerOptions } from 'worker-mailer';
+import type { MailerProvider, MailerSendOptions } from './base';
 
-import type { Email, WorkerMailerOptions } from 'worker-mailer'
+export class WorkersMailer implements MailerProvider {
+  private mailerInstance: WorkerMailer | null = null;
+  private smtpConnectionOptions: WorkerMailerOptions;
 
-export class WorkersMailer {
-	private smtpConnectionOptions: WorkerMailerOptions
+  constructor(smtpConnectionOptions: WorkerMailerOptions) {
+    if (!smtpConnectionOptions) {
+      throw new Error('WorkersMailer: SMTP connection options are required.');
+    }
+    this.smtpConnectionOptions = smtpConnectionOptions;
+  }
 
-	/**
-	 * Constructs an WorkersMailer instance.
-	 * @param smtpConnectionOptions Options for SMTP connection.
-	 */
-	constructor(smtpConnectionOptions: WorkerMailerOptions) {
-		this.smtpConnectionOptions = smtpConnectionOptions
+  private async connect(): Promise<WorkerMailer> {
+    if (!this.mailerInstance) {
+      try {
+        this.mailerInstance = await WorkerMailer.connect(this.smtpConnectionOptions);
+      } catch (error) {
+        // console.error('Error connecting with WorkersMailer:', error);
+        throw new Error(`WorkersMailer: Failed to connect. ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
+    return this.mailerInstance;
+  }
 
-		if (!smtpConnectionOptions) {
-			throw new Error(
-				'WorkersMailer Service: Worker Mailer Options not provided and could not be found in environment variables.'
-			)
-		}
-	}
-
-	/**
-	 * Send an email message.
-	 * @param msg .
-	 */
-	async send(msg: Email): Promise<void> {
-		const mailer = await WorkerMailer.connect(this.smtpConnectionOptions)
-
-		await mailer.send(msg)
-	}
+  async send(options: MailerSendOptions): Promise<void> {
+    const mailer = await this.connect();
+    try {
+      const email = new Email({
+        from: { address: options.from }, // Assuming from is just an email address string
+        to: (Array.isArray(options.to) ? options.to : [options.to]).map(addr => ({ address: addr })),
+        subject: options.subject,
+        html: options.html,
+        ...(options.text && { text: options.text }),
+      });
+      await mailer.send(email);
+    } catch (error) {
+      // console.error('Error sending email with WorkersMailer:', error);
+      throw new Error(`WorkersMailer: Failed to send email. ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
 }
