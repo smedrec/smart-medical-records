@@ -6,6 +6,7 @@ import createClient from 'openapi-fetch'
 import { fetch, request } from 'undici'
 
 import { Audit } from '@repo/audit'
+import { Cerbos } from '@repo/cerbos'
 
 import { assistantAgent } from './agents/assistant-agent'
 import { fhirAgent } from './agents/fhir-test'
@@ -20,6 +21,7 @@ import type { Session, User } from '@repo/auth'
 import type { FhirApiClient, FhirSessionData } from '../hono/middleware/fhir-auth'
 
 type McpFhirToolCallContext = {
+	cerbos: Cerbos
 	audit: Audit
 	fhirClient?: FhirApiClient | null
 	fhirSessionData?: FhirSessionData | null
@@ -110,6 +112,7 @@ export const mastra = new Mastra({
 						return new Response('Unauthorized', { status: 401 })
 					}*/
 
+				const cerbos = new Cerbos(process.env.CERBOS_URL!)
 				const audit = new Audit('audit', process.env.AUDIT_REDIS_URL!)
 
 				const sessionData: FhirSessionData = {
@@ -120,6 +123,7 @@ export const mastra = new Mastra({
 				}
 				const fhirApiClient: FhirApiClient = createClient({ baseUrl: sessionData.serverUrl })
 				const runtimeContext = c.get('runtimeContext')
+				runtimeContext.set('cerbos', cerbos)
 				runtimeContext.set('audit', audit)
 				runtimeContext.set('fhirSessionData', sessionData)
 				runtimeContext.set('fhirClient', fhirApiClient)

@@ -1,9 +1,8 @@
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
-import { cerbos } from '../../cerbos'
-
 import type { Audit } from '@repo/audit'
+import type { Cerbos } from '@repo/cerbos'
 import type { FhirApiClient, FhirSessionData } from '../../hono/middleware/fhir-auth'
 import type { Bundle, OperationOutcome } from '../../v4.0.1'
 
@@ -28,6 +27,7 @@ export const fhirResourceReadTool = createTool({
 		id: z.string().describe('Resource id'),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<unknown> => {
+		const cerbos = runtimeContext.get('cerbos') as Cerbos
 		const audit = runtimeContext.get('audit') as Audit
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
 		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
@@ -147,6 +147,7 @@ export const fhirResourceSearchTool = createTool({
 		params: z.unknown().describe('The fhir resource search parameters'),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<Bundle<unknown>> => {
+		const cerbos = runtimeContext.get('cerbos') as Cerbos
 		const audit = runtimeContext.get('audit') as Audit
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
 		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
@@ -245,6 +246,7 @@ export const fhirResourceCreateTool = createTool({
 		resource: z.unknown().describe('The FHIR resource'),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<unknown> => {
+		const cerbos = runtimeContext.get('cerbos') as Cerbos
 		const audit = runtimeContext.get('audit') as Audit
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
 		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
@@ -356,6 +358,7 @@ export const fhirResourceUpdateTool = createTool({
 		resource: z.unknown().describe(''),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<unknown> => {
+		const cerbos = runtimeContext.get('cerbos') as Cerbos
 		const audit = runtimeContext.get('audit') as Audit
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
 		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
@@ -469,6 +472,7 @@ export const fhirResourceDeleteTool = createTool({
 		id: z.string().describe('Resource id'),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<unknown> => {
+		const cerbos = runtimeContext.get('cerbos') as Cerbos
 		const audit = runtimeContext.get('audit') as Audit
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
 		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient

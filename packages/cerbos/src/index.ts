@@ -20,31 +20,34 @@
  * // E.g., cerbosClient.checkResource({ ... });
  * ```
  */
-import { GRPC } from '@cerbos/grpc';
-import { HTTP } from '@cerbos/http';
-import type { CerbosClient } from '@cerbos/core';
+import { GRPC } from '@cerbos/grpc'
+import { HTTP } from '@cerbos/http'
+
+import type { Client, IsAllowedRequest, RequestOptions } from '@cerbos/core'
 
 // Helper to try and get env variables from Cloudflare Workers or Node.js process.env
 function getEnv(variableName: string): string | undefined {
-	// Check Cloudflare Workers env (this is a common way, but might need adjustment based on actual CF worker env structure)
-	// @ts-expect-error Hides `Cannot find name 'env'.` when not in CF Worker context. KV bindings are usually on `env`
-	if (typeof WebSocketPair !== 'undefined' && typeof env !== 'undefined' && env && env[variableName]) {
+	// Check Cloudflare Workers env
+	// @ts-expect-error Hides `Cannot find name 'env'.` when not in CF Worker context.
+	if (typeof env !== 'undefined' && env[variableName]) {
 		// @ts-expect-error
-		return env[variableName];
+		return env[variableName]
 	}
 	// Check Node.js process.env
 	if (typeof process !== 'undefined' && process.env && process.env[variableName]) {
-		return process.env[variableName];
+		return process.env[variableName]
 	}
-	return undefined;
+	return undefined
 }
 
 // Environment detection functions
-const isCloudflareWorkers = (): boolean => typeof WebSocketPair !== 'undefined';
-const isNodeJS = (): boolean => typeof process !== 'undefined' && process.versions != null && process.versions.node != null;
+const isCloudflareWorkers = (): boolean => typeof WebSocketPair !== 'undefined'
+const isNodeJS = (): boolean =>
+	typeof process !== 'undefined' && process.versions != null && process.versions.node != null
 
 export class Cerbos {
-	private client: CerbosClient;
+	private client: Client
+	private forceHttp: boolean // FIXME - grpc is not working on cerbos
 
 	/**
 	 * Constructs a Cerbos instance, automatically selecting the appropriate client
@@ -55,30 +58,35 @@ export class Cerbos {
 	 * @throws Error if the environment is not recognized as Cloudflare Workers or Node.js.
 	 */
 	constructor(cerbosUrl?: string) {
-		const effectiveCerbosUrl = cerbosUrl || getEnv('CERBOS_URL');
+		const effectiveCerbosUrl = cerbosUrl || getEnv('CERBOS_URL')
+		this.forceHttp = true
 
 		if (!effectiveCerbosUrl) {
 			throw new Error(
 				'Cerbos Service: Cerbos URL not provided and could not be found in environment variables (CERBOS_URL).'
-			);
+			)
 		}
 
-		if (isCloudflareWorkers()) {
-			this.client = new HTTP(effectiveCerbosUrl);
+		if (isCloudflareWorkers() || this.forceHttp) {
+			this.client = new HTTP(effectiveCerbosUrl)
 		} else if (isNodeJS()) {
-			this.client = new GRPC(effectiveCerbosUrl, { tls: false }); // Assuming local development often uses non-TLS gRPC. Adjust as needed.
+			this.client = new GRPC(effectiveCerbosUrl, { tls: false }) // Assuming local development often uses non-TLS gRPC. Adjust as needed.
 		} else {
 			throw new Error(
 				'Cerbos Service: Unrecognized environment. Cannot determine whether to use HTTP or gRPC client.'
-			);
+			)
 		}
+	}
+
+	public isAllowed(request: IsAllowedRequest, options?: RequestOptions): Promise<boolean> {
+		return this.client.isAllowed(request, options)
 	}
 
 	/**
 	 * Retrieves the initialized Cerbos client instance (either HTTP or gRPC).
 	 * @returns The CerbosClient instance.
 	 */
-	public getClient(): CerbosClient {
-		return this.client;
+	public getClient(): Client {
+		return this.client
 	}
 }
