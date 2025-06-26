@@ -1,15 +1,29 @@
 {
-	"compilerOptions": {
-		"target": "ES2022",
-		"module": "ES2022",
-		"moduleResolution": "node",
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"strict": true,
-		"skipLibCheck": true,
-		"allowImportingTsExtensions": true,
-		"noEmit": false
-	},
-	"include": ["src/**/*", "env.d.ts"],
-	"exclude": ["node_modules", "dist", ".mastra", ".turbo", ".vscode"]
+  "extends": "@repo/typescript-config/workers.json",
+  "include": [
+    // These paths are relative to this tsconfig.json (apps/ai)
+    "src/**/*",
+    "env.d.ts",
+    "worker-configuration.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".mastra", // Mastra's build output
+    ".turbo",
+    ".vscode"
+  ],
+  "compilerOptions": {
+    // Overrides or additions to the extended workers.json compilerOptions if needed
+    // The types from workers.json should be mostly fine.
+    // Ensure Cloudflare workers types are available
+    "types": [
+      "@cloudflare/workers-types",
+      "@cloudflare/vitest-pool-workers",
+      // If you have a local worker-configuration.d.ts specific to apps/ai,
+      // and it's not picked up by the include, you might need to reference it here.
+      // However, the include pattern should cover it.
+      "./worker-configuration.d.ts" // This is also in the include of workers.json as ${configDir}/worker-configuration.d.ts
+    ]
+  }
 }
