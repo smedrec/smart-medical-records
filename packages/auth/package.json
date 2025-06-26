@@ -4,8 +4,14 @@
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
-	"main": "src/index.ts",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist",
+		"src"
+	],
 	"scripts": {
+		"build": "tsc --build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"test": "run-vitest"

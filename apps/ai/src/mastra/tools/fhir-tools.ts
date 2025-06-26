@@ -200,6 +200,7 @@ export const fhirResourceSearchTool = createTool({
 			action: `cerbos:${cerbosAction}`,
 			targetResourceType: resourceType,
 			status: 'success',
+			outcomeDescription: 'Authorization granted by Cerbos.',
 		})
 		try {
 			const { data, error, response } = await fhirClient.GET(`/${resourceType}`, {
@@ -301,6 +302,7 @@ export const fhirResourceCreateTool = createTool({
 			action: `cerbos:${cerbosAction}`,
 			targetResourceType: resourceType,
 			status: 'success',
+			outcomeDescription: 'Authorization granted by Cerbos.',
 		})
 
 		const valid = patientSchema.safeParse(context.resource)
@@ -425,6 +427,7 @@ export const fhirResourceUpdateTool = createTool({
 			targetResourceType: resourceType,
 			targetResourceId: resourceId,
 			status: 'success',
+			outcomeDescription: 'Authorization granted by Cerbos.',
 		})
 		try {
 			const { data, error, response } = await fhirClient.PUT(`/${resourceType}/{id}`, {
