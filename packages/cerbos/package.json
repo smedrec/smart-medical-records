@@ -1,0 +1,33 @@
+{
+	"name": "@repo/cerbos",
+	"version": "0.1.0",
+	"private": true,
+	"sideEffects": false,
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"build": "tsc --build",
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"test": "run-vitest"
+	},
+	"dependencies": {
+		"@cerbos/grpc": "^0.22.0",
+		"@cerbos/http": "0.22.0",
+		"@repo/hono-helpers": "workspace:*"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "0.8.46",
+		"@cloudflare/workers-types": "4.20250620.0",
+		"@repo/eslint-config": "workspace:*",
+		"@repo/tools": "workspace:*",
+		"@repo/typescript-config": "workspace:*",
+		"@types/node": "24.0.4",
+		"vitest": "3.2.4"
+	}
+}

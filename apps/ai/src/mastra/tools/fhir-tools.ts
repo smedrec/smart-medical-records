@@ -1,22 +1,17 @@
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
-import { logAuditEvent } from '../../audit' // Import audit logger
 import { cerbos } from '../../cerbos'
-import { createPatientSchema, createPractitionerSchema } from '../../v4.0.1'
 
 import type { Audit } from '@repo/audit'
 import type { FhirApiClient, FhirSessionData } from '../../hono/middleware/fhir-auth'
-import type { Bundle, OperationOutcome, Organization, Patient, Practitioner } from '../../v4.0.1'
+import type { Bundle, OperationOutcome } from '../../v4.0.1'
 
 export type McpFhirToolCallContext = {
 	audit: Audit
 	fhirClient?: FhirApiClient | null
 	fhirSessionData?: FhirSessionData | null
 }
-
-const patientSchema = createPatientSchema()
-const practitionerSchema = createPractitionerSchema()
 
 const defaultPrincipalId = 'anonymous'
 const defaultRoles = ['anonymous']
@@ -32,7 +27,7 @@ export const fhirResourceReadTool = createTool({
 			.describe('Resource type, ex: Patient, Practitioner, Organization, etc'),
 		id: z.string().describe('Resource id'),
 	}),
-	execute: async ({ context, runtimeContext }): Promise<Patient> => {
+	execute: async ({ context, runtimeContext }): Promise<unknown> => {
 		const audit = runtimeContext.get('audit') as Audit
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
 		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
@@ -124,7 +119,7 @@ export const fhirResourceReadTool = createTool({
 				status: 'success',
 				outcomeDescription: `Successfully read ${resourceType} resource.`,
 			})
-			return data as Patient
+			return data
 		} catch (e: any) {
 			await audit.log({
 				principalId,
@@ -151,7 +146,7 @@ export const fhirResourceSearchTool = createTool({
 			.describe('Resource type, ex: Patient, Practitioner, Organization, etc'),
 		params: z.unknown().describe('The fhir resource search parameters'),
 	}),
-	execute: async ({ context, runtimeContext }): Promise<Bundle<Patient>> => {
+	execute: async ({ context, runtimeContext }): Promise<Bundle<unknown>> => {
 		const audit = runtimeContext.get('audit') as Audit
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
 		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
@@ -226,7 +221,7 @@ export const fhirResourceSearchTool = createTool({
 				targetResourceType: resourceType,
 				status: 'success',
 			})
-			return data as Bundle<any>
+			return data as Bundle<unknown>
 		} catch (e: any) {
 			await audit.log({
 				principalId,
@@ -305,19 +300,6 @@ export const fhirResourceCreateTool = createTool({
 			outcomeDescription: 'Authorization granted by Cerbos.',
 		})
 
-		const valid = patientSchema.safeParse(context.resource)
-		if (!valid.success) {
-			const desc = `${valid.error.message} to ${cerbosAction} ${resourceType}`
-			await audit.log({
-				principalId,
-				action: `cerbos:${cerbosAction}`,
-				targetResourceType: resourceType,
-				status: 'failure',
-				outcomeDescription: desc,
-			})
-			throw new Error(desc)
-		}
-
 		try {
 			const { data, error, response } = await fhirClient.POST(`/${resourceType}`, {
 				body: context.resource,
@@ -349,7 +331,7 @@ export const fhirResourceCreateTool = createTool({
 				targetResourceId: data.id,
 				status: 'success',
 			})
-			return data as Patient
+			return data
 		} catch (e: any) {
 			await audit.log({
 				principalId,
@@ -593,6 +575,7 @@ export const fhirResourceDeleteTool = createTool({
 	},
 })
 
+/**
 // --- Patient Tools ---
 export const patientReadTool = createTool({
 	id: 'fhirPatientRead',
@@ -1742,6 +1725,7 @@ export const fhirOrganizationTools = [
 	organizationUpdateTool,
 ]
 
+ */
 export const fhirResourceTools = [
 	fhirResourceReadTool,
 	fhirResourceSearchTool,
