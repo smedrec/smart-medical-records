@@ -1,0 +1,39 @@
+{
+	"name": "@repo/auditdb",
+	"version": "0.1.0",
+	"private": true,
+	"sideEffects": false,
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"auditdb:generate": "drizzle-kit generate --config=drizzle-dev.config.ts",
+		"auditdb:migrate": "drizzle-kit migrate --config=drizzle-dev.config.ts",
+		"auditdb:studio": "drizzle-kit studio --config=drizzle-dev.config.ts",
+		"build": "tsc --build",
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
+		"test": "run-vitest"
+	},
+	"dependencies": {
+		"@repo/audit": "workspace:*",
+		"@repo/hono-helpers": "workspace:*",
+		"drizzle-orm": "0.44.2",
+		"postgres": "3.4.7"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "0.8.46",
+		"@cloudflare/workers-types": "4.20250620.0",
+		"@repo/eslint-config": "workspace:*",
+		"@repo/tools": "workspace:*",
+		"@repo/typescript-config": "workspace:*",
+		"@types/node": "24.0.4",
+		"drizzle-kit": "0.31.2",
+		"vitest": "3.2.4"
+	}
+}
