@@ -40,7 +40,7 @@ export default defineUserConfig({
 			},
 			{
 				text: 'Packages',
-				children: ['/packages/audit.md', '/packages/mailer.md'],
+				children: ['/packages/audit.md', '/packages/mailer.md', '/packages/cerbos.md'],
 			},
 		],
 	}),
