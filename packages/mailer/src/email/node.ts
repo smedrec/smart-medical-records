@@ -1,34 +1,34 @@
-import nodemailer from 'nodemailer'
+import nodemailer from 'nodemailer';
+import type SMTPTransport from 'nodemailer/lib/smtp-transport';
+import type { MailerProvider, MailerSendOptions } from './base';
 
-import type { SendMailOptions } from 'nodemailer'
-import type SMTPTransport from 'nodemailer/lib/smtp-transport'
+export class NodeMailer implements MailerProvider {
+  private transporter: nodemailer.Transporter;
 
-export class NodeMailer {
-	private smtpConnectionOptions: SMTPTransport.Options
+  constructor(smtpConnectionOptions: SMTPTransport.Options) {
+    if (!smtpConnectionOptions) {
+      throw new Error('NodeMailer: SMTP connection options are required.');
+    }
+    this.transporter = nodemailer.createTransport(smtpConnectionOptions);
+  }
 
-	/**
-	 * Constructs an NodeMailer instance.
-	 * @param smtpConnectionOptions Options for SMTP connection.
-	 */
-	constructor(smtpConnectionOptions: SMTPTransport.Options) {
-		this.smtpConnectionOptions = smtpConnectionOptions
+  async send(options: MailerSendOptions): Promise<void> {
+    try {
+      await this.transporter.sendMail({
+        from: options.from,
+        to: options.to,
+        subject: options.subject,
+        html: options.html,
+        text: options.text,
+      });
+    } catch (error) {
+      // console.error('Error sending email with NodeMailer:', error);
+      throw new Error(`NodeMailer: Failed to send email. ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
 
-		if (!smtpConnectionOptions) {
-			throw new Error(
-				'WorkersMailer Service: Node Mailer Options not provided and could not be found in environment variables.'
-			)
-		}
-	}
-
-	/**
-	 * Send an email message.
-	 * @param msg .
-	 * */
-	async send(msg: SendMailOptions): Promise<void> {
-		const mailer = nodemailer.createTransport(this.smtpConnectionOptions)
-
-		await mailer.sendMail(msg)
-
-		void mailer.close()
-	}
+  // Method to close the connection, useful for graceful shutdown
+  close(): void {
+    this.transporter.close();
+  }
 }

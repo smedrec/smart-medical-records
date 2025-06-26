@@ -18,7 +18,9 @@
 	},
 	"dependencies": {
 		"@repo/hono-helpers": "workspace:*",
+		"@sendgrid/mail": "^8.1.5",
 		"nodemailer": "7.0.3",
+		"resend": "^4.6.0",
 		"worker-mailer": "1.1.4"
 	},
 	"devDependencies": {
@@ -29,6 +31,8 @@
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "24.0.4",
 		"@types/nodemailer": "6.4.17",
-		"vitest": "3.2.4"
+		"vitest": "^1.6.0",
+		"@vitest/coverage-v8": "^1.6.0",
+		"jest-mock-extended": "^3.0.7"
 	}
 }
