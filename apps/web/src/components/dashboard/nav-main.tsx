@@ -13,6 +13,7 @@ import {
 	Key,
 	Search,
 	Settings,
+	ShieldAlert,
 	Stethoscope,
 } from 'lucide-react'
 
@@ -72,6 +73,12 @@ const items = [
 		tooltip: 'Search resources',
 		url: '/dashboard/search',
 		icon: Search,
+	},
+	{
+		title: 'Audit logs',
+		tooltip: 'Audit logs',
+		url: '/dashboard/audit',
+		icon: ShieldAlert,
 	},
 	{
 		title: 'Settings',

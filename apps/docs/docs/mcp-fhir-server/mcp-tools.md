@@ -24,62 +24,28 @@ MCP tools are invoked by sending JSON-RPC 2.0 messages over a persistent connect
 
 The following tools are provided for interacting with FHIR resources. Tool names in MCP (used as the `method` in JSON-RPC calls) are as listed below.
 
-### Patient Tools
+### FHIR Resource Tools
 
-- **`fhirPatientCreate`**
-  - Description: Creates a new Patient FHIR resource.
-  - Input (`params`): `{ "resource": Patient }` (The FHIR Patient R4 object to create).
-  - Output: The created FHIR Patient R4 object from the server, including its server-assigned ID and metadata.
-- **`fhirPatientRead`**
-  - Description: Reads a Patient FHIR resource by its ID.
-  - Input (`params`): `{ "id": "string" }` (The logical ID of the Patient).
-  - Output: The requested FHIR Patient R4 object.
-- **`fhirPatientUpdate`**
-  - Description: Updates an existing Patient FHIR resource by its ID. The provided `resource` should be the complete updated Patient resource.
-  - Input (`params`): `{ "id": "string", "resource": Patient }`.
-  - Output: The updated FHIR Patient R4 object from the server.
-- **`fhirPatientSearch`**
-  - Description: Searches for Patient FHIR resources based on FHIR R4 search parameters.
-  - Input (`params`): `Record<string, any>` (An object representing FHIR search parameters, e.g., `{ "name": "Smith", "birthdate": "ge1990-01-01" }`).
+- **`fhirResourceCreate`**
+  - Description: Creates a new FHIR resource.
+  - Input (`params`): `{ "resourceType": "string", "resource": <unknown> }` (The FHIR Resource R4 object to create).
+  - Output: The created FHIR Resource R4 object from the server, including its server-assigned ID and metadata.
+- **`fhirResourceRead`**
+  - Description: Reads a FHIR resource by its ID.
+  - Input (`params`): `{ "resourceType": "string", "id": "string" }` (The logical ID of the Resource).
+  - Output: The requested FHIR Resource R4 object.
+- **`fhirResourceUpdate`**
+  - Description: Updates an existing FHIR resource by its ID. The provided `resource` should be the complete updated FHIR resource.
+  - Input (`params`): `{ "resourceType": "string", "id": "string", "resource": <unknown> }`.
+  - Output: The updated FHIR Resource R4 object from the server.
+- **`fhirResourceSearch`**
+  - Description: Searches for FHIR resources based on FHIR R4 search parameters.
+  - Input (`params`): { "resourceType": "string", searchParams: `Record<string, any>` } (An object representing FHIR search parameters, e.g., `{ "name": "Smith", "birthdate": "ge1990-01-01" }`).
   - Output: A FHIR R4 Bundle resource containing the search results.
-
-### Practitioner Tools
-
-- **`fhirPractitionerCreate`**
-  - Description: Creates a new Practitioner FHIR resource.
-  - Input (`params`): `{ "resource": Practitioner }`.
-  - Output: The created FHIR Practitioner R4 object.
-- **`fhirPractitionerRead`**
-  - Description: Reads a Practitioner FHIR resource by its ID.
-  - Input (`params`): `{ "id": "string" }`.
-  - Output: The requested FHIR Practitioner R4 object.
-- **`fhirPractitionerUpdate`**
-  - Description: Updates an existing Practitioner FHIR resource.
-  - Input (`params`): `{ "id": "string", "resource": Practitioner }`.
-  - Output: The updated FHIR Practitioner R4 object.
-- **`fhirPractitionerSearch`**
-  - Description: Searches for Practitioner FHIR resources.
-  - Input (`params`): `Record<string, any>` (e.g., `{ "family": "Jones", "identifier": "system|value" }`).
-  - Output: A FHIR R4 Bundle resource containing Practitioner search results.
-
-### Organization Tools
-
-- **`fhirOrganizationCreate`**
-  - Description: Creates a new Organization FHIR resource.
-  - Input (`params`): `{ "resource": Organization }`.
-  - Output: The created FHIR Organization R4 object.
-- **`fhirOrganizationRead`**
-  - Description: Reads an Organization FHIR resource by its ID.
-  - Input (`params`): `{ "id": "string" }`.
-  - Output: The requested FHIR Organization R4 object.
-- **`fhirOrganizationUpdate`**
-  - Description: Updates an existing Organization FHIR resource.
-  - Input (`params`): `{ "id": "string", "resource": Organization }`.
-  - Output: The updated FHIR Organization R4 object.
-- **`fhirOrganizationSearch`**
-  - Description: Searches for Organization FHIR resources.
-  - Input (`params`): `Record<string, any>` (e.g., `{ "name": "General Hospital", "address-city": "Anytown" }`).
-  - Output: A FHIR R4 Bundle resource containing Organization search results.
+- **`fhirResourceDelete`**
+  - Description: Deletes an existing FHIR resource by its ID. The provided `resource` should be the complete updated FHIR resource.
+  - Input (`params`): `{ "resourceType": "string", "id": "string" }` (The logical ID of the Resource).
+  - Output: The confirmation FHIR message R4 object from the server.
 
 ## Example MCP Call (Conceptual)
 
@@ -88,10 +54,10 @@ MCP clients communicate with these tools using JSON-RPC 2.0. Here's a conceptual
 ```json
 {
 	"jsonrpc": "2.0",
-	"method": "fhirPatientRead",
-	"params": { "id": "123" },
+	"method": "fhirResourceRead",
+	"params": { "resourceType": "Patient", "id": "123" },
 	"id": "request-1"
 }
 ```
 
-The `method` name corresponds to the registered tool name (e.g., `fhirPatientRead`, `fhirPatientSearch`). The `params` object structure should match the `inputSchema` defined for the respective tool in `apps/mcp/src/server/tools/fhir-tools.ts`. The server will respond with a JSON-RPC response containing either the `result` (the output described above) or an `error` object.
+The `method` name corresponds to the registered tool name (e.g., `fhirResourceRead`, `fhirPatientSearch`). The `params` object structure should match the `inputSchema` defined for the respective tool in `apps/mcp/src/server/tools/fhir-tools.ts`. The server will respond with a JSON-RPC response containing either the `result` (the output described above) or an `error` object.

@@ -151,6 +151,9 @@ export const mastra = new Mastra({
 					const json = await res.json()
 					console.log(JSON.stringify(json, null, 2))
 
+					const cerbos = new Cerbos(process.env.CERBOS_URL!)
+					const audit = new Audit('audit', process.env.AUDIT_REDIS_URL!)
+
 					// Type guard for runtime validation
 					const sessionAuth: { session: Session; user: User } | null =
 						json && typeof json === 'object'
@@ -159,11 +162,13 @@ export const mastra = new Mastra({
 
 					const sessionData: FhirSessionData = {
 						tokenResponse: {},
-						serverUrl: 'http://joseantcordeiro.hopto.org:8080/fhir/',
+						serverUrl: 'https://hapi.teachhowtofish.org/fhir/',
 						userId: sessionAuth?.session.userId || '1RnE9Braod6DUi0b0EfqBgaTcRoWYwHz', // Added for Cerbos Principal ID
 						roles: [sessionAuth?.session.activeOrganizationRole || 'owner'],
 					}
 					const fhirApiClient: FhirApiClient = createClient({ baseUrl: sessionData.serverUrl })
+					runtimeContext.set('cerbos', cerbos)
+					runtimeContext.set('audit', audit)
 					runtimeContext.set('fhirSessionData', sessionData)
 					runtimeContext.set('fhirClient', fhirApiClient)
 					/**const sessionData: FhirSessionData = {

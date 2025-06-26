@@ -4,9 +4,7 @@ import { Worker } from 'bullmq'
 import { Redis } from 'ioredis'
 import { pino } from 'pino'
 
-import { auditLog as auditLogTableSchema } from '@repo/auditdb'
-//import { checkDbConnection, db } from './db/index.js'
-import { AuditDb } from '@repo/auditdb/dist/db/index.js'
+import { AuditDb, auditLog as auditLogTableSchema } from '@repo/auditdb'
 
 import type { Job } from 'bullmq'
 import type { RedisOptions } from 'ioredis'

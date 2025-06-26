@@ -5,8 +5,8 @@ import { env } from 'cloudflare:workers'
 import { eq } from 'drizzle-orm'
 
 import { activeOrganization, db, organization as organizationDb, user as userDb } from '@repo/db'
-import { email } from '@repo/mailer'
 
+import { email } from '../email'
 import {
 	authorizeSmartClient,
 	getActiveMemberRole,
@@ -341,6 +341,7 @@ export const auth = betterAuth({
 		'http://localhost:3000',
 		'http://localhost:8787',
 		'http://localhost:4111',
+		'https://f45f-2001-8a0-f0db-6300-801d-8625-88e9-729.ngrok-free.app',
 	],
 })
 //}
