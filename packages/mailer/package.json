@@ -4,14 +4,21 @@
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
-	"main": "src/index.ts",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist",
+		"src"
+	],
 	"scripts": {
+		"build": "tsc --build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"test": "run-vitest"
 	},
 	"dependencies": {
 		"@repo/hono-helpers": "workspace:*",
+		"nodemailer": "7.0.3",
 		"worker-mailer": "1.1.4"
 	},
 	"devDependencies": {
@@ -21,6 +28,7 @@
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "24.0.4",
+		"@types/nodemailer": "6.4.17",
 		"vitest": "3.2.4"
 	}
 }

@@ -955,6 +955,9 @@ importers:
       '@repo/hono-helpers':
         specifier: workspace:*
         version: link:../hono-helpers
+      nodemailer:
+        specifier: 7.0.3
+        version: 7.0.3
       worker-mailer:
         specifier: 1.1.4
         version: 1.1.4
@@ -977,6 +980,9 @@ importers:
       '@types/node':
         specifier: 24.0.4
         version: 24.0.4
+      '@types/nodemailer':
+        specifier: 6.4.17
+        version: 6.4.17
       vitest:
         specifier: 3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@24.0.4)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
@@ -28785,7 +28791,7 @@ snapshots:
       isstream: 0.1.2
       jsonwebtoken: 9.0.2
       mime-types: 2.1.35
-      retry-axios: 2.6.0(axios@1.10.0)
+      retry-axios: 2.6.0(axios@1.10.0(debug@4.4.1))
       tough-cookie: 4.1.4
     transitivePeerDependencies:
       - supports-color
@@ -32869,7 +32875,7 @@ snapshots:
       onetime: 7.0.0
       signal-exit: 4.1.0
 
-  retry-axios@2.6.0(axios@1.10.0):
+  retry-axios@2.6.0(axios@1.10.0(debug@4.4.1)):
     dependencies:
       axios: 1.10.0(debug@4.4.1)
 
