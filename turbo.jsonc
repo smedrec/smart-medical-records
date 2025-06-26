@@ -14,7 +14,10 @@
 		"REDIS_URL",
 		"WORKER_CONCURRENCY",
 		"AUDIT_QUEUE_NAME",
-		"BETTER_AUTH_URL"
+		"BETTER_AUTH_URL",
+		"SMTP_HOST",
+		"SMTP_USER",
+		"SMTP_PASSWORD"
 	],
 	"globalPassThroughEnv": ["WRANGLER_LOG", "FORCE_COLOR"],
 	"remoteCache": {
