@@ -1,5 +1,5 @@
 import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js'
-import postgres from 'postgres'
+import postgres, { Sql } from 'postgres'
 
 import * as schema from './schema.js'
 
@@ -19,34 +19,38 @@ function getEnv(variableName: string): string | undefined {
 }
 
 export class AuditDb {
-	private client: // postgres client type
-	private auditDb: PostgresJsDatabase
+	private client: Sql
+	private auditDb: PostgresJsDatabase<typeof schema>
 
 	/**
-	 * Constructs a Cerbos instance, automatically selecting the appropriate client
-	 * (HTTP for Cloudflare Workers, gRPC for Node.js environment).
-	 * @param cerbosUrl Optional. The Cerbos PDP connection URL. If not provided, it attempts to use
-	 *                 the `CERBOS_URL` environment variable.
-	 * @throws Error if the Cerbos URL is not provided and cannot be found in environment variables.
-	 * @throws Error if the environment is not recognized as Cloudflare Workers or Node.js.
+	 * Constructs an AuditDb instance, establishing a connection to the PostgreSQL database
+	 * and initializing Drizzle ORM.
+	 * @param postgresUrl Optional. The PostgreSQL connection URL. If not provided, it attempts to use
+	 *                    the `AUDIT_DB_URL` environment variable.
+	 * @throws Error if the PostgreSQL URL is not provided and cannot be found in environment variables.
 	 */
 	constructor(postgresUrl?: string) {
 		const effectivePostgresUrl = postgresUrl || getEnv('AUDIT_DB_URL')
 
 		if (!effectivePostgresUrl) {
 			throw new Error(
-				'Audit DB Service: Audit DB URL not provided and could not be found in environment variables (AUDIT_DB_URL).'
+				'AuditDb: PostgreSQL connection URL not provided and could not be found in environment variables (AUDIT_DB_URL).'
 			)
 		}
 		this.client = postgres(effectivePostgresUrl, {})
-
 		this.auditDb = drizzle(this.client, { schema })
-
 	}
 
+	/**
+	 * Provides access to the Drizzle ORM instance for database operations.
+	 * @returns The Drizzle ORM instance typed with the audit log schema.
+	 */
+	public getDrizzleInstance(): PostgresJsDatabase<typeof schema> {
+		return this.auditDb
+	}
 
 	/**
-	 * A simple function to test the connection.
+	 * Checks the database connection by executing a simple query.
 	 * @returns true or false.
 	 */
 	public async checkAuditDbConnection() {
