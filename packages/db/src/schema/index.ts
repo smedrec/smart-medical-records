@@ -36,6 +36,7 @@ export const session = sqliteTable('session', {
 	impersonatedBy: text('impersonated_by'),
 	activeOrganizationId: text('active_organization_id'),
 	activeOrganizationRole: text('active_organization_role'),
+	smartClientAccessToken: text('smart_client_access_token'),
 })
 
 export const account = sqliteTable('account', {

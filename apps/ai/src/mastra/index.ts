@@ -10,6 +10,7 @@ import { Cerbos } from '@repo/cerbos'
 
 import { assistantAgent } from './agents/assistant-agent'
 import { fhirAgent } from './agents/fhir-test'
+import { patientReportAgent } from './agents/patient-report'
 import { fhirMCPServer } from './mcp'
 import { opensearch } from './stores/opensearch'
 import { pgStorage, pgVector } from './stores/pgvector'
@@ -186,7 +187,7 @@ export const mastra = new Mastra({
 		],
 	},
 	workflows: { weatherWorkflow },
-	agents: { assistantAgent, fhirAgent },
+	agents: { assistantAgent, patientReportAgent },
 	vectors: { pgVector, opensearch },
 	//storage: new D1Store({
 	//  binding: DB, // D1Database binding provided by the Workers runtime

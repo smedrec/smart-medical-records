@@ -1,6 +1,8 @@
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
+import { getInitialFhirSearchQueries } from './utils/fhirSearchQueries'
+
 import type { Audit } from '@repo/audit'
 import type { Cerbos } from '@repo/cerbos'
 import type { FhirApiClient, FhirSessionData } from '../../hono/middleware/fhir-auth'
@@ -579,6 +581,138 @@ export const fhirResourceDeleteTool = createTool({
 	},
 })
 
+export const fhirPatientReportSearchTool = createTool({
+	id: 'fhirPatientReportSearch',
+	description: 'Search patient clinical data in JSON format.',
+	inputSchema: z.object({
+		id: z.string().describe('Patient id'),
+	}),
+	execute: async ({ context, runtimeContext }): Promise<unknown> => {
+		const cerbos = runtimeContext.get('cerbos') as Cerbos
+		const audit = runtimeContext.get('audit') as Audit
+		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
+		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
+		const toolName = 'fhirPatientReportSearch'
+		const resourceType = 'FhirPatientReport'
+		const resourceId = context.id
+		const principalId = fhirSessionData.userId || defaultPrincipalId
+		const roles = fhirSessionData.roles || defaultRoles
+		const principal = { id: principalId, roles: roles, attributes: {} }
+		const cerbosResource = { kind: resourceType, id: resourceId, attributes: {} }
+		const cerbosAction = 'read'
+
+		const queries = getInitialFhirSearchQueries(resourceId)
+
+		await audit.log({
+			principalId,
+			action: `${toolName}Attempt`,
+			targetResourceType: resourceType,
+			targetResourceId: resourceId,
+			status: 'attempt',
+		})
+
+		if (!fhirClient) {
+			await audit.log({
+				principalId,
+				action: toolName,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'failure',
+				outcomeDescription: 'FHIR client not available.',
+			})
+			throw new Error('FHIR client not available.')
+		}
+
+		const allowed = await cerbos.isAllowed({
+			principal,
+			resource: cerbosResource,
+			action: cerbosAction,
+		})
+
+		if (!allowed) {
+			const outcomeDescription = `Forbidden: User ${principalId} with roles [${roles.join(', ')}] not authorized to perform '${cerbosAction}' on ${cerbosResource.kind}/${cerbosResource.id}.`
+			await audit.log({
+				principalId,
+				action: `cerbos:${cerbosAction}`,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'failure',
+				outcomeDescription,
+			})
+			throw new Error(outcomeDescription)
+		}
+		await audit.log({
+			principalId,
+			action: `cerbos:${cerbosAction}`,
+			targetResourceType: resourceType,
+			targetResourceId: resourceId,
+			status: 'success',
+			outcomeDescription: 'Authorization granted by Cerbos.',
+		})
+
+		const result = queries.map(async (query) => {
+			await audit.log({
+				principalId,
+				action: `${toolName}Attempt`,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'attempt',
+				details: {
+					params: query.params,
+				},
+			})
+
+			try {
+				console.log(JSON.stringify(query.params))
+				const { data, error, response } = await fhirClient.GET(`/${query.resourceType}`, {
+					params: { query: query.params },
+				})
+				if (error) {
+					const rText = await response.text()
+					const outcomeDescription = `FHIR ${resourceType} read failed: Status ${response.status}`
+					await audit.log({
+						principalId,
+						action: toolName,
+						targetResourceType: resourceType,
+						targetResourceId: resourceId,
+						status: 'failure',
+						outcomeDescription,
+						details: {
+							responseStatus: response.status,
+							responseBody: rText,
+						},
+					})
+					console.error(
+						`FHIR ${resourceType} read error (ID: ${context.id}): Status ${response.status}`,
+						await response.text()
+					)
+					throw new Error(outcomeDescription)
+				}
+				await audit.log({
+					principalId,
+					action: toolName,
+					targetResourceType: resourceType,
+					targetResourceId: resourceId,
+					status: 'success',
+					outcomeDescription: `Successfully read ${resourceType} resource.`,
+				})
+				if (data) return data
+			} catch (e: any) {
+				await audit.log({
+					principalId,
+					action: toolName,
+					targetResourceType: resourceType,
+					targetResourceId: resourceId,
+					status: 'failure',
+					outcomeDescription: e.message,
+				})
+				//throw e
+			}
+		})
+
+		return result
+	},
+})
 /**
 // --- Patient Tools ---
 export const patientReadTool = createTool({
