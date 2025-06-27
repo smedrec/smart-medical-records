@@ -9,7 +9,6 @@ import { Audit } from '@repo/audit'
 import { Cerbos } from '@repo/cerbos'
 
 import { assistantAgent } from './agents/assistant-agent'
-import { fhirAgent } from './agents/fhir-test'
 import { patientReportAgent } from './agents/patient-report'
 import { fhirMCPServer } from './mcp'
 import { opensearch } from './stores/opensearch'
@@ -17,7 +16,6 @@ import { pgStorage, pgVector } from './stores/pgvector'
 import { weatherWorkflow } from './workflows/weather-workflow'
 
 import type { OtelConfig } from '@mastra/core'
-import type { RuntimeContext } from '@mastra/core/di'
 import type { Session, User } from '@repo/auth'
 import type { FhirApiClient, FhirSessionData } from '../hono/middleware/fhir-auth'
 

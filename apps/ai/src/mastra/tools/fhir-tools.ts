@@ -650,65 +650,69 @@ export const fhirPatientReportSearchTool = createTool({
 			outcomeDescription: 'Authorization granted by Cerbos.',
 		})
 
-		const result = queries.map(async (query) => {
-			await audit.log({
-				principalId,
-				action: `${toolName}Attempt`,
-				targetResourceType: resourceType,
-				targetResourceId: resourceId,
-				status: 'attempt',
-				details: {
-					params: query.params,
-				},
-			})
+		let result: any[] = []
 
-			try {
-				console.log(JSON.stringify(query.params))
-				const { data, error, response } = await fhirClient.GET(`/${query.resourceType}`, {
-					params: { query: query.params },
+		await Promise.all(
+			queries.map(async (query) => {
+				await audit.log({
+					principalId,
+					action: `${toolName}Attempt`,
+					targetResourceType: query.resourceType,
+					targetResourceId: resourceId,
+					status: 'attempt',
+					details: {
+						params: query.params,
+					},
 				})
-				if (error) {
-					const rText = await response.text()
-					const outcomeDescription = `FHIR ${resourceType} read failed: Status ${response.status}`
+
+				try {
+					console.log(JSON.stringify(query.params))
+					const { data, error, response } = await fhirClient.GET(`/${query.resourceType}`, {
+						params: { query: query.params },
+					})
+					if (error) {
+						const rText = await response.text()
+						const outcomeDescription = `FHIR ${resourceType} read failed: Status ${response.status}`
+						await audit.log({
+							principalId,
+							action: toolName,
+							targetResourceType: query.resourceType,
+							targetResourceId: resourceId,
+							status: 'failure',
+							outcomeDescription,
+							details: {
+								responseStatus: response.status,
+								responseBody: rText,
+							},
+						})
+						console.error(
+							`FHIR ${query.resourceType} read error (ID: ${context.id}): Status ${response.status}`,
+							await response.text()
+						)
+						throw new Error(outcomeDescription)
+					}
 					await audit.log({
 						principalId,
 						action: toolName,
-						targetResourceType: resourceType,
+						targetResourceType: query.resourceType,
+						targetResourceId: resourceId,
+						status: 'success',
+						outcomeDescription: `Successfully read ${query.resourceType} resource.`,
+					})
+					if (data.total > 0) result.push(data)
+				} catch (e: any) {
+					await audit.log({
+						principalId,
+						action: toolName,
+						targetResourceType: query.resourceType,
 						targetResourceId: resourceId,
 						status: 'failure',
-						outcomeDescription,
-						details: {
-							responseStatus: response.status,
-							responseBody: rText,
-						},
+						outcomeDescription: e.message,
 					})
-					console.error(
-						`FHIR ${resourceType} read error (ID: ${context.id}): Status ${response.status}`,
-						await response.text()
-					)
-					throw new Error(outcomeDescription)
+					//throw e
 				}
-				await audit.log({
-					principalId,
-					action: toolName,
-					targetResourceType: resourceType,
-					targetResourceId: resourceId,
-					status: 'success',
-					outcomeDescription: `Successfully read ${resourceType} resource.`,
-				})
-				if (data) return data
-			} catch (e: any) {
-				await audit.log({
-					principalId,
-					action: toolName,
-					targetResourceType: resourceType,
-					targetResourceId: resourceId,
-					status: 'failure',
-					outcomeDescription: e.message,
-				})
-				//throw e
-			}
-		})
+			})
+		)
 
 		return result
 	},
@@ -1870,6 +1874,7 @@ export const fhirResourceTools = [
 	fhirResourceCreateTool,
 	fhirResourceUpdateTool,
 	fhirResourceDeleteTool,
+	fhirPatientReportSearchTool,
 ]
 
 export const allFhirTools = [...fhirResourceTools]
