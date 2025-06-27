@@ -1,17 +1,21 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true,
+    "module": "esnext",
+    "target": "ES2020",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noEmitHelpers": true,
+    "noEmitOnError": true,
+    "jsx": "react",
+    "lib": ["ESNext", "dom"],
+    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "~/*": ["src/*"],
+      "@/*": ["src/*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-  ]
+  "include": ["./src/**/*.tsx?"],
+  "files": ["./references.d.ts"],
+  "exclude": ["node_modules", "platforms"]
 }

@@ -1,50 +1,54 @@
-# Welcome to your Expo app 👋
+# React NativeScript Blank Template
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+App templates help you jump start your native cross-platform apps with built-in UI elements and best practices. Save time writing boilerplate code over and over again when you create new apps.
 
-## Get started
+## Quick Start from NPM package
+Execute the following command to create an app from this template:
 
-1. Install dependencies
+```
+ns create my-blank-react --react
 
-   ```bash
-   npm install
-   ```
+cd my-blank-react
+npm install
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+ns preview
+# or
+ns run android
+# or
+ns run ios
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+> Note: This command will create a new NativeScript app that uses the latest version of this template published to [npm](https://www.npmjs.com/package/@nativescript/template-blank-react).
 
-## Learn more
 
-To learn more about developing your project with Expo, look at the following resources:
+**NB:** Please, keep in mind that the main branch may refer to dependencies that are not on NPM yet!
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Walkthrough
 
-## Join the community
+Having created an app from this template, here's an introduction to how it works:
 
-Join our community of developers creating universal apps.
+### Architecture
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- `src/app.ts`: The app entrypoint. It renders the MainStack component as the root component.
+- `src/components/MainStack.tsx`: A React Navigation 5 [stack navigator](https://reactnavigation.org/docs/5.x/stack-navigator/) serving as the root component.
+- `src/components/ScreenOne.tsx`, `src/components/ScreenTwo.tsx`: A couple of screens to navigate to.
+- `src/NavigationParamList.tsx`: A record of the navigation params for each route in your app.
+
+### The basics
+
+Learn React NativeScript itself by reading [its docs](https://react-nativescript.netlify.app/docs/introduction/introduction.html).
+
+Learn how to navigate by referring to the React Navigation 5 [docs])https://reactnavigation.org/docs/5.x/getting-started) and refer to the [react-nativescript-navigation](https://github.com/shirakaba/react-nativescript-navigation/tree/master/react-nativescript-navigation) repo to see which options are supported for each navigator.
+
+React libraries without a dependency on `react-dom` (like Redux) should work just fine in React NativeScript as long as the `react` version is compatible.
+
+## Get Help
+The NativeScript framework has a vibrant community that can help when you run into problems.
+
+Try [joining the NativeScript community Discord](https://nativescript.org/discord). The Discord `#react` channel is a great place to get help troubleshooting problems, as well as connect with other NativeScript developers.
+
+If you have found an issue with this template, please report the problem in this repository's [Issues page](https://github.com/shirakaba/tns-template-blank-react/issues).
+
+## Contributing
+
+We love PRs, and accept them gladly. Feel free to propose changes and new ideas. We will review and discuss, so that they can be accepted and better integrated.
