@@ -8,7 +8,6 @@ import { emailSendTool } from '../tools/email-tools'
 import { allFhirTools, fhirPatientReportSearchTool } from '../tools/fhir-tools'
 
 const llm = groq('llama-3.3-70b-versatile')
-const localLlm = ollama('qwen3:latest')
 
 // Initialize memory with PostgreSQL storage and vector search
 const memory = new Memory({
@@ -18,6 +17,7 @@ const memory = new Memory({
 	options: { lastMessages: 10, semanticRecall: { topK: 3, messageRange: 2 } },
 })
 
+// FIXME - This is a break of privacy, the system writes the assistant message with patient data on the database
 // Create a new agent for activity planning
 const patientReportAgent = new Agent({
 	name: 'patientReportAgent',
@@ -79,10 +79,10 @@ The report should include the following sections:
 
 **8. Social History:**
 * Summarize relevant social history pertinent to health (e.g., smoking status, alcohol use, occupation, living situation). [Extract from Observation specifically categorized as "social-history".].
-* Smoking Status: The Observation.code might be "Tobacco smoking status" (LOINC: 72166-2), and the Observation.value could be "Current every day smoker" (LOINC: LA18976-3). Other relevant elements could include the duration of smoking (e.g., number of years) and quit date, which are crucial for risk assessment. 
-* Alcohol Use: The Observation.code could be "Alcohol use" or a more specific code related to the type of alcohol. The Observation.value would indicate the frequency and amount of alcohol consumption, potentially using coded values like "moderate" or "heavy". 
-* Occupation: The Observation.code could be "Occupation" and the Observation.value would be a string describing the patient's occupation. 
-* Living Situation: This could be captured using a combination of Observation.code and Observation.value, potentially including information about housing type, household members, and social support. 
+    * **Smoking Status: [Extract from Observation.code might be "Tobacco smoking status" (LOINC: 72166-2), and the Observation.value could be "Current every day smoker" (LOINC: LA18976-3). Other relevant elements could include the duration of smoking (e.g., number of years) and quit date, which are crucial for risk assessment.]
+    * **Alcohol Use: [Extract from Observation.code could be "Alcohol use" or a more specific code related to the type of alcohol. The Observation.value would indicate the frequency and amount of alcohol consumption, potentially using coded values like "moderate" or "heavy".]
+    * **Occupation: [Extract from Observation.code could be "Occupation" and the Observation.value would be a string describing the patient's occupation.]
+    * **Living Situation: [This could be captured using a combination of Observation.code and Observation.value, potentially including information about housing type, household members, and social support.]
 
 **9. Family History:**
 * Summarize any significant family medical history (e.g., chronic diseases in first-degree relatives). [Extract from FamilyMemberHistory].
