@@ -15,7 +15,7 @@
 	},
 	"dependencies": {
 		"@cerbos/http": "0.22.0",
-		"@modelcontextprotocol/sdk": "1.13.1",
+		"@modelcontextprotocol/sdk": "1.13.2",
 		"@repo/audit": "workspace:*",
 		"@repo/auth": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
@@ -27,12 +27,12 @@
 		"zod": "3.25.67"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.46",
+		"@cloudflare/vitest-pool-workers": "0.8.47",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "24.0.4",
 		"vitest": "3.2.4",
-		"wrangler": "4.21.2"
+		"wrangler": "4.22.0"
 	}
 }

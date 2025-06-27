@@ -14,7 +14,7 @@
     "@vuepress/bundler-vite": "2.0.0-rc.23",
     "@vuepress/theme-default": "2.0.0-rc.110",
     "sass-embedded": "1.89.2",
-    "vue": "^3.5.17",
+    "vue": "3.5.17",
     "vuepress": "2.0.0-rc.23"
   }
 }

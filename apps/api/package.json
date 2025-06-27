@@ -21,8 +21,8 @@
 	},
 	"dependencies": {
 		"@cerbos/http": "0.22.0",
-		"@hono/zod-openapi": "0.19.8",
-		"@mastra/client-js": "0.10.6",
+		"@hono/zod-openapi": "0.19.9",
+		"@mastra/client-js": "0.10.7",
 		"@mastra/rag": "1.0.1",
 		"@paralleldrive/cuid2": "2.2.2",
 		"@repo/audit": "workspace:*",
@@ -42,13 +42,13 @@
 		"zod": "3.25.67"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.46",
+		"@cloudflare/vitest-pool-workers": "0.8.47",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "24.0.4",
-		"drizzle-kit": "0.31.2",
+		"drizzle-kit": "0.31.4",
 		"vitest": "3.2.4",
-		"wrangler": "4.21.2"
+		"wrangler": "4.22.0"
 	}
 }

@@ -21,13 +21,13 @@
 	},
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "1.7.5",
-		"@cloudflare/vitest-pool-workers": "0.8.46",
+		"@cloudflare/vitest-pool-workers": "0.8.47",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "24.0.4",
 		"vite": "7.0.0",
 		"vitest": "3.2.4",
-		"wrangler": "4.21.2"
+		"wrangler": "4.22.0"
 	}
 }

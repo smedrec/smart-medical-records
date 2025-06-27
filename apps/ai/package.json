@@ -18,11 +18,11 @@
 	"dependencies": {
 		"@ai-sdk/groq": "1.2.9",
 		"@cerbos/http": "0.22.0",
-		"@cloudflare/vitest-pool-workers": "0.8.46",
+		"@cloudflare/vitest-pool-workers": "0.8.47",
 		"@mastra/agui": "1.0.4",
 		"@mastra/cloudflare-d1": "0.12.0",
-		"@mastra/core": "0.10.7",
-		"@mastra/deployer-cloudflare": "0.10.7",
+		"@mastra/core": "0.10.8",
+		"@mastra/deployer-cloudflare": "0.10.8",
 		"@mastra/loggers": "0.10.2",
 		"@mastra/mcp": "0.10.5",
 		"@mastra/memory": "0.11.0",
@@ -43,17 +43,17 @@
 		"openapi-fetch": "0.14.0",
 		"pino": "9.7.0",
 		"pino-opentelemetry-transport": "1.0.1",
-		"undici": "7.10.0",
+		"undici": "7.11.0",
 		"zod": "3.25.67"
 	},
 	"devDependencies": {
-		"@cloudflare/workers-types": "4.20250620.0",
+		"@cloudflare/workers-types": "4.20250627.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "24.0.4",
 		"@types/nodemailer": "6.4.17",
-		"mastra": "0.10.7",
-		"wrangler": "4.21.2"
+		"mastra": "0.10.8",
+		"wrangler": "4.22.0"
 	},
 	"engines": {
 		"node": ">=20.9.0"

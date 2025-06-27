@@ -26,13 +26,13 @@
 		"postgres": "3.4.7"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.46",
-		"@cloudflare/workers-types": "4.20250620.0",
+		"@cloudflare/vitest-pool-workers": "0.8.47",
+		"@cloudflare/workers-types": "4.20250627.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "24.0.4",
-		"drizzle-kit": "0.31.2",
+		"drizzle-kit": "0.31.4",
 		"vitest": "3.2.4"
 	}
 }
