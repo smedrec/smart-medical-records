@@ -20,26 +20,12 @@ COPY turbo.jsonc ./
 # A more optimized approach would be to use `pnpm list -r --depth -1 --json` to get the dependency tree
 # and copy only the necessary package.json files.
 COPY apps/audit/package.json ./apps/audit/
-COPY apps/ai/package.json ./apps/ai/
-COPY apps/api/package.json ./apps/api/
-COPY apps/docs/package.json ./apps/docs/
-COPY apps/mcp/package.json ./apps/mcp/
-COPY apps/test/package.json ./apps/test/
-COPY apps/web/package.json ./apps/web/
 
-COPY packages/app-client/package.json ./packages/app-client/
-COPY packages/app-client-workers/package.json ./packages/app-client-workers/
 COPY packages/audit/package.json ./packages/audit/
-COPY packages/auth/package.json ./packages/auth/
-COPY packages/db/package.json ./packages/db/
+COPY packages/auditdb/package.json ./packages/auditdb/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
-COPY packages/fhir/package.json ./packages/fhir/
-COPY packages/hono-helpers/package.json ./packages/hono-helpers/
-COPY packages/mailer/package.json ./packages/mailer/
 COPY packages/tools/package.json ./packages/tools/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
-COPY packages/ui/package.json ./packages/ui/
-COPY packages/workspace-dependencies/package.json ./packages/workspace-dependencies/
 
 # Install all dependencies
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --strict-peer
@@ -52,7 +38,10 @@ COPY --from=deps /app /app
 # This assumes that @repo/audit is a local workspace package
 COPY apps/audit ./apps/audit
 COPY packages/audit ./packages/audit
-COPY packages/typescript-config ./packages/typescript-config # Dependency of audit app
+COPY packages/auditdb ./packages/auditdb
+COPY packages/typescript-config ./packages/typescript-config
+COPY packages/tools ./packages/tools
+COPY packages/eslint-config ./packages/eslint-config
 
 # If there are other @repo dependencies for audit-worker, they need to be copied too.
 # For example, if @repo/tools or @repo/eslint-config were runtime dependencies (they are devDeps here).
