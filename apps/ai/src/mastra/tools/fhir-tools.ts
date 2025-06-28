@@ -8,6 +8,7 @@ import type { Audit } from '@repo/audit'
 import type { Cerbos } from '@repo/cerbos'
 import type { FhirApiClient, FhirSessionData } from '../../hono/middleware/fhir-auth'
 import type { Bundle, OperationOutcome } from '../../v4.0.1'
+import type { ToolCallResult } from './types'
 
 export type McpFhirToolCallContext = {
 	audit: Audit
@@ -30,10 +31,7 @@ export const fhirResourceReadTool = createTool({
 			.describe('Resource type, ex: Patient, Practitioner, Organization, etc'),
 		id: z.string().describe('Resource id'),
 	}),
-	execute: async ({
-		context,
-		runtimeContext,
-	}): Promise<unknown | ReturnType<typeof createTextResponse>> => {
+	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
 		const cerbos = runtimeContext.get('cerbos') as Cerbos
 		const audit = runtimeContext.get('audit') as Audit
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -126,7 +124,14 @@ export const fhirResourceReadTool = createTool({
 				status: 'success',
 				outcomeDescription: `Successfully read ${resourceType} resource.`,
 			})
-			return data
+			return {
+				content: [
+					{
+						type: 'text',
+						text: JSON.stringify(data, null, 2),
+					},
+				],
+			}
 		} catch (e: any) {
 			await audit.log({
 				principalId,
@@ -153,10 +158,7 @@ export const fhirResourceSearchTool = createTool({
 			.describe('Resource type, ex: Patient, Practitioner, Organization, etc'),
 		params: z.unknown().describe('The fhir resource search parameters'),
 	}),
-	execute: async ({
-		context,
-		runtimeContext,
-	}): Promise<Bundle<unknown> | ReturnType<typeof createTextResponse>> => {
+	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
 		const cerbos = runtimeContext.get('cerbos') as Cerbos
 		const audit = runtimeContext.get('audit') as Audit
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -235,7 +237,14 @@ export const fhirResourceSearchTool = createTool({
 				targetResourceType: resourceType,
 				status: 'success',
 			})
-			return data as Bundle<unknown>
+			return {
+				content: [
+					{
+						type: 'text',
+						text: JSON.stringify(data as Bundle<unknown>, null, 2),
+					},
+				],
+			}
 		} catch (e: any) {
 			await audit.log({
 				principalId,
@@ -259,10 +268,7 @@ export const fhirResourceCreateTool = createTool({
 			.describe('Resource type, ex: Patient, Practitioner, Organization, etc'),
 		resource: z.unknown().describe('The FHIR resource'),
 	}),
-	execute: async ({
-		context,
-		runtimeContext,
-	}): Promise<Bundle<unknown> | ReturnType<typeof createTextResponse>> => {
+	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
 		const cerbos = runtimeContext.get('cerbos') as Cerbos
 		const audit = runtimeContext.get('audit') as Audit
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -350,7 +356,14 @@ export const fhirResourceCreateTool = createTool({
 				targetResourceId: data.id,
 				status: 'success',
 			})
-			return data
+			return {
+				content: [
+					{
+						type: 'text',
+						text: JSON.stringify(data, null, 2),
+					},
+				],
+			}
 		} catch (e: any) {
 			await audit.log({
 				principalId,
@@ -375,10 +388,7 @@ export const fhirResourceUpdateTool = createTool({
 		id: z.string().describe('Resource id'),
 		resource: z.unknown().describe(''),
 	}),
-	execute: async ({
-		context,
-		runtimeContext,
-	}): Promise<unknown | ReturnType<typeof createTextResponse>> => {
+	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
 		const cerbos = runtimeContext.get('cerbos') as Cerbos
 		const audit = runtimeContext.get('audit') as Audit
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -468,7 +478,14 @@ export const fhirResourceUpdateTool = createTool({
 				targetResourceId: resourceId,
 				status: 'success',
 			})
-			return data
+			return {
+				content: [
+					{
+						type: 'text',
+						text: JSON.stringify(data, null, 2),
+					},
+				],
+			}
 		} catch (e: any) {
 			await audit.log({
 				principalId,
@@ -493,10 +510,7 @@ export const fhirResourceDeleteTool = createTool({
 			.describe('Resource type, ex: Patient, Practitioner, Organization, etc'),
 		id: z.string().describe('Resource id'),
 	}),
-	execute: async ({
-		context,
-		runtimeContext,
-	}): Promise<unknown | ReturnType<typeof createTextResponse>> => {
+	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
 		const cerbos = runtimeContext.get('cerbos') as Cerbos
 		const audit = runtimeContext.get('audit') as Audit
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -589,7 +603,14 @@ export const fhirResourceDeleteTool = createTool({
 				status: 'success',
 				outcomeDescription: `Successfully delete ${resourceType} resource.`,
 			})
-			return data
+			return {
+				content: [
+					{
+						type: 'text',
+						text: JSON.stringify(data, null, 2),
+					},
+				],
+			}
 		} catch (e: any) {
 			await audit.log({
 				principalId,
@@ -611,10 +632,7 @@ export const fhirPatientReportSearchTool = createTool({
 	inputSchema: z.object({
 		id: z.string().describe('Patient id'),
 	}),
-	execute: async ({
-		context,
-		runtimeContext,
-	}): Promise<unknown | ReturnType<typeof createTextResponse>> => {
+	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
 		const cerbos = runtimeContext.get('cerbos') as Cerbos
 		const audit = runtimeContext.get('audit') as Audit
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
@@ -743,7 +761,14 @@ export const fhirPatientReportSearchTool = createTool({
 			})
 		)
 
-		return result
+		return {
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify(result, null, 2),
+				},
+			],
+		}
 	},
 })
 

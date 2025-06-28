@@ -13,7 +13,7 @@ const memory = new Memory({
 	options: { lastMessages: 10, semanticRecall: { topK: 3, messageRange: 2 } },
 })
 // Configure MCPClient to connect to your server(s)
-export const mcp = new MCPClient({
+export const openMCPServer = new MCPClient({
 	servers: {
 		fhirresources: {
 			command: 'npx',
@@ -37,6 +37,6 @@ export const fhirAgent = new Agent({
     You are an Agent that helps users to manage FHIR resources.
   `,
 	model: groq('llama-3.3-70b-versatile'),
-	tools: await mcp.getTools(),
+	tools: await openMCPServer.getTools(),
 	memory,
 })

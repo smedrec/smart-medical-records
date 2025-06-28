@@ -9,6 +9,7 @@ import { Audit } from '@repo/audit'
 import { Cerbos } from '@repo/cerbos'
 
 import { assistantAgent } from './agents/assistant-agent'
+import { fhirAgent, openMCPServer } from './agents/fhir-test'
 import { patientReportAgent } from './agents/patient-report'
 import { fhirMCPServer } from './mcp'
 import { opensearch } from './stores/opensearch'
