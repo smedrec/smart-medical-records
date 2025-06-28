@@ -14,6 +14,7 @@ COPY pnpm-workspace.yaml ./
 COPY package.json ./
 COPY tsconfig.json ./
 COPY turbo.jsonc ./
+COPY patches/fhirclient@2.6.0.patch ./patches/fhirclient@2.6.0.patch
 
 # Copy necessary package.json files for all apps and packages
 # This is a bit of a shotgun approach, but ensures all workspace dependencies are recognized by pnpm
