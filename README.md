@@ -95,7 +95,7 @@ pnpm turbo -F api test
 
 ## Docs
 
-[SMEDREC DOCS](https://smedrec-67bbd.web.app/){:target="\_blank"}
+[SMEDREC DOCS](https://smedrec-67bbd.web.app/ target="\_blank")
 
 ## 📄 License
 
