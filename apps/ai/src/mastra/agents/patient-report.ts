@@ -18,7 +18,7 @@ const memory = new Memory({
 })
 
 // FIXME - This is a break of privacy, the system writes the assistant message with patient data on the database
-// Create a new agent for activity planning
+// Create a new agent for patient report
 const patientReportAgent = new Agent({
 	name: 'patientReportAgent',
 	description: 'Medical Report Generation from FHIR Patient Data',

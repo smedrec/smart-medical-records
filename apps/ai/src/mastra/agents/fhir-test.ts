@@ -4,13 +4,12 @@ import { MCPClient } from '@mastra/mcp'
 import { Memory } from '@mastra/memory'
 import { ollama } from 'ollama-ai-provider'
 
-import { opensearch } from '../stores/opensearch'
-import { pgStorage } from '../stores/pgvector'
+import { pgStorage, pgVector } from '../stores/pgvector'
 
 const memory = new Memory({
 	embedder: ollama.embedding('nomic-embed-text:latest'),
 	storage: pgStorage,
-	vector: opensearch,
+	vector: pgVector,
 	options: { lastMessages: 10, semanticRecall: { topK: 3, messageRange: 2 } },
 })
 // Configure MCPClient to connect to your server(s)
