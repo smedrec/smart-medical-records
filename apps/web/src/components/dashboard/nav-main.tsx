@@ -150,19 +150,27 @@ export function NavMain() {
 											</CollapsibleTrigger>
 											<CollapsibleContent>
 												<SidebarMenuSub>
-													{item.items?.map((subItem, subIndex) => (
-														<SidebarMenuSubItem key={`${subItem.title}-${subIndex}`}>
-															<SidebarMenuSubButton asChild>
-																<Link
-																	className={`group/icon pr-4 ${isActive ? 'text-primary bg-muted/50' : 'text-[#939393]'}`}
-																	to={subItem.url}
-																>
-																	<subItem.icon />
-																	<span className="text-[0.8rem] font-normal">{subItem.title}</span>
-																</Link>
-															</SidebarMenuSubButton>
-														</SidebarMenuSubItem>
-													))}
+													{item.items?.map((subItem, subIndex) => {
+														const isActive =
+															subItem.url === pathname ||
+															subItem.title === pathname ||
+															pagePath === lowercasedPagePath
+														return (
+															<SidebarMenuSubItem key={`${subItem.title}-${subIndex}`}>
+																<SidebarMenuSubButton asChild>
+																	<Link
+																		className={`group/icon pr-4 ${isActive ? 'text-primary bg-muted/50' : 'text-[#939393]'}`}
+																		to={subItem.url}
+																	>
+																		<subItem.icon />
+																		<span className="text-[0.8rem] font-normal">
+																			{subItem.title}
+																		</span>
+																	</Link>
+																</SidebarMenuSubButton>
+															</SidebarMenuSubItem>
+														)
+													})}
 												</SidebarMenuSub>
 											</CollapsibleContent>
 										</SidebarMenuItem>
