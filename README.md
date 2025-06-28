@@ -93,6 +93,10 @@ pnpm turbo -F api test
 3. Submit a PR with clear description
 4. Ensure all tests pass
 
+## Docs
+
+[SMEDREC DOCS](https://smedrec-67bbd.web.app/)
+
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE) for details

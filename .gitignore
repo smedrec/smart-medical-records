@@ -44,6 +44,9 @@ apps/docs/docs/.vuepress/.temp/
 apps/docs/docs/.vuepress/.cache/
 apps/docs/docs/.vuepress/dist/
 
+# firebase
+.firebase/
+
 # Mastra
 .mastra
 apps/ai/src/v4.0.1/
