@@ -19,6 +19,10 @@ export default defineUserConfig({
 				children: ['/get-started.md'],
 			},
 			{
+				text: 'AI Agents',
+				children: ['/agents/'], // VuePress resolves this to /development/README.md
+			},
+			{
 				text: 'Development',
 				children: ['/development/'], // VuePress resolves this to /development/README.md
 			},
