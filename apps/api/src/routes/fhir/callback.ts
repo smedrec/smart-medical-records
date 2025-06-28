@@ -51,7 +51,7 @@ export type FhirCallbackResponse = z.infer<
 
 export const registerFhirCallback = (app: App) =>
 	app.openapi(route, async (c) => {
-		const { cerbos, db } = c.get('services')
+		const { db } = c.get('services')
 		const session = c.get('session')
 
 		if (!session)
@@ -124,7 +124,6 @@ export const registerFhirCallback = (app: App) =>
 				console.log(`  ${key}: ${value}`)
 			}*/
 			const accessToken = await getSmartFhirAccessToken({
-				// FIXME - the request raw is empty
 				request: c.req.raw, // Pass the raw Request object
 				clientId: smartFhirClientConfig[0].clientId,
 				scope: smartFhirClientConfig[0].scope,
@@ -188,25 +187,4 @@ export const registerFhirCallback = (app: App) =>
 				message: `FHIR callback processing failed: ${error.message}`,
 			})
 		}
-
-		/**const decision = await cerbos.checkResource({
-			principal: {
-				id: session.session.userId,
-				roles: [session.session.activeOrganizationRole as string],
-				attributes: {},
-			},
-			resource: {
-				kind: resourceType,
-				id: id,
-				attributes: {},
-			},
-			actions: ['read'],
-		})
-
-		if (!decision.isAllowed('read')) {
-			throw new ApiError({
-				code: 'FORBIDDEN',
-				message: `You do not have permissions to read a ${resourceType}.`,
-			})
-		}*/
 	})

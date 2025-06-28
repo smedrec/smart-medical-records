@@ -5,6 +5,7 @@ import { ollama } from 'ollama-ai-provider'
 
 import { pgStorage, pgVector } from '../stores/pgvector'
 import { emailSendTool } from '../tools/email-tools'
+import { allFhirTools } from '../tools/fhir-tools'
 
 const llm = groq('llama-3.3-70b-versatile')
 
@@ -211,6 +212,7 @@ By following this prompt, the FHIR Scheduling Coordinator agent will be able to 
       `,
 
 	tools: {
+		...Object.fromEntries(allFhirTools.map((tool) => [tool.id, tool])),
 		emailSendTool,
 	},
 	memory,
