@@ -32,9 +32,9 @@ export const openMCPServer = new MCPClient({
 
 export const fhirAgent = new Agent({
 	name: 'fhir-resources-agent',
-	description: 'A assistant to manage FHIR',
+	description: 'A assistant to test FHIR mcp servers',
 	instructions: `
-    You are an Agent that helps users to manage FHIR resources.
+    You are an Agent that helps developers to test FHIR resources.
   `,
 	model: groq('llama-3.3-70b-versatile'),
 	tools: await openMCPServer.getTools(),

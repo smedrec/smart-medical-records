@@ -10,7 +10,7 @@ import { Cerbos } from '@repo/cerbos'
 
 import { assistantAgent } from './agents/assistant-agent'
 import { fhirAgent, openMCPServer } from './agents/fhir-test'
-import { patientReportAgent } from './agents/patient-report'
+import { patientReportAgent } from './agents/patient-report-agent'
 import { fhirMCPServer } from './mcp'
 import { opensearch } from './stores/opensearch'
 import { pgStorage, pgVector } from './stores/pgvector'
