@@ -11,7 +11,7 @@ export default defineUserConfig({
 	theme: defaultTheme({
 		logo: 'https://vuejs.press/images/hero.png',
 
-		navbar: ['/', '/get-started', '/development/'],
+		navbar: ['/', '/get-started', '/agents/', '/development/'],
 
 		sidebar: [
 			{
@@ -20,7 +20,12 @@ export default defineUserConfig({
 			},
 			{
 				text: 'AI Agents',
-				children: ['/agents/'], // VuePress resolves this to /development/README.md
+				children: [
+					'/agents/fhir-test.md',
+					'/agents/assistant-agent.md',
+					'/agents/patient-report-agent.md',
+					'/agents/scheduling-agent.md',
+				],
 			},
 			{
 				text: 'Development',

@@ -1,4 +1,4 @@
-# Mastra Agents Documentation
+# AI Agents
 
 This directory contains documentation for the various Mastra agents used in the AI application.
 
