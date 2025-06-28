@@ -32,7 +32,7 @@
 		"@repo/hono-helpers": "workspace:*",
 		"@solarahealth/fhir-r4": "1.2.0",
 		"ai": "4.3.16",
-		"better-auth": "1.2.10",
+		"better-auth": "1.2.12",
 		"drizzle-orm": "0.44.2",
 		"hono": "4.8.3",
 		"node-fetch": "3.3.2",
@@ -46,7 +46,7 @@
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/node": "24.0.4",
+		"@types/node": "24.0.7",
 		"drizzle-kit": "0.31.4",
 		"vitest": "3.2.4",
 		"wrangler": "4.22.0"
