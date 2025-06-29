@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import fetch, { Headers, Request } from 'node-fetch'
 
-import { smartFhirClient } from '@repo/db'
+import { smartFhirClient } from '@repo/auth-db'
 import {
 	defaultCookieOptions,
 	FHIR_AUTH_STATE_COOKIE,

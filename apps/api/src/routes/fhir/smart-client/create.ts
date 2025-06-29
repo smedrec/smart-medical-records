@@ -1,7 +1,7 @@
 import { ApiError, openApiErrorResponses } from '@/lib/errors'
 import { createRoute } from '@hono/zod-openapi'
 
-import { smartFhirClient } from '@repo/db'
+import { smartFhirClient } from '@repo/auth-db'
 
 import { AssistantSelectSchema, SmartFhirClientInsertSchema } from './types'
 

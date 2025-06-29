@@ -2,7 +2,7 @@ import { ApiError, openApiErrorResponses } from '@/lib/errors'
 import { createRoute, z } from '@hono/zod-openapi'
 import { eq } from 'drizzle-orm'
 
-import { smartFhirClient } from '@repo/db'
+import { smartFhirClient } from '@repo/auth-db'
 
 import type { App } from '@/lib/hono'
 import type { z } from '@hono/zod-openapi'

@@ -4,7 +4,12 @@ import { admin, apiKey, mcp, oidcProvider, openAPI, organization } from 'better-
 import { env } from 'cloudflare:workers'
 import { eq } from 'drizzle-orm'
 
-import { activeOrganization, db, organization as organizationDb, user as userDb } from '@repo/db'
+import {
+	activeOrganization,
+	db,
+	organization as organizationDb,
+	user as userDb,
+} from '@repo/auth-db'
 
 import { email } from '../email'
 import {

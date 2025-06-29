@@ -3,8 +3,8 @@ import { cerbos } from '@/lib/cerbos'
 import { createId } from '@paralleldrive/cuid2'
 
 import { Audit } from '@repo/audit'
-import { auth } from '@repo/auth'
-import { db } from '@repo/db'
+import { AuthDb } from '@repo/auth-db'
+import { auth } from '@repo/better-auth'
 import { fhir } from '@repo/fhir'
 
 import { ConsoleLogger } from '../logs'
@@ -56,6 +56,18 @@ export function init(): MiddlewareHandler<HonoEnv> {
 		})
 
 		const audit = new Audit('audit', c.env.AUDIT_REDIS_URL)
+
+		const authDbInstance = new AuthDb()
+
+		// Check the database connection
+		const isConnected = await authDbInstance.checkAuthDbConnection()
+		if (!isConnected) {
+			console.error('Failed to connect to the auth database. Exiting.')
+			process.exit(1)
+		}
+
+		// Get the Drizzle ORM instance
+		const db = authDbInstance.getDrizzleInstance()
 
 		//const cache = initCache(c);
 		//const cache = null

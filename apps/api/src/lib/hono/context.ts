@@ -1,7 +1,8 @@
 import type { cerbos } from '@/lib/cerbos'
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 import type { Audit } from '@repo/audit'
-import type { auth, Session, User } from '@repo/auth'
-import type { db } from '@repo/db'
+import type * as schema from '@repo/auth-db'
+import type { auth, Session, User } from '@repo/better-auth'
 import type { fhir } from '@repo/fhir'
 import type { HonoApp } from '@repo/hono-helpers'
 import type { SharedHonoEnv, SharedHonoVariables } from '@repo/hono-helpers/src/types'
@@ -24,7 +25,7 @@ export type ServiceContext = {
 	fhir: typeof fhir
 	//cache: Cache;
 	//db: { primary: Database; readonly: Database };
-	db: typeof db
+	db: PostgresJsDatabase<typeof schema>
 	//redis:  Redis,
 	audit: Audit
 	logger: Logger

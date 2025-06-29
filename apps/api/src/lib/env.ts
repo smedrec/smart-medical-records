@@ -4,6 +4,7 @@ export const zEnv = z.object({
 	VERSION: z.string().default('unknown'),
 
 	DATABASE_URL: z.string(),
+	AUTH_DB_URL: z.string(),
 
 	BETTER_AUTH_URL: z.string().url(),
 	BETTER_AUTH_SECRET: z.string(),
@@ -21,6 +22,7 @@ export const zEnv = z.object({
 	CLOUDFLARE_ZONE_ID: z.string().optional(),
 
 	AUDIT_REDIS_URL: z.string(),
+	BETTER_AUTH_REDIS_URL: z.string(),
 
 	NAME: z.string(),
 	ENVIRONMENT: z.enum(['VITEST', 'development', 'staging', 'production']).default('development'),

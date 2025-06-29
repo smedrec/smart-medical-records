@@ -26,7 +26,6 @@ export type SharedHonoEnv = {
 	 */
 	BETTER_AUTH_URL: string
 	BETTER_AUTH_SECRET: string
-	BETTER_AUTH_REDIS_URL: string
 	/*
 	 * Cerbos api url
 	 */
@@ -51,10 +50,15 @@ export type SharedHonoEnv = {
 	 * The postgres database url
 	 */
 	DATABASE_URL: string
+	AUTH_DB_URL: string
 	/**
 	 * REDIS instance to audit queues
 	 */
 	AUDIT_REDIS_URL: string
+	/**
+	 * REDIS instance to active sessions
+	 */
+	BETTER_AUTH_REDIS_URL: string
 	/**
 	 * Smart FHIR Client
 	 */

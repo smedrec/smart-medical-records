@@ -1,24 +1,29 @@
 {
-	"name": "@repo/auth",
+	"name": "@repo/auth-db",
 	"version": "0.1.0",
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
-	"main": "src/index.ts",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist",
+		"src"
+	],
 	"scripts": {
+		"auth-db:generate": "drizzle-kit generate --config=drizzle-dev.config.ts",
+		"auth-db:migrate": "drizzle-kit migrate --config=drizzle-dev.config.ts",
+		"auth-db:studio": "drizzle-kit studio --config=drizzle-dev.config.ts",
+		"build": "tsc --build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"test": "run-vitest"
 	},
 	"dependencies": {
-		"@repo/auth-db": "workspace:*",
-		"@repo/fhir": "workspace:*",
+		"@repo/audit": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
-		"@repo/mailer": "workspace:*",
-		"@solarahealth/fhir-r4": "1.2.0",
-		"better-auth": "1.2.12",
 		"drizzle-orm": "0.44.2",
-		"worker-mailer": "1.1.4"
+		"postgres": "3.4.7"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "0.8.47",
@@ -26,6 +31,8 @@
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
+		"@types/node": "24.0.7",
+		"drizzle-kit": "0.31.4",
 		"vitest": "3.2.4"
 	}
 }

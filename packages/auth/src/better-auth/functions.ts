@@ -4,7 +4,7 @@ import { and, eq } from 'drizzle-orm'
 
 //import { APIError } from 'better-auth/api';
 
-import { activeOrganization, apikey, db, member } from '@repo/db'
+import { activeOrganization, apikey, db, member } from '@repo/auth-db'
 import { createSmartFhirClient, fhir } from '@repo/fhir'
 
 import type { Organization, Person } from '@solarahealth/fhir-r4'

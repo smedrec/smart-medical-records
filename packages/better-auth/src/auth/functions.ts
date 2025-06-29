@@ -4,10 +4,15 @@ import { and, eq } from 'drizzle-orm'
 
 //import { APIError } from 'better-auth/api';
 
-import { activeOrganization, apikey, db, member } from '@repo/db'
-import { createSmartFhirClient, fhir } from '@repo/fhir'
+import { activeOrganization, apikey, AuthDb, member } from '@repo/auth-db'
 
-import type { Organization, Person } from '@solarahealth/fhir-r4'
+//import { createSmartFhirClient, fhir } from '@repo/fhir'
+
+//import type { Organization, Person } from '@solarahealth/fhir-r4'
+
+// Using environment variable AUDIT_DB_URL
+const authDbService = new AuthDb()
+const db = authDbService.getDrizzleInstance()
 
 export async function getActiveOrganization(userId: string): Promise<
 	| {
@@ -97,6 +102,7 @@ export async function getApiKey(userId: string): Promise<string | null> {
 	}
 }
 
+/**
 export async function setupOrganizationResource(name: string, userId: string): Promise<string> {
 	try {
 		const resource: Organization = {
@@ -194,3 +200,4 @@ export async function setupPersonResource(name: string, email: string): Promise<
 export async function authorizeSmartClient(userId: string): Promise<string> {
 	return await createSmartFhirClient({})
 }
+ */

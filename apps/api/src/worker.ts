@@ -11,7 +11,7 @@ import { registerSmartFhirClientUpdate } from '@/routes/fhir/smart-client/update
 import { registerUploadAvatar } from '@/routes/user/uploadAvatar'
 import { cors } from 'hono/cors'
 
-import { auth } from '@repo/auth'
+import { auth } from '@repo/better-auth'
 
 import { newApp } from './lib/hono'
 import { init } from './lib/hono/init'

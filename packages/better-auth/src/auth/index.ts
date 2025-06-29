@@ -5,17 +5,11 @@ import { eq } from 'drizzle-orm'
 import { Redis } from 'ioredis'
 
 import { Audit } from '@repo/audit'
-import { db, user as userDb } from '@repo/db'
+import { AuthDb, user as userDb } from '@repo/auth-db'
 import { NodeMailer } from '@repo/mailer'
 
 import { getEnvConfig } from './environment.js'
-import {
-	authorizeSmartClient,
-	getActiveMemberRole,
-	getActiveOrganization,
-	setupOrganizationResource,
-	setupPersonResource,
-} from './functions.js'
+import { getActiveOrganization } from './functions.js'
 import { betterAuthOptions } from './options.js'
 /**import {
 	ac as appAc,
@@ -43,6 +37,7 @@ type Permissions = {
 }
 
 type SessionWithAditionalFields<T> = T & {
+	activeOrganizationId: string | null
 	activeOrganizationRole: string | null
 	smartClientAccessToken: string | null
 }
@@ -64,6 +59,10 @@ redis.on('error', (err) => {
 	// Depending on the error, you might want to exit or implement a retry mechanism for the worker itself.
 	// For now, this will prevent the worker from starting or stop it if the connection is lost later.
 })
+
+// Using environment variable AUDIT_DB_URL
+const authDbService = new AuthDb()
+const db = authDbService.getDrizzleInstance()
 
 const mailerConfig: NodeMailerSmtpOptions = {
 	host: config.SMTP_HOST,
@@ -91,7 +90,7 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
 			maxAge: 5 * 60, // Cache duration in seconds
 		},
 	},*/
-	database: drizzleAdapter(db, { provider: 'sqlite' }),
+	database: drizzleAdapter(db, { provider: 'pg' }),
 	baseURL: config.BETTER_AUTH_URL,
 	secret: config.BETTER_AUTH_SECRET,
 
@@ -219,11 +218,12 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
               },
             };*/
 				},
-				after: async (user) => {
+				// TODO -setupPersonResource as a Mastra Workflow
+				/**after: async (user) => {
 					//perform additional actions, like creating a stripe customer or send welcome email
 					const id = await setupPersonResource(user.name, user.email)
 					await db.update(userDb).set({ personId: id }).where(eq(userDb.id, user.id))
-				},
+				},*/
 			},
 		},
 	},
@@ -289,7 +289,8 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
 			},
 			organizationCreation: {
 				disabled: false, // Set to true to disable organization creation
-				beforeCreate: async ({ organization, user }, request) => {
+				// TODO -setOrganizationResource as a Mastra Workflow
+				/**beforeCreate: async ({ organization, user }, request) => {
 					// Run custom logic before organization is created
 					// Optionally modify the organization data
 					const id = await setupOrganizationResource(organization.name, user.id)
@@ -302,7 +303,7 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
 						},
 					}
 				},
-				/**afterCreate: async ({ organization, member, user }, request) => {
+				afterCreate: async ({ organization, member, user }, request) => {
 					// Run custom logic after organization is created
 					// e.g., create default resources, send notifications
 					const id = await setupOrganizationResource(organization.id, organization.name, user.id)

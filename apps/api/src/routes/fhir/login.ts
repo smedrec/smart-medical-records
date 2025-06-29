@@ -3,7 +3,7 @@ import { createRoute, z } from '@hono/zod-openapi'
 import { eq } from 'drizzle-orm'
 import { setCookie } from 'hono/cookie'
 
-import { smartFhirClient } from '@repo/db'
+import { smartFhirClient } from '@repo/auth-db'
 import {
 	authorizeSmartClient,
 	defaultCookieOptions,

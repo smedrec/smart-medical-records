@@ -1,8 +1,8 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { prettyJSON } from 'hono/pretty-json'
 
-import { auth } from '@repo/auth'
-import { getActiveOrganization } from '@repo/auth/src/better-auth/functions'
+import { getActiveOrganization } from '@repo/auth/src/better-auth/functions.js'
+import { auth } from '@repo/better-auth'
 import { useNotFound } from '@repo/hono-helpers'
 
 import { handleError, handleZodError } from '../errors'

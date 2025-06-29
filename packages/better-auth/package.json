@@ -1,5 +1,5 @@
 {
-	"name": "@repo/cerbos",
+	"name": "@repo/better-auth",
 	"version": "0.1.0",
 	"private": true,
 	"sideEffects": false,
@@ -18,8 +18,7 @@
 	},
 	"dependencies": {
 		"@repo/audit": "workspace:*",
-		"@repo/db": "workspace:*",
-		"@repo/fhir": "workspace:*",
+		"@repo/auth-db": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
 		"@repo/mailer": "workspace:*",
 		"better-auth": "1.2.12",
