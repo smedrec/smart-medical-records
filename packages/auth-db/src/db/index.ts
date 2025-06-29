@@ -21,7 +21,7 @@ function getEnv(variableName: string): string | undefined {
 	return undefined
 }
 
-export class AuthDb {
+class AuthDb {
 	private client: Sql
 	private authDb: PostgresJsDatabase<typeof schema>
 
@@ -70,3 +70,5 @@ export class AuthDb {
 		}
 	}
 }
+
+export { AuthDb }

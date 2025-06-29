@@ -2,8 +2,8 @@ import { ApiError, openApiErrorResponses } from '@/lib/errors'
 import { idParamsSchema } from '@/shared/types'
 import { createRoute, z } from '@hono/zod-openapi'
 
+import { authClient } from '@repo/auth'
 import { activeOrganization } from '@repo/auth-db'
-import { authClient } from '@repo/better-auth'
 
 import type { App } from '@/lib/hono'
 

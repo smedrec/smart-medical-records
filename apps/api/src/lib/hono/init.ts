@@ -3,8 +3,8 @@ import { cerbos } from '@/lib/cerbos'
 import { createId } from '@paralleldrive/cuid2'
 
 import { Audit } from '@repo/audit'
+import { auth } from '@repo/auth'
 import { AuthDb } from '@repo/auth-db'
-import { auth } from '@repo/better-auth'
 import { fhir } from '@repo/fhir'
 
 import { ConsoleLogger } from '../logs'
