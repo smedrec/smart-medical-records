@@ -1,11 +1,12 @@
-import { parseZodErrorMessage } from '@/lib/utils/zod-error.js'
 import { z } from '@hono/zod-openapi'
 import { HTTPException } from 'hono/http-exception'
 
-import type { HonoEnv } from '@/lib/hono/context.js'
+import { parseZodErrorMessage } from '../utils/zod-error.js'
+
 import type { Context } from 'hono'
 import type { StatusCode } from 'hono/utils/http-status'
 import type { ZodError } from 'zod'
+import type { HonoEnv } from '../hono/context.js'
 
 const ErrorCode = z.enum([
 	'BAD_REQUEST',

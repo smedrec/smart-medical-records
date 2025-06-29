@@ -69,6 +69,14 @@ class AuthDb {
 			return false
 		}
 	}
+
+	/**
+	 * Ends the client connection.
+	 * @returns void.
+	 */
+	public async end(): Promise<void> {
+		await this.client.end()
+	}
 }
 
 export { AuthDb }

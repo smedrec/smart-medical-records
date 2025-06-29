@@ -1,5 +1,5 @@
 {
-	"extends": "@repo/typescript-config/base.json",
+	"extends": "@repo/typescript-config/workers.json",
 	"compilerOptions": {
 		"outDir": "./dist",
 		"rootDir": "src",
@@ -9,15 +9,9 @@
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"]
-		}
+		},
+		"types": ["node"], // Remove worker-specific types if any were implicitly included by workers.json
+		"lib": ["ES2022"] // Ensure appropriate ES version
 	},
-	"exclude": [
-		"node_modules/",
-		"dist/",
-		"eslint.config.ts",
-		"vitest.config.ts",
-		"vite.config.ts",
-		"drizzle-dev.config.ts",
-		"better-auth.config.ts"
-	]
+	"include": ["src/**/*.ts"]
 }

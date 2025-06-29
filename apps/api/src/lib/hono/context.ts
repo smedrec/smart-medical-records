@@ -1,4 +1,3 @@
-import type { cerbos } from '@/lib/cerbos/index.js'
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 import type { Audit } from '@repo/audit'
 import type { auth, Session, User } from '@repo/auth'
@@ -6,6 +5,7 @@ import type * as schema from '@repo/auth-db/dist/db/schema.js'
 //import type { fhir } from '@repo/fhir'
 import type { HonoApp } from '@repo/hono-helpers'
 import type { SharedHonoEnv, SharedHonoVariables } from '@repo/hono-helpers/src/types.js'
+import type { cerbos } from '../cerbos/index.js'
 import type { Logger } from '../logs/index.js'
 
 export type Env = SharedHonoEnv & {

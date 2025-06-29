@@ -1,5 +1,3 @@
-import { zEnv } from '@/lib/env.js'
-import { ConsoleLogger } from '@/lib/logs/index.js'
 //import { registerFhirCallback } from '@/routes/fhir/callback.js'
 //import { registerFhirLogin } from '@/routes/fhir/login.js'
 //import { registerSmartFhirClientCreate } from '@/routes/fhir/smart-client/create.js'
@@ -11,8 +9,10 @@ import { cors } from 'hono/cors'
 
 import { auth } from '@repo/auth'
 
+import { zEnv } from './lib/env.js'
 import { newApp } from './lib/hono/index.js'
 import { init } from './lib/hono/init.js'
+import { ConsoleLogger } from './lib/logs/index.js'
 
 // AI routes
 //import { registerAiChat } from './routes/ai/chat.js'

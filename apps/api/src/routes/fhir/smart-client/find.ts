@@ -1,13 +1,13 @@
-import { ApiError, openApiErrorResponses } from '@/lib/errors/index.js'
 import { createRoute } from '@hono/zod-openapi'
 import { eq } from 'drizzle-orm'
 
 import { smartFhirClient } from '@repo/auth-db'
 
+import { ApiError, openApiErrorResponses } from '../../../lib/errors/index.js'
 import { AssistantSelectSchema } from './types.js'
 
-import type { App } from '@/lib/hono/index.js'
 import type { z } from '@hono/zod-openapi'
+import type { App } from '../../../lib/hono/index.js'
 
 const route = createRoute({
 	tags: ['FHIR'],

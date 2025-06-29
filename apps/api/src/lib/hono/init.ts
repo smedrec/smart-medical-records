@@ -1,11 +1,11 @@
 //import { redis } from "../db/redis";
-import { cerbos } from '@/lib/cerbos/index.js'
 import { createId } from '@paralleldrive/cuid2'
 
 import { Audit } from '@repo/audit'
 import { auth } from '@repo/auth'
 import { AuthDb } from '@repo/auth-db'
 
+import { cerbos } from '../cerbos/index.js'
 //import { fhir } from '@repo/fhir'
 
 import { ConsoleLogger } from '../logs/index.js'
@@ -19,14 +19,12 @@ import type { HonoEnv } from '../hono/context.js'
  */
 //const rlMap = new Map();
 
-/**
- * workerId and coldStartAt are used to track the lifetime of the worker
- * and are set once when the worker is first initialized.
- *
- * subsequent requests will use the same workerId and coldStartAt
- */
 let isolateId: string | undefined = undefined
 let isolateCreatedAt: number | undefined = undefined
+
+let authDbInstance: AuthDb | undefined = undefined
+
+export { authDbInstance }
 /**
  * Initialize all services.
  *
@@ -58,13 +56,14 @@ export function init(): MiddlewareHandler<HonoEnv> {
 
 		const audit = new Audit('audit', c.env.AUDIT_REDIS_URL)
 
-		const authDbInstance = new AuthDb(c.env.AUTH_DB_URL)
-
-		// Check the database connection
-		const isConnected = await authDbInstance.checkAuthDbConnection()
-		if (!isConnected) {
-			console.error('Failed to connect to the auth database. Exiting.')
-			process.exit(1)
+		if (!authDbInstance) {
+			authDbInstance = new AuthDb(c.env.AUTH_DB_URL)
+			// Check the database connection
+			const isConnected = await authDbInstance.checkAuthDbConnection()
+			if (!isConnected) {
+				console.error('Failed to connect to the auth database. Exiting.')
+				process.exit(1)
+			}
 		}
 
 		// Get the Drizzle ORM instance

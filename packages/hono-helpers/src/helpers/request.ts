@@ -1,7 +1,7 @@
-import { redactUrl } from './url'
+import { redactUrl } from './url.js'
 
 import type { Context } from 'hono'
-import type { HonoApp } from '../types'
+import type { HonoApp } from '../types.js'
 
 export interface LogDataRequest {
 	url: string

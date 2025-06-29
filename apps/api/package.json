@@ -4,15 +4,16 @@
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
-	"main": "src/index.ts",
+	"main": "dist/index.js",
 	"scripts": {
 		"better-auth:generate": "pnpm dlx @better-auth/cli@latest generate --config ./better-auth.config.ts --output /home/jose/Documents/workspace/smedrec/smart-medical-records/packages/db/src/schema/auth.ts",
 		"build": "tsc",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"deploy": "run-wrangler-deploy",
-		"dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
-		"dev:vite": "vite --port 8801",
+		"dev:node": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
+		"dev:vite": "vite --port 8802",
+		"dev:wrangler": "run-wrangler-dev",
 		"test": "run-vitest"
 	},
 	"dependencies": {

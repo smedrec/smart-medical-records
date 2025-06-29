@@ -1,4 +1,4 @@
-/*import { ApiError, openApiErrorResponses } from '@/lib/errors/index.js'
+/*import { ApiError, openApiErrorResponses } from '../../../lib/errors/index.js'
 import { createRoute, z } from '@hono/zod-openapi'
 import { eq } from 'drizzle-orm'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
@@ -12,7 +12,7 @@ import {
 	getSmartFhirAccessToken,
 } from '@repo/fhir'
 
-import type { App } from '@/lib/hono/index.js'
+import type { App } from '../../../lib/hono/index.js'
 
 const route = createRoute({
 	tags: ['FHIR'],
