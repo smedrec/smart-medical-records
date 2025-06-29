@@ -1,9 +1,8 @@
-import { parseZodErrorMessage } from '@/lib/utils/zod-error'
+import { parseZodErrorMessage } from '@/lib/utils/zod-error.js'
 import { z } from '@hono/zod-openapi'
-import { env } from 'cloudflare:workers'
 import { HTTPException } from 'hono/http-exception'
 
-import type { HonoEnv } from '@/lib/hono/context'
+import type { HonoEnv } from '@/lib/hono/context.js'
 import type { Context } from 'hono'
 import type { StatusCode } from 'hono/utils/http-status'
 import type { ZodError } from 'zod'
@@ -34,7 +33,7 @@ export function errorSchemaFactory(code: z.ZodEnum<any>) {
 			}),
 			docs: z.string().openapi({
 				description: 'A link to our documentation with more details about this error code',
-				example: `${env.APP_PUBLIC_URL}/docs/api-reference/errors/code/${code._def.values.at(0)}`,
+				example: `${process.env.APP_PUBLIC_URL}/docs/api-reference/errors/code/${code._def.values.at(0)}`,
 			}),
 			message: z
 				.string()
@@ -55,7 +54,7 @@ export const ErrorSchema = z.object({
 		}),
 		docs: z.string().openapi({
 			description: 'A link to our documentation with more details about this error code',
-			example: `${env.APP_PUBLIC_URL}/docs/api-reference/errors/code/BAD_REQUEST`,
+			example: `${process.env.APP_PUBLIC_URL}/docs/api-reference/errors/code/BAD_REQUEST`,
 		}),
 		message: z.string().openapi({ description: 'A human readable explanation of what went wrong' }),
 		requestId: z.string().openapi({
@@ -150,7 +149,7 @@ export function handleZodError(
 			{
 				error: {
 					code: 'BAD_REQUEST',
-					docs: `${env.APP_PUBLIC_URL}/docs/api-reference/errors/code/BAD_REQUEST`,
+					docs: `${process.env.APP_PUBLIC_URL}/docs/api-reference/errors/code/BAD_REQUEST`,
 					message: parseZodErrorMessage(result.error),
 					requestId: c.get('requestId'),
 				},
@@ -179,7 +178,7 @@ export function handleError(err: Error, c: Context<HonoEnv>): Response {
 			{
 				error: {
 					code: err.code,
-					docs: `${env.APP_PUBLIC_URL}/docs/api-reference/errors/code/${err.code}`,
+					docs: `${process.env.APP_PUBLIC_URL}/docs/api-reference/errors/code/${err.code}`,
 					message: err.message,
 					requestId: c.get('requestId'),
 				},
@@ -205,7 +204,7 @@ export function handleError(err: Error, c: Context<HonoEnv>): Response {
 			{
 				error: {
 					code,
-					docs: `${env.APP_PUBLIC_URL}/docs/api-reference/errors/code/${code}`,
+					docs: `${process.env.APP_PUBLIC_URL}/docs/api-reference/errors/code/${code}`,
 					message: err.message,
 					requestId: c.get('requestId'),
 				},
@@ -228,7 +227,7 @@ export function handleError(err: Error, c: Context<HonoEnv>): Response {
 		{
 			error: {
 				code: 'INTERNAL_SERVER_ERROR',
-				docs: `${env.APP_PUBLIC_URL}/docs/api-reference/errors/code/INTERNAL_SERVER_ERROR`,
+				docs: `${process.env.APP_PUBLIC_URL}/docs/api-reference/errors/code/INTERNAL_SERVER_ERROR`,
 				message: err.message ?? 'something unexpected happened',
 				requestId: c.get('requestId'),
 			},
@@ -242,7 +241,7 @@ export function errorResponse(c: Context, code: z.infer<typeof ErrorCode>, messa
 		{
 			error: {
 				code: code,
-				docs: `${env.APP_PUBLIC_URL}/docs/api-reference/errors/code/${code}`,
+				docs: `${process.env.APP_PUBLIC_URL}/docs/api-reference/errors/code/${code}`,
 				message,
 				requestId: c.get('requestId'),
 			},

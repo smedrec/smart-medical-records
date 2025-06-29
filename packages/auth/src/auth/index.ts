@@ -1,7 +1,7 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { admin, apiKey, mcp, oidcProvider, openAPI, organization } from 'better-auth/plugins'
-import { eq } from 'drizzle-orm'
+//import { eq } from 'drizzle-orm'
 import { Redis } from 'ioredis'
 
 import { Audit } from '@repo/audit'
@@ -111,6 +111,15 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
 				`,
 			}
 			await mailer.send(emailDetails)
+			/**await email.send({
+				to: { name: user.name, email: user.email },
+				subject: 'Reset your password',
+				html: `
+					<p>Hi ${user.name},</p>
+					<p>Click the link below to reset your password:</p>
+					<p><a href="${url}">${url}</a></p>
+				`,
+			})*/
 		},
 	},
 	emailVerification: {
@@ -129,6 +138,15 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
 				`,
 			}
 			await mailer.send(emailDetails)
+			/**await email.send({
+				to: { name: user.name, email: user.email },
+				subject: 'Verify your email address',
+				html: `
+					<p>Hi ${user.name},</p>
+					<p>Click the link below to verify your email address:</p>
+					<p><a href="${url}">${url}</a></p>
+				`,
+			})*/
 		},
 	},
 	user: {
@@ -158,6 +176,16 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
 				`,
 				}
 				await mailer.send(emailDetails)
+				/**await email.send({
+					to: { name: user.name, email: newEmail },
+					subject: 'Verify your email change',
+					html: `
+						<p>Hi ${user.name},</p>
+						<p>Click the link below to verify your email change:</p>
+						<p><a href="${url}">${url}</a></p>
+						<p>If you didn't request this change, you can ignore this email.</p>
+					`,
+				})*/
 			},
 		},
 		deleteUser: {
@@ -172,9 +200,19 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
 						<p>Click the link below to verify your account deletion:</p>
 						<p><a href="${url}">${url}</a></p>
 						<p>If you didn't request this deletion, you can ignore this email.</p>
-				`,
+					`,
 				}
 				await mailer.send(emailDetails)
+				/**await email.send({
+					to: { name: user.name, email: user.email },
+					subject: 'Verify your account deletion',
+					html: `
+						<p>Hi ${user.name},</p>
+						<p>Click the link below to verify your account deletion:</p>
+						<p><a href="${url}">${url}</a></p>
+						<p>If you didn't request this deletion, you can ignore this email.</p>
+					`,
+				})*/
 			},
 		},
 	},
@@ -283,9 +321,20 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
             <p>Click the link below to accept:</p>
             <p><a href="${inviteLink}">${inviteLink}</a></p>
             <p>If you have any doubt please send a email to: ${data.inviter.user.email}.</p>
-				`,
+					`,
 				}
 				await mailer.send(emailDetails)
+				/**await email.send({
+					to: { name: '', email: data.email },
+					subject: 'Verify your account deletion',
+					html: `
+						<p>Hi,</p>
+            <p>${data.inviter.user.name} sen you a invite to join the ${data.organization.name} team!
+            <p>Click the link below to accept:</p>
+            <p><a href="${inviteLink}">${inviteLink}</a></p>
+            <p>If you have any doubt please send a email to: ${data.inviter.user.email}.</p>
+					`,
+				})*/
 			},
 			organizationCreation: {
 				disabled: false, // Set to true to disable organization creation

@@ -1,8 +1,8 @@
-import { ApiError, openApiErrorResponses } from '@/lib/errors'
-import { createId } from '@/lib/utils/id'
+import { ApiError, openApiErrorResponses } from '@/lib/errors/index.js'
+import { createId } from '@/lib/utils/id.js'
 import { createRoute, z } from '@hono/zod-openapi'
 
-import type { App } from '@/lib/hono'
+import type { App } from '@/lib/hono/index.js'
 
 const route = createRoute({
 	tags: ['User'],
@@ -70,7 +70,7 @@ export const registerUploadAvatar = (app: App) =>
 
 		const role = session.session.activeOrganizationRole
 
-		const { file } = await c.req.parseBody()
+		/**const { file } = await c.req.parseBody()
 		if (file instanceof File) {
 			const key = createId('avatar')
 			const fileBuffer = await file.arrayBuffer()
@@ -107,5 +107,5 @@ export const registerUploadAvatar = (app: App) =>
 				code: 'BAD_REQUEST',
 				message: `Invalid file type. Only PNG files are allowed for avatar uploads.`,
 			})
-		}
+		}*/
 	})

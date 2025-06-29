@@ -37,7 +37,7 @@ class AuthDb {
 
 		if (!effectivePostgresUrl) {
 			throw new Error(
-				'AuthDb: PostgreSQL connection URL not provided and could not be found in environment variables (AUDIT_DB_URL).'
+				'AuthDb: PostgreSQL connection URL not provided and could not be found in environment variables (AUTH_DB_URL).'
 			)
 		}
 		this.client = postgres(effectivePostgresUrl)

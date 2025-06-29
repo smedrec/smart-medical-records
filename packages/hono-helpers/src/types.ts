@@ -80,5 +80,5 @@ export interface HonoApp {
 export type SharedAppContext = {
 	var: SharedHonoVariables
 	env: SharedHonoEnv
-	executionCtx: Pick<ExecutionContext, 'waitUntil'>
+	//executionCtx: Pick<ExecutionContext, 'waitUntil'>
 }

@@ -1,8 +1,7 @@
-import { ApiError, openApiErrorResponses } from '@/lib/errors'
+/*import { ApiError, openApiErrorResponses } from '@/lib/errors/index.js'
 import { createRoute, z } from '@hono/zod-openapi'
 import { eq } from 'drizzle-orm'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
-import fetch, { Headers, Request } from 'node-fetch'
 
 import { smartFhirClient } from '@repo/auth-db'
 import {
@@ -13,7 +12,7 @@ import {
 	getSmartFhirAccessToken,
 } from '@repo/fhir'
 
-import type { App } from '@/lib/hono'
+import type { App } from '@/lib/hono/index.js'
 
 const route = createRoute({
 	tags: ['FHIR'],
@@ -122,7 +121,7 @@ export const registerFhirCallback = (app: App) =>
 			console.log(`REQUEST: ${request.method} ${raw.url}`)
 			for (const [key, value] of request.headers.entries()) {
 				console.log(`  ${key}: ${value}`)
-			}*/
+			}*/ /**
 			const accessToken = await getSmartFhirAccessToken({
 				request: c.req.raw, // Pass the raw Request object
 				clientId: smartFhirClientConfig[0].clientId,
@@ -188,3 +187,4 @@ export const registerFhirCallback = (app: App) =>
 			})
 		}
 	})
+*/

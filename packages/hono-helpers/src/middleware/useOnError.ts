@@ -1,12 +1,12 @@
 import { HTTPException } from 'hono/http-exception'
 import { httpStatus } from 'http-codex/status'
 
-import { logger } from '../helpers/logger'
+import { logger } from '../helpers/logger.js'
 
 import type { Context } from 'hono'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
-import type { APIError } from '../helpers/errors'
-import type { HonoApp } from '../types'
+import type { APIError } from '../helpers/errors.js'
+import type { HonoApp } from '../types.js'
 
 /** Handles typical onError hooks */
 export function useOnError<T extends HonoApp>() {

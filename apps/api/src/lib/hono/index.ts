@@ -2,13 +2,13 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import { prettyJSON } from 'hono/pretty-json'
 
 import { auth } from '@repo/auth'
-import { getActiveOrganization } from '@repo/auth/src/better-auth/functions.js'
+import { getActiveOrganization } from '@repo/auth/src/auth/functions.js'
 import { useNotFound } from '@repo/hono-helpers'
 
-import { handleError, handleZodError } from '../errors'
+import { handleError, handleZodError } from '../errors/index.js'
 
 import type { Context as GenericContext } from 'hono'
-import type { HonoEnv } from './context'
+import type { HonoEnv } from './context.js'
 
 //import { sentry } from '@hono/sentry';
 
@@ -30,7 +30,7 @@ export function newApp() {
 			'location',
 			c.req.header('True-Client-IP') ??
 				c.req.header('CF-Connecting-IP') ??
-				c.req.raw?.cf?.colo ??
+				//c.req.raw?.cf?.colo ??
 				''
 		)
 		c.set('userAgent', c.req.header('User-Agent'))

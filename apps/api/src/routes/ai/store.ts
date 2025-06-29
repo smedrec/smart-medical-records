@@ -3,12 +3,12 @@ import { MDocument } from '@mastra/rag'
 import { embedMany } from 'ai'
 import { ollama } from 'ollama-ai-provider'
 
-import { aiClient } from '../../lib/ai'
-import { ApiError, openApiErrorResponses } from '../../lib/errors'
-import { idVectorSchema } from '../../shared/types'
-import { AiStoreSchema } from './types'
+import { aiClient } from '../../lib/ai/index.js'
+import { ApiError, openApiErrorResponses } from '../../lib/errors/index.js'
+import { idVectorSchema } from '../../shared/types.js'
+import { AiStoreSchema } from './types.js'
 
-import type { App } from '../../lib/hono'
+import type { App } from '../../lib/hono/index.js'
 
 const route = createRoute({
 	tags: ['AI'],

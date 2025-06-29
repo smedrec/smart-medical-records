@@ -1,10 +1,10 @@
 import { createRoute, z } from '@hono/zod-openapi'
 
-import { aiClient } from '../../lib/ai'
-import { ApiError, openApiErrorResponses } from '../../lib/errors'
-import { idVectorSchema } from '../../shared/types'
+import { aiClient } from '../../lib/ai/index.js'
+import { ApiError, openApiErrorResponses } from '../../lib/errors/index.js'
+import { idVectorSchema } from '../../shared/types.js'
 
-import type { App } from '../../lib/hono'
+import type { App } from '../../lib/hono/index.js'
 
 const route = createRoute({
 	tags: ['AI'],

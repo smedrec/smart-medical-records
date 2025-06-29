@@ -1,11 +1,11 @@
-import { ApiError, openApiErrorResponses } from '@/lib/errors'
-import { idParamsSchema } from '@/shared/types'
+import { ApiError, openApiErrorResponses } from '@/lib/errors/index.js'
+import { idParamsSchema } from '@/shared/types.js'
 import { createRoute, z } from '@hono/zod-openapi'
 
 import { authClient } from '@repo/auth'
 import { activeOrganization } from '@repo/auth-db'
 
-import type { App } from '@/lib/hono'
+import type { App } from '@/lib/hono/index.js'
 
 const route = createRoute({
 	tags: ['Organization'],

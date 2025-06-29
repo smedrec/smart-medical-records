@@ -1,4 +1,4 @@
-import { Email, WorkerMailer } from 'worker-mailer'
+/**import { Email, WorkerMailer } from 'worker-mailer'
 
 import type { WorkerMailerOptions } from 'worker-mailer'
 import type { MailerProvider, MailerSendOptions } from './base.js'
@@ -49,3 +49,4 @@ export class WorkersMailer implements MailerProvider {
 		}
 	}
 }
+*/

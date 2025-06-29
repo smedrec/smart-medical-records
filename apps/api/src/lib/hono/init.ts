@@ -1,17 +1,18 @@
 //import { redis } from "../db/redis";
-import { cerbos } from '@/lib/cerbos'
+import { cerbos } from '@/lib/cerbos/index.js'
 import { createId } from '@paralleldrive/cuid2'
 
 import { Audit } from '@repo/audit'
 import { auth } from '@repo/auth'
 import { AuthDb } from '@repo/auth-db'
-import { fhir } from '@repo/fhir'
 
-import { ConsoleLogger } from '../logs'
+//import { fhir } from '@repo/fhir'
+
+import { ConsoleLogger } from '../logs/index.js'
 
 import type { MiddlewareHandler } from 'hono'
 //import {initCache} from "../cache";
-import type { HonoEnv } from '../hono/context'
+import type { HonoEnv } from '../hono/context.js'
 
 /**
  * These maps persist between worker executions and are used for caching
@@ -75,7 +76,7 @@ export function init(): MiddlewareHandler<HonoEnv> {
 		c.set('services', {
 			auth,
 			cerbos,
-			fhir,
+			//fhir,
 			db,
 			//redis,
 			audit,

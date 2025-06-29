@@ -1,2 +1,2 @@
-export * from './http'
-export * from './openapi_responses'
+export * from './http.js'
+export * from './openapi_responses.js'

@@ -1,8 +1,8 @@
 import { httpStatus } from 'http-codex/status'
 
 import type { Context } from 'hono'
-import type { APIError } from '../helpers/errors'
-import type { HonoApp } from '../types'
+import type { APIError } from '../helpers/errors.js'
+import type { HonoApp } from '../types.js'
 
 /** Handles typical notFound hooks */
 export function useNotFound<T extends HonoApp>() {

@@ -1,7 +1,7 @@
-import { Log } from './log'
+import { Log } from './log.js'
 
-import type { Fields, Logger } from './interface'
-import type { LogSchema } from './log'
+import type { Fields, Logger } from './interface.js'
+import type { LogSchema } from './log.js'
 
 export class ConsoleLogger implements Logger {
 	private requestId: string

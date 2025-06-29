@@ -1,9 +1,23 @@
 {
-	"extends": "@repo/typescript-config/workers.json",
+	"extends": "@repo/typescript-config/base.json",
 	"compilerOptions": {
+		"outDir": "./dist",
+		"rootDir": "src",
+		"noEmit": false, // Override the inherited noEmit: true
+		"module": "NodeNext", // or "CommonJS" if you prefer, but NodeNext is more modern for ESModules
+		"moduleResolution": "NodeNext",
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"]
 		}
-	}
+	},
+	"exclude": [
+		"node_modules/",
+		"dist/",
+		"eslint.config.ts",
+		"vitest.config.ts",
+		"vite.config.ts",
+		"drizzle-dev.config.ts",
+		"better-auth.config.ts"
+	]
 }

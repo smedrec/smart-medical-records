@@ -1,22 +1,18 @@
 {
 	"name": "api",
-	"version": "6.1.3",
+	"version": "0.1.0",
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
+	"main": "src/index.ts",
 	"scripts": {
 		"better-auth:generate": "pnpm dlx @better-auth/cli@latest generate --config ./better-auth.config.ts --output /home/jose/Documents/workspace/smedrec/smart-medical-records/packages/db/src/schema/auth.ts",
-		"build:wrangler": "run-wrangler-build",
+		"build": "tsc",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"deploy": "run-wrangler-deploy",
-		"dev": "run-wrangler-dev",
-		"fix:workers-types": "run-wrangler-types",
-		"migrate:custom": "drizzle-kit generate --custom --config=drizzle-dev.config.ts",
-		"migrate:dev": "wrangler d1 migrations apply DB --local",
-		"migrate:new": "drizzle-kit generate --config=drizzle-dev.config.ts",
-		"migrate:prod": "wrangler d1 migrations apply DB --remote",
-		"studio": "drizzle-kit studio --config=drizzle-dev.config.ts",
+		"dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
+		"dev:vite": "vite --port 8801",
 		"test": "run-vitest"
 	},
 	"dependencies": {
@@ -28,9 +24,7 @@
 		"@repo/audit": "workspace:*",
 		"@repo/auth": "workspace:*",
 		"@repo/auth-db": "workspace:*",
-		"@repo/fhir": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
-		"@solarahealth/fhir-r4": "1.2.0",
 		"ai": "4.3.16",
 		"better-auth": "1.2.12",
 		"drizzle-orm": "0.44.2",
@@ -42,12 +36,13 @@
 		"zod": "3.25.67"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.47",
+		"@hono/vite-dev-server": "^0.20.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "24.0.7",
 		"drizzle-kit": "0.31.4",
+		"vite": "7.0.0",
 		"vitest": "3.2.4",
 		"wrangler": "4.22.0"
 	}

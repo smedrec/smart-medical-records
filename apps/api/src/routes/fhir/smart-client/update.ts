@@ -1,12 +1,12 @@
-import { ApiError, openApiErrorResponses } from '@/lib/errors'
+import { ApiError, openApiErrorResponses } from '@/lib/errors/index.js'
 import { createRoute } from '@hono/zod-openapi'
 import { eq } from 'drizzle-orm'
 
 import { smartFhirClient } from '@repo/auth-db'
 
-import { AssistantSelectSchema, SmartFhirClientPatchSchema } from './types'
+import { AssistantSelectSchema, SmartFhirClientPatchSchema } from './types.js'
 
-import type { App } from '@/lib/hono'
+import type { App } from '@/lib/hono/index.js'
 import type { z } from '@hono/zod-openapi'
 
 const route = createRoute({

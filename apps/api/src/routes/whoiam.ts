@@ -1,8 +1,8 @@
 import { createRoute, z } from '@hono/zod-openapi'
 
-import { ApiError, openApiErrorResponses } from '../lib/errors'
+import { ApiError, openApiErrorResponses } from '../lib/errors/index.js'
 
-import type { App } from '../lib/hono'
+import type { App } from '../lib/hono/index.js'
 
 const route = createRoute({
 	tags: ['api'],
