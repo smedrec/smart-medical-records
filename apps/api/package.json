@@ -11,8 +11,8 @@
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"deploy": "run-wrangler-deploy",
-		"dev:node": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
-		"dev:vite": "vite --port 8802",
+		"dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
+		"dev:vite": "vite --port 8801",
 		"dev:wrangler": "run-wrangler-dev",
 		"test": "run-vitest"
 	},

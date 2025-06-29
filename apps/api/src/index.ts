@@ -1,11 +1,11 @@
 //import { zEnv } from '@/lib/env.js'
-//import { ConsoleLogger } from '@/lib/logs/index.js'
 //import { registerFhirCallback } from '@/routes/fhir/callback.js'
 //import { registerFhirLogin } from '@/routes/fhir/login.js'
-//import { registerSmartFhirClientCreate } from '@/routes/fhir/smart-client/create.js'
-//import { registerSmartFhirClientDelete } from '@/routes/fhir/smart-client/delete.js'
-//import { registerSmartFhirClientFind } from '@/routes/fhir/smart-client/find.js'
-//import { registerSmartFhirClientUpdate } from '@/routes/fhir/smart-client/update.js'
+import { registerSmartFhirClientCreate } from './routes/fhir/smart-client/create.js'
+import { registerSmartFhirClientDelete } from './routes/fhir/smart-client/delete.js'
+import { registerSmartFhirClientFind } from './routes/fhir/smart-client/find.js'
+import { registerSmartFhirClientUpdate } from './routes/fhir/smart-client/update.js'
+
 //import { registerUploadAvatar } from '@/routes/user/uploadAvatar.js'
 import 'dotenv/config'
 
@@ -17,14 +17,14 @@ import { auth } from '@repo/auth'
 import { newApp } from './lib/hono/index.js'
 import { authDbInstance, init } from './lib/hono/init.js'
 import { nodeEnv } from './lib/hono/node-env.js'
+import { logger } from './lib/logs/middleware.js'
 // AI routes
-/**import { registerAiChat } from './routes/ai/chat.js'
+import { registerAiChat } from './routes/ai/chat.js'
 import { registerAiCreateIndex } from './routes/ai/create-index.js'
 import { registerAiDeleteIndex } from './routes/ai/delete-index.js'
 import { registerAiDetailsIndex } from './routes/ai/details-index.js'
 import { registerAiIndexes } from './routes/ai/indexes.js'
 import { registerAiStore } from './routes/ai/store.js'
-import { registerWhoiam } from './routes/whoiam.js'*/
 import { registerLiveness } from './routes/liveness.js'
 
 import type { Env } from '@/lib/hono/context.js'
@@ -36,6 +36,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.use('*', init())
+app.use(logger())
 
 // cors
 app.use('*', (c, next) => {
@@ -59,9 +60,8 @@ app.on(['GET', 'POST'], '/auth/*', (c) => {
 })
 
 registerLiveness(app)
-/**registerWhoiam(app)
 
-registerUploadAvatar(app)
+//registerUploadAvatar(app)
 // FHIR routes
 //registerFhirLogin(app)
 //registerFhirCallback(app)
@@ -75,7 +75,7 @@ registerAiStore(app)
 registerAiCreateIndex(app)
 registerAiDeleteIndex(app)
 registerAiDetailsIndex(app)
-registerAiIndexes(app)*/
+registerAiIndexes(app)
 
 const server = serve({
 	fetch: app.fetch,
