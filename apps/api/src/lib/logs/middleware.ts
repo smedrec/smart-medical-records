@@ -98,7 +98,7 @@ export const logger = (fn: PrintFunc = console.log): MiddlewareHandler => {
 
 		await next()
 
-		await log(fn, LogPrefix.Outgoing, method, path, c.res.status, time(start))
+		//await log(fn, LogPrefix.Outgoing, method, path, c.res.status, time(start))
 		new ConsoleLogger({
 			requestId: c.get('requestId'),
 			environment: c.env.ENVIRONMENT,
