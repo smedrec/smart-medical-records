@@ -48,13 +48,18 @@ export function newApp() {
 		}
 
 		// FIXME - solve this session type structure
-		if (c.req.header('x-api-key')) {
+		/**if (c.req.header('x-api-key')) {
 			const organization = await getActiveOrganization(session.session?.userId)
 			session.session.activeOrganizationId = organization?.organizationId
 			session.session.activeOrganizationRole = organization?.role ?? null
-		}
+		}*/
 
-		c.set('session', session)
+		c.set('session', {
+			...session.session,
+			smartClientAccessToken: (session.session as any).smartClientAccessToken ?? null,
+			activeOrganizationId: (session.session as any).activeOrganizationId ?? null,
+			activeOrganizationRole: (session.session as any).activeOrganizationRole ?? null,
+		})
 
 		return next()
 	})

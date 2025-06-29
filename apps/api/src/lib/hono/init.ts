@@ -58,7 +58,7 @@ export function init(): MiddlewareHandler<HonoEnv> {
 
 		const audit = new Audit('audit', c.env.AUDIT_REDIS_URL)
 
-		const authDbInstance = new AuthDb()
+		const authDbInstance = new AuthDb(c.env.AUTH_DB_URL)
 
 		// Check the database connection
 		const isConnected = await authDbInstance.checkAuthDbConnection()

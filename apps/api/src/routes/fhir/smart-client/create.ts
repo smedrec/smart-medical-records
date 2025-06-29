@@ -56,8 +56,8 @@ export const registerSmartFhirClientCreate = (app: App) =>
 
 		const canCreateClient = await cerbos.isAllowed({
 			principal: {
-				id: session.session.userId,
-				roles: [session.session.activeOrganizationRole as string],
+				id: session.userId,
+				roles: [session.activeOrganizationRole as string],
 				attributes: {},
 			},
 			resource: {
@@ -78,8 +78,8 @@ export const registerSmartFhirClientCreate = (app: App) =>
 		const rawData = c.req.valid('json')
 		const data = {
 			...rawData,
-			organizationId: session.session.activeOrganizationId as string,
-			createdBy: session.session.userId,
+			organizationId: session.activeOrganizationId as string,
+			createdBy: session.userId,
 		}
 
 		const result = await db.insert(smartFhirClient).values(data).returning()
@@ -87,5 +87,16 @@ export const registerSmartFhirClientCreate = (app: App) =>
 		if (result.length < 1)
 			throw new ApiError({ code: 'INTERNAL_SERVER_ERROR', message: 'A machine readable error.' })
 
-		return c.json(result[0], 201)
+		// Ensure redirectUri and launchToken are always strings (never null)
+		const response = {
+			...result[0],
+			redirectUri: result[0].redirectUri ?? '',
+			launchToken: result[0].launchToken ?? '',
+			provider: result[0].provider as 'demo' | 'azure' | 'aws' | 'gcp',
+			environment: result[0].environment as 'development' | 'production',
+			updatedBy: result[0].updatedBy ?? undefined,
+			updatedAt: result[0].updatedAt ?? undefined,
+		}
+
+		return c.json(response, 201)
 	})

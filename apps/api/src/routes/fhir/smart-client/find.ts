@@ -45,8 +45,8 @@ export const registerSmartFhirClientFind = (app: App) =>
 
 		const canReadClient = await cerbos.isAllowed({
 			principal: {
-				id: session.session.userId,
-				roles: [session.session.activeOrganizationRole as string],
+				id: session.userId,
+				roles: [session.activeOrganizationRole as string],
 				attributes: {},
 			},
 			resource: {
@@ -67,7 +67,7 @@ export const registerSmartFhirClientFind = (app: App) =>
 		const result = await db
 			.select()
 			.from(smartFhirClient)
-			.where(eq(smartFhirClient.organizationId, session.session.activeOrganizationId as string))
+			.where(eq(smartFhirClient.organizationId, session.activeOrganizationId as string))
 
 		if (result.length < 1)
 			throw new ApiError({
@@ -75,5 +75,25 @@ export const registerSmartFhirClientFind = (app: App) =>
 				message: 'The organization does not have the smart fhir client configured.',
 			})
 
-		return c.json(result[0], 200)
+		// Ensure the response matches the OpenAPI schema types
+		const response = {
+			...result[0],
+			redirectUri: result[0].redirectUri ?? '',
+			launchToken: result[0].launchToken ?? '',
+			provider: result[0].provider as 'demo' | 'azure' | 'aws' | 'gcp',
+			environment: result[0].environment as 'development' | 'production',
+			updatedBy: result[0].updatedBy ?? undefined,
+			updatedAt: result[0].updatedAt
+				? typeof result[0].updatedAt === 'string'
+					? result[0].updatedAt
+					: result[0].updatedAt.toISOString()
+				: undefined,
+			createdAt: result[0].createdAt
+				? typeof result[0].createdAt === 'string'
+					? result[0].createdAt
+					: result[0].createdAt.toISOString()
+				: undefined,
+		}
+
+		return c.json(response, 200)
 	})

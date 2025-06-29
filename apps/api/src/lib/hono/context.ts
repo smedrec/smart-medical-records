@@ -33,10 +33,7 @@ export type Variables = SharedHonoVariables & {
 	isolateCreatedAt: number
 	requestId: string
 	requestStartedAt: number
-	session: {
-		session: Session
-		user: User
-	} | null
+	session: Session | null
 	services: ServiceContext
 	/**
 	 * IP address or region information

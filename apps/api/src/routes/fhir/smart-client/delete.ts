@@ -46,8 +46,8 @@ export const registerSmartFhirClientDelete = (app: App) =>
 
 		const canDeleteClient = await cerbos.isAllowed({
 			principal: {
-				id: session.session.userId,
-				roles: [session.session.activeOrganizationRole as string],
+				id: session.userId,
+				roles: [session.activeOrganizationRole as string],
 				attributes: {},
 			},
 			resource: {
@@ -67,7 +67,7 @@ export const registerSmartFhirClientDelete = (app: App) =>
 
 		const result = await db
 			.delete(smartFhirClient)
-			.where(eq(smartFhirClient.organizationId, session.session.activeOrganizationId as string))
+			.where(eq(smartFhirClient.organizationId, session.activeOrganizationId as string))
 			.returning()
 
 		if (result.length < 1)

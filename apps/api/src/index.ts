@@ -7,6 +7,8 @@
 //import { registerSmartFhirClientFind } from '@/routes/fhir/smart-client/find.js'
 //import { registerSmartFhirClientUpdate } from '@/routes/fhir/smart-client/update.js'
 //import { registerUploadAvatar } from '@/routes/user/uploadAvatar.js'
+import 'dotenv/config'
+
 import { cors } from 'hono/cors'
 
 import { auth } from '@repo/auth'

@@ -35,7 +35,9 @@ const route = createRoute({
 			content: {
 				'application/json': {
 					schema: z.object({
-						success: z.boolean().openapi({}),
+						dimension: z.number().openapi({}),
+						count: z.number().openapi({}),
+						metric: z.string().openapi({}),
 					}),
 				},
 			},

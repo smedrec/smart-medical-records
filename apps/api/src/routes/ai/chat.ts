@@ -99,15 +99,29 @@ export const registerAiChat = (app: App) =>
 				},
 			})
 			// Extract the assistant's text from the response
-			/**const lastMessage = Array.isArray(response.response.messages)
-				? response.response.messages.find((msg: any) => msg.role === 'assistant')
+			type Message = {
+				role: string
+				content: string | { text?: string } | Array<{ text?: string }>
+			}
+
+			const lastMessage = Array.isArray(response.response.messages)
+				? (response.response.messages as Message[])
+						.slice()
+						.reverse()
+						.find((msg) => msg.role === 'assistant')
 				: null
 			const text =
 				typeof lastMessage?.content === 'string'
 					? lastMessage.content
-					: (lastMessage?.content?.text ?? '')*/
+					: Array.isArray(lastMessage?.content)
+						? (lastMessage.content as Array<{ text?: string }>)
+								.map((part) => (typeof part.text === 'string' ? part.text : ''))
+								.join(' ')
+						: typeof (lastMessage?.content as { text?: string })?.text === 'string'
+							? (lastMessage?.content as { text?: string }).text
+							: ''
 
-			return c.json(response.response.messages, 200)
+			return c.json({ text: String(text) }, 200)
 		} catch (error) {
 			console.error('Development error:', error)
 			throw new ApiError({ code: 'INTERNAL_SERVER_ERROR', message: error as string })

@@ -21,7 +21,7 @@ const route = createRoute({
 			content: {
 				'application/json': {
 					schema: z.object({
-						success: z.boolean().openapi({}),
+						indexes: z.array(z.string()).openapi({}),
 					}),
 				},
 			},

@@ -53,13 +53,13 @@ export const registerOrganizationSetActive = (app: App) =>
 			const result = await db
 				.insert(activeOrganization)
 				.values({
-					userId: session.session.userId,
+					userId: session.userId,
 					organizationId: id,
-					role: session.session.activeOrganizationRole!,
+					role: session.activeOrganizationRole!,
 				})
 				.onConflictDoUpdate({
 					target: activeOrganization.userId,
-					set: { organizationId: id, role: session.session.activeOrganizationRole! },
+					set: { organizationId: id, role: session.activeOrganizationRole! },
 				})
 				.returning()
 

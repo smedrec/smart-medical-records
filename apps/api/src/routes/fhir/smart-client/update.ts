@@ -44,7 +44,7 @@ export type SmartFhirClientUpdateRequest = z.infer<
 	(typeof route.request.body.content)['application/json']['schema']
 >
 export type SmartFhirClientUpdateResponse = z.infer<
-	(typeof route.responses)[201]['content']['application/json']['schema']
+	(typeof route.responses)[200]['content']['application/json']['schema']
 >
 
 export const registerSmartFhirClientUpdate = (app: App) =>
@@ -57,8 +57,8 @@ export const registerSmartFhirClientUpdate = (app: App) =>
 
 		const canCreateClient = await cerbos.isAllowed({
 			principal: {
-				id: session.session.userId,
-				roles: [session.session.activeOrganizationRole as string],
+				id: session.userId,
+				roles: [session.activeOrganizationRole as string],
 				attributes: {},
 			},
 			resource: {
@@ -79,14 +79,14 @@ export const registerSmartFhirClientUpdate = (app: App) =>
 		const rawData = c.req.valid('json')
 		const data = {
 			...rawData,
-			updateBy: session.session.userId,
+			updateBy: session.userId,
 			updateAt: new Date(),
 		}
 
 		const result = await db
 			.update(smartFhirClient)
 			.set(data)
-			.where(eq(smartFhirClient.organizationId, session.session.activeOrganizationId as string))
+			.where(eq(smartFhirClient.organizationId, session.activeOrganizationId as string))
 			.returning()
 
 		if (result.length < 1)
@@ -95,5 +95,25 @@ export const registerSmartFhirClientUpdate = (app: App) =>
 				message: 'A machine readable error when updating the smart fhir client.',
 			})
 
-		return c.json(result[0], 200)
+		// Ensure redirectUri and launchToken are always strings (never null)
+		const response = {
+			...result[0],
+			redirectUri: result[0].redirectUri ?? '',
+			launchToken: result[0].launchToken ?? '',
+			provider: result[0].provider as 'demo' | 'azure' | 'aws' | 'gcp',
+			environment: result[0].environment as 'development' | 'production',
+			updatedBy: result[0].updatedBy ?? undefined,
+			updatedAt: result[0].updatedAt
+				? typeof result[0].updatedAt === 'string'
+					? result[0].updatedAt
+					: result[0].updatedAt.toISOString()
+				: undefined,
+			createdAt: result[0].createdAt
+				? typeof result[0].createdAt === 'string'
+					? result[0].createdAt
+					: result[0].createdAt.toISOString()
+				: undefined,
+		}
+
+		return c.json(response, 200)
 	})

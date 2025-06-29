@@ -64,6 +64,12 @@ redis.on('error', (err) => {
 const authDbService = new AuthDb()
 const db = authDbService.getDrizzleInstance()
 
+if (await authDbService.checkAuthDbConnection()) {
+	console.info('🟢 Connected to Postgres for Better Auth service.')
+} else {
+	console.error('🔴 Postgres connection error for Better Auth service')
+}
+
 const mailerConfig: NodeMailerSmtpOptions = {
 	host: config.SMTP_HOST,
 	port: 2525, // Or 465 for SSL
