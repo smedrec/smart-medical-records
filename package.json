@@ -51,8 +51,5 @@
 		"patchedDependencies": {
 			"fhirclient@2.6.0": "patches/fhirclient@2.6.0.patch"
 		}
-	},
-	"dependencies": {
-		"ioredis": "5.6.1"
 	}
 }
