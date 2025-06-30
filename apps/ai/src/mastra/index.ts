@@ -18,6 +18,7 @@ import { patientReportAgent } from './agents/patient-report-agent'
 import { fhirMCPServer } from './mcp'
 import { opensearch } from './stores/opensearch'
 import { pgStorage, pgVector } from './stores/pgvector'
+import { newOrganizationWorkflow } from './workflows/new-organization-workflow'
 import { newUserWorkflow } from './workflows/new-user-workflow'
 import { weatherWorkflow } from './workflows/weather-workflow'
 
@@ -246,7 +247,7 @@ export const mastra = new Mastra({
 			}),
 		],
 	},
-	workflows: { newUserWorkflow },
+	workflows: { newUserWorkflow, newOrganizationWorkflow },
 	agents: { assistantAgent, patientReportAgent },
 	vectors: { pgVector, opensearch },
 	//storage: new D1Store({
