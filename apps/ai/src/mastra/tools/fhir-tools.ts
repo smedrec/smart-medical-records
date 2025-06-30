@@ -18,6 +18,7 @@ export type McpFhirToolCallContext = {
 
 const defaultPrincipalId = 'anonymous'
 const defaultRoles = ['anonymous']
+const defaultOrganization = 'anonymous'
 
 // -- FHIR Resource Tools
 
@@ -45,11 +46,13 @@ export const fhirResourceReadTool = createTool({
 		const principalId = fhirSessionData.userId || defaultPrincipalId
 		const roles = fhirSessionData.roles || defaultRoles
 		const principal = { id: principalId, roles: roles, attributes: {} }
+		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganization
 		const cerbosResource = { kind: resourceType, id: resourceId, attributes: {} }
 		const cerbosAction = 'read'
 
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `${toolName}Attempt`,
 			targetResourceType: resourceType,
 			targetResourceId: resourceId,
@@ -77,6 +80,7 @@ export const fhirResourceReadTool = createTool({
 			const outcomeDescription = `Forbidden: User ${principalId} with roles [${roles.join(', ')}] not authorized to perform '${cerbosAction}' on ${cerbosResource.kind}/${cerbosResource.id}.`
 			await audit.log({
 				principalId,
+				organizationId,
 				action: `cerbos:${cerbosAction}`,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -87,6 +91,7 @@ export const fhirResourceReadTool = createTool({
 		}
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `cerbos:${cerbosAction}`,
 			targetResourceType: resourceType,
 			targetResourceId: resourceId,
@@ -103,6 +108,7 @@ export const fhirResourceReadTool = createTool({
 				const outcomeDescription = `FHIR ${resourceType} read failed: Status ${response.status}`
 				await audit.log({
 					principalId,
+					organizationId,
 					action: toolName,
 					targetResourceType: resourceType,
 					targetResourceId: resourceId,
@@ -121,6 +127,7 @@ export const fhirResourceReadTool = createTool({
 			}
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -138,6 +145,7 @@ export const fhirResourceReadTool = createTool({
 		} catch (e: any) {
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -170,9 +178,11 @@ export const fhirResourceSearchTool = createTool({
 		const resourceType = context.resourceType
 		const principalId = fhirSessionData.userId || defaultPrincipalId
 		const roles = fhirSessionData.roles || defaultRoles
+		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganization
 
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `${toolName}Attempt`,
 			targetResourceType: resourceType,
 			status: 'attempt',
@@ -182,6 +192,7 @@ export const fhirResourceSearchTool = createTool({
 		if (!fhirClient) {
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				status: 'failure',
@@ -202,6 +213,7 @@ export const fhirResourceSearchTool = createTool({
 			const desc = `Forbidden to ${cerbosAction} ${resourceType}`
 			await audit.log({
 				principalId,
+				organizationId,
 				action: `cerbos:${cerbosAction}`,
 				targetResourceType: resourceType,
 				status: 'failure',
@@ -211,6 +223,7 @@ export const fhirResourceSearchTool = createTool({
 		}
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `cerbos:${cerbosAction}`,
 			targetResourceType: resourceType,
 			status: 'success',
@@ -224,6 +237,7 @@ export const fhirResourceSearchTool = createTool({
 				const desc = `FHIR ${resourceType} search failed: Status ${response.status}`
 				await audit.log({
 					principalId,
+					organizationId,
 					action: toolName,
 					targetResourceType: resourceType,
 					status: 'failure',
@@ -236,6 +250,7 @@ export const fhirResourceSearchTool = createTool({
 			}
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				status: 'success',
@@ -251,6 +266,7 @@ export const fhirResourceSearchTool = createTool({
 		} catch (e: any) {
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				status: 'failure',
@@ -280,9 +296,11 @@ export const fhirResourceCreateTool = createTool({
 		const resourceType = context.resourceType
 		const principalId = fhirSessionData.userId || defaultPrincipalId
 		const roles = fhirSessionData.roles || defaultRoles
+		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganization
 
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `${toolName}Attempt`,
 			targetResourceType: resourceType,
 			status: 'attempt',
@@ -291,6 +309,7 @@ export const fhirResourceCreateTool = createTool({
 		if (!fhirClient) {
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				status: 'failure',
@@ -312,6 +331,7 @@ export const fhirResourceCreateTool = createTool({
 			const desc = `Forbidden to ${cerbosAction} ${resourceType}`
 			await audit.log({
 				principalId,
+				organizationId,
 				action: `cerbos:${cerbosAction}`,
 				targetResourceType: resourceType,
 				status: 'failure',
@@ -322,6 +342,7 @@ export const fhirResourceCreateTool = createTool({
 
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `cerbos:${cerbosAction}`,
 			targetResourceType: resourceType,
 			status: 'success',
@@ -337,6 +358,7 @@ export const fhirResourceCreateTool = createTool({
 				const desc = `FHIR ${resourceType} create failed: Status ${response.status}`
 				await audit.log({
 					principalId,
+					organizationId,
 					action: toolName,
 					targetResourceType: resourceType,
 					status: 'failure',
@@ -354,6 +376,7 @@ export const fhirResourceCreateTool = createTool({
 			}
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				targetResourceId: data.id,
@@ -370,6 +393,7 @@ export const fhirResourceCreateTool = createTool({
 		} catch (e: any) {
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				status: 'failure',
@@ -400,10 +424,12 @@ export const fhirResourceUpdateTool = createTool({
 		const resourceType = context.resourceType
 		const resourceId = context.id
 		const principalId = fhirSessionData.userId || defaultPrincipalId
+		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganization
 		const roles = fhirSessionData.roles || defaultRoles
 
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `${toolName}Attempt`,
 			targetResourceType: resourceType,
 			targetResourceId: resourceId,
@@ -412,6 +438,7 @@ export const fhirResourceUpdateTool = createTool({
 		if (!fhirClient) {
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -432,6 +459,7 @@ export const fhirResourceUpdateTool = createTool({
 			const desc = `Forbidden to ${cerbosAction} ${resourceType}/${resourceId}`
 			await audit.log({
 				principalId,
+				organizationId,
 				action: `cerbos:${cerbosAction}`,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -442,6 +470,7 @@ export const fhirResourceUpdateTool = createTool({
 		}
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `cerbos:${cerbosAction}`,
 			targetResourceType: resourceType,
 			targetResourceId: resourceId,
@@ -458,6 +487,7 @@ export const fhirResourceUpdateTool = createTool({
 				const desc = `FHIR ${resourceType} update failed: Status ${response.status}`
 				await audit.log({
 					principalId,
+					organizationId,
 					action: toolName,
 					targetResourceType: resourceType,
 					targetResourceId: resourceId,
@@ -476,6 +506,7 @@ export const fhirResourceUpdateTool = createTool({
 			}
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -492,6 +523,7 @@ export const fhirResourceUpdateTool = createTool({
 		} catch (e: any) {
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -527,10 +559,12 @@ export const fhirResourceValidateTool = createTool({
 		const resourceType = context.resourceType
 		const resourceId = context.id || 'validate'
 		const principalId = fhirSessionData.userId || defaultPrincipalId
+		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganization
 		const roles = fhirSessionData.roles || defaultRoles
 
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `${toolName}Attempt`,
 			targetResourceType: resourceType,
 			targetResourceId: resourceId,
@@ -539,6 +573,7 @@ export const fhirResourceValidateTool = createTool({
 		if (!fhirClient) {
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -559,6 +594,7 @@ export const fhirResourceValidateTool = createTool({
 			const desc = `Forbidden to ${cerbosAction} ${resourceType}/$validate`
 			await audit.log({
 				principalId,
+				organizationId,
 				action: `cerbos:${cerbosAction}`,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -569,6 +605,7 @@ export const fhirResourceValidateTool = createTool({
 		}
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `cerbos:${cerbosAction}`,
 			targetResourceType: resourceType,
 			targetResourceId: resourceId,
@@ -584,6 +621,7 @@ export const fhirResourceValidateTool = createTool({
 				const desc = `FHIR ${resourceType} validate failed: Status ${response.status}`
 				await audit.log({
 					principalId,
+					organizationId,
 					action: toolName,
 					targetResourceType: resourceType,
 					targetResourceId: resourceId,
@@ -602,6 +640,7 @@ export const fhirResourceValidateTool = createTool({
 			}
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -618,6 +657,7 @@ export const fhirResourceValidateTool = createTool({
 		} catch (e: any) {
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -648,6 +688,7 @@ export const fhirResourceDeleteTool = createTool({
 		const resourceType = context.resourceType
 		const resourceId = context.id
 		const principalId = fhirSessionData.userId || defaultPrincipalId
+		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganization
 		const roles = fhirSessionData.roles || defaultRoles
 		const principal = { id: principalId, roles: roles, attributes: {} }
 		const cerbosResource = { kind: resourceType, id: resourceId, attributes: {} }
@@ -655,6 +696,7 @@ export const fhirResourceDeleteTool = createTool({
 
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `${toolName}Attempt`,
 			targetResourceType: resourceType,
 			targetResourceId: resourceId,
@@ -664,6 +706,7 @@ export const fhirResourceDeleteTool = createTool({
 		if (!fhirClient) {
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -682,6 +725,7 @@ export const fhirResourceDeleteTool = createTool({
 			const outcomeDescription = `Forbidden: User ${principalId} with roles [${roles.join(', ')}] not authorized to perform '${cerbosAction}' on ${cerbosResource.kind}/${cerbosResource.id}.`
 			await audit.log({
 				principalId,
+				organizationId,
 				action: `cerbos:${cerbosAction}`,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -692,6 +736,7 @@ export const fhirResourceDeleteTool = createTool({
 		}
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `cerbos:${cerbosAction}`,
 			targetResourceType: resourceType,
 			targetResourceId: resourceId,
@@ -708,6 +753,7 @@ export const fhirResourceDeleteTool = createTool({
 				const outcomeDescription = `FHIR ${resourceType} delete failed: Status ${response.status}`
 				await audit.log({
 					principalId,
+					organizationId,
 					action: toolName,
 					targetResourceType: resourceType,
 					targetResourceId: resourceId,
@@ -726,6 +772,7 @@ export const fhirResourceDeleteTool = createTool({
 			}
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -743,6 +790,7 @@ export const fhirResourceDeleteTool = createTool({
 		} catch (e: any) {
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -770,6 +818,7 @@ export const fhirPatientReportSearchTool = createTool({
 		const resourceType = 'FhirPatientReport'
 		const resourceId = context.id
 		const principalId = fhirSessionData.userId || defaultPrincipalId
+		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganization
 		const roles = fhirSessionData.roles || defaultRoles
 		const principal = { id: principalId, roles: roles, attributes: {} }
 		const cerbosResource = { kind: resourceType, id: resourceId, attributes: {} }
@@ -779,6 +828,7 @@ export const fhirPatientReportSearchTool = createTool({
 
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `${toolName}Attempt`,
 			targetResourceType: resourceType,
 			targetResourceId: resourceId,
@@ -788,6 +838,7 @@ export const fhirPatientReportSearchTool = createTool({
 		if (!fhirClient) {
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -807,6 +858,7 @@ export const fhirPatientReportSearchTool = createTool({
 			const outcomeDescription = `Forbidden: User ${principalId} with roles [${roles.join(', ')}] not authorized to perform '${cerbosAction}' on ${cerbosResource.kind}/${cerbosResource.id}.`
 			await audit.log({
 				principalId,
+				organizationId,
 				action: `cerbos:${cerbosAction}`,
 				targetResourceType: resourceType,
 				targetResourceId: resourceId,
@@ -817,6 +869,7 @@ export const fhirPatientReportSearchTool = createTool({
 		}
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `cerbos:${cerbosAction}`,
 			targetResourceType: resourceType,
 			targetResourceId: resourceId,
@@ -830,6 +883,7 @@ export const fhirPatientReportSearchTool = createTool({
 			queries.map(async (query) => {
 				await audit.log({
 					principalId,
+					organizationId,
 					action: `${toolName}Attempt`,
 					targetResourceType: query.resourceType,
 					targetResourceId: resourceId,
@@ -849,6 +903,7 @@ export const fhirPatientReportSearchTool = createTool({
 						const outcomeDescription = `FHIR ${resourceType} read failed: Status ${response.status}`
 						await audit.log({
 							principalId,
+							organizationId,
 							action: toolName,
 							targetResourceType: query.resourceType,
 							targetResourceId: resourceId,
@@ -867,6 +922,7 @@ export const fhirPatientReportSearchTool = createTool({
 					}
 					await audit.log({
 						principalId,
+						organizationId,
 						action: toolName,
 						targetResourceType: query.resourceType,
 						targetResourceId: resourceId,
@@ -877,6 +933,7 @@ export const fhirPatientReportSearchTool = createTool({
 				} catch (e: any) {
 					await audit.log({
 						principalId,
+						organizationId,
 						action: toolName,
 						targetResourceType: query.resourceType,
 						targetResourceId: resourceId,

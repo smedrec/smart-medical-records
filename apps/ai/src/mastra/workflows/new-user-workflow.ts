@@ -21,6 +21,7 @@ const sessionData: FhirSessionData = {
 	serverUrl: 'https://hapi.teachhowtofish.org/fhir/',
 	userId: '1Hb4MBVPx02HHsBPc8yfJDMDiW2XeVjO', // Added for Cerbos Principal ID
 	roles: ['owner'],
+	activeOrganizationId: 'G47R3UBSyF2aVGT3hwMKbh06aZngIA8m',
 }
 const fhirApiClient: FhirApiClient = createClient({ baseUrl: sessionData.serverUrl })
 runtimeContext.set('cerbos', cerbos)
