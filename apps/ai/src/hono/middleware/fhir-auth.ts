@@ -6,6 +6,7 @@ import type {
 	Client as OpenApiFetchClient,
 	Middleware as OpenApiFetchMiddleware,
 } from 'openapi-fetch'
+import type { User } from '@repo/auth'
 
 // TODO: Share this constant with worker.ts (e.g., from a shared constants file)
 const FHIR_SESSION_COOKIE = 'fhir_session'
@@ -18,7 +19,9 @@ export interface FhirSessionData {
 	}
 	serverUrl: string
 	userId?: string // Added for Cerbos Principal ID
+	user?: User
 	roles?: string[] // Added for Cerbos Principal roles
+	activeOrganizationId?: string
 }
 
 // Define the shape of the fhirClient in the context if needed, for now using OpenApiFetchClient<any>

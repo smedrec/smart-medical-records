@@ -61,7 +61,7 @@ redis.on('error', (err) => {
 })
 
 // Using environment variable AUDIT_DB_URL
-const authDbService = new AuthDb()
+const authDbService = new AuthDb(config.AUTH_DB_URL)
 const db = authDbService.getDrizzleInstance()
 
 if (await authDbService.checkAuthDbConnection()) {

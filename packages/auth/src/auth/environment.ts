@@ -27,6 +27,7 @@ export interface EnvConfig {
 	BETTER_AUTH_URL: string
 	BETTER_AUTH_SECRET: string
 	BETTER_AUTH_REDIS_URL: string
+	AUTH_DB_URL: string
 	AUDIT_REDIS_URL: string
 	APP_PUBLIC_URL: string
 	SMTP_HOST: string
@@ -44,6 +45,7 @@ export function getEnvConfig(): EnvConfig {
 	const BETTER_AUTH_URL = getEnv('BETTER_AUTH_URL')
 	const BETTER_AUTH_SECRET = getEnv('BETTER_AUTH_SECRET')
 	const BETTER_AUTH_REDIS_URL = getEnv('BETTER_AUTH_REDIS_URL')
+	const AUTH_DB_URL = getEnv('AUTH_DB_URL')
 	const AUDIT_REDIS_URL = getEnv('AUDIT_REDIS_URL')
 	const APP_PUBLIC_URL = getEnv('APP_PUBLIC_URL')
 	const SMTP_HOST = getEnv('SMTP_HOST')
@@ -62,6 +64,10 @@ export function getEnvConfig(): EnvConfig {
 		throw new AUTHError(
 			`BETTER_AUTH_SECRET environment variable not set. BETTER_AUTH_SECRET is required.`
 		)
+	}
+
+	if (!AUTH_DB_URL) {
+		throw new AUTHError(`AUTH_DB_URL environment variable not set. AUTH_DB_URL is required.`)
 	}
 
 	if (!BETTER_AUTH_REDIS_URL) {
@@ -109,6 +115,7 @@ export function getEnvConfig(): EnvConfig {
 		BETTER_AUTH_URL,
 		BETTER_AUTH_SECRET,
 		BETTER_AUTH_REDIS_URL,
+		AUTH_DB_URL,
 		AUDIT_REDIS_URL,
 		APP_PUBLIC_URL,
 		SMTP_HOST,

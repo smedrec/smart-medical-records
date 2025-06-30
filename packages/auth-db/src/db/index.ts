@@ -40,6 +40,7 @@ class AuthDb {
 				'AuthDb: PostgreSQL connection URL not provided and could not be found in environment variables (AUTH_DB_URL).'
 			)
 		}
+
 		this.client = postgres(effectivePostgresUrl)
 		this.authDb = drizzle(this.client, { schema })
 	}

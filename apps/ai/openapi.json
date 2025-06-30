@@ -1,0 +1,3800 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Mastra API",
+		"description": "Mastra API",
+		"version": "1.0.0"
+	},
+	"paths": {
+		"/sign-in/email": {
+			"post": {
+				"responses": {},
+				"operationId": "postSign-inEmail",
+				"parameters": []
+			}
+		},
+		"/.well-known/{agentId}/agent.json": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Agent configuration"
+					}
+				},
+				"operationId": "get.well-knownByAgentIdAgent.json",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get agent configuration"
+			}
+		},
+		"/a2a/{agentId}": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "A2A response"
+					},
+					"400": {
+						"description": "Missing or invalid request parameters"
+					},
+					"404": {
+						"description": "Agent not found"
+					}
+				},
+				"operationId": "postA2aByAgentId",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Execute agent via A2A protocol",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"method": {
+										"type": "string",
+										"enum": ["tasks/send", "tasks/sendSubscribe", "tasks/get", "tasks/cancel"],
+										"description": "The A2A protocol method to execute"
+									},
+									"params": {
+										"type": "object",
+										"oneOf": [
+											{
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"description": "Unique identifier for the task being initiated or continued"
+													},
+													"sessionId": {
+														"type": "string",
+														"description": "Optional identifier for the session this task belongs to"
+													},
+													"message": {
+														"type": "object",
+														"description": "The message content to send to the agent for processing"
+													},
+													"pushNotification": {
+														"type": "object",
+														"nullable": true,
+														"description": "Optional pushNotification information for receiving notifications about this task"
+													},
+													"historyLength": {
+														"type": "integer",
+														"nullable": true,
+														"description": "Optional parameter to specify how much message history to include in the response"
+													},
+													"metadata": {
+														"type": "object",
+														"nullable": true,
+														"description": "Optional metadata associated with sending this message"
+													}
+												},
+												"required": ["id", "message"]
+											},
+											{
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"description": "The unique identifier of the task"
+													},
+													"historyLength": {
+														"type": "integer",
+														"nullable": true,
+														"description": "Optional history length to retrieve for the task"
+													},
+													"metadata": {
+														"type": "object",
+														"nullable": true,
+														"description": "Optional metadata to include with the operation"
+													}
+												},
+												"required": ["id"]
+											},
+											{
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"description": "The unique identifier of the task"
+													},
+													"metadata": {
+														"type": "object",
+														"nullable": true,
+														"description": "Optional metadata to include with the operation"
+													}
+												},
+												"required": ["id"]
+											}
+										]
+									}
+								},
+								"required": ["method", "params"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success"
+					}
+				},
+				"operationId": "getApi",
+				"tags": ["system"],
+				"parameters": [],
+				"description": "Get API status"
+			}
+		},
+		"/api/agents": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of all agents"
+					}
+				},
+				"operationId": "getApiAgents",
+				"tags": ["agents"],
+				"parameters": [],
+				"description": "Get all available agents"
+			}
+		},
+		"/api/networks/v-next": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of all v-next networks"
+					}
+				},
+				"operationId": "getApiNetworksV-next",
+				"tags": ["vNextNetworks"],
+				"parameters": [],
+				"description": "Get all available v-next networks"
+			}
+		},
+		"/api/networks/v-next/{networkId}": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "v-next Network details"
+					},
+					"404": {
+						"description": "v-next Network not found"
+					}
+				},
+				"operationId": "getApiNetworksV-nextByNetworkId",
+				"tags": ["vNextNetworks"],
+				"parameters": [
+					{
+						"name": "networkId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get v-next network by ID"
+			}
+		},
+		"/api/networks/v-next/{networkId}/generate": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Generated response"
+					},
+					"404": {
+						"description": "v-next Network not found"
+					}
+				},
+				"operationId": "postApiNetworksV-nextByNetworkIdGenerate",
+				"tags": ["vNextNetworks"],
+				"parameters": [
+					{
+						"name": "networkId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Generate a response from a v-next network",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"message": {
+										"type": "string",
+										"description": "Message for the v-next network"
+									},
+									"threadId": {
+										"type": "string",
+										"description": "Thread Id of the conversation"
+									},
+									"resourceId": {
+										"type": "string",
+										"description": "Resource Id of the conversation"
+									}
+								},
+								"required": ["message"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/networks/v-next/{networkId}/loop": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Looped response"
+					},
+					"404": {
+						"description": "v-next Network not found"
+					}
+				},
+				"operationId": "postApiNetworksV-nextByNetworkIdLoop",
+				"tags": ["vNextNetworks"],
+				"parameters": [
+					{
+						"name": "networkId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Loop a v-next network",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"message": {
+										"type": "string",
+										"description": "Message for the v-next network"
+									}
+								},
+								"required": ["message"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/networks/v-next/{networkId}/loop-stream": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Streamed response"
+					},
+					"404": {
+						"description": "v-next Network not found"
+					}
+				},
+				"operationId": "postApiNetworksV-nextByNetworkIdLoop-stream",
+				"tags": ["vNextNetworks"],
+				"parameters": [
+					{
+						"name": "networkId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Stream a v-next network loop",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"message": {
+										"type": "string",
+										"description": "Message for the v-next network"
+									},
+									"threadId": {
+										"type": "string",
+										"description": "Thread Id of the conversation"
+									},
+									"resourceId": {
+										"type": "string",
+										"description": "Resource Id of the conversation"
+									},
+									"maxIterations": {
+										"type": "number",
+										"description": "Maximum number of iterations to run"
+									}
+								},
+								"required": ["message"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/networks/v-next/{networkId}/stream": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Streamed response"
+					},
+					"404": {
+						"description": "v-next Network not found"
+					}
+				},
+				"operationId": "postApiNetworksV-nextByNetworkIdStream",
+				"tags": ["vNextNetworks"],
+				"parameters": [
+					{
+						"name": "networkId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Stream a response from a v-next network",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"message": {
+										"type": "string",
+										"description": "Message for the v-next network"
+									},
+									"threadId": {
+										"type": "string",
+										"description": "Thread Id of the conversation"
+									},
+									"resourceId": {
+										"type": "string",
+										"description": "Resource Id of the conversation"
+									}
+								},
+								"required": ["message"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/networks": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of all networks"
+					}
+				},
+				"operationId": "getApiNetworks",
+				"tags": ["networks"],
+				"parameters": [],
+				"description": "Get all available networks"
+			}
+		},
+		"/api/networks/{networkId}": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Network details"
+					},
+					"404": {
+						"description": "Network not found"
+					}
+				},
+				"operationId": "getApiNetworksByNetworkId",
+				"tags": ["networks"],
+				"parameters": [
+					{
+						"name": "networkId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get network by ID"
+			}
+		},
+		"/api/networks/{networkId}/generate": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Generated response"
+					},
+					"404": {
+						"description": "Network not found"
+					}
+				},
+				"operationId": "postApiNetworksByNetworkIdGenerate",
+				"tags": ["networks"],
+				"parameters": [
+					{
+						"name": "networkId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Generate a response from a network",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"input": {
+										"oneOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "array",
+												"items": {
+													"type": "object"
+												}
+											}
+										],
+										"description": "Input for the network, can be a string or an array of CoreMessage objects"
+									}
+								},
+								"required": ["input"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/networks/{networkId}/stream": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Generated response"
+					},
+					"404": {
+						"description": "Network not found"
+					}
+				},
+				"operationId": "postApiNetworksByNetworkIdStream",
+				"tags": ["networks"],
+				"parameters": [
+					{
+						"name": "networkId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Generate a response from a network",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"input": {
+										"oneOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "array",
+												"items": {
+													"type": "object"
+												}
+											}
+										],
+										"description": "Input for the network, can be a string or an array of CoreMessage objects"
+									}
+								},
+								"required": ["input"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/agents/{agentId}": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Agent details"
+					},
+					"404": {
+						"description": "Agent not found"
+					}
+				},
+				"operationId": "getApiAgentsByAgentId",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get agent by ID"
+			}
+		},
+		"/api/agents/{agentId}/evals/ci": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of evals"
+					}
+				},
+				"operationId": "getApiAgentsByAgentIdEvalsCi",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get CI evals by agent ID"
+			}
+		},
+		"/api/agents/{agentId}/evals/live": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of evals"
+					}
+				},
+				"operationId": "getApiAgentsByAgentIdEvalsLive",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get live evals by agent ID"
+			}
+		},
+		"/api/agents/{agentId}/generate": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Generated response"
+					},
+					"404": {
+						"description": "Agent not found"
+					}
+				},
+				"operationId": "postApiAgentsByAgentIdGenerate",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Generate a response from an agent",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"messages": {
+										"type": "array",
+										"items": {
+											"type": "object"
+										}
+									},
+									"threadId": {
+										"type": "string"
+									},
+									"resourceId": {
+										"type": "string",
+										"description": "The resource ID for the conversation"
+									},
+									"resourceid": {
+										"type": "string",
+										"description": "The resource ID for the conversation (deprecated, use resourceId instead)",
+										"deprecated": true
+									},
+									"runId": {
+										"type": "string"
+									},
+									"output": {
+										"type": "object"
+									}
+								},
+								"required": ["messages"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/agents/{agentId}/stream": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Streamed response"
+					},
+					"404": {
+						"description": "Agent not found"
+					}
+				},
+				"operationId": "postApiAgentsByAgentIdStream",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Stream a response from an agent",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"messages": {
+										"type": "array",
+										"items": {
+											"type": "object"
+										}
+									},
+									"threadId": {
+										"type": "string"
+									},
+									"resourceId": {
+										"type": "string",
+										"description": "The resource ID for the conversation"
+									},
+									"resourceid": {
+										"type": "string",
+										"description": "The resource ID for the conversation (deprecated, use resourceId instead)",
+										"deprecated": true
+									},
+									"runId": {
+										"type": "string"
+									},
+									"output": {
+										"type": "object"
+									}
+								},
+								"required": ["messages"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/agents/{agentId}/instructions": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Instructions updated successfully"
+					},
+					"403": {
+						"description": "Not allowed in non-playground environment"
+					},
+					"404": {
+						"description": "Agent not found"
+					}
+				},
+				"operationId": "postApiAgentsByAgentIdInstructions",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Update an agent's instructions",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"instructions": {
+										"type": "string",
+										"description": "New instructions for the agent"
+									}
+								},
+								"required": ["instructions"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/agents/{agentId}/instructions/enhance": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Generated system prompt and analysis",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"explanation": {
+											"type": "string",
+											"description": "Detailed analysis of the instructions"
+										},
+										"new_prompt": {
+											"type": "string",
+											"description": "The enhanced system prompt"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing or invalid request parameters"
+					},
+					"404": {
+						"description": "Agent not found"
+					},
+					"500": {
+						"description": "Internal server error or model response parsing error"
+					}
+				},
+				"operationId": "postApiAgentsByAgentIdInstructionsEnhance",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						},
+						"description": "ID of the agent whose model will be used for prompt generation"
+					}
+				],
+				"description": "Generate an improved system prompt from instructions",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"instructions": {
+										"type": "string",
+										"description": "Instructions to generate a system prompt from"
+									},
+									"comment": {
+										"type": "string",
+										"description": "Optional comment for the enhanced prompt"
+									}
+								},
+								"required": ["instructions"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/agents/{agentId}/speakers": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of available speakers",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"description": "Speaker information depending on the voice provider",
+										"properties": {
+											"voiceId": {
+												"type": "string"
+											}
+										},
+										"additionalProperties": true
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Agent does not have voice capabilities"
+					},
+					"404": {
+						"description": "Agent not found"
+					}
+				},
+				"operationId": "getApiAgentsByAgentIdSpeakers",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "[DEPRECATED] Use /api/agents/:agentId/voice/speakers instead. Get available speakers for an agent"
+			}
+		},
+		"/api/agents/{agentId}/voice/speakers": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of available speakers",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"description": "Speaker information depending on the voice provider",
+										"properties": {
+											"voiceId": {
+												"type": "string"
+											}
+										},
+										"additionalProperties": true
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Agent does not have voice capabilities"
+					},
+					"404": {
+						"description": "Agent not found"
+					}
+				},
+				"operationId": "getApiAgentsByAgentIdVoiceSpeakers",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get available speakers for an agent"
+			}
+		},
+		"/api/agents/{agentId}/speak": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Audio stream",
+						"content": {
+							"audio/mpeg": {
+								"schema": {
+									"format": "binary",
+									"description": "Audio stream containing the generated speech"
+								}
+							},
+							"audio/*": {
+								"schema": {
+									"format": "binary",
+									"description": "Audio stream depending on the provider"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Agent does not have voice capabilities or invalid request"
+					},
+					"404": {
+						"description": "Agent not found"
+					}
+				},
+				"operationId": "postApiAgentsByAgentIdSpeak",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "[DEPRECATED] Use /api/agents/:agentId/voice/speak instead. Convert text to speech using the agent's voice provider",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"text": {
+										"type": "string",
+										"description": "Text to convert to speech"
+									},
+									"options": {
+										"type": "object",
+										"description": "Provider-specific options for speech generation",
+										"properties": {
+											"speaker": {
+												"type": "string",
+												"description": "Speaker ID to use for speech generation"
+											}
+										},
+										"additionalProperties": true
+									}
+								},
+								"required": ["text"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/agents/{agentId}/voice/speak": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Audio stream",
+						"content": {
+							"audio/mpeg": {
+								"schema": {
+									"format": "binary",
+									"description": "Audio stream containing the generated speech"
+								}
+							},
+							"audio/*": {
+								"schema": {
+									"format": "binary",
+									"description": "Audio stream depending on the provider"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Agent does not have voice capabilities or invalid request"
+					},
+					"404": {
+						"description": "Agent not found"
+					}
+				},
+				"operationId": "postApiAgentsByAgentIdVoiceSpeak",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Convert text to speech using the agent's voice provider",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"input": {
+										"type": "string",
+										"description": "Text to convert to speech"
+									},
+									"options": {
+										"type": "object",
+										"description": "Provider-specific options for speech generation",
+										"properties": {
+											"speaker": {
+												"type": "string",
+												"description": "Speaker ID to use for speech generation"
+											},
+											"options": {
+												"type": "object",
+												"description": "Provider-specific options for speech generation",
+												"additionalProperties": true
+											}
+										},
+										"additionalProperties": true
+									}
+								},
+								"required": ["text"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/agents/{agentId}/voice/listener": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Checks if listener is available for the agent",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Listener information depending on the voice provider",
+									"properties": {
+										"enabled": {
+											"type": "boolean"
+										}
+									},
+									"additionalProperties": true
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Agent does not have voice capabilities"
+					},
+					"404": {
+						"description": "Agent not found"
+					}
+				},
+				"operationId": "getApiAgentsByAgentIdVoiceListener",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get available listener for an agent"
+			}
+		},
+		"/api/agents/{agentId}/listen": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Transcription result",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"text": {
+											"type": "string",
+											"description": "Transcribed text"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Agent does not have voice capabilities or invalid request"
+					},
+					"404": {
+						"description": "Agent not found"
+					}
+				},
+				"operationId": "postApiAgentsByAgentIdListen",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "[DEPRECATED] Use /api/agents/:agentId/voice/listen instead. Convert speech to text using the agent's voice provider. Additional provider-specific options can be passed as query parameters.",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"audio/mpeg": {
+							"schema": {
+								"format": "binary",
+								"description": "Audio data stream to transcribe (supports various formats depending on provider like mp3, wav, webm, flac)"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/agents/{agentId}/voice/listen": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Transcription result",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"text": {
+											"type": "string",
+											"description": "Transcribed text"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Agent does not have voice capabilities or invalid request"
+					},
+					"404": {
+						"description": "Agent not found"
+					}
+				},
+				"operationId": "postApiAgentsByAgentIdVoiceListen",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Convert speech to text using the agent's voice provider. Additional provider-specific options can be passed as query parameters.",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"required": ["audio"],
+								"properties": {
+									"audio": {
+										"type": "string",
+										"format": "binary",
+										"description": "Audio data stream to transcribe (supports various formats depending on provider like mp3, wav, webm, flac)"
+									},
+									"options": {
+										"type": "object",
+										"description": "Provider-specific options for speech-to-text",
+										"additionalProperties": true
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/agents/{agentId}/tools/{toolId}/execute": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Tool execution result"
+					},
+					"404": {
+						"description": "Tool or agent not found"
+					}
+				},
+				"operationId": "postApiAgentsByAgentIdToolsByToolIdExecute",
+				"tags": ["agents"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "toolId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Execute a tool through an agent",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"data": {
+										"type": "object"
+									},
+									"runtimeContext": {
+										"type": "object"
+									}
+								},
+								"required": ["data"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/mcp/{serverId}/mcp": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Streamable HTTP connection processed"
+					},
+					"404": {
+						"description": "MCP server not found"
+					}
+				},
+				"operationId": "postApiMcpByServerIdMcp",
+				"tags": ["mcp"],
+				"parameters": [
+					{
+						"name": "serverId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Send a message to an MCP server using Streamable HTTP",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Streamable HTTP connection processed"
+					},
+					"404": {
+						"description": "MCP server not found"
+					}
+				},
+				"operationId": "getApiMcpByServerIdMcp",
+				"tags": ["mcp"],
+				"parameters": [
+					{
+						"name": "serverId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Send a message to an MCP server using Streamable HTTP"
+			}
+		},
+		"/api/mcp/{serverId}/sse": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "SSE connection established. The client will receive events over this connection. (Content-Type: text/event-stream)"
+					},
+					"404": {
+						"description": "MCP server instance not found."
+					},
+					"500": {
+						"description": "Internal server error establishing SSE connection."
+					}
+				},
+				"operationId": "getApiMcpByServerIdSse",
+				"tags": ["mcp"],
+				"parameters": [
+					{
+						"name": "serverId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						},
+						"description": "The ID of the MCP server instance."
+					}
+				],
+				"description": "Establish an MCP Server-Sent Events (SSE) connection with a server instance."
+			}
+		},
+		"/api/mcp/{serverId}/messages": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Message received and is being processed by the MCP server. The actual result or error will be sent as an SSE event over the established connection."
+					},
+					"400": {
+						"description": "Bad request (e.g., invalid JSON payload or missing body)."
+					},
+					"404": {
+						"description": "MCP server instance not found or SSE connection path incorrect."
+					},
+					"503": {
+						"description": "SSE connection not established with this server, or server unable to process message."
+					}
+				},
+				"operationId": "postApiMcpByServerIdMessages",
+				"tags": ["mcp"],
+				"parameters": [
+					{
+						"name": "serverId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						},
+						"description": "The ID of the MCP server instance."
+					}
+				],
+				"description": "Send a message to an MCP server over an established SSE connection.",
+				"requestBody": {
+					"description": "JSON-RPC message to send to the MCP server.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/mcp/v0/servers": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "A list of MCP server instances.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"servers": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string"
+													},
+													"name": {
+														"type": "string"
+													},
+													"description": {
+														"type": "string"
+													},
+													"repository": {
+														"type": "object",
+														"properties": {
+															"url": {
+																"type": "string",
+																"description": "The URL of the repository (e.g., a GitHub URL)"
+															},
+															"source": {
+																"type": "string",
+																"description": "The source control platform (e.g., 'github', 'gitlab')",
+																"enum": ["github", "gitlab"]
+															},
+															"id": {
+																"type": "string",
+																"description": "A unique identifier for the repository at the source"
+															}
+														}
+													},
+													"version_detail": {
+														"type": "object",
+														"properties": {
+															"version": {
+																"type": "string",
+																"description": "The semantic version string (e.g., \"1.0.2\")"
+															},
+															"release_date": {
+																"type": "string",
+																"description": "The ISO 8601 date-time string when this version was released or registered"
+															},
+															"is_latest": {
+																"type": "boolean",
+																"description": "Indicates if this version is the latest available"
+															}
+														}
+													}
+												}
+											}
+										},
+										"next": {
+											"type": "string",
+											"format": "uri",
+											"nullable": true
+										},
+										"total_count": {
+											"type": "integer"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"operationId": "getApiMcpV0Servers",
+				"tags": ["mcp"],
+				"parameters": [
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Number of results per page.",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 50,
+							"minimum": 1,
+							"maximum": 5000
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of results to skip for pagination.",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 0,
+							"minimum": 0
+						}
+					}
+				],
+				"description": "List all available MCP server instances with basic information."
+			}
+		},
+		"/api/mcp/v0/servers/{id}": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Detailed information about the MCP server instance.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"description": {
+											"type": "string"
+										},
+										"repository": {
+											"type": "object",
+											"properties": {
+												"url": {
+													"type": "string"
+												},
+												"source": {
+													"type": "string"
+												},
+												"id": {
+													"type": "string"
+												}
+											}
+										},
+										"version_detail": {
+											"type": "object",
+											"properties": {
+												"version": {
+													"type": "string"
+												},
+												"release_date": {
+													"type": "string"
+												},
+												"is_latest": {
+													"type": "boolean"
+												}
+											}
+										},
+										"package_canonical": {
+											"type": "string"
+										},
+										"packages": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"registry_name": {
+														"type": "string"
+													},
+													"name": {
+														"type": "string"
+													},
+													"version": {
+														"type": "string"
+													},
+													"command": {
+														"type": "object",
+														"properties": {
+															"name": {
+																"type": "string"
+															},
+															"subcommands": {
+																"type": "array",
+																"items": {
+																	"type": "object",
+																	"properties": {
+																		"name": {
+																			"type": "string"
+																		},
+																		"description": {
+																			"type": "string"
+																		},
+																		"is_required": {
+																			"type": "boolean"
+																		},
+																		"subcommands": {
+																			"type": "array",
+																			"items": {
+																				"type": "object"
+																			}
+																		},
+																		"positional_arguments": {
+																			"type": "array",
+																			"items": {
+																				"type": "object"
+																			}
+																		},
+																		"named_arguments": {
+																			"type": "array",
+																			"items": {
+																				"type": "object"
+																			}
+																		}
+																	}
+																}
+															},
+															"positional_arguments": {
+																"type": "array",
+																"items": {
+																	"type": "object"
+																}
+															},
+															"named_arguments": {
+																"type": "array",
+																"items": {
+																	"type": "object"
+																}
+															}
+														}
+													},
+													"environment_variables": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"name": {
+																	"type": "string"
+																},
+																"description": {
+																	"type": "string"
+																},
+																"required": {
+																	"type": "boolean"
+																},
+																"default_value": {
+																	"type": "string"
+																}
+															}
+														}
+													}
+												}
+											}
+										},
+										"remotes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"transport_type": {
+														"type": "string"
+													},
+													"url": {
+														"type": "string"
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "MCP server instance not found.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"error": {
+											"type": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"operationId": "getApiMcpV0ServersById",
+				"tags": ["mcp"],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "Unique ID of the MCP server instance.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "version",
+						"in": "query",
+						"required": false,
+						"description": "Desired MCP server version (currently informational, server returns its actual version).",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get detailed information about a specific MCP server instance."
+			}
+		},
+		"/api/mcp/{serverId}/tools": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "A list of tools for the MCP server."
+					},
+					"404": {
+						"description": "MCP server instance not found."
+					},
+					"501": {
+						"description": "Server does not support listing tools."
+					}
+				},
+				"operationId": "getApiMcpByServerIdTools",
+				"tags": ["mcp"],
+				"parameters": [
+					{
+						"name": "serverId",
+						"in": "path",
+						"required": true,
+						"description": "Unique ID of the MCP server instance.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "List all tools available on a specific MCP server instance."
+			}
+		},
+		"/api/mcp/{serverId}/tools/{toolId}": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Details of the specified tool."
+					},
+					"404": {
+						"description": "MCP server or tool not found."
+					},
+					"501": {
+						"description": "Server does not support getting tool details."
+					}
+				},
+				"operationId": "getApiMcpByServerIdToolsByToolId",
+				"tags": ["mcp"],
+				"parameters": [
+					{
+						"name": "serverId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "toolId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get details for a specific tool on an MCP server."
+			}
+		},
+		"/api/mcp/{serverId}/tools/{toolId}/execute": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Result of the tool execution."
+					},
+					"400": {
+						"description": "Invalid tool arguments."
+					},
+					"404": {
+						"description": "MCP server or tool not found."
+					},
+					"501": {
+						"description": "Server does not support tool execution."
+					}
+				},
+				"operationId": "postApiMcpByServerIdToolsByToolIdExecute",
+				"tags": ["mcp"],
+				"parameters": [
+					{
+						"name": "serverId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "toolId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Execute a specific tool on an MCP server.",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"data": {
+										"type": "object"
+									},
+									"runtimeContext": {
+										"type": "object"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/memory/network/status": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Memory status"
+					}
+				},
+				"operationId": "getApiMemoryNetworkStatus",
+				"tags": ["networkMemory"],
+				"parameters": [
+					{
+						"name": "networkId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get network memory status"
+			}
+		},
+		"/api/memory/network/threads": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of all threads"
+					}
+				},
+				"operationId": "getApiMemoryNetworkThreads",
+				"tags": ["networkMemory"],
+				"parameters": [
+					{
+						"name": "resourceid",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "networkId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get all threads"
+			},
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Created thread"
+					}
+				},
+				"operationId": "postApiMemoryNetworkThreads",
+				"tags": ["networkMemory"],
+				"parameters": [
+					{
+						"name": "networkId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Create a new thread",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"title": {
+										"type": "string"
+									},
+									"metadata": {
+										"type": "object"
+									},
+									"resourceId": {
+										"type": "string"
+									},
+									"threadId": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/memory/network/threads/{threadId}": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Thread details"
+					},
+					"404": {
+						"description": "Thread not found"
+					}
+				},
+				"operationId": "getApiMemoryNetworkThreadsByThreadId",
+				"tags": ["networkMemory"],
+				"parameters": [
+					{
+						"name": "threadId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "networkId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get thread by ID"
+			},
+			"patch": {
+				"responses": {
+					"200": {
+						"description": "Updated thread"
+					},
+					"404": {
+						"description": "Thread not found"
+					}
+				},
+				"operationId": "patchApiMemoryNetworkThreadsByThreadId",
+				"tags": ["networkMemory"],
+				"parameters": [
+					{
+						"name": "threadId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "networkId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Update a thread",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"responses": {
+					"200": {
+						"description": "Thread deleted"
+					},
+					"404": {
+						"description": "Thread not found"
+					}
+				},
+				"operationId": "deleteApiMemoryNetworkThreadsByThreadId",
+				"tags": ["networkMemory"],
+				"parameters": [
+					{
+						"name": "threadId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "networkId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Delete a thread"
+			}
+		},
+		"/api/memory/network/threads/{threadId}/messages": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of messages"
+					}
+				},
+				"operationId": "getApiMemoryNetworkThreadsByThreadIdMessages",
+				"tags": ["networkMemory"],
+				"parameters": [
+					{
+						"name": "threadId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "networkId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "number"
+						},
+						"description": "Limit the number of messages to retrieve (default: 40)"
+					}
+				],
+				"description": "Get messages for a thread"
+			}
+		},
+		"/api/memory/network/save-messages": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Messages saved"
+					}
+				},
+				"operationId": "postApiMemoryNetworkSave-messages",
+				"tags": ["networkMemory"],
+				"parameters": [
+					{
+						"name": "networkId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Save messages",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"messages": {
+										"type": "array",
+										"items": {
+											"type": "object"
+										}
+									}
+								},
+								"required": ["messages"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/memory/status": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Memory status"
+					}
+				},
+				"operationId": "getApiMemoryStatus",
+				"tags": ["memory"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get memory status"
+			}
+		},
+		"/api/memory/threads": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of all threads"
+					}
+				},
+				"operationId": "getApiMemoryThreads",
+				"tags": ["memory"],
+				"parameters": [
+					{
+						"name": "resourceid",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "agentId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get all threads"
+			},
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Created thread"
+					}
+				},
+				"operationId": "postApiMemoryThreads",
+				"tags": ["memory"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Create a new thread",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"title": {
+										"type": "string"
+									},
+									"metadata": {
+										"type": "object"
+									},
+									"resourceId": {
+										"type": "string"
+									},
+									"threadId": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/memory/threads/{threadId}": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Thread details"
+					},
+					"404": {
+						"description": "Thread not found"
+					}
+				},
+				"operationId": "getApiMemoryThreadsByThreadId",
+				"tags": ["memory"],
+				"parameters": [
+					{
+						"name": "threadId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "agentId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get thread by ID"
+			},
+			"patch": {
+				"responses": {
+					"200": {
+						"description": "Updated thread"
+					},
+					"404": {
+						"description": "Thread not found"
+					}
+				},
+				"operationId": "patchApiMemoryThreadsByThreadId",
+				"tags": ["memory"],
+				"parameters": [
+					{
+						"name": "threadId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "agentId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Update a thread",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"responses": {
+					"200": {
+						"description": "Thread deleted"
+					},
+					"404": {
+						"description": "Thread not found"
+					}
+				},
+				"operationId": "deleteApiMemoryThreadsByThreadId",
+				"tags": ["memory"],
+				"parameters": [
+					{
+						"name": "threadId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "agentId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Delete a thread"
+			}
+		},
+		"/api/memory/threads/{threadId}/messages": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of messages"
+					}
+				},
+				"operationId": "getApiMemoryThreadsByThreadIdMessages",
+				"tags": ["memory"],
+				"parameters": [
+					{
+						"name": "threadId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "agentId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "number"
+						},
+						"description": "Limit the number of messages to retrieve (default: 40)"
+					}
+				],
+				"description": "Get messages for a thread"
+			}
+		},
+		"/api/memory/save-messages": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Messages saved"
+					}
+				},
+				"operationId": "postApiMemorySave-messages",
+				"tags": ["memory"],
+				"parameters": [
+					{
+						"name": "agentId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Save messages",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"messages": {
+										"type": "array",
+										"items": {
+											"type": "object"
+										}
+									}
+								},
+								"required": ["messages"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/telemetry": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of all traces (paged)"
+					}
+				},
+				"operationId": "getApiTelemetry",
+				"tags": ["telemetry"],
+				"parameters": [],
+				"description": "Get all traces"
+			},
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Traces stored"
+					}
+				},
+				"operationId": "postApiTelemetry",
+				"tags": ["telemetry"],
+				"parameters": [],
+				"description": "Store telemetry"
+			}
+		},
+		"/api/workflows/legacy": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of all legacy workflows"
+					}
+				},
+				"operationId": "getApiWorkflowsLegacy",
+				"tags": ["legacyWorkflows"],
+				"parameters": [],
+				"description": "Get all legacy workflows"
+			}
+		},
+		"/api/workflows/legacy/{workflowId}": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Legacy Workflow details"
+					},
+					"404": {
+						"description": "Legacy Workflow not found"
+					}
+				},
+				"operationId": "getApiWorkflowsLegacyByWorkflowId",
+				"tags": ["legacyWorkflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get legacy workflow by ID"
+			}
+		},
+		"/api/workflows/legacy/{workflowId}/runs": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of legacy workflow runs from storage"
+					}
+				},
+				"operationId": "getApiWorkflowsLegacyByWorkflowIdRuns",
+				"tags": ["legacyWorkflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "fromDate",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"format": "date-time"
+						}
+					},
+					{
+						"name": "toDate",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"format": "date-time"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "number"
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "number"
+						}
+					},
+					{
+						"name": "resourceId",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get all runs for a legacy workflow"
+			}
+		},
+		"/api/workflows/legacy/{workflowId}/resume": {
+			"post": {
+				"responses": {},
+				"operationId": "postApiWorkflowsLegacyByWorkflowIdResume",
+				"tags": ["legacyWorkflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Resume a suspended legacy workflow step",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"stepId": {
+										"type": "string"
+									},
+									"context": {
+										"type": "object"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/workflows/legacy/{workflowId}/resume-async": {
+			"post": {
+				"responses": {},
+				"operationId": "postApiWorkflowsLegacyByWorkflowIdResume-async",
+				"tags": ["legacyWorkflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Resume a suspended legacy workflow step",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"stepId": {
+										"type": "string"
+									},
+									"context": {
+										"type": "object"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/workflows/legacy/{workflowId}/create-run": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "New legacy workflow run created"
+					}
+				},
+				"operationId": "postApiWorkflowsLegacyByWorkflowIdCreate-run",
+				"tags": ["legacyWorkflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Create a new legacy workflow run"
+			}
+		},
+		"/api/workflows/legacy/{workflowId}/start-async": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Legacy Workflow execution result"
+					},
+					"404": {
+						"description": "Legacy Workflow not found"
+					}
+				},
+				"operationId": "postApiWorkflowsLegacyByWorkflowIdStart-async",
+				"tags": ["legacyWorkflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Execute/Start a legacy workflow",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"input": {
+										"type": "object"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/workflows/legacy/{workflowId}/start": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Legacy Workflow run started"
+					},
+					"404": {
+						"description": "Legacy Workflow not found"
+					}
+				},
+				"operationId": "postApiWorkflowsLegacyByWorkflowIdStart",
+				"tags": ["legacyWorkflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Create and start a new legacy workflow run",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"input": {
+										"type": "object"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/workflows/legacy/{workflowId}/watch": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Legacy Workflow transitions in real-time"
+					}
+				},
+				"operationId": "getApiWorkflowsLegacyByWorkflowIdWatch",
+				"tags": ["legacyWorkflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Watch legacy workflow transitions in real-time"
+			}
+		},
+		"/api/workflows": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of all workflows"
+					}
+				},
+				"operationId": "getApiWorkflows",
+				"tags": ["workflows"],
+				"parameters": [],
+				"description": "Get all workflows"
+			}
+		},
+		"/api/workflows/{workflowId}": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Workflow details"
+					},
+					"404": {
+						"description": "Workflow not found"
+					}
+				},
+				"operationId": "getApiWorkflowsByWorkflowId",
+				"tags": ["workflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get workflow by ID"
+			}
+		},
+		"/api/workflows/{workflowId}/runs": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of workflow runs from storage"
+					}
+				},
+				"operationId": "getApiWorkflowsByWorkflowIdRuns",
+				"tags": ["workflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "fromDate",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"format": "date-time"
+						}
+					},
+					{
+						"name": "toDate",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"format": "date-time"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "number"
+						}
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "number"
+						}
+					},
+					{
+						"name": "resourceId",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get all runs for a workflow"
+			}
+		},
+		"/api/workflows/{workflowId}/runs/{runId}/execution-result": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Workflow run execution result"
+					},
+					"404": {
+						"description": "Workflow run execution result not found"
+					}
+				},
+				"operationId": "getApiWorkflowsByWorkflowIdRunsByRunIdExecution-result",
+				"tags": ["workflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get execution result for a workflow run"
+			}
+		},
+		"/api/workflows/{workflowId}/runs/{runId}": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Workflow run by ID"
+					},
+					"404": {
+						"description": "Workflow run not found"
+					}
+				},
+				"operationId": "getApiWorkflowsByWorkflowIdRunsByRunId",
+				"tags": ["workflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get workflow run by ID"
+			}
+		},
+		"/api/workflows/{workflowId}/resume": {
+			"post": {
+				"responses": {},
+				"operationId": "postApiWorkflowsByWorkflowIdResume",
+				"tags": ["workflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Resume a suspended workflow step",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"step": {
+										"oneOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "array",
+												"items": {
+													"type": "string"
+												}
+											}
+										]
+									},
+									"resumeData": {
+										"type": "object"
+									},
+									"runtimeContext": {
+										"type": "object",
+										"description": "Runtime context for the workflow execution"
+									}
+								},
+								"required": ["step"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/workflows/{workflowId}/resume-async": {
+			"post": {
+				"responses": {},
+				"operationId": "postApiWorkflowsByWorkflowIdResume-async",
+				"tags": ["workflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Resume a suspended workflow step",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"step": {
+										"oneOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "array",
+												"items": {
+													"type": "string"
+												}
+											}
+										]
+									},
+									"resumeData": {
+										"type": "object"
+									},
+									"runtimeContext": {
+										"type": "object",
+										"description": "Runtime context for the workflow execution"
+									}
+								},
+								"required": ["step"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/workflows/{workflowId}/stream": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "workflow run started"
+					},
+					"404": {
+						"description": "workflow not found"
+					}
+				},
+				"operationId": "postApiWorkflowsByWorkflowIdStream",
+				"tags": ["workflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Stream workflow in real-time",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"inputData": {
+										"type": "object"
+									},
+									"runtimeContext": {
+										"type": "object",
+										"description": "Runtime context for the workflow execution"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/workflows/{workflowId}/create-run": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "New workflow run created"
+					}
+				},
+				"operationId": "postApiWorkflowsByWorkflowIdCreate-run",
+				"tags": ["workflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Create a new workflow run"
+			}
+		},
+		"/api/workflows/{workflowId}/start-async": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "workflow execution result"
+					},
+					"404": {
+						"description": "workflow not found"
+					}
+				},
+				"operationId": "postApiWorkflowsByWorkflowIdStart-async",
+				"tags": ["workflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Execute/Start a workflow",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"inputData": {
+										"type": "object"
+									},
+									"runtimeContext": {
+										"type": "object",
+										"description": "Runtime context for the workflow execution"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/workflows/{workflowId}/start": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "workflow run started"
+					},
+					"404": {
+						"description": "workflow not found"
+					}
+				},
+				"operationId": "postApiWorkflowsByWorkflowIdStart",
+				"tags": ["workflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Create and start a new workflow run",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"inputData": {
+										"type": "object"
+									},
+									"runtimeContext": {
+										"type": "object",
+										"description": "Runtime context for the workflow execution"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/workflows/{workflowId}/watch": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "workflow transitions in real-time"
+					}
+				},
+				"operationId": "getApiWorkflowsByWorkflowIdWatch",
+				"tags": ["workflows"],
+				"parameters": [
+					{
+						"name": "workflowId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Watch workflow transitions in real-time"
+			}
+		},
+		"/api/logs": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Paginated list of all logs"
+					}
+				},
+				"operationId": "getApiLogs",
+				"tags": ["logs"],
+				"parameters": [
+					{
+						"name": "transportId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "fromDate",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "toDate",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "logLevel",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "filters",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "page",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "number"
+						}
+					},
+					{
+						"name": "perPage",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "number"
+						}
+					}
+				],
+				"description": "Get all logs"
+			}
+		},
+		"/api/logs/transports": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of all log transports"
+					}
+				},
+				"operationId": "getApiLogsTransports",
+				"tags": ["logs"],
+				"parameters": [],
+				"description": "List of all log transports"
+			}
+		},
+		"/api/logs/{runId}": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Paginated list of logs for run ID"
+					}
+				},
+				"operationId": "getApiLogsByRunId",
+				"tags": ["logs"],
+				"parameters": [
+					{
+						"name": "runId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "transportId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "fromDate",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "toDate",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "logLevel",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "filters",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "page",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "number"
+						}
+					},
+					{
+						"name": "perPage",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "number"
+						}
+					}
+				],
+				"description": "Get logs by run ID"
+			}
+		},
+		"/api/tools": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of all tools"
+					}
+				},
+				"operationId": "getApiTools",
+				"tags": ["tools"],
+				"parameters": [],
+				"description": "Get all tools"
+			}
+		},
+		"/api/tools/{toolId}": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Tool details"
+					},
+					"404": {
+						"description": "Tool not found"
+					}
+				},
+				"operationId": "getApiToolsByToolId",
+				"tags": ["tools"],
+				"parameters": [
+					{
+						"name": "toolId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get tool by ID"
+			}
+		},
+		"/api/tools/{toolId}/execute": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Tool execution result"
+					},
+					"404": {
+						"description": "Tool not found"
+					}
+				},
+				"operationId": "postApiToolsByToolIdExecute",
+				"tags": ["tools"],
+				"parameters": [
+					{
+						"name": "toolId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "runId",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Execute a tool",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"data": {
+										"type": "object"
+									},
+									"runtimeContext": {
+										"type": "object"
+									}
+								},
+								"required": ["data"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/vector/{vectorName}/upsert": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Vectors upserted successfully"
+					}
+				},
+				"operationId": "postApiVectorByVectorNameUpsert",
+				"tags": ["vector"],
+				"parameters": [
+					{
+						"name": "vectorName",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Upsert vectors into an index",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"indexName": {
+										"type": "string"
+									},
+									"vectors": {
+										"type": "array",
+										"items": {
+											"type": "array",
+											"items": {
+												"type": "number"
+											}
+										}
+									},
+									"metadata": {
+										"type": "array",
+										"items": {
+											"type": "object"
+										}
+									},
+									"ids": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									}
+								},
+								"required": ["indexName", "vectors"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/vector/{vectorName}/create-index": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Index created successfully"
+					}
+				},
+				"operationId": "postApiVectorByVectorNameCreate-index",
+				"tags": ["vector"],
+				"parameters": [
+					{
+						"name": "vectorName",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Create a new vector index",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"indexName": {
+										"type": "string"
+									},
+									"dimension": {
+										"type": "number"
+									},
+									"metric": {
+										"type": "string",
+										"enum": ["cosine", "euclidean", "dotproduct"]
+									}
+								},
+								"required": ["indexName", "dimension"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/vector/{vectorName}/query": {
+			"post": {
+				"responses": {
+					"200": {
+						"description": "Query results"
+					}
+				},
+				"operationId": "postApiVectorByVectorNameQuery",
+				"tags": ["vector"],
+				"parameters": [
+					{
+						"name": "vectorName",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Query vectors from an index",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"indexName": {
+										"type": "string"
+									},
+									"queryVector": {
+										"type": "array",
+										"items": {
+											"type": "number"
+										}
+									},
+									"topK": {
+										"type": "number"
+									},
+									"filter": {
+										"type": "object"
+									},
+									"includeVector": {
+										"type": "boolean"
+									}
+								},
+								"required": ["indexName", "queryVector"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/vector/{vectorName}/indexes": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "List of indexes"
+					}
+				},
+				"operationId": "getApiVectorByVectorNameIndexes",
+				"tags": ["vector"],
+				"parameters": [
+					{
+						"name": "vectorName",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "List all indexes for a vector store"
+			}
+		},
+		"/api/vector/{vectorName}/indexes/{indexName}": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Index details"
+					}
+				},
+				"operationId": "getApiVectorByVectorNameIndexesByIndexName",
+				"tags": ["vector"],
+				"parameters": [
+					{
+						"name": "vectorName",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "indexName",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Get details about a specific index"
+			},
+			"delete": {
+				"responses": {
+					"200": {
+						"description": "Index deleted successfully"
+					}
+				},
+				"operationId": "deleteApiVectorByVectorNameIndexesByIndexName",
+				"tags": ["vector"],
+				"parameters": [
+					{
+						"name": "vectorName",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "indexName",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"description": "Delete a specific index"
+			}
+		},
+		"/swagger-ui": {},
+		"/refresh-events": {},
+		"/__refresh": {}
+	},
+	"components": {
+		"schemas": {}
+	}
+}
