@@ -335,6 +335,67 @@ importers:
         specifier: 2.0.0-rc.23
         version: 2.0.0-rc.23(@vuepress/bundler-vite@2.0.0-rc.23(@types/node@24.0.7)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0))(typescript@5.8.3)(vue@3.5.17(typescript@5.8.3))
 
+  apps/mail:
+    dependencies:
+      '@repo/audit':
+        specifier: workspace:*
+        version: link:../../packages/audit
+      '@repo/auth-db':
+        specifier: workspace:*
+        version: link:../../packages/auth-db
+      '@repo/mailer':
+        specifier: workspace:*
+        version: link:../../packages/mailer
+      '@repo/send-mail':
+        specifier: workspace:*
+        version: link:../../packages/send-mail
+      bullmq:
+        specifier: 5.56.0
+        version: 5.56.0
+      dotenv:
+        specifier: 17.0.0
+        version: 17.0.0
+      drizzle-orm:
+        specifier: 0.44.2
+        version: 0.44.2(@cloudflare/workers-types@4.20250628.0)(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.15.4)(@upstash/redis@1.35.0)(better-sqlite3@11.10.0)(kysely@0.28.2)(pg@8.16.3)(postgres@3.4.7)
+      ioredis:
+        specifier: 5.6.1
+        version: 5.6.1
+      pino:
+        specifier: 9.7.0
+        version: 9.7.0
+      postgres:
+        specifier: 3.4.7
+        version: 3.4.7
+      workers-tagged-logger:
+        specifier: 0.13.0
+        version: 0.13.0
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@repo/tools':
+        specifier: workspace:*
+        version: link:../../packages/tools
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@types/node':
+        specifier: 24.0.7
+        version: 24.0.7
+      concurrently:
+        specifier: 9.2.0
+        version: 9.2.0
+      nodemon:
+        specifier: 3.1.10
+        version: 3.1.10
+      typescript:
+        specifier: 5.5.4
+        version: 5.5.4
+      vitest:
+        specifier: 3.2.4
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@24.0.7)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
+
   apps/mcp:
     dependencies:
       '@cerbos/http':
@@ -1157,6 +1218,43 @@ importers:
       jest-mock-extended:
         specifier: 4.0.0
         version: 4.0.0(@jest/globals@29.7.0)(jest@29.7.0(@types/node@24.0.7)(ts-node@10.9.2(@types/node@24.0.7)(typescript@5.8.3)))(typescript@5.8.3)
+      vitest:
+        specifier: 3.2.4
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@24.0.7)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
+
+  packages/send-mail:
+    dependencies:
+      '@repo/hono-helpers':
+        specifier: workspace:*
+        version: link:../hono-helpers
+      '@repo/mailer':
+        specifier: workspace:*
+        version: link:../mailer
+      bullmq:
+        specifier: 5.56.0
+        version: 5.56.0
+      ioredis:
+        specifier: 5.6.1
+        version: 5.6.1
+    devDependencies:
+      '@cloudflare/vitest-pool-workers':
+        specifier: 0.8.47
+        version: 0.8.47(@cloudflare/workers-types@4.20250628.0)(@vitest/runner@3.2.4)(@vitest/snapshot@3.2.4)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.0.7)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
+      '@cloudflare/workers-types':
+        specifier: 4.20250628.0
+        version: 4.20250628.0
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@repo/tools':
+        specifier: workspace:*
+        version: link:../tools
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 24.0.7
+        version: 24.0.7
       vitest:
         specifier: 3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@24.0.7)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
@@ -25185,10 +25283,10 @@ snapshots:
       '@typescript-eslint/types': 8.35.0
       eslint-visitor-keys: 4.2.1
 
-  '@typescript/vfs@1.6.1(typescript@5.5.4)':
+  '@typescript/vfs@1.6.1(typescript@5.8.3)':
     dependencies:
       debug: 4.4.1(supports-color@10.0.0)
-      typescript: 5.5.4
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
@@ -35003,7 +35101,7 @@ snapshots:
   ts-to-zod@3.15.0:
     dependencies:
       '@oclif/core': 4.3.3
-      '@typescript/vfs': 1.6.1(typescript@5.5.4)
+      '@typescript/vfs': 1.6.1(typescript@5.8.3)
       case: 1.6.3
       chokidar: 3.6.0
       fs-extra: 11.3.0
@@ -35015,8 +35113,8 @@ snapshots:
       slash: 3.0.0
       threads: 1.7.0
       tslib: 2.8.1
-      tsutils: 3.21.0(typescript@5.5.4)
-      typescript: 5.5.4
+      tsutils: 3.21.0(typescript@5.8.3)
+      typescript: 5.8.3
       zod: 3.25.67
     transitivePeerDependencies:
       - supports-color
@@ -35040,10 +35138,10 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  tsutils@3.21.0(typescript@5.5.4):
+  tsutils@3.21.0(typescript@5.8.3):
     dependencies:
       tslib: 1.14.1
-      typescript: 5.5.4
+      typescript: 5.8.3
 
   tsx@4.20.3:
     dependencies:

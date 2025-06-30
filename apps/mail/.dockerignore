@@ -1,0 +1,41 @@
+# Ignore node_modules and build artifacts
+node_modules
+dist
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore local environment files and sensitive data
+.env
+.env*.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.secret
+
+# Ignore IDE and editor directories
+.idea
+.vscode
+*.swp
+*.swo
+
+# Ignore log files
+*.log
+logs/
+
+# Ignore test reports and coverage
+coverage/
+junit.xml
+TEST-RESULTS.*.xml
+
+# Drizzle specific
+drizzle/meta/_journal.json
+drizzle/migrations/*.snap # If you use snapshot testing for migrations
+
+# Turborepo cache
+.turbo
