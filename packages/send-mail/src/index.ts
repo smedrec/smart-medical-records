@@ -35,7 +35,7 @@ function getEnv(variableName: string): string | undefined {
 export interface SendMailEvent {
 	principalId: string
 	organizationId: string
-	action: 'sendMail'
+	action: string
 	emailDetails: MailerSendOptions
 }
 
@@ -109,6 +109,7 @@ email.send({
 	organizationId: 'org-123',
   action: 'sendMail',
   emailDetails: {
+	  from: 'fromName <fromemail@example.com>'
 		to: 'mail@example,
 		subject: 'The subject',
 		html: '<p>The html for the body email</p>,

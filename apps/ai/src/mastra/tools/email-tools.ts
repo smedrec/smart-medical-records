@@ -1,78 +1,13 @@
 import { createTool } from '@mastra/core'
-import { eq } from 'drizzle-orm'
 import z from 'zod'
 
-import { AuthDb, emailProvider } from '@repo/auth-db'
-import { NodeMailer, ResendMailer, SendGridMailer } from '@repo/mailer'
+import { SendMail } from '@repo/send-mail'
 
 import type { Audit } from '@repo/audit'
 import type { MailerSendOptions } from '@repo/mailer'
 import type { FhirSessionData } from '../../hono/middleware/fhir-auth'
 
-interface Mailer {
-	from: string | null
-	mailer: NodeMailer | ResendMailer | SendGridMailer | null
-}
-
-let authDbInstance: AuthDb | undefined = undefined
-export { authDbInstance }
-
-async function getEmailProvider(organizationId: string): Promise<Mailer> {
-	const transport: Mailer = { from: null, mailer: null }
-	// Using environment variable AUTH_DB_URL
-	if (!authDbInstance) {
-		authDbInstance = new AuthDb(process.env.AUTH_DB_URL)
-	}
-
-	if (await authDbInstance.checkAuthDbConnection()) {
-		console.info('🟢 Connected to Postgres for Email service.')
-	} else {
-		console.error('🔴 Postgres connection error for Email service')
-		return transport
-	}
-
-	const db = authDbInstance.getDrizzleInstance()
-
-	const provider = await db.query.emailProvider.findFirst({
-		where: eq(emailProvider.organizationId, organizationId),
-	})
-
-	if (!provider) {
-		console.error('🔴 Mailer connection error for Email service')
-		return transport
-	}
-
-	transport.from = `${provider.fromName} <${provider.fromEmail}>`
-
-	switch (provider?.providerType) {
-		case 'nodemailer':
-			transport.mailer = new NodeMailer({
-				host: provider.smtpHost!,
-				port: provider.smtpPort as number,
-				secure: provider.smtpSecure as boolean,
-				auth: {
-					user: provider.smtpUser!,
-					pass: provider.smtpPass!,
-				},
-			})
-			break
-		case 'resend':
-			transport.mailer = new ResendMailer({
-				apiKey: provider.apiKey!,
-			})
-			break
-		case 'sendgrid':
-			transport.mailer = new SendGridMailer({
-				apiKey: provider.apiKey!,
-			})
-			break
-
-		default:
-			break
-	}
-
-	return transport
-}
+const email = new SendMail('mail', process.env.MAIL_REDIS_URL!)
 
 // --- Email Tools (Apply similar detailed audit logging) ---
 export const emailSendTool = createTool({
@@ -94,7 +29,12 @@ export const emailSendTool = createTool({
 		const toolName = 'emailSend'
 		const principalId = fhirSessionData.userId
 		const organizationId = fhirSessionData.activeOrganizationId
-		let email: Mailer
+
+		if (!principalId || !organizationId)
+			return {
+				success: false,
+				message: 'userId and organizationId must be in context to send mails',
+			}
 
 		await audit.log({
 			principalId,
@@ -103,63 +43,21 @@ export const emailSendTool = createTool({
 			status: 'attempt',
 		})
 
-		if (organizationId) {
-			email = await getEmailProvider(organizationId)
-		} else {
-			await audit.log({
-				principalId,
-				organizationId,
-				action: toolName,
-				status: 'failure',
-				outcomeDescription: `Mailer send error: The organization id is not defined in the context, unable to define the mail transport`,
-			})
-			return {
-				success: false,
-				message:
-					'The organization id is not defined in the context, unable to define the mail transport',
-			}
-		}
-
-		if (!email.mailer) {
-			await audit.log({
-				principalId,
-				organizationId,
-				action: toolName,
-				status: 'failure',
-				outcomeDescription: `Mailer send error: Mailer connection error for Email service`,
-			})
-			console.error('🔴 Mailer connection error for Email service')
-			return { success: false, message: 'Mailer connection error for Email service' }
-		}
-
 		const emailDetails: MailerSendOptions = {
-			from: email.from!,
+			from: 'email.from',
 			to: context.to,
 			subject: context.subject,
 			html: context.html,
 			text: context.text,
 		}
 
-		try {
-			await email.mailer?.send(emailDetails)
-			await audit.log({
-				principalId,
-				organizationId,
-				action: toolName,
-				status: 'success',
-				outcomeDescription: 'Email sent successfully using Mailer!',
-			})
-			return { success: true, message: 'Email sent' }
-		} catch (error) {
-			await audit.log({
-				principalId,
-				organizationId,
-				action: toolName,
-				status: 'failure',
-				outcomeDescription: `Mailer send error: ${error}`,
-			})
-			console.error('🔴 Mailer send error')
-			return { success: false, message: 'Mailer send error' }
-		}
+		await email.send({
+			principalId,
+			organizationId,
+			action: toolName,
+			emailDetails,
+		})
+
+		return { success: true, message: 'Email sent' }
 	},
 })

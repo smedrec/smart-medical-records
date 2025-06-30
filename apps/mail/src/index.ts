@@ -22,10 +22,18 @@ interface Mailer {
 const LOG_LEVEL = (process.env.LOG_LEVEL || 'info') as LogLevel
 const MAIL_QUEUE_NAME = process.env.MAIL_QUEUE_NAME || 'mail'
 const REDIS_URL = process.env.MAIL_REDIS_URL
+const AUTH_DB_URL = process.env.AUTH_DB_URL
 
 if (!REDIS_URL) {
 	console.error(
 		'🔴 MAIL_REDIS_URL environment variable is not set. Please check your .env file or environment configuration.'
+	)
+	process.exit(1)
+}
+
+if (!AUTH_DB_URL) {
+	console.error(
+		'🔴 AUTH_DB_URL environment variable is not set. Please check your .env file or environment configuration.'
 	)
 	process.exit(1)
 }
@@ -62,7 +70,7 @@ async function getEmailProvider(organizationId: string): Promise<Mailer> {
 	const transport: Mailer = { from: null, mailer: null }
 
 	if (!authDbService) {
-		authDbService = new AuthDb(process.env.AUTH_DB_URL)
+		authDbService = new AuthDb(AUTH_DB_URL)
 	}
 
 	const db = authDbService.getDrizzleInstance()
@@ -140,7 +148,7 @@ async function main() {
 			await audit.log({
 				principalId,
 				organizationId,
-				action: action,
+				action: `${action}GetProvider`,
 				status: 'failure',
 				outcomeDescription: `Mailer send error: Mailer connection error for Email service`,
 			})
@@ -154,11 +162,14 @@ async function main() {
 		}
 
 		try {
-			await email.mailer?.send(emailDetails)
+			await email.mailer?.send({
+				...emailDetails,
+				from: email.from!,
+			})
 			await audit.log({
 				principalId,
 				organizationId,
-				action: action,
+				action: `${action}Send`,
 				status: 'success',
 				outcomeDescription: 'Email sent successfully using Mailer!',
 			})
@@ -169,7 +180,7 @@ async function main() {
 			await audit.log({
 				principalId,
 				organizationId,
-				action: action,
+				action: `${action}Send`,
 				status: 'failure',
 				outcomeDescription: `Mailer send error: ${error}`,
 			})

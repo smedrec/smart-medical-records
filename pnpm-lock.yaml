@@ -124,6 +124,9 @@ importers:
       '@repo/mailer':
         specifier: workspace:*
         version: link:../../packages/mailer
+      '@repo/send-mail':
+        specifier: workspace:*
+        version: link:../../packages/send-mail
       ai:
         specifier: 4.3.16
         version: 4.3.16(react@19.1.0)(zod@3.25.67)
@@ -516,7 +519,7 @@ importers:
         version: 0.10.7(effect@3.13.10)(openapi-types@12.1.3)(react@19.1.0)(zod@3.25.67)
       '@platejs/basic-nodes':
         specifier: 49.0.0
-        version: 49.0.0(platejs@49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 49.0.0(platejs@49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.7)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-icons':
         specifier: 1.3.2
         version: 1.3.2(react@19.1.0)
@@ -600,7 +603,7 @@ importers:
         version: 12.19.2(@emotion/is-prop-valid@1.2.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       next-themes:
         specifier: 1.0.0-beta.0
-        version: 1.0.0-beta.0(next@15.3.3(@babel/core@7.27.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.52.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 1.0.0-beta.0(next@15.3.3(@babel/core@7.27.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.52.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       nitro-cloudflare-dev:
         specifier: 0.2.2
         version: 0.2.2
@@ -612,7 +615,7 @@ importers:
         version: 0.5.0(@tanstack/react-query@5.81.5(react@19.1.0))(openapi-fetch@0.14.0)
       platejs:
         specifier: 49.0.11
-        version: 49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0))
+        version: 49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.7)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0))
       postcss:
         specifier: 8.5.6
         version: 8.5.6
@@ -17679,44 +17682,20 @@ snapshots:
       '@babel/helper-plugin-utils': 7.27.1
     optional: true
 
-  '@babel/plugin-syntax-async-generators@7.8.4(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
-
   '@babel/plugin-syntax-async-generators@7.8.4(@babel/core@7.27.7)':
     dependencies:
       '@babel/core': 7.27.7
       '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-syntax-bigint@7.8.3(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
 
   '@babel/plugin-syntax-bigint@7.8.3(@babel/core@7.27.7)':
     dependencies:
       '@babel/core': 7.27.7
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-syntax-class-properties@7.12.13(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
-
   '@babel/plugin-syntax-class-properties@7.12.13(@babel/core@7.27.7)':
     dependencies:
       '@babel/core': 7.27.7
       '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-syntax-class-static-block@7.14.5(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
 
   '@babel/plugin-syntax-class-static-block@7.14.5(@babel/core@7.27.7)':
     dependencies:
@@ -17747,33 +17726,15 @@ snapshots:
       '@babel/helper-plugin-utils': 7.27.1
     optional: true
 
-  '@babel/plugin-syntax-import-attributes@7.27.1(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
-
   '@babel/plugin-syntax-import-attributes@7.27.1(@babel/core@7.27.7)':
     dependencies:
       '@babel/core': 7.27.7
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-syntax-import-meta@7.10.4(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
-
   '@babel/plugin-syntax-import-meta@7.10.4(@babel/core@7.27.7)':
     dependencies:
       '@babel/core': 7.27.7
       '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-syntax-json-strings@7.8.3(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
 
   '@babel/plugin-syntax-json-strings@7.8.3(@babel/core@7.27.7)':
     dependencies:
@@ -17790,88 +17751,40 @@ snapshots:
       '@babel/core': 7.27.7
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-syntax-logical-assignment-operators@7.10.4(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
-
   '@babel/plugin-syntax-logical-assignment-operators@7.10.4(@babel/core@7.27.7)':
     dependencies:
       '@babel/core': 7.27.7
       '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-syntax-nullish-coalescing-operator@7.8.3(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
 
   '@babel/plugin-syntax-nullish-coalescing-operator@7.8.3(@babel/core@7.27.7)':
     dependencies:
       '@babel/core': 7.27.7
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-syntax-numeric-separator@7.10.4(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
-
   '@babel/plugin-syntax-numeric-separator@7.10.4(@babel/core@7.27.7)':
     dependencies:
       '@babel/core': 7.27.7
       '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-syntax-object-rest-spread@7.8.3(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
 
   '@babel/plugin-syntax-object-rest-spread@7.8.3(@babel/core@7.27.7)':
     dependencies:
       '@babel/core': 7.27.7
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-syntax-optional-catch-binding@7.8.3(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
-
   '@babel/plugin-syntax-optional-catch-binding@7.8.3(@babel/core@7.27.7)':
     dependencies:
       '@babel/core': 7.27.7
       '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-syntax-optional-chaining@7.8.3(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
 
   '@babel/plugin-syntax-optional-chaining@7.8.3(@babel/core@7.27.7)':
     dependencies:
       '@babel/core': 7.27.7
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-syntax-private-property-in-object@7.14.5(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
-
   '@babel/plugin-syntax-private-property-in-object@7.14.5(@babel/core@7.27.7)':
     dependencies:
       '@babel/core': 7.27.7
       '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-syntax-top-level-await@7.14.5(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/helper-plugin-utils': 7.27.1
-    optional: true
 
   '@babel/plugin-syntax-top-level-await@7.14.5(@babel/core@7.27.7)':
     dependencies:
@@ -22364,48 +22277,11 @@ snapshots:
 
   '@pkgr/core@0.2.4': {}
 
-  '@platejs/basic-nodes@49.0.0(platejs@49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      platejs: 49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0))
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-
   '@platejs/basic-nodes@49.0.0(platejs@49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.7)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       platejs: 49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.7)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0))
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-
-  '@platejs/core@49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0))':
-    dependencies:
-      '@platejs/slate': 49.0.2
-      '@udecode/react-hotkeys': 37.0.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@udecode/react-utils': 47.3.1(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@udecode/utils': 47.2.7
-      clsx: 2.1.1
-      html-entities: 2.6.0
-      is-hotkey: 0.2.0
-      jotai: 2.8.4(@types/react@19.1.8)(react@19.1.0)
-      jotai-optics: 0.4.0(jotai@2.8.4(@types/react@19.1.8)(react@19.1.0))(optics-ts@2.4.1)
-      jotai-x: 2.3.3(@types/react@19.1.8)(jotai@2.8.4(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
-      lodash: 4.17.21
-      nanoid: 5.1.5
-      optics-ts: 2.4.1
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      slate-hyperscript: 0.100.0(slate@0.117.0)
-      slate-react: 0.117.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)
-      use-deep-compare: 1.3.0(react@19.1.0)
-      zustand: 5.0.5(@types/react@19.1.8)(immer@10.1.1)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
-      zustand-x: 6.1.0(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(zustand@5.0.5(@types/react@19.1.8)(immer@10.1.1)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0)))
-    transitivePeerDependencies:
-      - '@types/react'
-      - immer
-      - react-native
-      - scheduler
-      - slate
-      - slate-dom
-      - use-sync-external-store
 
   '@platejs/core@49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.7)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0))':
     dependencies:
@@ -22445,25 +22321,6 @@ snapshots:
       lodash: 4.17.21
       slate: 0.117.0
       slate-dom: 0.116.0(slate@0.117.0)
-
-  '@platejs/utils@49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0))':
-    dependencies:
-      '@platejs/core': 49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0))
-      '@platejs/slate': 49.0.2
-      '@udecode/react-utils': 47.3.1(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@udecode/utils': 47.2.7
-      clsx: 2.1.1
-      lodash: 4.17.21
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-    transitivePeerDependencies:
-      - '@types/react'
-      - immer
-      - react-native
-      - scheduler
-      - slate
-      - slate-dom
-      - use-sync-external-store
 
   '@platejs/utils@49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.7)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0))':
     dependencies:
@@ -23395,16 +23252,6 @@ snapshots:
       yargs: 17.7.2
     optional: true
 
-  '@react-native/codegen@0.80.0(@babel/core@7.27.4)':
-    dependencies:
-      '@babel/core': 7.27.4
-      glob: 7.2.3
-      hermes-parser: 0.28.1
-      invariant: 2.2.4
-      nullthrows: 1.1.1
-      yargs: 17.7.2
-    optional: true
-
   '@react-native/codegen@0.80.0(@babel/core@7.27.7)':
     dependencies:
       '@babel/core': 7.27.7
@@ -23487,16 +23334,6 @@ snapshots:
     optional: true
 
   '@react-native/normalize-colors@0.80.0':
-    optional: true
-
-  '@react-native/virtualized-lists@0.80.0(@types/react@19.1.8)(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      invariant: 2.2.4
-      nullthrows: 1.1.1
-      react: 19.1.0
-      react-native: 0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0)
-    optionalDependencies:
-      '@types/react': 19.1.8
     optional: true
 
   '@react-native/virtualized-lists@0.80.0(@types/react@19.1.8)(react-native@0.80.0(@babel/core@7.27.7)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)':
@@ -26305,20 +26142,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  babel-jest@29.7.0(@babel/core@7.27.4):
-    dependencies:
-      '@babel/core': 7.27.4
-      '@jest/transform': 29.7.0
-      '@types/babel__core': 7.20.5
-      babel-plugin-istanbul: 6.1.1
-      babel-preset-jest: 29.6.3(@babel/core@7.27.4)
-      chalk: 4.1.2
-      graceful-fs: 4.2.11
-      slash: 3.0.0
-    transitivePeerDependencies:
-      - supports-color
-    optional: true
-
   babel-jest@29.7.0(@babel/core@7.27.7):
     dependencies:
       '@babel/core': 7.27.7
@@ -26396,26 +26219,6 @@ snapshots:
       - '@babel/core'
     optional: true
 
-  babel-preset-current-node-syntax@1.1.0(@babel/core@7.27.4):
-    dependencies:
-      '@babel/core': 7.27.4
-      '@babel/plugin-syntax-async-generators': 7.8.4(@babel/core@7.27.4)
-      '@babel/plugin-syntax-bigint': 7.8.3(@babel/core@7.27.4)
-      '@babel/plugin-syntax-class-properties': 7.12.13(@babel/core@7.27.4)
-      '@babel/plugin-syntax-class-static-block': 7.14.5(@babel/core@7.27.4)
-      '@babel/plugin-syntax-import-attributes': 7.27.1(@babel/core@7.27.4)
-      '@babel/plugin-syntax-import-meta': 7.10.4(@babel/core@7.27.4)
-      '@babel/plugin-syntax-json-strings': 7.8.3(@babel/core@7.27.4)
-      '@babel/plugin-syntax-logical-assignment-operators': 7.10.4(@babel/core@7.27.4)
-      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3(@babel/core@7.27.4)
-      '@babel/plugin-syntax-numeric-separator': 7.10.4(@babel/core@7.27.4)
-      '@babel/plugin-syntax-object-rest-spread': 7.8.3(@babel/core@7.27.4)
-      '@babel/plugin-syntax-optional-catch-binding': 7.8.3(@babel/core@7.27.4)
-      '@babel/plugin-syntax-optional-chaining': 7.8.3(@babel/core@7.27.4)
-      '@babel/plugin-syntax-private-property-in-object': 7.14.5(@babel/core@7.27.4)
-      '@babel/plugin-syntax-top-level-await': 7.14.5(@babel/core@7.27.4)
-    optional: true
-
   babel-preset-current-node-syntax@1.1.0(@babel/core@7.27.7):
     dependencies:
       '@babel/core': 7.27.7
@@ -26461,13 +26264,6 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
-    optional: true
-
-  babel-preset-jest@29.6.3(@babel/core@7.27.4):
-    dependencies:
-      '@babel/core': 7.27.4
-      babel-plugin-jest-hoist: 29.6.3
-      babel-preset-current-node-syntax: 1.1.0(@babel/core@7.27.4)
     optional: true
 
   babel-preset-jest@29.6.3(@babel/core@7.27.7):
@@ -31871,13 +31667,13 @@ snapshots:
 
   netmask@2.0.2: {}
 
-  next-themes@1.0.0-beta.0(next@15.3.3(@babel/core@7.27.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.52.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  next-themes@1.0.0-beta.0(next@15.3.3(@babel/core@7.27.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.52.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
-      next: 15.3.3(@babel/core@7.27.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.52.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      next: 15.3.3(@babel/core@7.27.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.52.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
-  next@15.3.3(@babel/core@7.27.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.52.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  next@15.3.3(@babel/core@7.27.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.52.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@next/env': 15.3.3
       '@swc/counter': 0.1.3
@@ -31887,7 +31683,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-      styled-jsx: 5.1.6(@babel/core@7.27.4)(react@19.1.0)
+      styled-jsx: 5.1.6(@babel/core@7.27.7)(react@19.1.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.3.3
       '@next/swc-darwin-x64': 15.3.3
@@ -32835,25 +32631,6 @@ snapshots:
       exsolve: 1.0.5
       pathe: 2.0.3
 
-  platejs@49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0)):
-    dependencies:
-      '@platejs/core': 49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0))
-      '@platejs/slate': 49.0.2
-      '@platejs/utils': 49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0))
-      '@udecode/react-hotkeys': 37.0.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@udecode/react-utils': 47.3.1(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@udecode/utils': 47.2.7
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-    transitivePeerDependencies:
-      - '@types/react'
-      - immer
-      - react-native
-      - scheduler
-      - slate
-      - slate-dom
-      - use-sync-external-store
-
   platejs@49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.7)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0)):
     dependencies:
       '@platejs/core': 49.0.11(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.7)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(slate-dom@0.116.0(slate@0.117.0))(slate@0.117.0)(use-sync-external-store@1.5.0(react@19.1.0))
@@ -33329,54 +33106,6 @@ snapshots:
       react-native: 0.80.0(@babel/core@7.27.7)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0)
     optional: true
 
-  react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0):
-    dependencies:
-      '@jest/create-cache-key-function': 29.7.0
-      '@react-native/assets-registry': 0.80.0
-      '@react-native/codegen': 0.80.0(@babel/core@7.27.4)
-      '@react-native/community-cli-plugin': 0.80.0(@react-native-community/cli@12.3.6)
-      '@react-native/gradle-plugin': 0.80.0
-      '@react-native/js-polyfills': 0.80.0
-      '@react-native/normalize-colors': 0.80.0
-      '@react-native/virtualized-lists': 0.80.0(@types/react@19.1.8)(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
-      abort-controller: 3.0.0
-      anser: 1.4.10
-      ansi-regex: 5.0.1
-      babel-jest: 29.7.0(@babel/core@7.27.4)
-      babel-plugin-syntax-hermes-parser: 0.28.1
-      base64-js: 1.5.1
-      chalk: 4.1.2
-      commander: 12.1.0
-      flow-enums-runtime: 0.0.6
-      glob: 7.2.3
-      invariant: 2.2.4
-      jest-environment-node: 29.7.0
-      memoize-one: 5.2.1
-      metro-runtime: 0.82.4
-      metro-source-map: 0.82.4
-      nullthrows: 1.1.1
-      pretty-format: 29.7.0
-      promise: 8.3.0
-      react: 19.1.0
-      react-devtools-core: 6.1.2
-      react-refresh: 0.14.2
-      regenerator-runtime: 0.13.11
-      scheduler: 0.26.0
-      semver: 7.7.2
-      stacktrace-parser: 0.1.11
-      whatwg-fetch: 3.6.20
-      ws: 6.2.3
-      yargs: 17.7.2
-    optionalDependencies:
-      '@types/react': 19.1.8
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@react-native-community/cli'
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-    optional: true
-
   react-native@0.80.0(@babel/core@7.27.7)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0):
     dependencies:
       '@jest/create-cache-key-function': 29.7.0
@@ -33485,16 +33214,6 @@ snapshots:
       prismjs: 1.30.0
       react: 19.1.0
       refractor: 3.6.0
-
-  react-tracked@1.7.14(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0):
-    dependencies:
-      proxy-compare: 2.6.0
-      react: 19.1.0
-      scheduler: 0.26.0
-      use-context-selector: 1.4.4(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)
-    optionalDependencies:
-      react-dom: 19.1.0(react@19.1.0)
-      react-native: 0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0)
 
   react-tracked@1.7.14(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.7)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0):
     dependencies:
@@ -34760,12 +34479,12 @@ snapshots:
       stylis: 4.3.2
       tslib: 2.6.2
 
-  styled-jsx@5.1.6(@babel/core@7.27.4)(react@19.1.0):
+  styled-jsx@5.1.6(@babel/core@7.27.7)(react@19.1.0):
     dependencies:
       client-only: 0.0.1
       react: 19.1.0
     optionalDependencies:
-      '@babel/core': 7.27.4
+      '@babel/core': 7.27.7
 
   stylis@4.3.2: {}
 
@@ -35595,14 +35314,6 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.1.8
 
-  use-context-selector@1.4.4(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0):
-    dependencies:
-      react: 19.1.0
-      scheduler: 0.26.0
-    optionalDependencies:
-      react-dom: 19.1.0(react@19.1.0)
-      react-native: 0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0)
-
   use-context-selector@1.4.4(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.7)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0):
     dependencies:
       react: 19.1.0
@@ -36254,20 +35965,6 @@ snapshots:
   zod@3.25.67: {}
 
   zod@3.25.7: {}
-
-  zustand-x@6.1.0(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(zustand@5.0.5(@types/react@19.1.8)(immer@10.1.1)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))):
-    dependencies:
-      immer: 10.1.1
-      lodash.mapvalues: 4.6.0
-      mutative: 1.1.0
-      react-tracked: 1.7.14(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.4)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)
-      use-sync-external-store: 1.4.0(react@19.1.0)
-      zustand: 5.0.5(@types/react@19.1.8)(immer@10.1.1)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
-    transitivePeerDependencies:
-      - react
-      - react-dom
-      - react-native
-      - scheduler
 
   zustand-x@6.1.0(react-dom@19.1.0(react@19.1.0))(react-native@0.80.0(@babel/core@7.27.7)(@react-native-community/cli@12.3.6)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0)(zustand@5.0.5(@types/react@19.1.8)(immer@10.1.1)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))):
     dependencies:
