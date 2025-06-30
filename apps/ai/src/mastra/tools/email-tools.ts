@@ -14,25 +14,28 @@ interface Mailer {
 	mailer: NodeMailer | ResendMailer | SendGridMailer | null
 }
 
+let authDbInstance: AuthDb | undefined = undefined
+export { authDbInstance }
+
 async function getEmailProvider(organizationId: string): Promise<Mailer> {
 	const transport: Mailer = { from: null, mailer: null }
 	// Using environment variable AUTH_DB_URL
-	const authDbService = new AuthDb(process.env.AUTH_DB_URL)
+	if (!authDbInstance) {
+		authDbInstance = new AuthDb(process.env.AUTH_DB_URL)
+	}
 
-	if (await authDbService.checkAuthDbConnection()) {
+	if (await authDbInstance.checkAuthDbConnection()) {
 		console.info('🟢 Connected to Postgres for Email service.')
 	} else {
 		console.error('🔴 Postgres connection error for Email service')
 		return transport
 	}
 
-	const db = authDbService.getDrizzleInstance()
+	const db = authDbInstance.getDrizzleInstance()
 
 	const provider = await db.query.emailProvider.findFirst({
 		where: eq(emailProvider.organizationId, organizationId),
 	})
-
-	await authDbService.end()
 
 	if (!provider) {
 		console.error('🔴 Mailer connection error for Email service')
@@ -103,6 +106,13 @@ export const emailSendTool = createTool({
 		if (organizationId) {
 			email = await getEmailProvider(organizationId)
 		} else {
+			await audit.log({
+				principalId,
+				organizationId,
+				action: toolName,
+				status: 'failure',
+				outcomeDescription: `Mailer send error: The organization id is not defined in the context, unable to define the mail transport`,
+			})
 			return {
 				success: false,
 				message:
@@ -111,7 +121,15 @@ export const emailSendTool = createTool({
 		}
 
 		if (!email.mailer) {
+			await audit.log({
+				principalId,
+				organizationId,
+				action: toolName,
+				status: 'failure',
+				outcomeDescription: `Mailer send error: Mailer connection error for Email service`,
+			})
 			console.error('🔴 Mailer connection error for Email service')
+			return { success: false, message: 'Mailer connection error for Email service' }
 		}
 
 		const emailDetails: MailerSendOptions = {
