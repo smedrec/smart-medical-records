@@ -28,7 +28,11 @@ export const emailSendTool = createTool({
 		to: z.string().describe('Recipient name'),
 		subject: z.string().describe('The subject of the email'),
 		html: z.string().describe('The body of the email in html'),
-		text: z.string().describe('The body of the email in text'),
+		text: z.string().optional().describe('The body of the email in text'),
+	}),
+	outputSchema: z.object({
+		success: z.boolean(),
+		message: z.string(),
 	}),
 	execute: async ({ context, runtimeContext }): Promise<{ success: boolean; message: string }> => {
 		const audit = runtimeContext.get('audit') as Audit
@@ -66,7 +70,7 @@ export const emailSendTool = createTool({
 				status: 'failure',
 				outcomeDescription: `NodeMailer send error: ${error}`,
 			})
-			throw error
+			return { success: false, message: 'NodeMailer send error' }
 		}
 	},
 })

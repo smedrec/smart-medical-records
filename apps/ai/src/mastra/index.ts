@@ -18,6 +18,7 @@ import { patientReportAgent } from './agents/patient-report-agent'
 import { fhirMCPServer } from './mcp'
 import { opensearch } from './stores/opensearch'
 import { pgStorage, pgVector } from './stores/pgvector'
+import { newUserWorkflow } from './workflows/new-user-workflow'
 import { weatherWorkflow } from './workflows/weather-workflow'
 
 import type { OtelConfig } from '@mastra/core'
@@ -121,7 +122,7 @@ export const mastra = new Mastra({
 
 					//console.log(`AUTH CONFIG: ${JSON.stringify(authConfig, null, 2)}`)
 
-					if (!authInstance) {
+					/**if (!authInstance) {
 						authInstance = new Auth(authConfig)
 					}
 
@@ -162,7 +163,7 @@ export const mastra = new Mastra({
 					runtimeContext.set('cerbos', cerbos)
 					runtimeContext.set('audit', audit)
 					runtimeContext.set('fhirSessionData', sessionData)
-					runtimeContext.set('fhirClient', fhirApiClient)
+					runtimeContext.set('fhirClient', fhirApiClient)*/
 					await next()
 				},
 				path: '/api/*',
@@ -245,7 +246,7 @@ export const mastra = new Mastra({
 			}),
 		],
 	},
-	workflows: { weatherWorkflow },
+	workflows: { newUserWorkflow },
 	agents: { assistantAgent, patientReportAgent },
 	vectors: { pgVector, opensearch },
 	//storage: new D1Store({
