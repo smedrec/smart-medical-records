@@ -238,3 +238,24 @@ export const smartFhirClient = pgTable(
 		]
 	}
 )
+
+export const emailProvider = pgTable(
+	'email_provider',
+	{
+		organizationId: text('organization_id')
+			.notNull()
+			.references(() => organization.id, { onDelete: 'cascade' }),
+		providerType: text('provider_type').notNull().default('nodemailer'), // e.g., 'nodemailer', 'workersmailer', 'resend', 'sendgrid'
+		smtpHost: text('smtp_host'),
+		smtpPort: integer('smtp_port').default(465),
+		smtpSecure: boolean('smtp_secure').default(true),
+		smtpUser: text('smtp_user'),
+		smtpPass: text('smtp_pass'),
+		apiKey: text('api_key'),
+		fromName: text('from_name'),
+		fromEmail: text('from_email'),
+	},
+	(table) => {
+		return [primaryKey({ columns: [table.organizationId] })]
+	}
+)

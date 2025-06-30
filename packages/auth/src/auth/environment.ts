@@ -31,9 +31,19 @@ export interface EnvConfig {
 	AUDIT_REDIS_URL: string
 	APP_PUBLIC_URL: string
 	SMTP_HOST: string
+	SMTP_PORT?: number // 465 for SSL
+	SMTP_SECURE?: boolean // true for 465, false for other ports like 587 (STARTTLS)
 	SMTP_USER: string
 	SMTP_PASSWORD: string
 }
+/**
+ * SMTP_PORT default value: 465
+ */
+let SMTP_PORT = 465
+/**
+ * SMTP_SECURE default value: false
+ */
+let SMTP_SECURE = false
 
 /**
  * Validate and retrieve required environment variables
@@ -49,6 +59,7 @@ export function getEnvConfig(): EnvConfig {
 	const AUDIT_REDIS_URL = getEnv('AUDIT_REDIS_URL')
 	const APP_PUBLIC_URL = getEnv('APP_PUBLIC_URL')
 	const SMTP_HOST = getEnv('SMTP_HOST')
+	const SMTP_PORT_STRING = getEnv('SMTP_PORT')
 	const SMTP_USER = getEnv('SMTP_USER')
 	const SMTP_PASSWORD = getEnv('SMTP_PASSWORD')
 
@@ -90,6 +101,14 @@ export function getEnvConfig(): EnvConfig {
 		throw new AUTHError(`SMTP_HOST environment variable not set. SMTP_HOST is required.`)
 	}
 
+	if (SMTP_PORT_STRING) {
+		SMTP_PORT = parseInt(SMTP_PORT_STRING, 10)
+	}
+
+	if (SMTP_PORT === 465) {
+		SMTP_SECURE = true
+	}
+
 	if (!SMTP_USER) {
 		throw new AUTHError(`SMTP_USER environment variable not set. SMTP_USER is required.`)
 	}
@@ -119,6 +138,8 @@ export function getEnvConfig(): EnvConfig {
 		AUDIT_REDIS_URL,
 		APP_PUBLIC_URL,
 		SMTP_HOST,
+		SMTP_PORT,
+		SMTP_SECURE,
 		SMTP_USER,
 		SMTP_PASSWORD,
 	}

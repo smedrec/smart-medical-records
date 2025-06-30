@@ -72,8 +72,8 @@ if (await authDbService.checkAuthDbConnection()) {
 
 const mailerConfig: NodeMailerSmtpOptions = {
 	host: config.SMTP_HOST,
-	port: 2525, // Or 465 for SSL
-	secure: false, // true for 465, false for other ports like 587 (STARTTLS)
+	port: config.SMTP_PORT,
+	secure: config.SMTP_SECURE,
 	auth: {
 		user: config.SMTP_USER,
 		pass: config.SMTP_PASSWORD,

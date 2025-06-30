@@ -1,24 +1,71 @@
 import { createTool } from '@mastra/core'
+import { eq } from 'drizzle-orm'
 import z from 'zod'
 
-import { NodeMailer } from '@repo/mailer'
+import { AuthDb, emailProvider } from '@repo/auth-db'
+import { NodeMailer, ResendMailer, SendGridMailer } from '@repo/mailer'
 
 import type { Audit } from '@repo/audit'
-import type { MailerSendOptions, NodeMailerSmtpOptions } from '@repo/mailer'
 import type { FhirSessionData } from '../../hono/middleware/fhir-auth'
 
-const config: NodeMailerSmtpOptions = {
-	host: process.env.SMTP_HOST!,
-	port: 2525, // Or 465 for SSL
-	secure: false, // true for 465, false for other ports like 587 (STARTTLS)
-	auth: {
-		user: process.env.SMTP_USER!,
-		pass: process.env.SMTP_PASSWORD!,
-	},
-	// Other nodemailer options can be added here
+interface Mailer {
+	from: string | null
+	mailer: any | null
 }
 
-const mailer = new NodeMailer(config)
+async function getEmailProvider(organizationId: string) {
+	const transport: Mailer = { from: null, mailer: null }
+	// Using environment variable AUTH_DB_URL
+	const authDbService = new AuthDb(process.env.AUTH_DB_URL)
+
+	if (await authDbService.checkAuthDbConnection()) {
+		console.info('🟢 Connected to Postgres for Email service.')
+	} else {
+		console.error('🔴 Postgres connection error for Email service')
+		return transport
+	}
+
+	const db = authDbService.getDrizzleInstance()
+
+	const provider = await db.query.emailProvider.findFirst({
+		where: eq(emailProvider.organizationId, organizationId),
+	})
+
+	if (!provider) {
+		console.error('🔴 Mailer connection error for Email service')
+		return transport
+	}
+
+	transport.from = `${provider?.fromName} <${provider?.fromEmail}>`
+	switch (provider?.providerType) {
+		case 'nodemailer':
+			transport.mailer = new NodeMailer({
+				host: provider.smtpHost!,
+				port: provider.smtpPort as number,
+				secure: provider.smtpSecure as boolean,
+				auth: {
+					user: provider.smtpUser!,
+					pass: provider.smtpPass!,
+				},
+			})
+			break
+		case 'resend':
+			transport.mailer = new ResendMailer({
+				apiKey: provider.apiKey!,
+			})
+			break
+		case 'sendgrid':
+			transport.mailer = new SendGridMailer({
+				apiKey: provider.apiKey!,
+			})
+			break
+
+		default:
+			break
+	}
+
+	return transport
+}
 
 // --- Email Tools (Apply similar detailed audit logging) ---
 export const emailSendTool = createTool({
@@ -40,6 +87,7 @@ export const emailSendTool = createTool({
 		const toolName = 'emailSend'
 		const principalId = fhirSessionData.userId
 		const organizationId = fhirSessionData.activeOrganizationId
+		let email: { from: string | null; mailer: any | null }
 
 		await audit.log({
 			principalId,
@@ -48,8 +96,17 @@ export const emailSendTool = createTool({
 			status: 'attempt',
 		})
 
-		const emailDetails: MailerSendOptions = {
-			from: 'no-reply@smedrec.com',
+		if (organizationId) {
+			email = await getEmailProvider(organizationId)
+		} else {
+			return {
+				success: false,
+				message:
+					'The organization id is not defined in the context, unable to define the mail transport',
+			}
+		}
+		const emailDetails = {
+			from: email.from,
 			to: context.to,
 			subject: context.subject,
 			html: context.html,
@@ -57,13 +114,13 @@ export const emailSendTool = createTool({
 		}
 
 		try {
-			await mailer.send(emailDetails)
+			await email.mailer.send(emailDetails)
 			await audit.log({
 				principalId,
 				organizationId,
 				action: toolName,
 				status: 'success',
-				outcomeDescription: 'Email sent successfully using NodeMailer!',
+				outcomeDescription: 'Email sent successfully using Mailer!',
 			})
 			return { success: true, message: 'Email sent' }
 		} catch (error) {
@@ -72,9 +129,10 @@ export const emailSendTool = createTool({
 				organizationId,
 				action: toolName,
 				status: 'failure',
-				outcomeDescription: `NodeMailer send error: ${error}`,
+				outcomeDescription: `Mailer send error: ${error}`,
 			})
-			return { success: false, message: 'NodeMailer send error' }
+			console.error('🔴 Mailer send error')
+			return { success: false, message: 'Mailer send error' }
 		}
 	},
 })

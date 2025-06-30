@@ -9,7 +9,7 @@ import createClient from 'openapi-fetch'
 import { fetch, request } from 'undici'
 
 import { Audit } from '@repo/audit'
-import { Auth } from '@repo/auth/dist/auth/auth-class.js'
+import type { Auth } from '@repo/auth/dist/auth/auth-class.js'
 import { Cerbos } from '@repo/cerbos'
 
 import { assistantAgent } from './agents/assistant-agent'
@@ -117,6 +117,7 @@ export const mastra = new Mastra({
 						AUDIT_REDIS_URL: process.env.AUDIT_REDIS_URL!,
 						APP_PUBLIC_URL: process.env.APP_PUBLIC_URL!,
 						SMTP_HOST: process.env.SMTP_HOST!,
+						SMTP_PORT: process.env.SMTP_PORT!,
 						SMTP_USER: process.env.SMTP_USER!,
 						SMTP_PASSWORD: process.env.SMTP_PASSWORD!,
 					}
