@@ -6,14 +6,15 @@ import { AuthDb, emailProvider } from '@repo/auth-db'
 import { NodeMailer, ResendMailer, SendGridMailer } from '@repo/mailer'
 
 import type { Audit } from '@repo/audit'
+import type { MailerSendOptions } from '@repo/mailer'
 import type { FhirSessionData } from '../../hono/middleware/fhir-auth'
 
 interface Mailer {
 	from: string | null
-	mailer: any | null
+	mailer: NodeMailer | ResendMailer | SendGridMailer | null
 }
 
-async function getEmailProvider(organizationId: string) {
+async function getEmailProvider(organizationId: string): Promise<Mailer> {
 	const transport: Mailer = { from: null, mailer: null }
 	// Using environment variable AUTH_DB_URL
 	const authDbService = new AuthDb(process.env.AUTH_DB_URL)
@@ -31,12 +32,15 @@ async function getEmailProvider(organizationId: string) {
 		where: eq(emailProvider.organizationId, organizationId),
 	})
 
+	await authDbService.end()
+
 	if (!provider) {
 		console.error('🔴 Mailer connection error for Email service')
 		return transport
 	}
 
-	transport.from = `${provider?.fromName} <${provider?.fromEmail}>`
+	transport.from = `${provider.fromName} <${provider.fromEmail}>`
+
 	switch (provider?.providerType) {
 		case 'nodemailer':
 			transport.mailer = new NodeMailer({
@@ -87,7 +91,7 @@ export const emailSendTool = createTool({
 		const toolName = 'emailSend'
 		const principalId = fhirSessionData.userId
 		const organizationId = fhirSessionData.activeOrganizationId
-		let email: { from: string | null; mailer: any | null }
+		let email: Mailer
 
 		await audit.log({
 			principalId,
@@ -105,8 +109,13 @@ export const emailSendTool = createTool({
 					'The organization id is not defined in the context, unable to define the mail transport',
 			}
 		}
-		const emailDetails = {
-			from: email.from,
+
+		if (!email.mailer) {
+			console.error('🔴 Mailer connection error for Email service')
+		}
+
+		const emailDetails: MailerSendOptions = {
+			from: email.from!,
 			to: context.to,
 			subject: context.subject,
 			html: context.html,
@@ -114,7 +123,7 @@ export const emailSendTool = createTool({
 		}
 
 		try {
-			await email.mailer.send(emailDetails)
+			await email.mailer?.send(emailDetails)
 			await audit.log({
 				principalId,
 				organizationId,
