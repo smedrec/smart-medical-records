@@ -39,9 +39,11 @@ export const emailSendTool = createTool({
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
 		const toolName = 'emailSend'
 		const principalId = fhirSessionData.userId
+		const organizationId = fhirSessionData.activeOrganizationId
 
 		await audit.log({
 			principalId,
+			organizationId,
 			action: `${toolName}Attempt`,
 			status: 'attempt',
 		})
@@ -58,6 +60,7 @@ export const emailSendTool = createTool({
 			await mailer.send(emailDetails)
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				status: 'success',
 				outcomeDescription: 'Email sent successfully using NodeMailer!',
@@ -66,6 +69,7 @@ export const emailSendTool = createTool({
 		} catch (error) {
 			await audit.log({
 				principalId,
+				organizationId,
 				action: toolName,
 				status: 'failure',
 				outcomeDescription: `NodeMailer send error: ${error}`,
