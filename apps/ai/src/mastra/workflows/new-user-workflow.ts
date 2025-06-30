@@ -8,9 +8,9 @@ import { Cerbos } from '@repo/cerbos'
 
 import { emailSendTool } from '../tools/email-tools'
 import { fhirResourceCreateTool } from '../tools/fhir-tools'
-import { ToolCallResult } from '../tools/types'
 
 import type { FhirApiClient, FhirSessionData } from '../../hono/middleware/fhir-auth'
+import type { ToolCallResult } from '../tools/types'
 
 const runtimeContext = new RuntimeContext()
 
@@ -116,7 +116,7 @@ const createFhirPersonResource = createStep({
 			})) as ToolCallResult
 
 			// Assume result.result contains the created FHIR resource
-			const createdResource = result.content[0] as { id?: string }
+			const createdResource = JSON.parse(result.content[0].text)
 			if (
 				!result ||
 				typeof createdResource !== 'object' ||
