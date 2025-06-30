@@ -13,7 +13,7 @@ import type { AuditLogEvent } from '@repo/audit'
 
 const LOG_LEVEL = (process.env.LOG_LEVEL || 'info') as LogLevel
 const AUDIT_QUEUE_NAME = process.env.AUDIT_QUEUE_NAME || 'audit'
-const REDIS_URL = process.env.REDIS_URL
+const REDIS_URL = process.env.AUDIT_REDIS_URL
 
 if (!REDIS_URL) {
 	console.error(
@@ -45,12 +45,16 @@ connection.on('error', (err) => {
 })
 
 // Using environment variable AUDIT_DB_URL
-const auditDbService = new AuditDb()
-const db = auditDbService.getDrizzleInstance()
+let auditDbService: AuditDb | undefined = undefined
+export { auditDbService }
 
 // Main function to start the worker
 async function main() {
 	logger.info('🏁 Audit worker starting...')
+
+	if (!auditDbService) {
+		auditDbService = new AuditDb(process.env.AUTH_DB_URL)
+	}
 
 	// 1. Check database connection
 	const dbConnected = await auditDbService.checkAuditDbConnection()
@@ -61,6 +65,8 @@ async function main() {
 		await connection.quit() // Close Redis connection before exiting
 		process.exit(1)
 	}
+
+	const db = auditDbService.getDrizzleInstance()
 
 	// 2. Define the job processor
 	const processJob = async (job: Job<AuditLogEvent, any, string>): Promise<void> => {
@@ -135,7 +141,8 @@ async function main() {
 		logger.info(`🚦 Received ${signal}. Shutting down gracefully...`)
 		await worker.close()
 		await connection.quit()
-		logger.info('🚪 Worker and Redis connection closed. Exiting.')
+		await auditDbService?.end()
+		logger.info('🚪 Worker, Postgres and Redis connections closed. Exiting.')
 		process.exit(0)
 	}
 
@@ -144,7 +151,8 @@ async function main() {
 }
 
 // Start the application
-main().catch((error) => {
+main().catch(async (error) => {
 	logger.error('💥 Unhandled error in main application scope:', error)
+	await auditDbService?.end()
 	void connection.quit().finally(() => process.exit(1))
 })

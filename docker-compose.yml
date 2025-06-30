@@ -1,12 +1,23 @@
 services:
   audit:
-    container_name: audit
+    container_name: audit-worker
     build:
       context: .
       dockerfile: ./apps/audit/Dockerfile
     restart: always
     environment:
-      - REDIS_URL=${REDIS_URL}
+      - AUDIT_REDIS_URL=${REDIS_URL}
       - AUDIT_QUEUE_NAME=${AUDIT_QUEUE_NAME}
       - AUDIT_DB_URL=${AUDIT_DB_URL}
+      - LOG_LEVEL=${LOG_LEVEL}
+  mail:
+    container_name: mail-worker
+    build:
+      context: .
+      dockerfile: ./apps/mail/Dockerfile
+    restart: always
+    environment:
+      - MAIL_REDIS_URL=${MAIL_REDIS_URL}
+      - MAIL_QUEUE_NAME=${MAIL_QUEUE_NAME}
+      - AUTH_DB_URL=${AUTH_DB_URL}
       - LOG_LEVEL=${LOG_LEVEL}
