@@ -51,6 +51,7 @@ let auditDbService: AuditDb | undefined = undefined
 export { auditDbService }
 
 // Simple healthcheck server for audit worker
+const port = process.env.AUDIT_WORKER_PORT
 const app = new Hono()
 app.get('/healthz', (c) => c.text('OK'))
 const server = serve(app)
