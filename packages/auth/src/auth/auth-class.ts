@@ -5,7 +5,7 @@ import Redis from 'ioredis'
 
 import { Audit } from '@repo/audit'
 import { AuthDb } from '@repo/auth-db'
-import { NodeMailer } from '@repo/mailer'
+import { SendMail } from '@repo/send-mail'
 
 import { mastra } from '../utils/mastra.js'
 import { getEnvConfig } from './environment.js'
@@ -21,7 +21,7 @@ import {
 } from './permissions/organization.js'
 
 import type { RedisOptions } from 'ioredis'
-import type { MailerSendOptions, NodeMailerSmtpOptions } from '@repo/mailer'
+import type { MailerSendOptions } from '@repo/mailer'
 import type { EnvConfig } from './environment.js'
 
 class Auth {
@@ -55,7 +55,7 @@ class Auth {
 			// For now, this will prevent the worker from starting or stop it if the connection is lost later.
 		})
 
-		// Using environment variable AUDIT_DB_URL
+		// Using environment variable AUTH_DB_URL
 		const authDbService = new AuthDb(effectiveConfig.AUTH_DB_URL)
 		const db = authDbService.getDrizzleInstance()
 
@@ -65,18 +65,7 @@ class Auth {
 		//	console.error('🔴 Postgres connection error for Better Auth service')
 		//}
 
-		const mailerConfig: NodeMailerSmtpOptions = {
-			host: effectiveConfig.SMTP_HOST,
-			port: 2525, // Or 465 for SSL
-			secure: false, // true for 465, false for other ports like 587 (STARTTLS)
-			auth: {
-				user: effectiveConfig.SMTP_USER,
-				pass: effectiveConfig.SMTP_PASSWORD,
-			},
-			// Other nodemailer options can be added here
-		}
-
-		const mailer = new NodeMailer(mailerConfig)
+		const email = new SendMail('mail', effectiveConfig.MAIL_REDIS_URL!)
 
 		const audit = new Audit('audit', effectiveConfig.AUDIT_REDIS_URL)
 
@@ -98,53 +87,48 @@ class Auth {
 				maxPasswordLength: 128,
 				requireEmailVerification: true,
 				sendResetPassword: async ({ user, url }) => {
+					const org = await getActiveOrganization(user.id)
+					// TODO - return a error to user
+					if (!org) return
 					const emailDetails: MailerSendOptions = {
 						from: 'no-reply@smedrec.com',
 						to: user.email,
 						subject: 'Reset your password',
 						html: `
-					<p>Hi ${user.name},</p>
-					<p>Click the link below to reset your password:</p>
-					<p><a href="${url}">${url}</a></p>
-				`,
+							<p>Hi ${user.name},</p>
+							<p>Click the link below to reset your password:</p>
+							<p><a href="${url}">${url}</a></p>
+						`,
 					}
-					await mailer.send(emailDetails)
-					/**await email.send({
-				to: { name: user.name, email: user.email },
-				subject: 'Reset your password',
-				html: `
-					<p>Hi ${user.name},</p>
-					<p>Click the link below to reset your password:</p>
-					<p><a href="${url}">${url}</a></p>
-				`,
-			})*/
+					await email.send({
+						principalId: user.id,
+						organizationId: org.organizationId,
+						action: 'sendResetPassword',
+						emailDetails,
+					})
 				},
 			},
 			emailVerification: {
 				sendOnSignUp: true,
 				autoSignInAfterVerification: true,
 				sendVerificationEmail: async ({ user, url }) => {
-					// TO DO: redirect to APP
+					// TODO: redirect to APP
 					const emailDetails: MailerSendOptions = {
-						from: 'no-reply@smedrec.com',
+						from: 'SMEDREC <no-reply@smedrec.com>',
 						to: user.email,
 						subject: 'Verify your email address',
 						html: `
-					<p>Hi ${user.name},</p>
-					<p>Click the link below to verify your email address:</p>
-					<p><a href="${url}">${url}</a></p>
-				`,
+							<p>Hi ${user.name},</p>
+							<p>Click the link below to verify your email address:</p>
+							<p><a href="${url}">${url}</a></p>
+						`,
 					}
-					await mailer.send(emailDetails)
-					/**await email.send({
-				to: { name: user.name, email: user.email },
-				subject: 'Verify your email address',
-				html: `
-					<p>Hi ${user.name},</p>
-					<p>Click the link below to verify your email address:</p>
-					<p><a href="${url}">${url}</a></p>
-				`,
-			})*/
+					await email.send({
+						principalId: user.id,
+						organizationId: '',
+						action: 'sendVerificationEmail',
+						emailDetails,
+					})
 				},
 			},
 			user: {
@@ -162,55 +146,51 @@ class Auth {
 				changeEmail: {
 					enabled: true,
 					sendChangeEmailVerification: async ({ user, newEmail, url }) => {
+						const org = await getActiveOrganization(user.id)
+						// TODO - return a error to user
+						if (!org) return
 						const emailDetails: MailerSendOptions = {
 							from: 'no-reply@smedrec.com',
 							to: newEmail,
 							subject: 'Verify your email change',
 							html: `
-						<p>Hi ${user.name},</p>
-						<p>Click the link below to verify your email change:</p>
-						<p><a href="${url}">${url}</a></p>
-						<p>If you didn't request this change, you can ignore this email.</p>
-				`,
+								<p>Hi ${user.name},</p>
+								<p>Click the link below to verify your email change:</p>
+								<p><a href="${url}">${url}</a></p>
+								<p>If you didn't request this change, you can ignore this email.</p>
+						`,
 						}
-						await mailer.send(emailDetails)
-						/**await email.send({
-					to: { name: user.name, email: newEmail },
-					subject: 'Verify your email change',
-					html: `
-						<p>Hi ${user.name},</p>
-						<p>Click the link below to verify your email change:</p>
-						<p><a href="${url}">${url}</a></p>
-						<p>If you didn't request this change, you can ignore this email.</p>
-					`,
-				})*/
+						await email.send({
+							principalId: user.id,
+							organizationId: org.organizationId,
+							action: 'sendChangeEmailVerification',
+							emailDetails,
+						})
 					},
 				},
 				deleteUser: {
 					enabled: true,
 					sendDeleteAccountVerification: async ({ user, url }) => {
+						const org = await getActiveOrganization(user.id)
+						// TODO - return a error to user
+						if (!org) return
 						const emailDetails: MailerSendOptions = {
 							from: 'no-reply@smedrec.com',
 							to: user.email,
 							subject: 'Verify your account deletion',
 							html: `
-						<p>Hi ${user.name},</p>
-						<p>Click the link below to verify your account deletion:</p>
-						<p><a href="${url}">${url}</a></p>
-						<p>If you didn't request this deletion, you can ignore this email.</p>
-					`,
+								<p>Hi ${user.name},</p>
+								<p>Click the link below to verify your account deletion:</p>
+								<p><a href="${url}">${url}</a></p>
+								<p>If you didn't request this deletion, you can ignore this email.</p>
+							`,
 						}
-						await mailer.send(emailDetails)
-						/**await email.send({
-					to: { name: user.name, email: user.email },
-					subject: 'Verify your account deletion',
-					html: `
-						<p>Hi ${user.name},</p>
-						<p>Click the link below to verify your account deletion:</p>
-						<p><a href="${url}">${url}</a></p>
-						<p>If you didn't request this deletion, you can ignore this email.</p>
-					`,
-				})*/
+						await email.send({
+							principalId: user.id,
+							organizationId: org.organizationId,
+							action: 'sendDeleteAccountVerification',
+							emailDetails,
+						})
 					},
 				},
 			},
@@ -292,14 +272,6 @@ class Auth {
 			plugins: [
 				admin({
 					defaultRole: 'user',
-					/**ac: appAc,
-			roles: {
-				admin: appAdmin,
-				owner,
-				user,
-				patient,
-				practitioner,
-			},*/
 				}),
 				organization({
 					ac: orgAc,
@@ -322,42 +294,22 @@ class Auth {
 							to: data.email,
 							subject: `Invite to join to the ${data.organization.name} team!`,
 							html: `
-						<p>Hi,</p>
-            <p>${data.inviter.user.name} sen you a invite to join the ${data.organization.name} team!
-            <p>Click the link below to accept:</p>
-            <p><a href="${inviteLink}">${inviteLink}</a></p>
-            <p>If you have any doubt please send a email to: ${data.inviter.user.email}.</p>
-					`,
+								<p>Hi,</p>
+								<p>${data.inviter.user.name} sen you a invite to join the ${data.organization.name} team!
+								<p>Click the link below to accept:</p>
+								<p><a href="${inviteLink}">${inviteLink}</a></p>
+								<p>If you have any doubt please send a email to: ${data.inviter.user.email}.</p>
+							`,
 						}
-						await mailer.send(emailDetails)
-						/**await email.send({
-					to: { name: '', email: data.email },
-					subject: 'Verify your account deletion',
-					html: `
-						<p>Hi,</p>
-            <p>${data.inviter.user.name} sen you a invite to join the ${data.organization.name} team!
-            <p>Click the link below to accept:</p>
-            <p><a href="${inviteLink}">${inviteLink}</a></p>
-            <p>If you have any doubt please send a email to: ${data.inviter.user.email}.</p>
-					`,
-				})*/
+						await email.send({
+							principalId: data.inviter.user.id,
+							organizationId: data.organization.id,
+							action: 'sendInvitationEmail',
+							emailDetails,
+						})
 					},
 					organizationCreation: {
 						disabled: false, // Set to true to disable organization creation
-						// TODO -setOrganizationResource as a Mastra Workflow
-						/**beforeCreate: async ({ organization, user }, request) => {
-					// Run custom logic before organization is created
-					// Optionally modify the organization data
-					const id = await setupOrganizationResource(organization.name, user.id)
-					return {
-						data: {
-							...organization,
-							metadata: {
-								organizationId: id,
-							},
-						},
-					}
-				},*/
 						afterCreate: async ({ organization, member, user }, request) => {
 							// Run custom logic after organization is created
 							// e.g., create default resources, send notifications
@@ -465,3 +417,19 @@ class Auth {
 }
 
 export { Auth }
+
+export type User = {
+	id: string
+	name: string
+	emailVerified: boolean
+	email: string
+	createdAt: Date
+	updatedAt: Date
+	image?: string | null | undefined
+	role: 'user' | 'admin'
+	banned: boolean
+	banReason?: string | null | undefined
+	banExpires?: Date | null
+	lang: string
+	personId?: string | null | undefined
+}

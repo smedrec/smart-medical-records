@@ -10,6 +10,6 @@ export const notes = new MCPServer({
 	resources: resourceHandlers,
 	prompts: promptHandlers,
 	tools: {
-		writeNoteTool,
+		write: writeNoteTool,
 	},
 })

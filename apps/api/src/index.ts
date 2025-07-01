@@ -12,8 +12,7 @@ import 'dotenv/config'
 import { serve } from '@hono/node-server'
 import { cors } from 'hono/cors'
 
-import { auth } from '@repo/auth'
-
+import { auth } from './lib/auth.js'
 import { newApp } from './lib/hono/index.js'
 import { authDbInstance, init } from './lib/hono/init.js'
 import { nodeEnv } from './lib/hono/node-env.js'

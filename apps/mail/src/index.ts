@@ -9,7 +9,7 @@ import { pino } from 'pino'
 
 import { Audit } from '@repo/audit'
 import { AuthDb, emailProvider } from '@repo/auth-db'
-import { NodeMailer, ResendMailer, SendGridMailer } from '@repo/mailer'
+import { NodeMailer, NodeMailerSmtpOptions, ResendMailer, SendGridMailer } from '@repo/mailer'
 
 import type { Job } from 'bullmq'
 import type { RedisOptions } from 'ioredis'
@@ -67,6 +67,19 @@ let authDbService: AuthDb | undefined = undefined
 export { authDbService }
 
 const audit = new Audit('audit', process.env.AUDIT_REDIS_URL!)
+
+const mailerConfig: NodeMailerSmtpOptions = {
+	host: process.env.SMTP_HOST,
+	port: parseInt(process.env.SMTP_PORT!, 10), // Or 465 for SSL
+	secure: parseInt(process.env.SMTP_PORT!, 10) === 465, // true for 465, false for other ports like 587 (STARTTLS)
+	auth: {
+		user: process.env.SMTP_USER,
+		pass: process.env.SMTP_PASSWORD,
+	},
+	// Other nodemailer options can be added here
+}
+
+const mailer = new NodeMailer(mailerConfig)
 
 // Simple healthcheck server for mail worker
 const app = new Hono()
@@ -149,8 +162,21 @@ async function main() {
 		// Extract known fields and prepare 'details' for the rest
 		const { principalId, organizationId, action, emailDetails } = eventData
 
+		if (action === 'sendVerificationEmail') {
+			await mailer.send(emailDetails)
+			await audit.log({
+				principalId,
+				action: `${action}Send`,
+				status: 'success',
+				outcomeDescription: 'Email sent successfully using Mailer!',
+			})
+		}
+
 		try {
-			email = await getEmailProvider(organizationId)
+			email =
+				action !== 'sendVerificationEmail'
+					? await getEmailProvider(organizationId)
+					: { from: emailDetails.from, mailer: mailer }
 		} catch (error) {
 			await audit.log({
 				principalId,
@@ -175,7 +201,7 @@ async function main() {
 			})
 			await audit.log({
 				principalId,
-				organizationId,
+				organizationId: action !== 'sendVerificationEmail' ? organizationId : null,
 				action: `${action}Send`,
 				status: 'success',
 				outcomeDescription: 'Email sent successfully using Mailer!',
@@ -186,7 +212,7 @@ async function main() {
 		} catch (error) {
 			await audit.log({
 				principalId,
-				organizationId,
+				organizationId: action !== 'sendVerificationEmail' ? organizationId : null,
 				action: `${action}Send`,
 				status: 'failure',
 				outcomeDescription: `Mailer send error: ${error}`,

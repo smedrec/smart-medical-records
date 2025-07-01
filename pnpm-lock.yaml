@@ -899,6 +899,9 @@ importers:
       '@repo/hono-helpers':
         specifier: workspace:*
         version: link:../hono-helpers
+      '@repo/send-mail':
+        specifier: workspace:*
+        version: link:../send-mail
       better-auth:
         specifier: 1.2.12
         version: 1.2.12

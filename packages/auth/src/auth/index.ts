@@ -464,7 +464,7 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
 //}
 
 export type Session = SessionWithAditionalFields<typeof auth.$Infer.Session.session>
-export type User = typeof auth.$Infer.Session.user
+//export type User = typeof auth.$Infer.Session.user
 
 /**export type Session = {
 	session: {

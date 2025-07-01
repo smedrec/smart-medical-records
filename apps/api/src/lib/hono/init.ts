@@ -2,9 +2,9 @@
 import { createId } from '@paralleldrive/cuid2'
 
 import { Audit } from '@repo/audit'
-import { auth } from '@repo/auth'
 import { AuthDb } from '@repo/auth-db'
 
+import { auth } from '../auth.js'
 import { cerbos } from '../cerbos/index.js'
 //import { fhir } from '@repo/fhir'
 
