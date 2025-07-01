@@ -1,0 +1,39 @@
+{
+	"name": "@repo/app-db",
+	"version": "0.1.0",
+	"private": true,
+	"sideEffects": false,
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"appdb:generate": "drizzle-kit generate --config=drizzle-dev.config.ts",
+		"appdb:migrate": "drizzle-kit migrate --config=drizzle-dev.config.ts",
+		"appdb:studio": "drizzle-kit studio --config=drizzle-dev.config.ts",
+		"build": "tsc --build",
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"test": "run-vitest"
+	},
+	"dependencies": {
+		"@better-auth/utils": "0.2.5",
+		"@repo/audit": "workspace:*",
+		"@repo/hono-helpers": "workspace:*",
+		"drizzle-orm": "0.44.2",
+		"postgres": "3.4.7"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "0.8.47",
+		"@cloudflare/workers-types": "4.20250628.0",
+		"@repo/eslint-config": "workspace:*",
+		"@repo/tools": "workspace:*",
+		"@repo/typescript-config": "workspace:*",
+		"@types/node": "24.0.8",
+		"drizzle-kit": "0.31.4",
+		"vitest": "3.2.4"
+	}
+}

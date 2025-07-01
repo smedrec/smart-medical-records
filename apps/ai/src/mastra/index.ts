@@ -9,13 +9,13 @@ import createClient from 'openapi-fetch'
 import { fetch, request } from 'undici'
 
 import { Audit } from '@repo/audit'
-import type { Auth } from '@repo/auth/dist/auth/auth-class.js'
 import { Cerbos } from '@repo/cerbos'
 
 import { assistantAgent } from './agents/assistant-agent'
 import { fhirAgent, openMCPServer } from './agents/fhir-test'
 import { patientReportAgent } from './agents/patient-report-agent'
 import { fhirMCPServer } from './mcp'
+import { notes } from './mcp/notes'
 import { opensearch } from './stores/opensearch'
 import { pgStorage, pgVector } from './stores/pgvector'
 import { newOrganizationWorkflow } from './workflows/new-organization-workflow'
@@ -24,6 +24,7 @@ import { weatherWorkflow } from './workflows/weather-workflow'
 
 import type { OtelConfig } from '@mastra/core'
 import type { Session, User } from '@repo/auth'
+import type { Auth } from '@repo/auth/dist/auth/auth-class.js'
 import type { EnvConfig } from '@repo/auth/dist/auth/environment.js'
 import type { FhirApiClient, FhirSessionData } from '../hono/middleware/fhir-auth'
 
@@ -258,6 +259,7 @@ export const mastra = new Mastra({
 	storage: pgStorage,
 	mcpServers: {
 		fhirMCPServer,
+		notes,
 	},
 	logger: new PinoLogger({
 		name: 'Mastra',
