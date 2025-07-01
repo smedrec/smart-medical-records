@@ -2,6 +2,7 @@ import 'dotenv/config'
 
 import { serve } from '@hono/node-server'
 import { Worker } from 'bullmq'
+import { BullMQOtel } from 'bullmq-otel'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { Redis } from 'ioredis'
@@ -9,11 +10,12 @@ import { pino } from 'pino'
 
 import { Audit } from '@repo/audit'
 import { AuthDb, emailProvider } from '@repo/auth-db'
-import { NodeMailer, NodeMailerSmtpOptions, ResendMailer, SendGridMailer } from '@repo/mailer'
+import { NodeMailer, ResendMailer, SendGridMailer } from '@repo/mailer'
 
 import type { Job } from 'bullmq'
 import type { RedisOptions } from 'ioredis'
 import type { LogLevel } from 'workers-tagged-logger'
+import type { NodeMailerSmtpOptions } from '@repo/mailer'
 import type { SendMailEvent } from '@repo/send-mail'
 
 interface Mailer {
@@ -82,12 +84,16 @@ const mailerConfig: NodeMailerSmtpOptions = {
 const mailer = new NodeMailer(mailerConfig)
 
 // Simple healthcheck server for mail worker
+const port = process.env.WORKER_PORT
 const app = new Hono()
 app.get('/healthz', (c) => c.text('OK'))
 const server = serve(app)
 
-async function getEmailProvider(organizationId: string): Promise<Mailer> {
+async function getEmailProvider(organizationId: string, action: string): Promise<Mailer> {
 	const transport: Mailer = { from: null, mailer: null }
+
+	if (action === 'sendVerificationEmail')
+		return { from: 'SMEDREC <no-reply@smedrec.com>', mailer: mailer }
 
 	if (!authDbService) {
 		authDbService = new AuthDb(AUTH_DB_URL)
@@ -105,15 +111,15 @@ async function getEmailProvider(organizationId: string): Promise<Mailer> {
 
 	transport.from = `${provider.fromName} <${provider.fromEmail}>`
 
-	switch (provider?.providerType) {
-		case 'nodemailer':
+	switch (provider?.provider) {
+		case 'smtp':
 			transport.mailer = new NodeMailer({
-				host: provider.smtpHost!,
-				port: provider.smtpPort as number,
-				secure: provider.smtpSecure as boolean,
+				host: provider.host!,
+				port: provider.port as number,
+				secure: provider.secure as boolean,
 				auth: {
-					user: provider.smtpUser!,
-					pass: provider.smtpPass!,
+					user: provider.user!,
+					pass: provider.password!,
 				},
 			})
 			break
@@ -162,21 +168,8 @@ async function main() {
 		// Extract known fields and prepare 'details' for the rest
 		const { principalId, organizationId, action, emailDetails } = eventData
 
-		if (action === 'sendVerificationEmail') {
-			await mailer.send(emailDetails)
-			await audit.log({
-				principalId,
-				action: `${action}Send`,
-				status: 'success',
-				outcomeDescription: 'Email sent successfully using Mailer!',
-			})
-		}
-
 		try {
-			email =
-				action !== 'sendVerificationEmail'
-					? await getEmailProvider(organizationId)
-					: { from: emailDetails.from, mailer: mailer }
+			email = await getEmailProvider(organizationId, action)
 		} catch (error) {
 			await audit.log({
 				principalId,
@@ -228,6 +221,7 @@ async function main() {
 		concurrency: process.env.WORKER_CONCURRENCY ? parseInt(process.env.WORKER_CONCURRENCY, 10) : 5,
 		removeOnComplete: { count: 1000 }, // Keep last 1000 completed jobs
 		removeOnFail: { count: 5000 }, // Keep last 5000 failed jobs
+		telemetry: new BullMQOtel(MAIL_QUEUE_NAME, '0.1.0'),
 	})
 
 	worker.on('completed', (job) => {

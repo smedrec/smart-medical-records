@@ -361,6 +361,18 @@ importers:
       '@hono/node-server':
         specifier: ^1.14.4
         version: 1.14.4(hono@4.8.3)
+      '@opentelemetry/exporter-metrics-otlp-proto':
+        specifier: ^0.202.0
+        version: 0.202.0(@opentelemetry/api@1.9.0)
+      '@opentelemetry/exporter-trace-otlp-proto':
+        specifier: ^0.202.0
+        version: 0.202.0(@opentelemetry/api@1.9.0)
+      '@opentelemetry/sdk-metrics':
+        specifier: ^2.0.1
+        version: 2.0.1(@opentelemetry/api@1.9.0)
+      '@opentelemetry/sdk-node':
+        specifier: ^0.202.0
+        version: 0.202.0(@opentelemetry/api@1.9.0)
       '@repo/audit':
         specifier: workspace:*
         version: link:../../packages/audit
@@ -376,6 +388,9 @@ importers:
       bullmq:
         specifier: 5.56.0
         version: 5.56.0
+      bullmq-otel:
+        specifier: ^1.0.1
+        version: 1.0.1
       dotenv:
         specifier: 17.0.0
         version: 17.0.0
@@ -1306,6 +1321,18 @@ importers:
 
   packages/send-mail:
     dependencies:
+      '@opentelemetry/exporter-metrics-otlp-proto':
+        specifier: ^0.202.0
+        version: 0.202.0(@opentelemetry/api@1.9.0)
+      '@opentelemetry/exporter-trace-otlp-proto':
+        specifier: ^0.202.0
+        version: 0.202.0(@opentelemetry/api@1.9.0)
+      '@opentelemetry/sdk-metrics':
+        specifier: ^2.0.1
+        version: 2.0.1(@opentelemetry/api@1.9.0)
+      '@opentelemetry/sdk-node':
+        specifier: ^0.202.0
+        version: 0.202.0(@opentelemetry/api@1.9.0)
       '@repo/hono-helpers':
         specifier: workspace:*
         version: link:../hono-helpers
@@ -1315,6 +1342,9 @@ importers:
       bullmq:
         specifier: 5.56.0
         version: 5.56.0
+      bullmq-otel:
+        specifier: ^1.0.1
+        version: 1.0.1
       ioredis:
         specifier: 5.6.1
         version: 5.6.1
@@ -8632,6 +8662,9 @@ packages:
 
   builtins@5.1.0:
     resolution: {integrity: sha512-SW9lzGTLvWTP1AY8xeAMZimqDrIaSdLQUcVr9DMef51niJ022Ri87SwRRKYm4A6iHfkPaiVUu/Duw2Wc4J7kKg==}
+
+  bullmq-otel@1.0.1:
+    resolution: {integrity: sha512-9SSBA/iq8bFUJ9I5bDwv1UmtbJAmIGHt796g5lsYZWasqouTqkFA3+Z/n17mCc8VzfxxygCCCBsXdC1mICbxdw==}
 
   bullmq@5.56.0:
     resolution: {integrity: sha512-j5ct2tdc9M8PKcjhJw+euO24BsO1wXBAkNGXYI1R1qvh7FvRldZ5wtLixLWqQ4/crafj0Vrwi+y1kXFXMwBJFA==}
@@ -26583,6 +26616,13 @@ snapshots:
     dependencies:
       semver: 7.7.2
 
+  bullmq-otel@1.0.1:
+    dependencies:
+      '@opentelemetry/api': 1.9.0
+      bullmq: 5.56.0
+    transitivePeerDependencies:
+      - supports-color
+
   bullmq@5.56.0:
     dependencies:
       cron-parser: 4.9.0
@@ -29393,7 +29433,7 @@ snapshots:
       isstream: 0.1.2
       jsonwebtoken: 9.0.2
       mime-types: 2.1.35
-      retry-axios: 2.6.0(axios@1.10.0)
+      retry-axios: 2.6.0(axios@1.10.0(debug@4.4.1))
       tough-cookie: 4.1.4
     transitivePeerDependencies:
       - supports-color
@@ -33742,7 +33782,7 @@ snapshots:
       onetime: 7.0.0
       signal-exit: 4.1.0
 
-  retry-axios@2.6.0(axios@1.10.0):
+  retry-axios@2.6.0(axios@1.10.0(debug@4.4.1)):
     dependencies:
       axios: 1.10.0(debug@4.4.1)
 

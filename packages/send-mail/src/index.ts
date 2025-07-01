@@ -12,6 +12,7 @@
  * ```
  */
 import { Queue } from 'bullmq'
+import { BullMQOtel } from 'bullmq-otel'
 import { Redis } from 'ioredis'
 
 import type { RedisOptions } from 'ioredis'
@@ -67,7 +68,10 @@ export class SendMail {
 			...redisConnectionOptions,
 		})
 
-		this.bullmq_queue = new Queue(this.queueName, { connection: this.connection })
+		this.bullmq_queue = new Queue(this.queueName, {
+			connection: this.connection,
+			telemetry: new BullMQOtel(this.queueName, '0.1.0'),
+		})
 
 		this.connection.on('error', (err) => {
 			// It's good to log this, but throwing here might be too disruptive for client apps.
