@@ -8,6 +8,7 @@ import { Audit } from '@repo/audit'
 import { AuthDb, user as userDb } from '@repo/auth-db'
 import { NodeMailer } from '@repo/mailer'
 
+import { mastra } from '../utils/mastra.js'
 import { getEnvConfig } from './environment.js'
 import { getActiveOrganization } from './functions.js'
 import { betterAuthOptions } from './options.js'
@@ -262,12 +263,19 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
               },
             };*/
 				},
-				// TODO -setupPersonResource as a Mastra Workflow
-				/**after: async (user) => {
-					//perform additional actions, like creating a stripe customer or send welcome email
-					const id = await setupPersonResource(user.name, user.email)
-					await db.update(userDb).set({ personId: id }).where(eq(userDb.id, user.id))
-				},*/
+				after: async (user) => {
+					//perform additional actions, like creating a fhir resource and send welcome email
+					const workflow = mastra.getWorkflow('newUserWorkflow')
+					const { runId } = await workflow.createRun()
+					try {
+						void workflow.start({
+							runId: runId,
+							inputData: { name: user.name, email: user.email },
+						})
+					} catch (e) {
+						console.log(e)
+					}
+				},
 			},
 		},
 	},
@@ -357,16 +365,26 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
 							},
 						},
 					}
-				},
+				},*/
 				afterCreate: async ({ organization, member, user }, request) => {
 					// Run custom logic after organization is created
 					// e.g., create default resources, send notifications
-					const id = await setupOrganizationResource(organization.id, organization.name, user.id)
-					await db
-						.update(organizationDb)
-						.set({ metadata: `{ "organizationId": ${id} }` })
-						.where(eq(organizationDb.id, organization.id))
-				},*/
+					const workflow = mastra.getWorkflow('newOrganizationWorkflow')
+					const { runId } = await workflow.createRun()
+					try {
+						void workflow.start({
+							runId: runId,
+							inputData: {
+								orgId: organization.id,
+								orgName: organization.name,
+								name: user.name,
+								email: user.email,
+							},
+						})
+					} catch (e) {
+						console.log(e)
+					}
+				},
 			},
 			organizationLimit: 1,
 		}),

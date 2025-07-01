@@ -1,9 +1,11 @@
 import { RuntimeContext } from '@mastra/core/di'
 import { createStep, createWorkflow } from '@mastra/core/workflows'
+import { eq } from 'drizzle-orm'
 import createClient from 'openapi-fetch'
 import { z } from 'zod'
 
 import { Audit } from '@repo/audit'
+import { AuthDb, user } from '@repo/auth-db'
 import { Cerbos } from '@repo/cerbos'
 
 import { emailSendTool } from '../tools/email-tools'
@@ -29,9 +31,12 @@ runtimeContext.set('audit', audit)
 runtimeContext.set('fhirSessionData', sessionData)
 runtimeContext.set('fhirClient', fhirApiClient)
 
+let authDbService: AuthDb | undefined = undefined
+export { authDbService }
+
 const sendWelcomeEmail = createStep({
 	id: 'send-welcome-email',
-	description: 'Sends thewelcome email to the new user',
+	description: 'Sends the welcome email to the new user',
 	inputSchema: z.object({
 		name: z.string().describe('The user name'),
 		email: z.string().email().describe('The user email'),
@@ -126,6 +131,20 @@ const createFhirPersonResource = createStep({
 			) {
 				return { success: false, message: 'Failed to create person resource: missing id' }
 			}
+
+			if (!authDbService) {
+				authDbService = new AuthDb(process.env.AUTH_DB_URL)
+			}
+
+			const db = authDbService.getDrizzleInstance()
+			// TODO - check errors
+			await db
+				.update(user)
+				.set({ personId: createdResource.id })
+				.where(eq(user.email, inputData.email))
+
+			await authDbService.end()
+
 			return {
 				success: true,
 				message: `Person resource created with id: ${createdResource.id}`,
@@ -139,7 +158,7 @@ const createFhirPersonResource = createStep({
 
 export const newUserWorkflow = createWorkflow({
 	id: 'new-user-workflow',
-	description: 'Test workflow',
+	description: 'New user workflow tasks',
 	inputSchema: z.object({
 		name: z.string().describe('The user name'),
 		email: z.string().email().describe('The user email'),

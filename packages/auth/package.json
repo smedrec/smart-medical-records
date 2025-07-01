@@ -17,6 +17,7 @@
 		"test": "run-vitest"
 	},
 	"dependencies": {
+		"@mastra/client-js": "0.10.7",
 		"@repo/audit": "workspace:*",
 		"@repo/auth-db": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",

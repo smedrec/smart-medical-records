@@ -1,9 +1,11 @@
 import { RuntimeContext } from '@mastra/core/di'
 import { createStep, createWorkflow } from '@mastra/core/workflows'
+import { eq } from 'drizzle-orm'
 import createClient from 'openapi-fetch'
 import { z } from 'zod'
 
 import { Audit } from '@repo/audit'
+import { AuthDb, organization } from '@repo/auth-db'
 import { Cerbos } from '@repo/cerbos'
 
 import { emailSendTool } from '../tools/email-tools'
@@ -29,11 +31,15 @@ runtimeContext.set('audit', audit)
 runtimeContext.set('fhirSessionData', sessionData)
 runtimeContext.set('fhirClient', fhirApiClient)
 
+let authDbService: AuthDb | undefined = undefined
+export { authDbService }
+
 const createFhirOrganizationResource = createStep({
 	id: 'create-fhir-organization-resource',
 	description: 'Creates a new FHIR Organization Resource for the new created organization',
 	inputSchema: z.object({
-		orgName: z.string().describe('The organization name'),
+		orgId: z.string().describe('The new organization id'),
+		orgName: z.string().describe('The new organization name'),
 		success: z.boolean(),
 		message: z.string(),
 	}),
@@ -77,6 +83,18 @@ const createFhirOrganizationResource = createStep({
 			) {
 				return { success: false, message: 'Failed to create organization resource: missing id' }
 			}
+
+			if (!authDbService) {
+				authDbService = new AuthDb(process.env.AUTH_DB_URL)
+			}
+
+			const db = authDbService.getDrizzleInstance()
+			// TODO - check errors
+			await db
+				.update(organization)
+				.set({ metadata: `{ "organizationId": ${createdResource.id} }` })
+				.where(eq(organization.id, inputData.orgId))
+
 			return {
 				success: true,
 				message: `Organization resource created with id: ${createdResource.id}`,
@@ -92,7 +110,8 @@ export const newOrganizationWorkflow = createWorkflow({
 	id: 'new-organization-workflow',
 	description: 'Creates a new Organization fhir resource',
 	inputSchema: z.object({
-		orgName: z.string().describe('The organization name'),
+		orgId: z.string().describe('The new organization id'),
+		orgName: z.string().describe('The new organization name'),
 		name: z.string().describe('The user name'),
 		email: z.string().email().describe('The user email'),
 	}),
@@ -104,19 +123,21 @@ export const newOrganizationWorkflow = createWorkflow({
 	.then(
 		createStep({
 			id: 'send-marketing-email-with-orgName',
-			description: 'Sends the marketing email and passes orgName forward',
+			description: 'Sends the marketing email and passes orgId and orgName forward',
 			inputSchema: z.object({
-				orgName: z.string().describe('The organization name'),
+				orgId: z.string().describe('The new organization id'),
+				orgName: z.string().describe('The new organization name'),
 				name: z.string().describe('The user name'),
 				email: z.string().email().describe('The user email'),
 			}),
 			outputSchema: z.object({
+				orgId: z.string(),
 				orgName: z.string(),
 				success: z.boolean(),
 				message: z.string(),
 			}),
 			execute: async ({ inputData }) => {
-				const { orgName, name, email } = inputData
+				const { orgId, orgName, name, email } = inputData
 				const result = await emailSendTool.execute({
 					context: {
 						to: email,
@@ -132,6 +153,7 @@ export const newOrganizationWorkflow = createWorkflow({
 					runtimeContext,
 				})
 				return {
+					orgId: orgId,
 					orgName: orgName,
 					success: result.success,
 					message: result.message,
