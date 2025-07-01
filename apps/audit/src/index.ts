@@ -1,6 +1,8 @@
 import 'dotenv/config'
 
+import { serve } from '@hono/node-server'
 import { Worker } from 'bullmq'
+import { Hono } from 'hono'
 import { Redis } from 'ioredis'
 import { pino } from 'pino'
 
@@ -47,6 +49,12 @@ connection.on('error', (err) => {
 // Using environment variable AUDIT_DB_URL
 let auditDbService: AuditDb | undefined = undefined
 export { auditDbService }
+
+// Simple healthcheck server for audit worker
+const port = parseInt(process.env.WORKER_PORT!, 10) || 5600
+const app = new Hono()
+app.get('/healthz', (c) => c.text('OK'))
+const server = serve(app)
 
 // Main function to start the worker
 async function main() {
@@ -136,9 +144,17 @@ async function main() {
 
 	logger.info(`👂 Worker listening for jobs on queue: "${AUDIT_QUEUE_NAME}"`)
 
+	serve({
+		fetch: app.fetch,
+		port: port,
+	})
+
+	logger.info(`👂 Healthcheck server listening on port ${port}`)
+
 	// Graceful shutdown
 	const gracefulShutdown = async (signal: string) => {
 		logger.info(`🚦 Received ${signal}. Shutting down gracefully...`)
+		server.close()
 		await worker.close()
 		await connection.quit()
 		await auditDbService?.end()

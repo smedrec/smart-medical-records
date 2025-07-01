@@ -267,6 +267,9 @@ importers:
 
   apps/audit:
     dependencies:
+      '@hono/node-server':
+        specifier: ^1.14.4
+        version: 1.14.4(hono@4.8.3)
       '@repo/audit':
         specifier: workspace:*
         version: link:../../packages/audit
@@ -279,12 +282,12 @@ importers:
       dotenv:
         specifier: 17.0.0
         version: 17.0.0
+      hono:
+        specifier: 4.8.3
+        version: 4.8.3
       ioredis:
         specifier: 5.6.1
         version: 5.6.1
-      pg:
-        specifier: 8.16.3
-        version: 8.16.3
       pino:
         specifier: 9.7.0
         version: 9.7.0
@@ -340,6 +343,9 @@ importers:
 
   apps/mail:
     dependencies:
+      '@hono/node-server':
+        specifier: ^1.14.4
+        version: 1.14.4(hono@4.8.3)
       '@repo/audit':
         specifier: workspace:*
         version: link:../../packages/audit
@@ -361,6 +367,9 @@ importers:
       drizzle-orm:
         specifier: 0.44.2
         version: 0.44.2(@cloudflare/workers-types@4.20250628.0)(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.15.4)(@upstash/redis@1.35.0)(better-sqlite3@11.10.0)(kysely@0.28.2)(pg@8.16.3)(postgres@3.4.7)
+      hono:
+        specifier: 4.8.3
+        version: 4.8.3
       ioredis:
         specifier: 5.6.1
         version: 5.6.1
@@ -29234,7 +29243,7 @@ snapshots:
       isstream: 0.1.2
       jsonwebtoken: 9.0.2
       mime-types: 2.1.35
-      retry-axios: 2.6.0(axios@1.10.0)
+      retry-axios: 2.6.0(axios@1.10.0(debug@4.4.1))
       tough-cookie: 4.1.4
     transitivePeerDependencies:
       - supports-color
@@ -33583,7 +33592,7 @@ snapshots:
       onetime: 7.0.0
       signal-exit: 4.1.0
 
-  retry-axios@2.6.0(axios@1.10.0):
+  retry-axios@2.6.0(axios@1.10.0(debug@4.4.1)):
     dependencies:
       axios: 1.10.0(debug@4.4.1)
 
