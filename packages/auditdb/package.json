@@ -31,7 +31,7 @@
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/node": "24.0.7",
+		"@types/node": "24.0.8",
 		"drizzle-kit": "0.31.4",
 		"vitest": "3.2.4"
 	}

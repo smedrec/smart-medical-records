@@ -20,7 +20,7 @@
 		"@commander-js/extra-typings": "14.0.0",
 		"@jahands/cli-tools": "0.10.11",
 		"@types/fs-extra": "11.0.4",
-		"@types/node": "24.0.7",
+		"@types/node": "24.0.8",
 		"cli-table3": "0.6.5",
 		"commander": "14.0.0",
 		"empathic": "2.0.0",

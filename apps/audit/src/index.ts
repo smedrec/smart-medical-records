@@ -22,7 +22,7 @@ if (!REDIS_URL) {
 	process.exit(1)
 }
 
-const logger = pino({ name: 'AuditWorker', level: LOG_LEVEL })
+const logger = pino({ name: 'audit-worker', level: LOG_LEVEL })
 
 // Initialize Redis connection for BullMQ
 // BullMQ recommends not using maxRetriesPerRequest: null in newer versions,
