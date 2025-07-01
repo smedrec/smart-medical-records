@@ -6,6 +6,7 @@ import {
 	text,
 	timestamp,
 	uniqueIndex,
+	varchar,
 } from 'drizzle-orm/pg-core'
 
 export const user = pgTable('user', {
@@ -239,21 +240,26 @@ export const smartFhirClient = pgTable(
 	}
 )
 
+type MailProvider = 'smtp' | 'resend' | 'sendgrid'
+
 export const emailProvider = pgTable(
 	'email_provider',
 	{
 		organizationId: text('organization_id')
 			.notNull()
 			.references(() => organization.id, { onDelete: 'cascade' }),
-		providerType: text('provider_type').notNull().default('nodemailer'), // e.g., 'nodemailer', 'workersmailer', 'resend', 'sendgrid'
-		smtpHost: text('smtp_host'),
-		smtpPort: integer('smtp_port').default(465),
-		smtpSecure: boolean('smtp_secure').default(true),
-		smtpUser: text('smtp_user'),
-		smtpPass: text('smtp_pass'),
-		apiKey: text('api_key'),
-		fromName: text('from_name'),
-		fromEmail: text('from_email'),
+		provider: varchar('provider', { length: 50 })
+			.$type<MailProvider>() // Enforces the type against MailProvider
+			.notNull()
+			.default('smtp'), // e.g., 'smtp', 'resend', 'sendgrid'
+		host: varchar('smtp_host', { length: 100 }),
+		port: integer('smtp_port').default(465),
+		secure: boolean('smtp_secure').default(true),
+		user: varchar('smtp_user', { length: 50 }),
+		password: varchar('smtp_pass', { length: 50 }),
+		apiKey: varchar('api_key', { length: 255 }),
+		fromName: varchar('from_name', { length: 50 }),
+		fromEmail: varchar('from_email', { length: 50 }),
 	},
 	(table) => {
 		return [primaryKey({ columns: [table.organizationId] })]

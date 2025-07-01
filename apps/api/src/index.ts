@@ -24,6 +24,10 @@ import { registerAiDeleteIndex } from './routes/ai/delete-index.js'
 import { registerAiDetailsIndex } from './routes/ai/details-index.js'
 import { registerAiIndexes } from './routes/ai/indexes.js'
 import { registerAiStore } from './routes/ai/store.js'
+import { registerConfigMailCreate } from './routes/config/mail/create.js'
+import { registerConfigMailDelete } from './routes/config/mail/delete.js'
+import { registerConfigMailFind } from './routes/config/mail/find.js'
+import { registerConfigMailUpdate } from './routes/config/mail/update.js'
 import { registerLiveness } from './routes/liveness.js'
 
 import type { Env } from '@/lib/hono/context.js'
@@ -68,6 +72,10 @@ registerSmartFhirClientFind(app)
 registerSmartFhirClientCreate(app)
 registerSmartFhirClientUpdate(app)
 registerSmartFhirClientDelete(app)
+registerConfigMailCreate(app)
+registerConfigMailFind(app)
+registerConfigMailUpdate(app)
+registerConfigMailDelete(app)
 // ai routes
 registerAiChat(app)
 registerAiStore(app)

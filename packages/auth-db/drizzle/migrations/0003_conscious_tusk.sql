@@ -1,0 +1,1 @@
+ALTER TABLE "email_provider" RENAME COLUMN "provider_type" TO "provider";
