@@ -7,6 +7,7 @@ import { Audit } from '@repo/audit'
 import { AuthDb } from '@repo/auth-db'
 import { NodeMailer } from '@repo/mailer'
 
+import { mastra } from '../utils/mastra.js'
 import { getEnvConfig } from './environment.js'
 import { getActiveOrganization } from './functions.js'
 import { betterAuthOptions } from './options.js'
@@ -254,11 +255,19 @@ class Auth {
             };*/
 						},
 						// TODO -setupPersonResource as a Mastra Workflow
-						/**after: async (user) => {
-					//perform additional actions, like creating a stripe customer or send welcome email
-					const id = await setupPersonResource(user.name, user.email)
-					await db.update(userDb).set({ personId: id }).where(eq(userDb.id, user.id))
-				},*/
+						after: async (user) => {
+							//perform additional actions, like creating a fhir resource and send welcome email
+							const workflow = mastra.getWorkflow('newUserWorkflow')
+							const { runId } = await workflow.createRun()
+							try {
+								void workflow.start({
+									runId: runId,
+									inputData: { name: user.name, email: user.email },
+								})
+							} catch (e) {
+								console.log(e)
+							}
+						},
 					},
 				},
 			},
@@ -348,16 +357,26 @@ class Auth {
 							},
 						},
 					}
-				},
-				afterCreate: async ({ organization, member, user }, request) => {
-					// Run custom logic after organization is created
-					// e.g., create default resources, send notifications
-					const id = await setupOrganizationResource(organization.id, organization.name, user.id)
-					await db
-						.update(organizationDb)
-						.set({ metadata: `{ "organizationId": ${id} }` })
-						.where(eq(organizationDb.id, organization.id))
 				},*/
+						afterCreate: async ({ organization, member, user }, request) => {
+							// Run custom logic after organization is created
+							// e.g., create default resources, send notifications
+							const workflow = mastra.getWorkflow('newOrganizationWorkflow')
+							const { runId } = await workflow.createRun()
+							try {
+								void workflow.start({
+									runId: runId,
+									inputData: {
+										orgId: organization.id,
+										orgName: organization.name,
+										name: user.name,
+										email: user.email,
+									},
+								})
+							} catch (e) {
+								console.log(e)
+							}
+						},
 					},
 					organizationLimit: 1,
 				}),
@@ -437,8 +456,8 @@ class Auth {
 	}
 
 	/**
-	 * Provides access to the Drizzle ORM instance for database operations.
-	 * @returns The Drizzle ORM instance typed with the audit log schema.
+	 * Provides access to the Auth instance for auth operations.
+	 * @returns The auth instance typed with the ReturnType<typeof betterAuth> schema.
 	 */
 	public getAuthInstance(): ReturnType<typeof betterAuth> {
 		return this.auth
