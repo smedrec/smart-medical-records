@@ -14,6 +14,7 @@ import { Cerbos } from '@repo/cerbos'
 import { assistantAgent } from './agents/assistant-agent'
 import { fhirAgent, openMCPServer } from './agents/fhir-test'
 import { patientReportAgent } from './agents/patient-report-agent'
+import { getAuthInstance, initializeAuth } from './auth'
 import { fhirMCPServer } from './mcp'
 import { notes } from './mcp/notes'
 import { opensearch } from './stores/opensearch'
@@ -24,8 +25,6 @@ import { weatherWorkflow } from './workflows/weather-workflow'
 
 import type { OtelConfig } from '@mastra/core'
 import type { Session, User } from '@repo/auth'
-import type { Auth } from '@repo/auth/dist/auth/auth-class.js'
-import type { EnvConfig } from '@repo/auth/dist/auth/environment.js'
 import type { FhirApiClient, FhirSessionData } from '../hono/middleware/fhir-auth'
 
 type McpFhirToolCallContext = {
@@ -46,16 +45,15 @@ const otelConfig: OtelConfig = {
 	},
 	export: {
 		type: 'otlp',
-		protocol: 'grpc',
-		endpoint: 'http://joseantcordeiro.hopto.org:4317',
+		protocol: 'http',
+		endpoint: 'http://joseantcordeiro.hopto.org:4318',
 		headers: {
 			//Authorization: "Bearer YOUR_TOKEN_HERE",
 		},
 	},
 }
 
-let authInstance: Auth | undefined = undefined
-export { authInstance }
+initializeAuth()
 
 export const mastra = new Mastra({
 	/**deployer: new CloudflareDeployer({
@@ -96,41 +94,7 @@ export const mastra = new Mastra({
 		middleware: [
 			{
 				handler: async (c, next) => {
-					/**const response = await fetch(`${process.env.BETTER_AUTH_URL}/auth/oauth2/userinfo`, {
-						headers: {
-							Authorization: `Bearer ACCESS_TOKEN`,
-						},
-					}) */
-					/**const session = await auth.api.getSession({ headers: c.req.raw.headers })
-
-					if (!session) {
-						return new Response('Unauthorized', { status: 401 })
-					}
-					const authHeader = c.req.header('Authorization')
-					if (!authHeader) {
-						return new Response('Unauthorized', { status: 401 })
-					}*/
-					const authConfig: EnvConfig = {
-						BETTER_AUTH_URL: process.env.BETTER_AUTH_URL!,
-						BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET!,
-						BETTER_AUTH_REDIS_URL: process.env.BETTER_AUTH_REDIS_URL!,
-						AUTH_DB_URL: process.env.AUTH_DB_URL!,
-						AUDIT_REDIS_URL: process.env.AUDIT_REDIS_URL!,
-						APP_PUBLIC_URL: process.env.APP_PUBLIC_URL!,
-						SMTP_HOST: process.env.SMTP_HOST!,
-						SMTP_PORT: process.env.SMTP_PORT!,
-						SMTP_USER: process.env.SMTP_USER!,
-						SMTP_PASSWORD: process.env.SMTP_PASSWORD!,
-					}
-
-					//console.log(`AUTH CONFIG: ${JSON.stringify(authConfig, null, 2)}`)
-
-					/**if (!authInstance) {
-						authInstance = new Auth(authConfig)
-					}
-
-					const auth = authInstance.getAuthInstance()
-
+					const auth = getAuthInstance()
 					const rawSession = await auth.api.getSession({ headers: c.req.raw.headers })
 
 					if (!rawSession) {
@@ -145,7 +109,12 @@ export const mastra = new Mastra({
 							activeOrganizationId: (rawSession.session as any).activeOrganizationId ?? null,
 							activeOrganizationRole: (rawSession.session as any).activeOrganizationRole ?? null,
 						},
-						user: rawSession.user,
+						user: {
+							...rawSession.user,
+							role: (rawSession.user as any).role ?? null,
+							banned: (rawSession.user as any).banned ?? null,
+							lang: (rawSession.user as any).lang ?? null,
+						},
 					}
 
 					console.log(`SESSION: ${JSON.stringify(session, null, 2)}`)
@@ -166,7 +135,7 @@ export const mastra = new Mastra({
 					runtimeContext.set('cerbos', cerbos)
 					runtimeContext.set('audit', audit)
 					runtimeContext.set('fhirSessionData', sessionData)
-					runtimeContext.set('fhirClient', fhirApiClient)*/
+					runtimeContext.set('fhirClient', fhirApiClient)
 					await next()
 				},
 				path: '/api/*',

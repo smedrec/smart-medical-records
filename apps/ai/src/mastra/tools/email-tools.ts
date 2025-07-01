@@ -14,7 +14,7 @@ export const emailSendTool = createTool({
 	id: 'emailSend',
 	description: 'Send a email.',
 	inputSchema: z.object({
-		to: z.string().describe('Recipient name'),
+		to: z.string().describe('Recipient email'),
 		subject: z.string().describe('The subject of the email'),
 		html: z.string().describe('The body of the email in html'),
 		text: z.string().optional().describe('The body of the email in text'),
