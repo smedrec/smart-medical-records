@@ -68,8 +68,8 @@ COPY apps/audit/src ./apps/audit/src
 # Set the working directory for the app
 WORKDIR /app/apps/audit
 
-# Expose any ports if necessary (not needed for this worker)
-# EXPOSE 3000
+# Expose ports for healthcheck
+EXPOSE 5600
 
 # Set environment variables
 ENV NODE_ENV=development

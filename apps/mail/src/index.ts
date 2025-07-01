@@ -69,7 +69,6 @@ export { authDbService }
 const audit = new Audit('audit', process.env.AUDIT_REDIS_URL!)
 
 // Simple healthcheck server for mail worker
-const port = parseInt(process.env.WORKER_PORT!, 10) || 5601
 const app = new Hono()
 app.get('/healthz', (c) => c.text('OK'))
 const server = serve(app)
@@ -221,7 +220,7 @@ async function main() {
 
 	serve({
 		fetch: app.fetch,
-		port: port,
+		port: 5601,
 	})
 
 	logger.info(`👂 Healthcheck server listening on port ${port}`)

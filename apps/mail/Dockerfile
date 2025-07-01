@@ -76,8 +76,8 @@ COPY apps/mail/src ./apps/mail/src
 # Set the working directory for the app
 WORKDIR /app/apps/mail
 
-# Expose any ports if necessary (not needed for this worker)
-# EXPOSE 3000
+# Expose ports for healthcheck
+EXPOSE 5601
 
 # Set environment variables
 ENV NODE_ENV=development

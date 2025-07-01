@@ -5,6 +5,8 @@ services:
       context: .
       dockerfile: ./apps/audit/Dockerfile
     restart: always
+    ports:
+      - ${WORKER_PORT}:5600
     environment:
       - AUDIT_REDIS_URL=${AUDIT_REDIS_URL}
       - AUDIT_QUEUE_NAME=${AUDIT_QUEUE_NAME}
@@ -16,6 +18,8 @@ services:
       context: .
       dockerfile: ./apps/mail/Dockerfile
     restart: always
+    ports:
+      - ${WORKER_PORT}:5601
     environment:
       - MAIL_REDIS_URL=${MAIL_REDIS_URL}
       - MAIL_QUEUE_NAME=${MAIL_QUEUE_NAME}
