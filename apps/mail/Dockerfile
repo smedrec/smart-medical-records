@@ -20,7 +20,7 @@ COPY patches/fhirclient@2.6.0.patch ./patches/fhirclient@2.6.0.patch
 # This is a bit of a shotgun approach, but ensures all workspace dependencies are recognized by pnpm
 # A more optimized approach would be to use `pnpm list -r --depth -1 --json` to get the dependency tree
 # and copy only the necessary package.json files.
-COPY apps/mail/package.json ./apps/audit/
+COPY apps/mail/package.json ./apps/mail/
 
 COPY packages/audit/package.json ./packages/audit/
 COPY packages/auth-db/package.json ./packages/auth-db/
@@ -29,6 +29,8 @@ COPY packages/mailer/package.json ./packages/mailer/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY packages/tools/package.json ./packages/tools/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
+COPY packages/workspace-dependencies/package.json ./packages/workspace-dependencies/
+COPY packages/hono-helpers/package.json ./packages/hono-helpers/
 
 # Install all dependencies
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --strict-peer
@@ -47,6 +49,8 @@ COPY packages/mailer ./packages/mailer
 COPY packages/typescript-config ./packages/typescript-config
 COPY packages/tools ./packages/tools
 COPY packages/eslint-config ./packages/eslint-config
+COPY packages/workspace-dependencies ./packages/workspace-dependencies
+COPY packages/hono-helpers ./packages/hono-helpers
 
 # If there are other @repo dependencies for audit-worker, they need to be copied too.
 # For example, if @repo/tools or @repo/eslint-config were runtime dependencies (they are devDeps here).
