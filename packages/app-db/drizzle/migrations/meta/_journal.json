@@ -8,6 +8,13 @@
       "when": 1751351176102,
       "tag": "0000_parallel_hardball",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1751352546978,
+      "tag": "0001_early_wolfsbane",
+      "breakpoints": true
     }
   ]
 }
