@@ -18,8 +18,10 @@ export const writeNoteTool = createTool({
 	}),
 	outputSchema: z.string().nonempty(),
 	execute: async ({ context, runtimeContext }) => {
-		const principalId = runtimeContext.get('userId') || defaultPrincipalId
-		const organizationId = runtimeContext.get('activeOrganizationId') || defaultOrganizationId
+		const principalId: string = runtimeContext.get('userId') || defaultPrincipalId
+		const organizationId: string =
+			runtimeContext.get('activeOrganizationId') || defaultOrganizationId
+
 		if (!appDbService) {
 			appDbService = new AppDb(process.env.APP_DB_URL)
 		}
