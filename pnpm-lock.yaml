@@ -899,6 +899,9 @@ importers:
       '@repo/hono-helpers':
         specifier: workspace:*
         version: link:../hono-helpers
+      '@repo/mailer':
+        specifier: workspace:*
+        version: link:../mailer
       '@repo/send-mail':
         specifier: workspace:*
         version: link:../send-mail
@@ -1294,6 +1297,9 @@ importers:
       jest-mock-extended:
         specifier: 4.0.0
         version: 4.0.0(@jest/globals@29.7.0)(jest@29.7.0(@types/node@24.0.8)(ts-node@10.9.2(@types/node@24.0.8)(typescript@5.8.3)))(typescript@5.8.3)
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
       vitest:
         specifier: 3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@24.0.8)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
@@ -25248,10 +25254,10 @@ snapshots:
       '@typescript-eslint/types': 8.35.1
       eslint-visitor-keys: 4.2.1
 
-  '@typescript/vfs@1.6.1(typescript@5.8.3)':
+  '@typescript/vfs@1.6.1(typescript@5.5.4)':
     dependencies:
       debug: 4.4.1(supports-color@10.0.0)
-      typescript: 5.8.3
+      typescript: 5.5.4
     transitivePeerDependencies:
       - supports-color
 
@@ -34967,7 +34973,7 @@ snapshots:
   ts-to-zod@3.15.0:
     dependencies:
       '@oclif/core': 4.3.3
-      '@typescript/vfs': 1.6.1(typescript@5.8.3)
+      '@typescript/vfs': 1.6.1(typescript@5.5.4)
       case: 1.6.3
       chokidar: 3.6.0
       fs-extra: 11.3.0
@@ -34979,8 +34985,8 @@ snapshots:
       slash: 3.0.0
       threads: 1.7.0
       tslib: 2.8.1
-      tsutils: 3.21.0(typescript@5.8.3)
-      typescript: 5.8.3
+      tsutils: 3.21.0(typescript@5.5.4)
+      typescript: 5.5.4
       zod: 3.25.67
     transitivePeerDependencies:
       - supports-color
@@ -35004,10 +35010,10 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  tsutils@3.21.0(typescript@5.8.3):
+  tsutils@3.21.0(typescript@5.5.4):
     dependencies:
       tslib: 1.14.1
-      typescript: 5.8.3
+      typescript: 5.5.4
 
   tsx@4.20.3:
     dependencies:

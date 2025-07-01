@@ -12,6 +12,6 @@
  * import { auth } from '@repo/auth';
  *
  */
-export * from './auth/auth-class.js'
+
 export * from './auth/index.js'
 export * from './client.js'

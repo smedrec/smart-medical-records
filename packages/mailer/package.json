@@ -11,7 +11,7 @@
 		"src"
 	],
 	"scripts": {
-		"build": "tsc",
+		"build": "tsc --build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"test": "run-vitest"
@@ -32,6 +32,7 @@
 		"@types/nodemailer": "6.4.17",
 		"@vitest/coverage-v8": "3.2.4",
 		"jest-mock-extended": "4.0.0",
+		"typescript": "5.8.3",
 		"vitest": "3.2.4"
 	}
 }
