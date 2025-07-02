@@ -3,8 +3,8 @@
 	"include": [
 		// These paths are relative to this tsconfig.json (apps/ai)
 		"src/**/*",
-		"env.d.ts",
-		"worker-configuration.d.ts"
+		"env.d.ts"
+		//"worker-configuration.d.ts"
 	],
 	"exclude": [
 		"node_modules",
@@ -19,11 +19,11 @@
 		// Ensure Cloudflare workers types are available
 		"types": [
 			"@cloudflare/workers-types",
-			"@cloudflare/vitest-pool-workers",
+			"@cloudflare/vitest-pool-workers"
 			// If you have a local worker-configuration.d.ts specific to apps/ai,
 			// and it's not picked up by the include, you might need to reference it here.
 			// However, the include pattern should cover it.
-			"./worker-configuration.d.ts" // This is also in the include of workers.json as ${configDir}/worker-configuration.d.ts
+			//"./worker-configuration.d.ts" // This is also in the include of workers.json as ${configDir}/worker-configuration.d.ts
 		],
 		"paths": {
 			"@/*": ["./src/*"]
