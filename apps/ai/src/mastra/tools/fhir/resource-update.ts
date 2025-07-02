@@ -3,9 +3,9 @@ import { createTextResponse } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
+import type { OperationOutcome } from '@/fhir/v4.0.1'
 import type { FhirApiClient, FhirSessionData } from '@/hono/middleware/fhir-auth'
 import type { ToolCallResult } from '@/mastra/tools/types'
-import type { OperationOutcome } from '@/v4.0.1'
 import type { Audit } from '@repo/audit'
 import type { Cerbos } from '@repo/cerbos'
 

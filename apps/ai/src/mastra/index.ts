@@ -1,40 +1,27 @@
 import 'dotenv/config'
 
+import { getAuditInstance, initializeAudit } from '@/audit'
+import { getAuthInstance, initializeAuth } from '@/auth'
+import { getCerbosInstance, initializeCerbos } from '@/cerbos'
 import { db } from '@/db'
 import { registerCopilotKit } from '@mastra/agui'
 import { Mastra } from '@mastra/core/mastra'
-import { registerApiRoute } from '@mastra/core/server'
 //import { CloudflareDeployer } from '@mastra/deployer-cloudflare'
 import { PinoLogger } from '@mastra/loggers'
 import createClient from 'openapi-fetch'
-import { fetch, request } from 'undici'
-
-import { Audit } from '@repo/audit'
-import { Cerbos } from '@repo/cerbos'
 
 import { assistantAgent } from './agents/assistant-agent'
-import { fhirAgent, openMCPServer } from './agents/fhir-test'
 import { patientReportAgent } from './agents/patient-report-agent'
-import { getAuthInstance, initializeAuth } from './auth'
 import { fhirMCPServer } from './mcp'
-import { notes } from './mcp/notes'
 import { opensearch } from './stores/opensearch'
 import { pgStorage, pgVector } from './stores/pgvector'
 import { newOrganizationWorkflow } from './workflows/new-organization-workflow'
 import { newUserWorkflow } from './workflows/new-user-workflow'
-import { weatherWorkflow } from './workflows/weather-workflow'
 
 import type { paths } from '@/fhir/r4'
 import type { OtelConfig } from '@mastra/core'
 import type { Session, User } from '@repo/auth'
 import type { FhirApiClient, FhirSessionData } from '../hono/middleware/fhir-auth'
-
-type McpFhirToolCallContext = {
-	cerbos: Cerbos
-	audit: Audit
-	fhirClient?: FhirApiClient | null
-	fhirSessionData?: FhirSessionData | null
-}
 
 // FIXME The traces does not working
 const otelConfig: OtelConfig = {
@@ -47,7 +34,7 @@ const otelConfig: OtelConfig = {
 	},
 	export: {
 		type: 'otlp',
-		protocol: 'http',
+		protocol: 'grpc',
 		endpoint: 'http://joseantcordeiro.hopto.org:4318',
 		headers: {
 			//Authorization: "Bearer YOUR_TOKEN_HERE",
@@ -56,9 +43,8 @@ const otelConfig: OtelConfig = {
 }
 
 initializeAuth()
-
-const cerbos = new Cerbos(process.env.CERBOS_URL!)
-const audit = new Audit('audit', process.env.AUDIT_REDIS_URL!)
+initializeCerbos()
+initializeAudit()
 
 export const mastra = new Mastra({
 	/**deployer: new CloudflareDeployer({
@@ -123,6 +109,8 @@ export const mastra = new Mastra({
 					}
 
 					//console.log(`SESSION: ${JSON.stringify(session, null, 2)}`)
+					const cerbos = getCerbosInstance()
+					const audit = getAuditInstance()
 
 					const sessionData: FhirSessionData = {
 						tokenResponse: {},
@@ -158,22 +146,6 @@ export const mastra = new Mastra({
 			},
 		],
 		apiRoutes: [
-			registerApiRoute('/sign-in/email', {
-				method: 'POST',
-				handler: async (c) => {
-					const body = await c.req.json()
-					console.log(`${c.req.method} ${c.req.url} ${JSON.stringify(body, null, 2)}`)
-					const res = await fetch('http://localhost:8801/auth/sign-in/email', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify(body),
-					})
-					const json = await res.json()
-					return c.json(json as Record<string, unknown>)
-				},
-			}),
 			registerCopilotKit({
 				path: '/copilotkit',
 				resourceId: 'assistantAgent',

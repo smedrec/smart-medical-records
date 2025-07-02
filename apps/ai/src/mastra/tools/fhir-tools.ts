@@ -6,8 +6,8 @@ import { createTextResponse } from './utils'
 
 import type { Audit } from '@repo/audit'
 import type { Cerbos } from '@repo/cerbos'
+import type { Bundle, OperationOutcome } from '../../fhir/v4.0.1'
 import type { FhirApiClient, FhirSessionData } from '../../hono/middleware/fhir-auth'
-import type { Bundle, OperationOutcome } from '../../v4.0.1'
 import type { ToolCallResult } from './types'
 
 export type McpFhirToolCallContext = {
