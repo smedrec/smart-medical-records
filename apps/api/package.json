@@ -1,5 +1,5 @@
 {
-	"name": "api",
+	"name": "@smedrec/api",
 	"version": "0.1.0",
 	"private": true,
 	"sideEffects": false,
@@ -19,7 +19,7 @@
 	"dependencies": {
 		"@cerbos/http": "0.22.0",
 		"@hono/zod-openapi": "0.19.9",
-		"@mastra/client-js": "0.10.7",
+		"@mastra/client-js": "0.10.8",
 		"@mastra/rag": "1.0.1",
 		"@paralleldrive/cuid2": "2.2.2",
 		"@repo/audit": "workspace:*",
@@ -41,7 +41,7 @@
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/node": "24.0.8",
+		"@types/node": "24.0.10",
 		"drizzle-kit": "0.31.4",
 		"vite": "7.0.0",
 		"vitest": "3.2.4",

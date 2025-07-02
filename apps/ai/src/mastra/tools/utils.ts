@@ -1,4 +1,4 @@
-import * as jose from 'jose'
+//import * as jose from 'jose'
 
 export const FhirServerUrlHeaderName = 'x-fhir-server-url'
 export const FhirAccessTokenHeaderName = 'x-fhir-access-token'
@@ -14,6 +14,7 @@ export function createTextResponse(
 	}
 }
 
+/**
 export type FhirContext = {
 	url: string
 	token: string
@@ -46,3 +47,4 @@ export function getPatientIdIfContextExists(req: Request) {
 
 	return req.headers[PatientIdHeaderName]?.toString() || null
 }
+ */

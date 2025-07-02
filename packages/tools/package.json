@@ -20,7 +20,7 @@
 		"@commander-js/extra-typings": "14.0.0",
 		"@jahands/cli-tools": "0.10.11",
 		"@types/fs-extra": "11.0.4",
-		"@types/node": "24.0.8",
+		"@types/node": "24.0.10",
 		"cli-table3": "0.6.5",
 		"commander": "14.0.0",
 		"empathic": "2.0.0",
@@ -29,7 +29,7 @@
 		"ts-pattern": "5.7.1",
 		"tsx": "4.20.3",
 		"zod": "3.25.67",
-		"zx": "8.6.0"
+		"zx": "8.6.1"
 	},
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",

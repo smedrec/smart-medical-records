@@ -15,14 +15,14 @@
 		"dev": "tsup src/index.ts --format cjs,esm --dts --watch"
 	},
 	"dependencies": {
-		"axios": "^1.7.2"
+		"axios": "1.7.2"
 	},
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"eslint": "^8.57.0",
-		"tsup": "^8.0.2",
-		"typescript": "^5.4.5"
+		"eslint": "9.27.0",
+		"tsup": "8.0.2",
+		"typescript": "5.5.4"
 	},
 	"publishConfig": {
 		"access": "public"

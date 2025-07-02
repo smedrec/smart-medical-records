@@ -17,7 +17,7 @@
 		"test": "run-vitest"
 	},
 	"dependencies": {
-		"@mastra/client-js": "0.10.7",
+		"@mastra/client-js": "0.10.8",
 		"@repo/audit": "workspace:*",
 		"@repo/auth-db": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
@@ -28,12 +28,12 @@
 		"ioredis": "5.6.1"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.47",
-		"@cloudflare/workers-types": "4.20250628.0",
+		"@cloudflare/vitest-pool-workers": "0.8.48",
+		"@cloudflare/workers-types": "4.20250702.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/node": "24.0.8",
+		"@types/node": "24.0.10",
 		"vitest": "3.2.4"
 	}
 }

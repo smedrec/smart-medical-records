@@ -1,6 +1,6 @@
 {
-	"name": "docs",
-	"version": "0.3.2-canary.0",
+	"name": "@smedrec/docs",
+	"version": "0.1.0",
 	"description": "Smart Medical Record Docs",
 	"license": "MIT",
 	"type": "module",

@@ -1,5 +1,5 @@
 {
-	"name": "audit-worker",
+	"name": "@smedrec/audit-worker",
 	"version": "0.1.0",
 	"private": true,
 	"sideEffects": false,
@@ -14,11 +14,11 @@
 		"test": "run-vitest"
 	},
 	"dependencies": {
-		"@hono/node-server": "^1.14.4",
+		"@hono/node-server": "1.14.4",
 		"@repo/audit": "workspace:*",
 		"@repo/auditdb": "workspace:*",
 		"bullmq": "5.56.0",
-		"dotenv": "17.0.0",
+		"dotenv": "17.0.1",
 		"hono": "4.8.3",
 		"ioredis": "5.6.1",
 		"pino": "9.7.0",
@@ -29,7 +29,7 @@
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/node": "24.0.8",
+		"@types/node": "24.0.10",
 		"concurrently": "9.2.0",
 		"nodemon": "3.1.10",
 		"typescript": "5.5.4",

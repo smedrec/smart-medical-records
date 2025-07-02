@@ -17,23 +17,23 @@
 		"test": "run-vitest"
 	},
 	"dependencies": {
-		"@opentelemetry/exporter-metrics-otlp-proto": "^0.202.0",
-		"@opentelemetry/exporter-trace-otlp-proto": "^0.202.0",
-		"@opentelemetry/sdk-metrics": "^2.0.1",
-		"@opentelemetry/sdk-node": "^0.202.0",
+		"@opentelemetry/exporter-metrics-otlp-proto": "0.202.0",
+		"@opentelemetry/exporter-trace-otlp-proto": "0.202.0",
+		"@opentelemetry/sdk-metrics": "2.0.1",
+		"@opentelemetry/sdk-node": "0.202.0",
 		"@repo/hono-helpers": "workspace:*",
 		"@repo/mailer": "workspace:*",
 		"bullmq": "5.56.0",
-		"bullmq-otel": "^1.0.1",
+		"bullmq-otel": "1.0.1",
 		"ioredis": "5.6.1"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.47",
-		"@cloudflare/workers-types": "4.20250628.0",
+		"@cloudflare/vitest-pool-workers": "0.8.48",
+		"@cloudflare/workers-types": "4.20250702.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/node": "24.0.8",
+		"@types/node": "24.0.10",
 		"vitest": "3.2.4"
 	}
 }
