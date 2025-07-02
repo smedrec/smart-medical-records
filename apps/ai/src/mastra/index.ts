@@ -3,7 +3,7 @@ import 'dotenv/config'
 import { getAuditInstance, initializeAudit } from '@/audit'
 import { getAuthInstance, initializeAuth } from '@/auth'
 import { getCerbosInstance, initializeCerbos } from '@/cerbos'
-import { db } from '@/db'
+import { getDbInstance, initializeDb } from '@/db'
 import { registerCopilotKit } from '@mastra/agui'
 import { Mastra } from '@mastra/core/mastra'
 import { PinoLogger } from '@mastra/loggers'
@@ -43,6 +43,7 @@ const otelConfig: OtelConfig = {
 initializeAuth()
 initializeCerbos()
 initializeAudit()
+initializeDb()
 
 export const mastra: Mastra = new Mastra({
 	server: {
@@ -80,6 +81,7 @@ export const mastra: Mastra = new Mastra({
 					//console.log(`SESSION: ${JSON.stringify(session, null, 2)}`)
 					const cerbos = getCerbosInstance()
 					const audit = getAuditInstance()
+					const db = getDbInstance()
 
 					const sessionData: FhirSessionData = {
 						tokenResponse: {},

@@ -16,15 +16,27 @@ export { appDbService }
 let authDbService: AuthDb | undefined = undefined
 export { authDbService }
 
-if (!appDbService) {
-	appDbService = new AppDb(process.env.APP_DB_URL)
+export function initializeDb() {
+	if (!appDbService) {
+		appDbService = new AppDb(process.env.APP_DB_URL)
+	}
+	if (!authDbService) {
+		authDbService = new AuthDb(process.env.AUTH_DB_URL)
+	}
+
+	return { appDbService, authDbService }
 }
 
-if (!authDbService) {
-	authDbService = new AuthDb(process.env.AUTH_DB_URL)
-}
+export function getDbInstance(): Databases {
+	if (!authDbService) {
+		throw new Error('Auth db not initialized. Call initializeDb first.')
+	}
+	if (!appDbService) {
+		throw new Error('App db not initialized. Call initializeDb first.')
+	}
 
-export const db: Databases = {
-	auth: authDbService.getDrizzleInstance(),
-	app: appDbService.getDrizzleInstance(),
+	return {
+		auth: authDbService.getDrizzleInstance(),
+		app: appDbService.getDrizzleInstance(),
+	}
 }

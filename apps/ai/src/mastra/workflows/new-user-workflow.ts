@@ -1,4 +1,3 @@
-import { db } from '@/db'
 import { createStep, createWorkflow } from '@mastra/core/workflows'
 import { eq } from 'drizzle-orm'
 import createClient from 'openapi-fetch'
@@ -9,6 +8,7 @@ import { user } from '@repo/auth-db'
 import { emailSendTool } from '../tools/email-tools'
 import { fhirResourceCreateTool } from '../tools/fhir/resource-create'
 
+import type { Databases } from '@/db'
 import type { ToolCallResult } from '../tools/types'
 
 const sendWelcomeEmail = createStep({
@@ -61,6 +61,7 @@ const createFhirPersonResource = createStep({
 		if (!inputData) {
 			return { success: false, message: 'Input data not found' }
 		}
+		const db = runtimeContext.get('db') as Databases
 
 		const names: string[] = inputData.name.split(' ')
 		const last = names.pop()

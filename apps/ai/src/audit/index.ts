@@ -4,7 +4,7 @@ let auditInstance: Audit | undefined = undefined
 
 export function initializeAudit() {
 	if (!auditInstance) {
-		auditInstance = new Audit(process.env.AUDIT_REDIS_URL!)
+		auditInstance = new Audit('audit', process.env.AUDIT_REDIS_URL!)
 	}
 	return auditInstance
 }
