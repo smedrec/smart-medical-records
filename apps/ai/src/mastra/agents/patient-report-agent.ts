@@ -3,9 +3,10 @@ import { Agent } from '@mastra/core/agent'
 import { Memory } from '@mastra/memory'
 import { ollama } from 'ollama-ai-provider'
 
+import { writeNoteTool } from '../mcp/notes/tools'
 import { pgStorage, pgVector } from '../stores/pgvector'
 import { emailSendTool } from '../tools/email-tools'
-import { allFhirTools, fhirPatientReportSearchTool } from '../tools/fhir-tools'
+import { fhirPatientReportSearchTool } from '../tools/fhir/patient-report-search'
 
 const llm = groq('llama-3.3-70b-versatile')
 
@@ -123,6 +124,7 @@ The report should include the following sections:
 	tools: {
 		fhirPatientReportSearchTool,
 		emailSendTool,
+		writeNoteTool,
 	},
 	memory,
 })

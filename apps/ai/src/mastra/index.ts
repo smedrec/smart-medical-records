@@ -1,5 +1,6 @@
 import 'dotenv/config'
 
+import { db } from '@/db'
 import { registerCopilotKit } from '@mastra/agui'
 import { Mastra } from '@mastra/core/mastra'
 import { registerApiRoute } from '@mastra/core/server'
@@ -23,6 +24,7 @@ import { newOrganizationWorkflow } from './workflows/new-organization-workflow'
 import { newUserWorkflow } from './workflows/new-user-workflow'
 import { weatherWorkflow } from './workflows/weather-workflow'
 
+import type { paths } from '@/fhir/r4'
 import type { OtelConfig } from '@mastra/core'
 import type { Session, User } from '@repo/auth'
 import type { FhirApiClient, FhirSessionData } from '../hono/middleware/fhir-auth'
@@ -54,6 +56,9 @@ const otelConfig: OtelConfig = {
 }
 
 initializeAuth()
+
+const cerbos = new Cerbos(process.env.CERBOS_URL!)
+const audit = new Audit('audit', process.env.AUDIT_REDIS_URL!)
 
 export const mastra = new Mastra({
 	/**deployer: new CloudflareDeployer({
@@ -117,9 +122,7 @@ export const mastra = new Mastra({
 						},
 					}
 
-					console.log(`SESSION: ${JSON.stringify(session, null, 2)}`)
-					const cerbos = new Cerbos(process.env.CERBOS_URL!)
-					const audit = new Audit('audit', process.env.AUDIT_REDIS_URL!)
+					//console.log(`SESSION: ${JSON.stringify(session, null, 2)}`)
 
 					const sessionData: FhirSessionData = {
 						tokenResponse: {},
@@ -130,10 +133,13 @@ export const mastra = new Mastra({
 						roles: [session.session.activeOrganizationRole as string],
 						activeOrganizationId: session.session.activeOrganizationId as string,
 					}
-					const fhirApiClient: FhirApiClient = createClient({ baseUrl: sessionData.serverUrl })
+					const fhirApiClient: FhirApiClient = createClient<paths>({
+						baseUrl: sessionData.serverUrl,
+					})
 					const runtimeContext = c.get('runtimeContext')
 					runtimeContext.set('cerbos', cerbos)
 					runtimeContext.set('audit', audit)
+					runtimeContext.set('db', db)
 					runtimeContext.set('fhirSessionData', sessionData)
 					runtimeContext.set('fhirClient', fhirApiClient)
 					await next()
@@ -171,50 +177,7 @@ export const mastra = new Mastra({
 			registerCopilotKit({
 				path: '/copilotkit',
 				resourceId: 'assistantAgent',
-				setContext: async (c, runtimeContext) => {
-					const { userId, role } = c.req.param()
-					// Add whatever you need to the runtimeContext
-					// Get session data from auth endpoint with proper error handling
-					const res = await fetch('http://localhost:8801/auth/get-session', {
-						headers: c.req.raw.headers,
-						method: 'GET',
-					})
-
-					// Parse JSON once and validate response
-					const json = await res.json()
-					console.log(JSON.stringify(json, null, 2))
-
-					const cerbos = new Cerbos(process.env.CERBOS_URL!)
-					const audit = new Audit('audit', process.env.AUDIT_REDIS_URL!)
-
-					// Type guard for runtime validation
-					const sessionAuth: { session: Session; user: User } | null =
-						json && typeof json === 'object'
-							? (json as { session: Session; user: User } | null)
-							: null
-
-					const sessionData: FhirSessionData = {
-						tokenResponse: {},
-						serverUrl: 'https://hapi.teachhowtofish.org/fhir/',
-						userId: sessionAuth?.session.userId || '1RnE9Braod6DUi0b0EfqBgaTcRoWYwHz', // Added for Cerbos Principal ID
-						roles: [sessionAuth?.session.activeOrganizationRole || 'owner'],
-					}
-					const fhirApiClient: FhirApiClient = createClient({ baseUrl: sessionData.serverUrl })
-					runtimeContext.set('cerbos', cerbos)
-					runtimeContext.set('audit', audit)
-					runtimeContext.set('fhirSessionData', sessionData)
-					runtimeContext.set('fhirClient', fhirApiClient)
-					/**const sessionData: FhirSessionData = {
-						tokenResponse: {},
-						serverUrl: 'http://joseantcordeiro.hopto.org:8080/fhir/',
-						userId: userId, // Added for Cerbos Principal ID
-						roles: [role as string],
-					}
-					runtimeContext.set('fhirSessionData', sessionData)
-					const fhirApiClient: FhirApiClient = createClient({ baseUrl: sessionData.serverUrl })
-					runtimeContext.set('fhirClient', fhirApiClient)
-					//runtimeContext.set('temperature-scale', 'celsius')*/
-				},
+				setContext: async (c, runtimeContext) => {},
 			}),
 		],
 	},
@@ -228,7 +191,6 @@ export const mastra = new Mastra({
 	storage: pgStorage,
 	mcpServers: {
 		fhirMCPServer,
-		notes,
 	},
 	logger: new PinoLogger({
 		name: 'Mastra',

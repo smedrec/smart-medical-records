@@ -5,7 +5,7 @@ import { ollama } from 'ollama-ai-provider'
 
 import { pgStorage, pgVector } from '../stores/pgvector'
 import { emailSendTool } from '../tools/email-tools'
-import { allFhirTools } from '../tools/fhir-tools'
+import { allFhirTools } from '../tools/fhir'
 
 const llm = groq('llama-3.3-70b-versatile')
 

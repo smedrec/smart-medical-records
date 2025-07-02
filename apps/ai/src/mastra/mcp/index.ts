@@ -2,7 +2,7 @@ import { MCPServer } from '@mastra/mcp'
 
 import { assistantAgent } from '../agents/assistant-agent'
 import { emailSendTool } from '../tools/email-tools'
-import { allFhirTools } from '../tools/fhir-tools'
+import { allFhirTools } from '../tools/fhir'
 
 // Your Mastra Workflow
 export const fhirMCPServer = new MCPServer({

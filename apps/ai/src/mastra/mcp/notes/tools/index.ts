@@ -1,37 +1,119 @@
+import { IToolCallResult } from '@/mastra/tools/types'
+import { createTextResponse } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core/tools'
+import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
-import { db, note } from '../../db'
+import { note } from '@repo/app-db'
 
-import type { FhirSessionData } from '../../../../hono/middleware/fhir-auth'
+import type { Databases } from '@/db'
+import type { FhirSessionData } from '@/hono/middleware/fhir-auth'
+import type { ToolCallResult } from '@/mastra/tools/types'
 
 const defaultPrincipalId = 'anonymous'
 const defaultOrganizationId = 'anonymous'
 
 export const writeNoteTool = createTool({
-	id: 'write',
+	id: 'write_note',
 	description: 'Write a new note or overwrite an existing one.',
 	inputSchema: z.object({
 		title: z.string().describe('The title of the note.'),
 		content: z.string().describe('The markdown content of the note.'),
 	}),
-	outputSchema: z.string(),
-	execute: async ({ context, runtimeContext }) => {
+	outputSchema: IToolCallResult,
+	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
+		const db = runtimeContext.get('db') as Databases
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
 		const principalId = fhirSessionData.userId || defaultPrincipalId
 		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganizationId
 
 		try {
-			const { title, content } = context
-			await db.insert(note).values({
-				title: title,
-				markdown: content,
+			await db.app.insert(note).values({
+				title: context.title,
+				markdown: context.content,
 				userId: principalId,
 				organizationId: organizationId,
 			})
-			return `Successfully wrote to note "${title}".`
+			return createTextResponse(`Successfully wrote to note "${context.title}".`, {
+				isError: false,
+			})
 		} catch (error: any) {
-			return `Error writing note: ${error.message}`
+			return createTextResponse(`Error writing note: ${error.message}`, { isError: true })
+		}
+	},
+})
+
+export const updateNoteTool = createTool({
+	id: 'write_note',
+	description: 'Update the title and/or the content of an existing one to update.',
+	inputSchema: z.object({
+		title: z.string().describe('The title of the note.'),
+		newTitle: z.string().optional().describe('The new title of the note, if applicable.'),
+		newContent: z
+			.string()
+			.optional()
+			.describe('The new markdown content of the note to update, if applicable.'),
+	}),
+	outputSchema: IToolCallResult,
+	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
+		if (!context.newTitle && !context.newContent) {
+			createTextResponse(`Nothing to update, the note remain the same`, { isError: true })
+		}
+		const db = runtimeContext.get('db') as Databases
+		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
+		const principalId = fhirSessionData.userId || defaultPrincipalId
+		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganizationId
+
+		try {
+			const update = await db.app
+				.update(note)
+				.set({
+					title: context.newTitle || undefined,
+					markdown: context.newContent || undefined,
+				})
+				.where(
+					and(
+						eq(note.title, context.title),
+						eq(note.userId, principalId),
+						eq(note.organizationId, organizationId)
+					)
+				)
+			if (update.length < 1) {
+				return createTextResponse(`Note with the title "${context.title}" not found`, {
+					isError: true,
+				})
+			}
+			return createTextResponse(`Successfully wrote to note "${context.title}".`, {
+				isError: false,
+			})
+		} catch (error: any) {
+			return createTextResponse(`Error writing note: ${error.message}`, { isError: true })
+		}
+	},
+})
+
+export const listNotesTool = createTool({
+	id: 'list_notes',
+	description: 'List the notes for the current user. This tool does not need any input.',
+	outputSchema: IToolCallResult,
+	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
+		const db = runtimeContext.get('db') as Databases
+		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
+		const principalId = fhirSessionData.userId || defaultPrincipalId
+		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganizationId
+
+		try {
+			const notes = await db.app.query.note.findMany({
+				columns: {
+					title: true,
+					markdown: true,
+				},
+				where: and(eq(note.userId, principalId), eq(note.organizationId, organizationId)),
+			})
+
+			return createTextResponse(JSON.stringify(notes, null, 2), { isError: false })
+		} catch (error: any) {
+			return createTextResponse(`Error listing note: ${error.message}`, { isError: true })
 		}
 	},
 })

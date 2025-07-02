@@ -1,8 +1,11 @@
+import { IToolCallResult } from '@/mastra/tools/types'
+import { createTextResponse } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
 import { SendMail } from '@repo/send-mail'
 
+import type { ToolCallResult } from '@/mastra/tools/types'
 import type { Audit } from '@repo/audit'
 import type { MailerSendOptions } from '@repo/mailer'
 import type { FhirSessionData } from '../../hono/middleware/fhir-auth'
@@ -19,11 +22,8 @@ export const emailSendTool = createTool({
 		html: z.string().describe('The body of the email in html'),
 		text: z.string().optional().describe('The body of the email in text'),
 	}),
-	outputSchema: z.object({
-		success: z.boolean(),
-		message: z.string(),
-	}),
-	execute: async ({ context, runtimeContext }): Promise<{ success: boolean; message: string }> => {
+	outputSchema: IToolCallResult,
+	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
 		const audit = runtimeContext.get('audit') as Audit
 		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
 		const toolName = 'emailSend'
@@ -31,10 +31,10 @@ export const emailSendTool = createTool({
 		const organizationId = fhirSessionData.activeOrganizationId
 
 		if (!principalId || !organizationId)
-			return {
-				success: false,
-				message: 'userId and organizationId must be in context to send mails',
-			}
+			return createTextResponse(
+				'userId and organizationId must be in runtime context to send mails',
+				{ isError: true }
+			)
 
 		await audit.log({
 			principalId,
@@ -58,6 +58,6 @@ export const emailSendTool = createTool({
 			emailDetails,
 		})
 
-		return { success: true, message: 'Email sent' }
+		return createTextResponse('Email enqueued', { isError: false })
 	},
 })

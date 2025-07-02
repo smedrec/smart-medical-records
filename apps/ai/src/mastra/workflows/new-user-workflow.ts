@@ -1,38 +1,15 @@
-import { RuntimeContext } from '@mastra/core/di'
+import { db } from '@/db'
 import { createStep, createWorkflow } from '@mastra/core/workflows'
 import { eq } from 'drizzle-orm'
 import createClient from 'openapi-fetch'
 import { z } from 'zod'
 
-import { Audit } from '@repo/audit'
-import { AuthDb, user } from '@repo/auth-db'
-import { Cerbos } from '@repo/cerbos'
+import { user } from '@repo/auth-db'
 
 import { emailSendTool } from '../tools/email-tools'
-import { fhirResourceCreateTool } from '../tools/fhir-tools'
+import { fhirResourceCreateTool } from '../tools/fhir/resource-create'
 
-import type { FhirApiClient, FhirSessionData } from '../../hono/middleware/fhir-auth'
 import type { ToolCallResult } from '../tools/types'
-
-const runtimeContext = new RuntimeContext()
-
-const cerbos = new Cerbos(process.env.CERBOS_URL!)
-const audit = new Audit('audit', process.env.AUDIT_REDIS_URL!)
-const sessionData: FhirSessionData = {
-	tokenResponse: {},
-	serverUrl: 'https://hapi.teachhowtofish.org/fhir/',
-	userId: '1Hb4MBVPx02HHsBPc8yfJDMDiW2XeVjO', // Added for Cerbos Principal ID
-	roles: ['owner'],
-	activeOrganizationId: 'G47R3UBSyF2aVGT3hwMKbh06aZngIA8m',
-}
-const fhirApiClient: FhirApiClient = createClient({ baseUrl: sessionData.serverUrl })
-runtimeContext.set('cerbos', cerbos)
-runtimeContext.set('audit', audit)
-runtimeContext.set('fhirSessionData', sessionData)
-runtimeContext.set('fhirClient', fhirApiClient)
-
-let authDbService: AuthDb | undefined = undefined
-export { authDbService }
 
 const sendWelcomeEmail = createStep({
 	id: 'send-welcome-email',
@@ -45,9 +22,9 @@ const sendWelcomeEmail = createStep({
 		success: z.boolean(),
 		message: z.string(),
 	}),
-	execute: async ({ inputData }) => {
+	execute: async ({ inputData, runtimeContext }) => {
 		const { name, email } = inputData
-		const result = await emailSendTool.execute({
+		const result = (await emailSendTool.execute({
 			context: {
 				to: email,
 				subject: 'Welcome a board',
@@ -60,11 +37,11 @@ const sendWelcomeEmail = createStep({
 				`,
 			},
 			runtimeContext,
-		})
+		})) as ToolCallResult
 		// Ensure result matches the outputSchema shape
 		return {
-			success: result.success ?? true,
-			message: result.message ?? 'Welcome email sent',
+			success: !result.isError,
+			message: result.content[0].text,
 		}
 	},
 })
@@ -80,7 +57,7 @@ const createFhirPersonResource = createStep({
 		success: z.boolean(),
 		message: z.string(),
 	}),
-	execute: async ({ inputData }) => {
+	execute: async ({ inputData, runtimeContext }) => {
 		if (!inputData) {
 			return { success: false, message: 'Input data not found' }
 		}
@@ -132,18 +109,11 @@ const createFhirPersonResource = createStep({
 				return { success: false, message: 'Failed to create person resource: missing id' }
 			}
 
-			if (!authDbService) {
-				authDbService = new AuthDb(process.env.AUTH_DB_URL)
-			}
-
-			const db = authDbService.getDrizzleInstance()
 			// TODO - check errors
-			await db
+			await db.auth
 				.update(user)
 				.set({ personId: createdResource.id })
 				.where(eq(user.email, inputData.email))
-
-			await authDbService.end()
 
 			return {
 				success: true,

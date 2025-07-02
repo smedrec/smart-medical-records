@@ -3,9 +3,10 @@ import { Agent } from '@mastra/core/agent'
 import { Memory } from '@mastra/memory'
 import { ollama } from 'ollama-ai-provider'
 
+import { listNotesTool, writeNoteTool } from '../mcp/notes/tools'
 import { pgStorage, pgVector } from '../stores/pgvector'
 import { emailSendTool } from '../tools/email-tools'
-import { allFhirTools } from '../tools/fhir-tools'
+import { allFhirTools } from '../tools/fhir'
 
 // Initialize memory with PostgreSQL storage and vector search
 const memory = new Memory({
@@ -123,6 +124,8 @@ By adhering to these guidelines, you will function as a highly effective, safe, 
 	tools: {
 		...Object.fromEntries(allFhirTools.map((tool) => [tool.id, tool])),
 		emailSendTool,
+		writeNoteTool,
+		listNotesTool,
 	},
 	memory,
 })

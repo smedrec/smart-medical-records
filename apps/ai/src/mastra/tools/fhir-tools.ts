@@ -1,8 +1,8 @@
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
+import { getInitialFhirSearchQueries } from './fhir/fhirSearchQueries'
 import { createTextResponse } from './utils'
-import { getInitialFhirSearchQueries } from './utils/fhirSearchQueries'
 
 import type { Audit } from '@repo/audit'
 import type { Cerbos } from '@repo/cerbos'

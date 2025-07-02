@@ -1,12 +1,13 @@
+import { db } from '@/db'
 import { eq } from 'drizzle-orm'
 
-import { db, note } from '../../db'
+import { note } from '@repo/app-db'
 
 import type { MCPServerResources, Resource } from '@mastra/mcp'
 
 const listNotes = async (): Promise<Resource[]> => {
 	try {
-		const notes = await db.select().from(note)
+		const notes = await db.app.select().from(note)
 		return notes.map((note) => {
 			const title = note.title
 			return {
@@ -25,7 +26,7 @@ const listNotes = async (): Promise<Resource[]> => {
 const readNote = async (uri: string): Promise<string | null> => {
 	const title = uri.replace('notes://', '')
 	try {
-		const content = await db.query.note.findFirst({
+		const content = await db.app.query.note.findFirst({
 			where: eq(note.title, title),
 			columns: {
 				markdown: true,
