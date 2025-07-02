@@ -1,6 +1,6 @@
 # @repo/auditdb
 
-The `@repo/auditdb` package provides a reusable class, `AuditDb`, for initializing a Drizzle ORM client connected to a PostgreSQL database. It's designed for use in various applications within the monorepo that require access to the audit log database.
+The `@repo/audit-db` package provides a reusable class, `AuditDb`, for initializing a Drizzle ORM client connected to a PostgreSQL database. It's designed for use in various applications within the monorepo that require access to the audit log database.
 
 ## Features
 
@@ -18,7 +18,7 @@ To add `@repo/auditdb` as a dependency in another package (e.g., an application 
 cd apps/your-app # or packages/your-package
 
 # Add @repo/auditdb using pnpm
-pnpm add '@repo/auditdb@workspace:*'
+pnpm add '@repo/audit-db@workspace:*'
 ```
 
 ## Usage
@@ -36,8 +36,8 @@ AUDIT_DB_URL="postgresql://user:password@host:port/database"
 Here's a basic example of how to use the `AuditDb` class:
 
 ```typescript
-import { AuditDb } from '@repo/auditdb';
-import { auditLog } from '@repo/auditdb/schema'; // Import the schema if you need to reference tables directly
+import { AuditDb } from '@repo/audit-db';
+import { auditLog } from '@repo/audit-db/schema'; // Import the schema if you need to reference tables directly
 
 async function main() {
   try {
@@ -85,17 +85,17 @@ main();
 
 The database schema is defined in `src/schema.ts`. This package uses Drizzle Kit for managing database migrations. The following scripts are available in `package.json`:
 
--   `pnpm run auditdb:generate`: Generates SQL migration files based on schema changes.
+-   `pnpm run audit-db:generate`: Generates SQL migration files based on schema changes.
     ```sh
-    pnpm --filter @repo/auditdb auditdb:generate
+    pnpm --filter @repo/audit-db audit-db:generate
     ```
--   `pnpm run auditdb:migrate`: Applies pending migrations to the database.
+-   `pnpm run audit-db:migrate`: Applies pending migrations to the database.
     ```sh
-    pnpm --filter @repo/auditdb auditdb:migrate
+    pnpm --filter @repo/audit-db audit-db:migrate
     ```
--   `pnpm run auditdb:studio`: Starts Drizzle Studio, a local GUI for your database.
+-   `pnpm run audit-db:studio`: Starts Drizzle Studio, a local GUI for your database.
     ```sh
-    pnpm --filter @repo/auditdb auditdb:studio
+    pnpm --filter @repo/audit-db audit-db:studio
     ```
 
 Make sure your database connection URL is correctly configured (e.g., via `AUDIT_DB_URL` or in `drizzle-dev.config.ts`) when running these commands.

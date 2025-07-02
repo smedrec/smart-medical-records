@@ -1,5 +1,5 @@
 {
-	"name": "@repo/auditdb",
+	"name": "@repo/audit-db",
 	"version": "0.1.0",
 	"private": true,
 	"sideEffects": false,
@@ -11,9 +11,9 @@
 		"src"
 	],
 	"scripts": {
-		"auditdb:generate": "drizzle-kit generate --config=drizzle-dev.config.ts",
-		"auditdb:migrate": "drizzle-kit migrate --config=drizzle-dev.config.ts",
-		"auditdb:studio": "drizzle-kit studio --config=drizzle-dev.config.ts",
+		"audit-db:generate": "drizzle-kit generate --config=drizzle-dev.config.ts",
+		"audit-db:migrate": "drizzle-kit migrate --config=drizzle-dev.config.ts",
+		"audit-db:studio": "drizzle-kit studio --config=drizzle-dev.config.ts",
 		"build": "tsc --build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",

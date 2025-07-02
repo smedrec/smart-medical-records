@@ -12,7 +12,6 @@
 		".vscode"
 	],
 	"compilerOptions": {
-		"types": ["node"],
 		"paths": {
 			"@/*": ["./src/*"]
 		}

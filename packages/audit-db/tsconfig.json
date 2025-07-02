@@ -4,8 +4,7 @@
 		"noEmit": false,
 		"outDir": "./dist",
 		"declaration": true,
-		"declarationMap": true,
-		"types": ["@cloudflare/workers-types", "@cloudflare/vitest-pool-workers", "node"]
+		"declarationMap": true
 		// We inherit module, target, moduleResolution ('bundler'), strict, etc., from the base.
 		// moduleResolution: "bundler" should still work fine for tsc producing .js files
 		// that Node.js (or another bundler) will consume.

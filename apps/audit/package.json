@@ -16,7 +16,7 @@
 	"dependencies": {
 		"@hono/node-server": "1.14.4",
 		"@repo/audit": "workspace:*",
-		"@repo/auditdb": "workspace:*",
+		"@repo/audit-db": "workspace:*",
 		"bullmq": "5.56.0",
 		"dotenv": "17.0.1",
 		"hono": "4.8.3",

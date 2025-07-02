@@ -6,7 +6,7 @@ import { Hono } from 'hono'
 import { Redis } from 'ioredis'
 import { pino } from 'pino'
 
-import { AuditDb, auditLog as auditLogTableSchema } from '@repo/auditdb'
+import { AuditDb, auditLog as auditLogTableSchema } from '@repo/audit-db'
 
 import type { Job } from 'bullmq'
 import type { RedisOptions } from 'ioredis'

@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { getHeaders } from '@tanstack/react-start/server'
 import { desc, eq } from 'drizzle-orm'
 
-import { AuditDb, auditLog } from '@repo/auditdb'
+import { AuditDb, auditLog } from '@repo/audit-db'
 
 type GetAuditLogsParams = {
 	principalId?: string
