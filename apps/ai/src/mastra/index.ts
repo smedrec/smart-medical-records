@@ -7,6 +7,7 @@ import { getDbInstance, initializeDb } from '@/db'
 import { allAuthWorkflows } from '@/mastra/workflows/auth'
 import { registerCopilotKit } from '@mastra/agui'
 import { Mastra } from '@mastra/core/mastra'
+import { registerApiRoute } from '@mastra/core/server'
 import { PinoLogger } from '@mastra/loggers'
 import createClient from 'openapi-fetch'
 
@@ -116,6 +117,34 @@ const mastra: Mastra = new Mastra({
 			},
 		],
 		apiRoutes: [
+			registerApiRoute('/fhir/callback', {
+				method: 'GET',
+				handler: async (c) => {
+					const code = c.req.query('code')
+					const state = c.req.query('state')
+
+					try {
+						const { code } = smartClient.handleAuthorizationResponse({ code, state })
+
+						// Exchange the authorization code for an access token
+						const tokenResponse = await smartClient.exchangeCodeForToken(code)
+
+						console.log('Access Token:', tokenResponse.access_token)
+						console.log('Refresh Token:', tokenResponse.refresh_token)
+						console.log('Expires In:', tokenResponse.expires_in)
+
+						// Refresh the access token (when it expires)
+						if (tokenResponse.refresh_token) {
+							const refreshedToken = await smartClient.refreshAccessToken(tokenResponse.refresh_token)
+							console.log('Refreshed Access Token:', refreshedToken.access_token)
+						}
+						return c.json(tokenResponse)
+					} catch (error) {
+						console.error('Error:', error.message)
+					}
+					return c.json(tokenResponse)
+				},
+			}),
 			registerCopilotKit({
 				path: '/copilotkit',
 				resourceId: 'assistantAgent',

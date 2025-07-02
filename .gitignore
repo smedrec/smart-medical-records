@@ -68,6 +68,9 @@ yarn-error.log*
 # Log files
 *.log
 
+# Key files
+*.key
+
 # Agents
 .claude/settings.local.json
 

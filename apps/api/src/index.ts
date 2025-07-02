@@ -1,6 +1,6 @@
 //import { zEnv } from '@/lib/env.js'
-//import { registerFhirCallback } from '@/routes/fhir/callback.js'
-//import { registerFhirLogin } from '@/routes/fhir/login.js'
+import { registerFhirAuthorize } from './routes/fhir/authorize.js'
+import { registerFhirCallback } from './routes/fhir/callback.js'
 import { registerSmartFhirClientCreate } from './routes/fhir/smart-client/create.js'
 import { registerSmartFhirClientDelete } from './routes/fhir/smart-client/delete.js'
 import { registerSmartFhirClientFind } from './routes/fhir/smart-client/find.js'
@@ -66,8 +66,8 @@ registerLiveness(app)
 
 //registerUploadAvatar(app)
 // FHIR routes
-//registerFhirLogin(app)
-//registerFhirCallback(app)
+registerFhirAuthorize(app)
+registerFhirCallback(app)
 registerSmartFhirClientFind(app)
 registerSmartFhirClientCreate(app)
 registerSmartFhirClientUpdate(app)

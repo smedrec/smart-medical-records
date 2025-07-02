@@ -1,5 +1,9 @@
-import { URLSearchParams } from 'url'
+import crypto from 'crypto'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath, URLSearchParams } from 'url'
 import axios from 'axios'
+import jwt from 'jsonwebtoken'
 
 import type {
 	AuthResponse,
@@ -7,7 +11,11 @@ import type {
 	RefreshTokenResponse,
 	SmartClientConfig,
 	TokenResponse,
-} from './types'
+} from './types.js'
+
+/**const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const KEYS_DIR = path.resolve(__dirname, '../keys')*/
 
 export class SmartClient {
 	private config: SmartClientConfig
@@ -107,6 +115,49 @@ export class SmartClient {
 				)
 			}
 			throw new Error('Failed to refresh access token')
+		}
+	}
+
+	public async getBackendToken(scope: string): Promise<TokenResponse> {
+		const privateKey = fs.readFileSync(
+			`/home/jose/Documents/workspace/smedrec/smart-medical-records/apps/api/node_modules/@repo/smart-client/dist/jwtRS256.key`,
+			'utf8'
+		)
+		const now = Math.floor(Date.now() / 1000)
+		const token = jwt.sign(
+			{
+				iss: this.config.clientId,
+				sub: this.config.clientId,
+				aud: this.config.tokenUrl,
+				jti: crypto.randomUUID(),
+				exp: now + 5 * 60,
+				iat: now,
+			},
+			privateKey,
+			{ algorithm: 'RS256' }
+		)
+
+		const params = new URLSearchParams({
+			grant_type: 'client_credentials',
+			client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+			client_assertion: token,
+			scope,
+		})
+
+		try {
+			const response = await axios.post<TokenResponse>(this.config.tokenUrl, params, {
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+			})
+			return response.data
+		} catch (error) {
+			if (axios.isAxiosError(error) && error.response) {
+				throw new Error(
+					`Failed to get backend token: ${error.response.status} ${error.response.data}`
+				)
+			}
+			throw new Error('Failed to get backend token')
 		}
 	}
 }

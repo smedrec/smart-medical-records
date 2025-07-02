@@ -4,7 +4,7 @@ export const FhirServerUrlHeaderName = 'x-fhir-server-url'
 export const FhirAccessTokenHeaderName = 'x-fhir-access-token'
 export const PatientIdHeaderName = 'x-patient-id'
 
-export function createTextResponse(
+function createTextResponse(
 	text: string,
 	options: { isError: boolean } = { isError: false }
 ): { content: Array<{ type: 'text'; text: string }>; isError?: boolean } {
@@ -14,6 +14,7 @@ export function createTextResponse(
 	}
 }
 
+export { createTextResponse }
 /**
 export type FhirContext = {
 	url: string

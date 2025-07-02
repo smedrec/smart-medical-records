@@ -26,6 +26,7 @@
 		"@repo/auth": "workspace:*",
 		"@repo/auth-db": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
+		"@repo/smart-client": "workspace:*",
 		"ai": "4.3.16",
 		"better-auth": "1.2.12",
 		"drizzle-orm": "0.44.2",
