@@ -37,7 +37,7 @@ export class AppDb {
 
 		if (!effectivePostgresUrl) {
 			throw new Error(
-				'AuditDb: PostgreSQL connection URL not provided and could not be found in environment variables (AUDIT_DB_URL).'
+				'AppDb: PostgreSQL connection URL not provided (postgresUrl parameter) and could not be found in environment variables (APP_DB_URL).'
 			)
 		}
 		this.client = postgres(effectivePostgresUrl)
