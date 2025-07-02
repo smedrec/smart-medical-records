@@ -6,14 +6,12 @@ import { getCerbosInstance, initializeCerbos } from '@/cerbos'
 import { db } from '@/db'
 import { registerCopilotKit } from '@mastra/agui'
 import { Mastra } from '@mastra/core/mastra'
-//import { CloudflareDeployer } from '@mastra/deployer-cloudflare'
 import { PinoLogger } from '@mastra/loggers'
 import createClient from 'openapi-fetch'
 
 import { assistantAgent } from './agents/assistant-agent'
 import { patientReportAgent } from './agents/patient-report-agent'
 import { fhirMCPServer } from './mcp'
-import { opensearch } from './stores/opensearch'
 import { pgStorage, pgVector } from './stores/pgvector'
 import { newOrganizationWorkflow } from './workflows/new-organization-workflow'
 import { newUserWorkflow } from './workflows/new-user-workflow'
@@ -46,36 +44,7 @@ initializeAuth()
 initializeCerbos()
 initializeAudit()
 
-export const mastra = new Mastra({
-	/**deployer: new CloudflareDeployer({
-		scope: 'your-account-id',
-		projectName: 'smedrec-ai-worker',
-		routes: [
-			{
-				pattern: 'example.com/*',
-				zone_name: 'example.com',
-				custom_domain: true,
-			},
-		],
-		workerNamespace: 'smedrec-ai-worker',
-		auth: {
-			apiToken: 'your-api-token',
-			apiEmail: 'your-email',
-		},
-		d1Databases: [
-			{
-				binding: 'DB',
-				database_name: 'smedrec-ai',
-				database_id: 'database-id',
-			},
-		],
-		kvNamespaces: [
-			{
-				binding: 'KV',
-				id: 'namespace-id',
-			},
-		],
-	}),*/
+export const mastra: Mastra = new Mastra({
 	server: {
 		cors: {
 			origin: '*',
@@ -155,7 +124,7 @@ export const mastra = new Mastra({
 	},
 	workflows: { newUserWorkflow, newOrganizationWorkflow },
 	agents: { assistantAgent, patientReportAgent },
-	vectors: { pgVector, opensearch },
+	vectors: { pgVector },
 	//storage: new D1Store({
 	//  binding: DB, // D1Database binding provided by the Workers runtime
 	//  tablePrefix: "dev_", // Optional: isolate tables per environment

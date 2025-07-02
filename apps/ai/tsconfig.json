@@ -1,10 +1,8 @@
 {
-	"extends": "@repo/typescript-config/workers.json",
+	"extends": "@repo/typescript-config/base.json",
 	"include": [
 		// These paths are relative to this tsconfig.json (apps/ai)
-		"src/**/*",
-		"env.d.ts"
-		//"worker-configuration.d.ts"
+		"src/**/*"
 	],
 	"exclude": [
 		"node_modules",
@@ -14,17 +12,7 @@
 		".vscode"
 	],
 	"compilerOptions": {
-		// Overrides or additions to the extended workers.json compilerOptions if needed
-		// The types from workers.json should be mostly fine.
-		// Ensure Cloudflare workers types are available
-		"types": [
-			"@cloudflare/workers-types",
-			"@cloudflare/vitest-pool-workers"
-			// If you have a local worker-configuration.d.ts specific to apps/ai,
-			// and it's not picked up by the include, you might need to reference it here.
-			// However, the include pattern should cover it.
-			//"./worker-configuration.d.ts" // This is also in the include of workers.json as ${configDir}/worker-configuration.d.ts
-		],
+		"types": ["node"],
 		"paths": {
 			"@/*": ["./src/*"]
 		}
