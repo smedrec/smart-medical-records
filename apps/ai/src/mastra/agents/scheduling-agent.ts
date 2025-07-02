@@ -1,11 +1,10 @@
+import { pgStorage, pgVector } from '@/mastra/stores/pgvector'
+import { allFhirTools } from '@/mastra/tools/fhir'
+import { emailSendTool } from '@/mastra/tools/mail/email-tools'
 import { groq } from '@ai-sdk/groq'
 import { Agent } from '@mastra/core/agent'
 import { Memory } from '@mastra/memory'
 import { ollama } from 'ollama-ai-provider'
-
-import { pgStorage, pgVector } from '../stores/pgvector'
-import { emailSendTool } from '../tools/email-tools'
-import { allFhirTools } from '../tools/fhir'
 
 const llm = groq('llama-3.3-70b-versatile')
 

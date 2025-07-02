@@ -1,3 +1,5 @@
+import { fhirResourceCreateTool } from '@/mastra/tools/fhir/resource-create'
+import { emailSendTool } from '@/mastra/tools/mail/email-tools'
 import { createStep, createWorkflow } from '@mastra/core/workflows'
 import { eq } from 'drizzle-orm'
 import createClient from 'openapi-fetch'
@@ -5,11 +7,8 @@ import { z } from 'zod'
 
 import { organization } from '@repo/auth-db'
 
-import { emailSendTool } from '../tools/email-tools'
-import { fhirResourceCreateTool } from '../tools/fhir/resource-create'
-
 import type { Databases } from '@/db'
-import type { ToolCallResult } from '../tools/types'
+import type { ToolCallResult } from '@/mastra/tools/types'
 
 const createFhirOrganizationResource = createStep({
 	id: 'create-fhir-organization-resource',
@@ -80,7 +79,7 @@ const createFhirOrganizationResource = createStep({
 	},
 })
 
-export const newOrganizationWorkflow = createWorkflow({
+const newOrganizationWorkflow = createWorkflow({
 	id: 'new-organization-workflow',
 	description: 'Creates a new Organization fhir resource',
 	inputSchema: z.object({
@@ -138,3 +137,5 @@ export const newOrganizationWorkflow = createWorkflow({
 	)
 	.then(createFhirOrganizationResource)
 	.commit()
+
+export { newOrganizationWorkflow }

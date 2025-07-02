@@ -1,9 +1,7 @@
+import { schedulingCoordinatorAgent } from '@/mastra/agents/scheduling-agent'
 import { groq } from '@ai-sdk/groq'
-import { Agent } from '@mastra/core/agent'
 import { createStep, createWorkflow } from '@mastra/core/workflows'
 import { z } from 'zod'
-
-import { schedulingCoordinatorAgent } from '../agents/scheduling-agent'
 
 const llm = groq('llama-3.3-70b-versatile')
 
@@ -45,3 +43,5 @@ const createAvailableSlotsWorkflow = createWorkflow({
 		finalCopy: z.string(),
 	}),
 })
+
+export { createAvailableSlotsWorkflow }

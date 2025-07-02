@@ -1,3 +1,5 @@
+import { fhirResourceCreateTool } from '@/mastra/tools/fhir/resource-create'
+import { emailSendTool } from '@/mastra/tools/mail/email-tools'
 import { createStep, createWorkflow } from '@mastra/core/workflows'
 import { eq } from 'drizzle-orm'
 import createClient from 'openapi-fetch'
@@ -5,11 +7,8 @@ import { z } from 'zod'
 
 import { user } from '@repo/auth-db'
 
-import { emailSendTool } from '../tools/email-tools'
-import { fhirResourceCreateTool } from '../tools/fhir/resource-create'
-
 import type { Databases } from '@/db'
-import type { ToolCallResult } from '../tools/types'
+import type { ToolCallResult } from '@/mastra/tools/types'
 
 const sendWelcomeEmail = createStep({
 	id: 'send-welcome-email',
@@ -127,7 +126,7 @@ const createFhirPersonResource = createStep({
 	},
 })
 
-export const newUserWorkflow = createWorkflow({
+const newUserWorkflow = createWorkflow({
 	id: 'new-user-workflow',
 	description: 'New user workflow tasks',
 	inputSchema: z.object({
@@ -141,3 +140,5 @@ export const newUserWorkflow = createWorkflow({
 })
 	.parallel([sendWelcomeEmail, createFhirPersonResource])
 	.commit()
+
+export { newUserWorkflow }

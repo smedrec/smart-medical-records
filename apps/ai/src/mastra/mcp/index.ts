@@ -1,11 +1,10 @@
+import { assistantAgent } from '@/mastra/agents/assistant-agent'
+import { allFhirTools } from '@/mastra/tools/fhir'
+import { emailSendTool } from '@/mastra/tools/mail/email-tools'
 import { MCPServer } from '@mastra/mcp'
 
-import { assistantAgent } from '../agents/assistant-agent'
-import { emailSendTool } from '../tools/email-tools'
-import { allFhirTools } from '../tools/fhir'
-
 // Your Mastra Workflow
-export const fhirMCPServer = new MCPServer({
+const fhirMCPServer = new MCPServer({
 	name: 'FHIR MCP Server',
 	version: '1.0.0',
 	tools: {
@@ -23,3 +22,5 @@ export const fhirMCPServer = new MCPServer({
 // await fhirMCPServer.startStdio();
 // Or integrate with an HTTP server using startSSE()
 // See MCPServer reference for details
+
+export { fhirMCPServer }

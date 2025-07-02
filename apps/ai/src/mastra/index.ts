@@ -4,6 +4,7 @@ import { getAuditInstance, initializeAudit } from '@/audit'
 import { getAuthInstance, initializeAuth } from '@/auth'
 import { getCerbosInstance, initializeCerbos } from '@/cerbos'
 import { getDbInstance, initializeDb } from '@/db'
+import { allAuthWorkflows } from '@/mastra/workflows/auth'
 import { registerCopilotKit } from '@mastra/agui'
 import { Mastra } from '@mastra/core/mastra'
 import { PinoLogger } from '@mastra/loggers'
@@ -13,8 +14,6 @@ import { assistantAgent } from './agents/assistant-agent'
 import { patientReportAgent } from './agents/patient-report-agent'
 import { fhirMCPServer } from './mcp'
 import { pgStorage, pgVector } from './stores/pgvector'
-import { newOrganizationWorkflow } from './workflows/new-organization-workflow'
-import { newUserWorkflow } from './workflows/new-user-workflow'
 
 import type { paths } from '@/fhir/r4'
 import type { OtelConfig } from '@mastra/core'
@@ -45,7 +44,7 @@ initializeCerbos()
 initializeAudit()
 initializeDb()
 
-export const mastra: Mastra = new Mastra({
+const mastra: Mastra = new Mastra({
 	server: {
 		cors: {
 			origin: '*',
@@ -124,7 +123,7 @@ export const mastra: Mastra = new Mastra({
 			}),
 		],
 	},
-	workflows: { newUserWorkflow, newOrganizationWorkflow },
+	workflows: { ...Object.fromEntries(allAuthWorkflows.map((workflow) => [workflow.id, workflow])) },
 	agents: { assistantAgent, patientReportAgent },
 	vectors: { pgVector },
 	//storage: new D1Store({
@@ -141,3 +140,5 @@ export const mastra: Mastra = new Mastra({
 	}),
 	telemetry: otelConfig,
 })
+
+export { mastra }

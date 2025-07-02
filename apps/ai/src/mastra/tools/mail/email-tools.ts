@@ -5,15 +5,15 @@ import z from 'zod'
 
 import { SendMail } from '@repo/send-mail'
 
+import type { FhirSessionData } from '@/hono/middleware/fhir-auth'
 import type { ToolCallResult } from '@/mastra/tools/types'
 import type { Audit } from '@repo/audit'
 import type { MailerSendOptions } from '@repo/mailer'
-import type { FhirSessionData } from '../../hono/middleware/fhir-auth'
 
 const email = new SendMail('mail', process.env.MAIL_REDIS_URL!)
 
 // --- Email Tools (Apply similar detailed audit logging) ---
-export const emailSendTool = createTool({
+const emailSendTool = createTool({
 	id: 'emailSend',
 	description: 'Send a email.',
 	inputSchema: z.object({
@@ -61,3 +61,5 @@ export const emailSendTool = createTool({
 		return createTextResponse('Email enqueued', { isError: false })
 	},
 })
+
+export { emailSendTool }

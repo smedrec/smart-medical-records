@@ -1,10 +1,9 @@
+import { pgStorage, pgVector } from '@/mastra/stores/pgvector'
 import { groq } from '@ai-sdk/groq'
 import { Agent } from '@mastra/core'
 import { MCPClient } from '@mastra/mcp'
 import { Memory } from '@mastra/memory'
 import { ollama } from 'ollama-ai-provider'
-
-import { pgStorage, pgVector } from '../stores/pgvector'
 
 const memory = new Memory({
 	embedder: ollama.embedding('nomic-embed-text:latest'),
