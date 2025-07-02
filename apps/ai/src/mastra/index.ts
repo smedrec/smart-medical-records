@@ -16,9 +16,9 @@ import { fhirMCPServer } from './mcp'
 import { pgStorage, pgVector } from './stores/pgvector'
 
 import type { paths } from '@/fhir/r4'
+import type { FhirApiClient, FhirSessionData } from '@/hono/middleware/fhir-auth'
 import type { OtelConfig } from '@mastra/core'
 import type { Session, User } from '@repo/auth'
-import type { FhirApiClient, FhirSessionData } from '../hono/middleware/fhir-auth'
 
 // FIXME The traces does not working
 const otelConfig: OtelConfig = {

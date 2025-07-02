@@ -12,6 +12,7 @@
 		".vscode"
 	],
 	"compilerOptions": {
+		"module": "esnext",
 		"paths": {
 			"@/*": ["./src/*"]
 		}

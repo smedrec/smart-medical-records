@@ -29,7 +29,7 @@ export const openMCPServer = new MCPClient({
 	},
 })
 
-export const fhirAgent = new Agent({
+const fhirAgent = new Agent({
 	name: 'fhir-resources-agent',
 	description: 'A assistant to test FHIR mcp servers',
 	instructions: `
@@ -39,3 +39,5 @@ export const fhirAgent = new Agent({
 	tools: await openMCPServer.getTools(),
 	memory,
 })
+
+export { fhirAgent }
