@@ -1,9 +1,9 @@
-//import { InfisicalSDK } from '@infisical/sdk'
+import { InfisicalSDK } from '@infisical/sdk'
 
-/**export const INFISICAL_PROJECT_ID = process.env.INFISICAL_PROJECT_ID!
+export const INFISICAL_PROJECT_ID = process.env.INFISICAL_PROJECT_ID!
 
 const infisical = new InfisicalSDK({
-	siteUrl: 'https://infisical.teachhowtofish.org/', // Optional, defaults to https://app.infisical.com
+	siteUrl: 'https://infisical.teachhowtofish.org', // Optional, defaults to https://app.infisical.com
 })
 
 // Authenticate with Infisical
@@ -12,7 +12,7 @@ await infisical.auth().universalAuth.login({
 	clientSecret: process.env.INFISICAL_CLIENT_SECRET!,
 })
 
-export { infisical }*/
+export { infisical }
 
 /**const allSecrets = await client.secrets().listSecrets({
   environment: "dev", // stg, dev, prod, or custom environment slugs
