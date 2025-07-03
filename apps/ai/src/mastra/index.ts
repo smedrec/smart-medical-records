@@ -4,20 +4,20 @@ import { getAuditInstance, initializeAudit } from '@/audit'
 import { getAuthInstance, initializeAuth } from '@/auth'
 import { getCerbosInstance, initializeCerbos } from '@/cerbos'
 import { getDbInstance, initializeDb } from '@/db'
+import { createFhirApiClient } from '@/fhir/client'
 import { allAuthWorkflows } from '@/mastra/workflows/auth'
 import { registerCopilotKit } from '@mastra/agui'
 import { Mastra } from '@mastra/core/mastra'
-import { registerApiRoute } from '@mastra/core/server'
+//import { registerApiRoute } from '@mastra/core/server'
 import { PinoLogger } from '@mastra/loggers'
-import createClient from 'openapi-fetch'
 
 import { assistantAgent } from './agents/assistant-agent'
 import { patientReportAgent } from './agents/patient-report-agent'
 import { fhirMCPServer } from './mcp'
 import { pgStorage, pgVector } from './stores/pgvector'
 
-import type { paths } from '@/fhir/r4'
-import type { FhirApiClient, FhirSessionData } from '@/hono/middleware/fhir-auth'
+import type { FhirApiClient } from '@/fhir/client'
+import type { FhirSessionData } from '@/hono/middleware/fhir-auth'
 import type { OtelConfig } from '@mastra/core'
 import type { Session, User } from '@repo/auth'
 
@@ -92,9 +92,8 @@ const mastra: Mastra = new Mastra({
 						roles: [session.session.activeOrganizationRole as string],
 						activeOrganizationId: session.session.activeOrganizationId as string,
 					}
-					const fhirApiClient: FhirApiClient = createClient<paths>({
-						baseUrl: sessionData.serverUrl,
-					})
+					const fhirApiClient: FhirApiClient = createFhirApiClient(sessionData.serverUrl)
+
 					const runtimeContext = c.get('runtimeContext')
 					runtimeContext.set('cerbos', cerbos)
 					runtimeContext.set('audit', audit)
@@ -117,7 +116,7 @@ const mastra: Mastra = new Mastra({
 			},
 		],
 		apiRoutes: [
-			registerApiRoute('/fhir/callback', {
+			/**registerApiRoute('/fhir/callback', {
 				method: 'GET',
 				handler: async (c) => {
 					const code = c.req.query('code')
@@ -135,7 +134,9 @@ const mastra: Mastra = new Mastra({
 
 						// Refresh the access token (when it expires)
 						if (tokenResponse.refresh_token) {
-							const refreshedToken = await smartClient.refreshAccessToken(tokenResponse.refresh_token)
+							const refreshedToken = await smartClient.refreshAccessToken(
+								tokenResponse.refresh_token
+							)
 							console.log('Refreshed Access Token:', refreshedToken.access_token)
 						}
 						return c.json(tokenResponse)
@@ -144,7 +145,7 @@ const mastra: Mastra = new Mastra({
 					}
 					return c.json(tokenResponse)
 				},
-			}),
+			}),*/
 			registerCopilotKit({
 				path: '/copilotkit',
 				resourceId: 'assistantAgent',

@@ -1,3 +1,4 @@
+import { paths } from '@/fhir/r4'
 import { getCookie } from 'hono/cookie'
 import createClient from 'openapi-fetch' // Direct import for lightweight client
 
@@ -23,11 +24,6 @@ export interface FhirSessionData {
 	roles?: string[] // Added for Cerbos Principal roles
 	activeOrganizationId?: string
 }
-
-// Define the shape of the fhirClient in the context if needed, for now using OpenApiFetchClient<any>
-// This could be typed more specifically if your paths.d.ts from @repo/fhir is accessible
-// and relevant for a generic API client.
-export type FhirApiClient = OpenApiFetchClient<any>
 
 // Extend Hono's context type if you want typed access c.get('fhirClient')
 // declare module 'hono' {
