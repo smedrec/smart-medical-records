@@ -10,11 +10,12 @@ export class InfisicalKmsClient {
 	}
 
 	public async encrypt(plaintext: string): Promise<EncryptResponse> {
+		const b64 = btoa(plaintext)
 		try {
 			const response = await axios.post<EncryptResponse>(
 				`${this.config.baseUrl}/${this.config.keyId}/encrypt`,
 				{
-					plaintext: `${plaintext}`,
+					plaintext: `${b64})`,
 				},
 				{
 					headers: {
@@ -46,7 +47,10 @@ export class InfisicalKmsClient {
 					},
 				}
 			)
-			return response.data
+			const str = atob(response.data.plaintext)
+			return {
+				plaintext: str,
+			}
 		} catch (error) {
 			if (axios.isAxiosError(error) && error.response) {
 				throw new Error(`Failed to decrypt data: ${error.response.status} ${error.response.data}`)

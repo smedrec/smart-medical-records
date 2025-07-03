@@ -209,6 +209,9 @@ importers:
       '@repo/hono-helpers':
         specifier: workspace:*
         version: link:../../packages/hono-helpers
+      '@repo/infisical-kms':
+        specifier: workspace:*
+        version: link:../../packages/infisical-kms
       '@repo/smart-client':
         specifier: workspace:*
         version: link:../../packages/smart-client

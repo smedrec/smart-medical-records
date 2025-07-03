@@ -5,6 +5,8 @@ import { registerSmartFhirClientCreate } from './routes/fhir/smart-client/create
 import { registerSmartFhirClientDelete } from './routes/fhir/smart-client/delete.js'
 import { registerSmartFhirClientFind } from './routes/fhir/smart-client/find.js'
 import { registerSmartFhirClientUpdate } from './routes/fhir/smart-client/update.js'
+import { registerKmsDecrypt } from './routes/kms/decrypt.js'
+import { registerKmsEncrypt } from './routes/kms/encrypt.js'
 
 //import { registerUploadAvatar } from '@/routes/user/uploadAvatar.js'
 import 'dotenv/config'
@@ -83,6 +85,9 @@ registerAiCreateIndex(app)
 registerAiDeleteIndex(app)
 registerAiDetailsIndex(app)
 registerAiIndexes(app)
+// KMS
+registerKmsEncrypt(app)
+registerKmsDecrypt(app)
 
 const server = serve({
 	fetch: app.fetch,
