@@ -205,38 +205,37 @@ export const activeOrganization = pgTable(
 	}
 )
 
+type Providers = 'demo' | 'azure' | 'aws' | 'gcp'
+type Environments = 'development' | 'production'
+
 export const smartFhirClient = pgTable(
 	'smart_fhir_client',
 	{
-		organizationId: text('organization_id')
-			.notNull()
-			.references(() => organization.id, { onDelete: 'cascade' }),
+		organizationId: varchar('organization_id', { length: 32 }).notNull().primaryKey(),
 		clientId: text('client_id').notNull(),
-		scope: text('scope').notNull(),
-		iss: text('iss').notNull(),
-		redirectUri: text('redirect_uri'),
-		launchToken: text('launch_token'),
-		fhirBaseUrl: text('fhir_base_url').notNull(),
-		/**code: text('code'), // Authorization code from callback
-		state: text('state'), // State from callback
-		expectedState: text('expected_state'), // State originally generated and stored by caller
-		pkceCodeVerifier: text('pkce_code_verifier').notNull(), // PKCE code verifier stored by caller*/
-		provider: text('provider').default('demo').notNull(), // demo azure aws gcp
-		environment: text('environment').default('development').notNull(), // development production
-		createdBy: text('created_by')
-			.notNull()
-			.references(() => user.id),
-		updatedBy: text('updated_by').references(() => user.id),
+		clientSecret: text('client_secret'),
+		scope: varchar('scope', { length: 256 }).notNull(),
+		iss: varchar('iss', { length: 256 }).notNull(),
+		redirectUri: varchar('redirect_uri', { length: 256 }).notNull(),
+		fhirBaseUrl: varchar('fhir_base_url', { length: 256 }),
+		privateKey: text('private_key').notNull(),
+		provider: varchar('provider', { length: 50 })
+			.$type<Providers>() // Enforces the type against Providers
+			.default('demo')
+			.notNull(),
+		environment: varchar('environment', { length: 50 })
+			.$type<Environments>() // Enforces the type against Environments
+			.default('development')
+			.notNull(),
+		createdBy: varchar('created_by', { length: 32 }).notNull(), // userId
+		updatedBy: varchar('updated_by', { length: 32 }), // userId
 		createdAt: timestamp('created_at')
 			.notNull()
 			.$defaultFn(() => /* @__PURE__ */ new Date()),
 		updatedAt: timestamp('updated_at'), // last updated time
 	},
 	(table) => {
-		return [
-			primaryKey({ columns: [table.organizationId] }),
-			uniqueIndex('client_id_idx').on(table.clientId),
-		]
+		return [uniqueIndex('client_id_idx').on(table.clientId)]
 	}
 )
 

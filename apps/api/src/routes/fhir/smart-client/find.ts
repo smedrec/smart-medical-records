@@ -77,11 +77,15 @@ export const registerSmartFhirClientFind = (app: App) =>
 
 		// Ensure the response matches the OpenAPI schema types
 		const response = {
-			...result[0],
+			organizationId: result[0].organizationId,
+			clientId: result[0].clientId,
+			scope: result[0].scope,
+			iss: result[0].iss,
 			redirectUri: result[0].redirectUri ?? '',
-			launchToken: result[0].launchToken ?? '',
+			fhirBaseUrl: result[0].fhirBaseUrl ?? '',
 			provider: result[0].provider as 'demo' | 'azure' | 'aws' | 'gcp',
 			environment: result[0].environment as 'development' | 'production',
+			createdBy: result[0].createdBy ?? undefined,
 			updatedBy: result[0].updatedBy ?? undefined,
 			updatedAt: result[0].updatedAt
 				? typeof result[0].updatedAt === 'string'

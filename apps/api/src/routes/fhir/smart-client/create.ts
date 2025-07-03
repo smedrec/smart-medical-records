@@ -89,13 +89,16 @@ export const registerSmartFhirClientCreate = (app: App) =>
 
 		// Ensure redirectUri and launchToken are always strings (never null)
 		const response = {
-			...result[0],
+			organizationId: result[0].organizationId,
+			clientId: result[0].clientId,
+			scope: result[0].scope,
+			iss: result[0].iss,
 			redirectUri: result[0].redirectUri ?? '',
-			launchToken: result[0].launchToken ?? '',
+			fhirBaseUrl: result[0].fhirBaseUrl ?? '',
 			provider: result[0].provider as 'demo' | 'azure' | 'aws' | 'gcp',
 			environment: result[0].environment as 'development' | 'production',
-			updatedBy: result[0].updatedBy ?? undefined,
-			updatedAt: result[0].updatedAt ?? undefined,
+			createdBy: result[0].createdBy ?? undefined,
+			createdAt: result[0].createdAt ?? undefined,
 		}
 
 		return c.json(response, 201)

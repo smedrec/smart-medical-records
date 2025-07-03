@@ -5,6 +5,9 @@ export const SmartFhirClientInsertSchema = z
 		clientId: z.string().openapi({
 			description: 'Smart fhir client id',
 		}),
+		clientSecret: z.string().optional().openapi({
+			description: 'Smart fhir client secret (optional',
+		}),
 		scope: z.string().openapi({
 			description: 'The scope.',
 			example: 'System/*',
@@ -17,12 +20,12 @@ export const SmartFhirClientInsertSchema = z
 			description: 'The redirectUri.',
 			example: '',
 		}),
-		launchToken: z.string().optional().openapi({
-			description: 'The launchToken.',
+		fhirBaseUrl: z.string().url().optional().openapi({
+			description: 'The FHIR rest api endpoint.',
 			example: '',
 		}),
-		fhirBaseUrl: z.string().url().openapi({
-			description: 'The FHIR rest api endpoint.',
+		privateKey: z.string().openapi({
+			description: 'The private key',
 			example: '',
 		}),
 		provider: z.enum(['demo', 'azure', 'aws', 'gcp']).openapi({}),
@@ -48,10 +51,6 @@ export const AssistantSelectSchema = z
 		}),
 		redirectUri: z.string().url().openapi({
 			description: 'The redirectUri.',
-			example: '',
-		}),
-		launchToken: z.string().optional().openapi({
-			description: 'The launchToken.',
 			example: '',
 		}),
 		fhirBaseUrl: z.string().url().optional().openapi({

@@ -10,6 +10,7 @@ import type {
 	GetAuthUrlParams,
 	RefreshTokenResponse,
 	SmartClientConfig,
+	SmartConfiguration,
 	TokenResponse,
 } from './types.js'
 
@@ -17,11 +18,67 @@ import type {
 const __dirname = path.dirname(__filename)
 const KEYS_DIR = path.resolve(__dirname, '../keys')*/
 
+type SmartClientOption = (s: SmartClient) => void
+
 export class SmartClient {
 	private config: SmartClientConfig
+	private smartConfig: SmartConfiguration
 
-	constructor(config: SmartClientConfig) {
-		this.config = config
+	constructor(...options: SmartClientOption[]) {
+		// defaults
+		this.config = {
+			clientId: '',
+			clientSecret: undefined,
+			scope: '',
+			iss: '',
+			redirectUri: '',
+			fhirBaseUrl: undefined,
+			privateKey: '',
+			provider: 'demo',
+			environment: 'development',
+		}
+		this.smartConfig = {
+			authorizationEndpoint: '',
+			tokenEndpoint: '',
+			introspectionEndpoint: '',
+			tokenEndpointAuthMethodsSupported: [],
+			scopesSupported: [],
+			responsesTypesSupported: [],
+			capabilities: [],
+		}
+		// set the options
+		for (const option of options) {
+			option(this)
+		}
+	}
+
+	public static WithConfig(clientOptions: SmartClientConfig): SmartClientOption {
+		return (s: SmartClient): void => {
+			s.config = clientOptions
+		}
+	}
+
+	public static async init(iss: string): Promise<SmartClientOption> {
+		try {
+			const response = await axios.get<SmartConfiguration>(
+				`${iss}/.well-known/smart-configuration`,
+				{
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				}
+			)
+			return (s: SmartClient): void => {
+				s.smartConfig = response.data
+			}
+		} catch (error) {
+			if (axios.isAxiosError(error) && error.response) {
+				throw new Error(
+					`Failed to get smart configuration: ${error.response.status} ${error.response.data}`
+				)
+			}
+			throw new Error('Failed to get smart configuration')
+		}
 	}
 
 	public getAuthorizationUrl(params: GetAuthUrlParams): string {
@@ -40,7 +97,7 @@ export class SmartClient {
 			searchParams.append('aud', params.aud)
 		}
 
-		return `${this.config.authUrl}?${searchParams.toString()}`
+		return `${this.smartConfig.authorizationEndpoint}?${searchParams.toString()}`
 	}
 
 	public handleAuthorizationResponse(query: {
@@ -74,7 +131,7 @@ export class SmartClient {
 		}
 
 		try {
-			const response = await axios.post<TokenResponse>(this.config.tokenUrl, params, {
+			const response = await axios.post<TokenResponse>(this.smartConfig.tokenEndpoint, params, {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded',
 				},
@@ -102,11 +159,15 @@ export class SmartClient {
 		}
 
 		try {
-			const response = await axios.post<RefreshTokenResponse>(this.config.tokenUrl, params, {
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-			})
+			const response = await axios.post<RefreshTokenResponse>(
+				this.smartConfig.tokenEndpoint,
+				params,
+				{
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+				}
+			)
 			return response.data
 		} catch (error) {
 			if (axios.isAxiosError(error) && error.response) {
@@ -118,22 +179,18 @@ export class SmartClient {
 		}
 	}
 
-	public async getBackendToken(scope: string): Promise<TokenResponse> {
-		const privateKey = fs.readFileSync(
-			`/home/jose/Documents/workspace/smedrec/smart-medical-records/apps/api/node_modules/@repo/smart-client/dist/jwtRS256.key`,
-			'utf8'
-		)
+	public async getBackendToken(): Promise<TokenResponse> {
 		const now = Math.floor(Date.now() / 1000)
 		const token = jwt.sign(
 			{
 				iss: this.config.clientId,
 				sub: this.config.clientId,
-				aud: this.config.tokenUrl,
+				aud: this.smartConfig.tokenEndpoint,
 				jti: crypto.randomUUID(),
 				exp: now + 5 * 60,
 				iat: now,
 			},
-			privateKey,
+			this.config.privateKey,
 			{ algorithm: 'RS256' }
 		)
 
@@ -141,11 +198,11 @@ export class SmartClient {
 			grant_type: 'client_credentials',
 			client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
 			client_assertion: token,
-			scope,
+			scope: this.config.scope,
 		})
 
 		try {
-			const response = await axios.post<TokenResponse>(this.config.tokenUrl, params, {
+			const response = await axios.post<TokenResponse>(this.smartConfig.tokenEndpoint, params, {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded',
 				},

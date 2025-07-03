@@ -36,6 +36,20 @@
       "when": 1751368378714,
       "tag": "0004_lazy_tag",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1751503516114,
+      "tag": "0005_ambiguous_sandman",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1751504094043,
+      "tag": "0006_yummy_molten_man",
+      "breakpoints": true
     }
   ]
 }

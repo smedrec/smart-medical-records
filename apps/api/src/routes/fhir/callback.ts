@@ -1,6 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi'
+import { eq } from 'drizzle-orm'
 
-//import { eq } from 'drizzle-orm'
+import { smartFhirClient } from '@repo/auth-db'
 //import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 
 import { SmartClient } from '@repo/smart-client'
@@ -61,23 +62,51 @@ export type FhirCallbackResponse = z.infer<
 
 export const registerFhirCallback = (app: App) =>
 	app.openapi(route, async (c) => {
-		const codeFromCallback = c.req.query('code')
-		const stateFromCallback = c.req.query('state')
-		console.log(`CODE: ${codeFromCallback} STATE: ${stateFromCallback}`)
+		const { cerbos, db, audit } = c.get('services')
+		const session = c.get('session')
 
-		const smartClient = new SmartClient({
-			clientId:
-				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJfa2V5IjoiLS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS1cbk1JSUNJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBZzhBTUlJQ0NnS0NBZ0VBdHd4b0RHZU5wZjFnM0ZKbDIwUFZcbkxYWVpLNm84eGV1RjN3SzM0V2ZKUGZWc2U4YUhrOHZCdkVoSUpJb3JqSEppR1Yzd0M3NWV4RFhORHJZOU01cCtcbmhnWndzRng2NmFhMWhhZHg1TUFVUVQ0cjRrTVRYcXJRNFlCZFZzZ29MMGVLWDNDamlkM0I2cC80RlBrZ3l3OXdcblo2TnZWamQwYXB3MjI4VDNxUUNCcEd0TWJEc2k4SVJiT05SU1FDVUpENDNSS1FJc2JNTEhsa081T1l6QkVHN1FcbktCU1UvL0VlRlpSVmczaDhNMVRvYnZjZGQ2T1lweEliclVzRDBvT0NLT1J0dWs2cHJ4OG1aekhxTFJkUnM0ejJcbkVSY3cvZW95VTRaOG0zUGsyZi9RNjNyK0VUSGh3TkNrR29nOXBTSTlQNUhlSmprQXZ5T2o1Vmx1Sk9aVDJpNllcbjFBQlR5eEQ2S3ZtUDdaYmtYMkRHL09TSjdHNEtEV2ZZZldxencrYmhTT0Vsc05hMVprVkJ3Q3oxYy9FK21zVGpcbmRNWGRNcFZFRWY0bW8xbDVaU1JCS3dTdVhESVlUUThTSmhLcnFVYmVNWUQ1ZmhXdHNEUDFtTDJKZEY3SGdybEpcbmsxYm9hejF4Y2hMa2p4VGF2SzVKaU9HbTdzaDBpa3BvaDFGYmROVHU0TFJMU01sYzMwSW1GbGJsU0czVTRtZzNcbkNYMUppYmF5Um9LSFY0RGk0UXpUSDVBeUxzQy9tc2owVzZrTkt3ZmZqT2hqNkNVbEttS3FIcFlzdkIwd3owRUJcbmU2MmhmV21VNlo0NmFUcTlmcEhlOUdmT010Wk5RZjU4UjJJTGJRNWlvZnd6VzJUdW1rcnNLUXY3U1NQaXBuZkZcbkVQVUtycUVhMVFNejl3cXFZZE5TdjRVQ0F3RUFBUT09XG4tLS0tLUVORCBQVUJMSUMgS0VZLS0tLS0iLCJpc3MiOiJodHRwczovL2hhcGkudGVhY2hob3d0b2Zpc2gub3JnL2ZoaXIiLCJhY2Nlc3NUb2tlbnNFeHBpcmVJbiI6MTUsImlhdCI6MTc1MTQ3Mzk4Mn0.bkqaqgh8t4RyR1PKFaie_I8OwsXV5XpZxR_DqOwUHMA',
-			//clientSecret: 'my-client-secret', // optional
-			redirectUri: 'http://localhost:8801/fhir/callback',
-			authUrl: 'https://launcher.teachhowtofish.org/v/r4/auth/authorize',
-			tokenUrl: 'https://launcher.teachhowtofish.org/v/r4/auth/token',
-		})
+		if (!session)
+			throw new ApiError({
+				code: 'UNAUTHORIZED',
+				message: 'You Need to login the app first to continue.',
+			})
+
+		const principalId = session.userId as string
+		const activeOrganizationId = session.activeOrganizationId as string
+
+		const smartFhirClientConfig = await db
+			.select()
+			.from(smartFhirClient)
+			.where(eq(smartFhirClient.organizationId, activeOrganizationId))
+
+		if (smartFhirClientConfig.length < 1)
+			throw new ApiError({
+				code: 'NOT_FOUND',
+				message: 'Smart Fhir Client not found.',
+			})
+
+		// 1. Initialize the SmartClient
+		const smartClient = new SmartClient(
+			SmartClient.WithConfig({
+				clientId: smartFhirClientConfig[0].clientId,
+				clientSecret: smartFhirClientConfig[0].clientSecret || undefined,
+				scope: smartFhirClientConfig[0].scope,
+				iss: smartFhirClientConfig[0].iss,
+				redirectUri: smartFhirClientConfig[0].redirectUri,
+				fhirBaseUrl: smartFhirClientConfig[0].fhirBaseUrl || undefined,
+				privateKey: smartFhirClientConfig[0].privateKey,
+				provider: smartFhirClientConfig[0].provider,
+				environment: smartFhirClientConfig[0].environment,
+			}),
+			await SmartClient.init(smartFhirClientConfig[0].iss)
+		)
 
 		try {
+			const codeFromCallback = c.req.query('code')
+			const stateFromCallback = c.req.query('state')
 			const { code } = smartClient.handleAuthorizationResponse({
-				code: c.req.query('code'),
-				state: c.req.query('state'),
+				code: codeFromCallback,
+				state: stateFromCallback,
 			})
 
 			// 4. Exchange the authorization code for an access token

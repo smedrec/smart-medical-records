@@ -1,9 +1,23 @@
 export interface SmartClientConfig {
 	clientId: string
 	clientSecret?: string
+	scope: string
+	iss: string
 	redirectUri: string
-	authUrl: string
-	tokenUrl: string
+	fhirBaseUrl?: string
+	privateKey: string
+	provider: 'demo' | 'azure' | 'aws' | 'gcp'
+	environment: 'development' | 'production'
+}
+
+export interface SmartConfiguration {
+	authorizationEndpoint: string
+	tokenEndpoint: string
+	introspectionEndpoint: string
+	tokenEndpointAuthMethodsSupported: string[]
+	scopesSupported: string[]
+	responsesTypesSupported: string[]
+	capabilities: string[]
 }
 
 export interface GetAuthUrlParams {
