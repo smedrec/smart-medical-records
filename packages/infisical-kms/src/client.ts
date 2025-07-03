@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import type { EncryptResponse, InfisicalKmsClientConfig } from './types.js'
+import type { DecryptResponse, EncryptResponse, InfisicalKmsClientConfig } from './types.js'
 
 export class InfisicalKmsClient {
 	private config: InfisicalKmsClientConfig
@@ -32,9 +32,9 @@ export class InfisicalKmsClient {
 		}
 	}
 
-	public async decrypt(ciphertext: string): Promise<EncryptResponse> {
+	public async decrypt(ciphertext: string): Promise<DecryptResponse> {
 		try {
-			const response = await axios.post<EncryptResponse>(
+			const response = await axios.post<DecryptResponse>(
 				`${this.config.baseUrl}/${this.config.keyId}/decrypt`,
 				{
 					plaintext: `${ciphertext}`,
