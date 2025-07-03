@@ -27,8 +27,8 @@
 		"postgres": "3.4.7"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.48",
-		"@cloudflare/workers-types": "4.20250702.0",
+		"@cloudflare/vitest-pool-workers": "0.8.49",
+		"@cloudflare/workers-types": "4.20250703.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",

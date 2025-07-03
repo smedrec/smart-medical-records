@@ -16,8 +16,8 @@
 	"dependencies": {
 		"@ai-sdk/groq": "1.2.9",
 		"@mastra/agui": "1.0.5",
-		"@mastra/core": "0.10.9",
-		"@mastra/loggers": "0.10.2",
+		"@mastra/core": "0.10.10",
+		"@mastra/loggers": "0.10.3",
 		"@mastra/mcp": "0.10.5",
 		"@mastra/memory": "0.11.1",
 		"@mastra/mongodb": "0.12.0",
@@ -44,7 +44,7 @@
 		"remark-parse": "11.0.0",
 		"undici": "7.11.0",
 		"unified": "11.0.5",
-		"zod": "3.25.67"
+		"zod": "3.25.71"
 	},
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",
@@ -52,8 +52,8 @@
 		"@types/node": "24.0.10",
 		"@types/nodemailer": "6.4.17",
 		"@types/unist": "3.0.3",
-		"mastra": "0.10.9",
-		"wrangler": "4.22.0"
+		"mastra": "0.10.10",
+		"wrangler": "4.23.0"
 	},
 	"engines": {
 		"node": ">=20.9.0"

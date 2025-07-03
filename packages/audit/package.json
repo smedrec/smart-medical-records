@@ -18,12 +18,12 @@
 	},
 	"dependencies": {
 		"@repo/hono-helpers": "workspace:*",
-		"bullmq": "5.56.0",
+		"bullmq": "5.56.1",
 		"ioredis": "5.6.1"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.48",
-		"@cloudflare/workers-types": "4.20250702.0",
+		"@cloudflare/vitest-pool-workers": "0.8.49",
+		"@cloudflare/workers-types": "4.20250703.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",

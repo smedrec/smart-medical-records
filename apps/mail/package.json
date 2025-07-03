@@ -14,7 +14,7 @@
 		"test": "run-vitest"
 	},
 	"dependencies": {
-		"@hono/node-server": "1.14.4",
+		"@hono/node-server": "1.15.0",
 		"@opentelemetry/exporter-metrics-otlp-proto": "0.202.0",
 		"@opentelemetry/exporter-trace-otlp-proto": "0.202.0",
 		"@opentelemetry/sdk-metrics": "2.0.1",
@@ -23,7 +23,7 @@
 		"@repo/auth-db": "workspace:*",
 		"@repo/mailer": "workspace:*",
 		"@repo/send-mail": "workspace:*",
-		"bullmq": "5.56.0",
+		"bullmq": "5.56.1",
 		"bullmq-otel": "1.0.1",
 		"dotenv": "17.0.1",
 		"drizzle-orm": "0.44.2",

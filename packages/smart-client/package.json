@@ -15,15 +15,15 @@
 		"dev": "tsup src/index.ts --format cjs,esm --dts --watch"
 	},
 	"dependencies": {
-		"axios": "1.7.2",
-		"jsonwebtoken": "^9.0.2"
+		"axios": "1.10.0",
+		"jsonwebtoken": "9.0.2"
 	},
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/jsonwebtoken": "^9.0.6",
+		"@types/jsonwebtoken": "9.0.6",
 		"eslint": "9.27.0",
-		"tsup": "8.0.2",
+		"tsup": "8.5.0",
 		"typescript": "5.5.4"
 	},
 	"publishConfig": {

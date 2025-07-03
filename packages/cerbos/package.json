@@ -17,18 +17,18 @@
 		"test": "run-vitest"
 	},
 	"dependencies": {
-		"@cerbos/grpc": "0.22.0",
-		"@cerbos/http": "0.22.0",
+		"@cerbos/grpc": "0.22.1",
+		"@cerbos/http": "0.22.1",
 		"@repo/hono-helpers": "workspace:*"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.48",
-		"@cloudflare/workers-types": "4.20250702.0",
+		"@cloudflare/vitest-pool-workers": "0.8.49",
+		"@cloudflare/workers-types": "4.20250703.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "24.0.10",
 		"vitest": "3.2.4",
-		"@cerbos/core": "0.22.0"
+		"@cerbos/core": "0.23.0"
 	}
 }
