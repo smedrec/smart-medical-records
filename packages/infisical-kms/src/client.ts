@@ -22,7 +22,7 @@ export class InfisicalKmsClient {
 			const response = await this.instance.post<EncryptResponse>(
 				`/api/v1/kms/keys/${this.config.keyId}/encrypt`,
 				{
-					plaintext: `${b64})`,
+					plaintext: b64,
 				}
 			)
 			return response.data
@@ -39,7 +39,7 @@ export class InfisicalKmsClient {
 			const response = await this.instance.post<DecryptResponse>(
 				`/api/v1/kms/keys/${this.config.keyId}/decrypt`,
 				{
-					plaintext: `${ciphertext}`,
+					ciphertext: ciphertext,
 				}
 			)
 			const str = atob(response.data.plaintext)
