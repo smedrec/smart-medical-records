@@ -2,7 +2,6 @@ import { fhirResourceCreateTool } from '@/mastra/tools/fhir/resource-create'
 import { emailSendTool } from '@/mastra/tools/mail/email-tools'
 import { createStep, createWorkflow } from '@mastra/core/workflows'
 import { eq } from 'drizzle-orm'
-import createClient from 'openapi-fetch'
 import { z } from 'zod'
 
 import { organization } from '@repo/auth-db'

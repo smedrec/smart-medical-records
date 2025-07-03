@@ -4,7 +4,7 @@ import { createTool } from '@mastra/core'
 import z from 'zod'
 
 import type { OperationOutcome } from '@/fhir/v4.0.1'
-import type { FhirApiClient, FhirSessionData } from '@/hono/middleware/fhir-auth'
+import type { FhirApiClient, RuntimeContextSession } from '@/hono/types'
 import type { ToolCallResult } from '@/mastra/tools/types'
 import type { Audit } from '@repo/audit'
 import type { Cerbos } from '@repo/cerbos'
@@ -26,13 +26,13 @@ export const fhirResourceCreateTool = createTool({
 	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
 		const cerbos = runtimeContext.get('cerbos') as Cerbos
 		const audit = runtimeContext.get('audit') as Audit
-		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
+		const session = runtimeContext.get('session') as RuntimeContextSession
 		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
 		const toolName = 'fhirResourceCreate'
 		const resourceType = context.resourceType
-		const principalId = fhirSessionData.userId || defaultPrincipalId
-		const roles = fhirSessionData.roles || defaultRoles
-		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganizationId
+		const principalId = session.userId || defaultPrincipalId
+		const roles = session.roles || defaultRoles
+		const organizationId = session.activeOrganizationId || defaultOrganizationId
 
 		await audit.log({
 			principalId,

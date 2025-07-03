@@ -17,7 +17,7 @@ import { fhirMCPServer } from './mcp'
 import { pgStorage, pgVector } from './stores/pgvector'
 
 import type { FhirApiClient } from '@/fhir/client'
-import type { FhirSessionData } from '@/hono/middleware/fhir-auth'
+import type { RuntimeContextSession } from '@/hono/types'
 import type { OtelConfig } from '@mastra/core'
 import type { Session, User } from '@repo/auth'
 
@@ -83,7 +83,7 @@ const mastra: Mastra = new Mastra({
 					const audit = getAuditInstance()
 					const db = getDbInstance()
 
-					const sessionData: FhirSessionData = {
+					const sessionData: RuntimeContextSession = {
 						tokenResponse: {},
 						serverUrl: 'https://hapi.teachhowtofish.org/fhir/',
 						userId: session.session.userId, // Added for Cerbos Principal ID
@@ -98,7 +98,7 @@ const mastra: Mastra = new Mastra({
 					runtimeContext.set('cerbos', cerbos)
 					runtimeContext.set('audit', audit)
 					runtimeContext.set('db', db)
-					runtimeContext.set('fhirSessionData', sessionData)
+					runtimeContext.set('session', sessionData)
 					runtimeContext.set('fhirClient', fhirApiClient)
 					await next()
 				},

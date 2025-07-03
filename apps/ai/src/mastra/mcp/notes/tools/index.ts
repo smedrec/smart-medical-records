@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { note } from '@repo/app-db'
 
 import type { Databases } from '@/db'
-import type { FhirSessionData } from '@/hono/middleware/fhir-auth'
+import type { RuntimeContextSession } from '@/hono/types'
 import type { ToolCallResult } from '@/mastra/tools/types'
 
 const defaultPrincipalId = 'anonymous'
@@ -23,9 +23,9 @@ export const writeNoteTool = createTool({
 	outputSchema: IToolCallResult,
 	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
 		const db = runtimeContext.get('db') as Databases
-		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
-		const principalId = fhirSessionData.userId || defaultPrincipalId
-		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganizationId
+		const session = runtimeContext.get('session') as RuntimeContextSession
+		const principalId = session.userId || defaultPrincipalId
+		const organizationId = session.activeOrganizationId || defaultOrganizationId
 
 		try {
 			await db.app.insert(note).values({
@@ -60,9 +60,9 @@ export const updateNoteTool = createTool({
 			createTextResponse(`Nothing to update, the note remain the same`, { isError: true })
 		}
 		const db = runtimeContext.get('db') as Databases
-		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
-		const principalId = fhirSessionData.userId || defaultPrincipalId
-		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganizationId
+		const session = runtimeContext.get('session') as RuntimeContextSession
+		const principalId = session.userId || defaultPrincipalId
+		const organizationId = session.activeOrganizationId || defaultOrganizationId
 
 		try {
 			const update = await db.app
@@ -98,9 +98,9 @@ export const listNotesTool = createTool({
 	outputSchema: IToolCallResult,
 	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
 		const db = runtimeContext.get('db') as Databases
-		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
-		const principalId = fhirSessionData.userId || defaultPrincipalId
-		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganizationId
+		const session = runtimeContext.get('session') as RuntimeContextSession
+		const principalId = session.userId || defaultPrincipalId
+		const organizationId = session.activeOrganizationId || defaultOrganizationId
 
 		try {
 			const notes = await db.app.query.note.findMany({

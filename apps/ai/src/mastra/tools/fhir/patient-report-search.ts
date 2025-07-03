@@ -4,7 +4,7 @@ import { createTextResponse } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
-import type { FhirApiClient, FhirSessionData } from '@/hono/middleware/fhir-auth'
+import type { FhirApiClient, RuntimeContextSession } from '@/hono/types'
 import type { ToolCallResult } from '@/mastra/tools/types'
 import type { Audit } from '@repo/audit'
 import type { Cerbos } from '@repo/cerbos'
@@ -23,14 +23,14 @@ export const fhirPatientReportSearchTool = createTool({
 	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
 		const cerbos = runtimeContext.get('cerbos') as Cerbos
 		const audit = runtimeContext.get('audit') as Audit
-		const fhirSessionData = runtimeContext.get('fhirSessionData') as FhirSessionData
+		const session = runtimeContext.get('session') as RuntimeContextSession
 		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
 		const toolName = 'fhirPatientReportSearch'
 		const resourceType = 'FhirPatientReport'
 		const resourceId = context.id
-		const principalId = fhirSessionData.userId || defaultPrincipalId
-		const organizationId = fhirSessionData.activeOrganizationId || defaultOrganizationId
-		const roles = fhirSessionData.roles || defaultRoles
+		const principalId = session.userId || defaultPrincipalId
+		const organizationId = session.activeOrganizationId || defaultOrganizationId
+		const roles = session.roles || defaultRoles
 		const principal = { id: principalId, roles: roles, attributes: {} }
 		const cerbosResource = { kind: resourceType, id: resourceId, attributes: {} }
 		const cerbosAction = 'read'
