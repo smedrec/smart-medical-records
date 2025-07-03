@@ -22,7 +22,7 @@ import { InfisicalKmsClient } from '@repo/infisical-kms'
 
 // 1. Initialize the InfisicalKmsClient
 const kmsClient = new InfisicalKmsClient({
-	baseUrl: 'https://app.infisical.com/api/v1/kms/keys',
+	baseUrl: 'https://app.infisical.com',
 	keyId: 'your-key-id',
 	accessToken: 'your-access-token',
 })

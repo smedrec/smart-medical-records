@@ -1,7 +1,5 @@
 //import { InfisicalSDK } from '@infisical/sdk'
 
-import { InfisicalKmsClient } from '@repo/infisical-kms'
-
 /**export const INFISICAL_PROJECT_ID = process.env.INFISICAL_PROJECT_ID!
 
 const infisical = new InfisicalSDK({
@@ -15,14 +13,6 @@ await infisical.auth().universalAuth.login({
 })
 
 export { infisical }*/
-
-const kms = new InfisicalKmsClient({
-	baseUrl: process.env.KMS_ENDPOINT!,
-	keyId: process.env.KMS_KEY_ID!,
-	accessToken: process.env.INFISICAL_ACCESS_TOKEN!,
-})
-
-export { kms }
 
 /**const allSecrets = await client.secrets().listSecrets({
   environment: "dev", // stg, dev, prod, or custom environment slugs

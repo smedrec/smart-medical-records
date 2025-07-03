@@ -1,10 +1,10 @@
 import { createRoute, z } from '@hono/zod-openapi'
 
 import { ApiError, openApiErrorResponses } from '../../lib/errors/index.js'
-import { kms } from '../../lib/infisical/index.js'
+import { kms } from '../../lib/infisical/kms.js'
 
-import type { App } from '@/lib/hono/index.js'
 import type { DecryptResponse } from '@repo/infisical-kms'
+import type { App } from '../../lib/hono/index.js'
 
 const route = createRoute({
 	tags: ['KMS'],

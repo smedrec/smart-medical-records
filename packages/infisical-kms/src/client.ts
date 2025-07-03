@@ -1,27 +1,28 @@
 import axios from 'axios'
 
+import type { AxiosInstance } from 'axios'
 import type { DecryptResponse, EncryptResponse, InfisicalKmsClientConfig } from './types.js'
 
 export class InfisicalKmsClient {
 	private config: InfisicalKmsClientConfig
+	private instance: AxiosInstance
 
 	constructor(config: InfisicalKmsClientConfig) {
 		this.config = config
+		this.instance = axios.create({
+			baseURL: `${this.config.baseUrl}`,
+		})
+		this.instance.defaults.headers.common['Content-Type'] = 'application/json'
+		this.instance.defaults.headers.common['Authorization'] = `Bearer ${this.config.accessToken}`
 	}
 
 	public async encrypt(plaintext: string): Promise<EncryptResponse> {
 		const b64 = btoa(plaintext)
 		try {
-			const response = await axios.post<EncryptResponse>(
-				`${this.config.baseUrl}/${this.config.keyId}/encrypt`,
+			const response = await this.instance.post<EncryptResponse>(
+				`/api/v1/kms/keys/${this.config.keyId}/encrypt`,
 				{
 					plaintext: `${b64})`,
-				},
-				{
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${this.config.accessToken}`,
-					},
 				}
 			)
 			return response.data
@@ -35,16 +36,10 @@ export class InfisicalKmsClient {
 
 	public async decrypt(ciphertext: string): Promise<DecryptResponse> {
 		try {
-			const response = await axios.post<DecryptResponse>(
-				`${this.config.baseUrl}/${this.config.keyId}/decrypt`,
+			const response = await this.instance.post<DecryptResponse>(
+				`/api/v1/kms/keys/${this.config.keyId}/decrypt`,
 				{
 					plaintext: `${ciphertext}`,
-				},
-				{
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${this.config.accessToken}`,
-					},
 				}
 			)
 			const str = atob(response.data.plaintext)
