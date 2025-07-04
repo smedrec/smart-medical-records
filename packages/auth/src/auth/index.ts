@@ -1,4 +1,4 @@
-import { betterAuth } from 'better-auth'
+import { betterAuth, unknown } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { admin, apiKey, mcp, oidcProvider, openAPI, organization } from 'better-auth/plugins'
 import Redis from 'ioredis'
@@ -228,8 +228,8 @@ class Auth {
 									runId: runId,
 									inputData: {
 										userId: session.userId,
-										ipAddress: session.ipAddress,
-										userAgent: session.userAgent,
+										ipAddress: session.ipAddress || 'unknown',
+										userAgent: session.userAgent || 'unknown',
 									},
 								})
 							} catch (e) {

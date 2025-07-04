@@ -1,12 +1,10 @@
 import { emailSendTool } from '@/mastra/tools/mail/email-tools'
 import { createStep, createWorkflow } from '@mastra/core'
-import { eq } from 'drizzle-orm'
 import z from 'zod'
 
-import { user } from '@repo/auth-db'
-
-import type { Databases } from '@/db'
+import type { RuntimeContextSession } from '@/hono/types'
 import type { ToolCallResult } from '@/mastra/tools/types'
+import type { Audit } from '@repo/audit'
 
 const newLoginWorkflow = createWorkflow({
 	id: 'new-login-workflow',
@@ -36,29 +34,27 @@ const newLoginWorkflow = createWorkflow({
 			}),
 			execute: async ({ inputData, runtimeContext }) => {
 				const { userId, ipAddress, userAgent } = inputData
-
-				const db = runtimeContext.get('db') as Databases
-				const userResult = await db.auth.query.user.findFirst({
-					columns: {
-						name: true,
-						email: true,
-					},
-					where: eq(user.id, userId),
-				})
-				if (!userResult) {
+				const session = runtimeContext.get('session') as RuntimeContextSession
+				const audit = runtimeContext.get('audit') as Audit
+				if (!session.user) {
 					return {
 						success: false,
-						message: `User with the id: ${userId} not found on database, something is wrong!`,
+						message: `User with the id: ${userId} not found on session, something is wrong!`,
 					}
 				}
-				const { name, email } = userResult
+				await audit.log({
+					principalId: userId,
+					organizationId: session.activeOrganizationId,
+					action: `userLogin`,
+					status: 'success',
+				})
 				const result = (await emailSendTool.execute({
 					context: {
-						to: email,
+						to: session.user.email,
 						subject: 'Successful login from new device',
 						html: `
-							<p><b>Hello ${name},</p>
-							<p>We're verifying a recent login for ${email}</P>
+							<p>Hello ${session.user?.name},</p>
+							<p>We're verifying a recent login for <b>${session.user.email}</b></P>
               <p><b>IP Address:</b> ${ipAddress}</p>
               <p><b>User Agent:</b> ${userAgent}</p>
 							<p>If you believe that this login is suspicious, please contact your administrator or reset your password immediately.</p>
