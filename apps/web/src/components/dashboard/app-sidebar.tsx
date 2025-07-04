@@ -1,9 +1,18 @@
-import ConnectionStatus from '@/components/dashboard/connection-status'
-import { SectionHeader } from '@/components/dashboard/tiny-components'
+import { SectionHeader, SidebarSection } from '@/components/dashboard/tiny-components'
 import { useAgents } from '@/hooks/use-agents'
 import { useQueryClient } from '@tanstack/react-query'
-import { useLocation, useNavigate } from '@tanstack/react-router'
-import { Book, Cog, Plus, TerminalIcon } from 'lucide-react'
+import { Link, useLocation, useNavigate } from '@tanstack/react-router'
+import {
+	Book,
+	Bot,
+	CircleUser,
+	Cog,
+	Fingerprint,
+	Hospital,
+	Key,
+	Plus,
+	TerminalIcon,
+} from 'lucide-react'
 import { useMemo } from 'react'
 import { toast } from 'sonner'
 
@@ -33,6 +42,72 @@ import { useVersionString } from '../../hooks/use-version'
 import { authClient } from '../../lib/auth-client'
 import clientLogger from '../../lib/logger'
 
+import type { GetAgentResponse } from '@mastra/client-js'
+import type { Organization } from 'better-auth/plugins/organization'
+
+const AgentRow = ({
+	agent,
+	isOnline,
+	active,
+}: {
+	agent: GetAgentResponse
+	isOnline: boolean
+	active: boolean
+}) => (
+	<SidebarMenuItem>
+		<Link to={`/dashboard/chat/${agent.name}`}>
+			<SidebarMenuButton
+				isActive={active}
+				className="px-2 py-2 my-1 h-full rounded-md justify-between"
+			>
+				<span className="text-base truncate max-w-24">{agent.name}</span>
+				<div className="flex items-center">
+					<div className="relative w-6 h-6 rounded-full bg-gray-600">
+						<span
+							className={cn(
+								'absolute bottom-0 right-0 w-[8px] h-[8px] rounded-full border border-white',
+								isOnline ? 'bg-green-500' : 'bg-muted-foreground'
+							)}
+						/>
+					</div>
+				</div>
+			</SidebarMenuButton>
+		</Link>
+	</SidebarMenuItem>
+)
+
+const AgentListSection = ({
+	agents,
+	activePath,
+}: {
+	agents: Record<string, GetAgentResponse>
+	activePath: string
+}) => (
+	<>
+		<div className="flex items-center px-4 pt-1 pb-0 text-muted-foreground">
+			<SectionHeader className="px-0 py-0 text-xs flex gap-1 mr-2">
+				<Bot className="size-4" />
+				<div>Agents</div>
+			</SectionHeader>
+			<Separator />
+		</div>
+		<SidebarGroup>
+			<SidebarGroupContent className="px-1 mt-0">
+				<SidebarMenu>
+					{agents.map((a) => (
+						<AgentRow
+							key={a?.id}
+							agent={a as Agent}
+							isOnline={true}
+							active={activePath.includes(`/dashboard/chat/${String(a?.id)}`)}
+						/>
+					))}
+				</SidebarMenu>
+			</SidebarGroupContent>
+		</SidebarGroup>
+	</>
+)
+
 const OrganizationsListSection = ({
 	organizations,
 	isLoadingOrganizations,
@@ -40,7 +115,7 @@ const OrganizationsListSection = ({
 }: {
 	organizations: Organization[] | undefined
 	isLoadingOrganizations: boolean
-	activeOrganizationId: string
+	activeOrganizationId: string | undefined
 }) => {
 	return (
 		<>
@@ -59,13 +134,36 @@ const OrganizationsListSection = ({
 									<SidebarMenuSkeleton />
 								</SidebarMenuItem>
 							))}
-						{organizations?.map((organization) => (
-							<GroupForOrganizations
-								key={organization.id}
-								organizationId={organization.id}
-								activeOrganizationId={activeOrganizationId}
-							/>
-						))}
+						{organizations?.map((organization) => {
+							const active = organization.id === activeOrganizationId
+							return (
+								<SidebarMenuItem>
+									<SidebarMenuButton
+										isActive={active}
+										className="px-2 py-2 my-1 h-full rounded-md justify-between"
+									>
+										{/* Name */}
+										<span className="text-base truncate max-w-24">{organization.name}</span>
+										<div className="flex items-center gap-2">
+											{/* Organization logo */}
+											<div className="flex -space-x-2">
+												{organization.logo ? (
+													<img
+														key={organization.id}
+														src={organization.logo}
+														alt={organization.name}
+														className="w-6 h-6 rounded-full object-cover border border-background"
+													/>
+												) : (
+													<></>
+												)}
+											</div>
+										</div>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							)
+						})}
+
 						{(!organizations || organizations.length === 0) && !isLoadingOrganizations && (
 							<SidebarMenuItem>
 								<div className="p-4 text-xs text-muted-foreground">No organizations found.</div>
@@ -76,6 +174,10 @@ const OrganizationsListSection = ({
 			</SidebarGroup>
 		</>
 	)
+}
+
+interface AppSidebarProps {
+	refreshHomePage: () => void
 }
 
 /**
@@ -100,11 +202,6 @@ export function AppSidebar({
 	const agents = useMemo(() => agentsData?.agents || [], [agentsData])
 	const organizations = useMemo(() => organizationsData || [], [organizationsData])
 
-	const [onlineAgents, offlineAgents] = useMemo(
-		() => partition(agents, (a) => a.status === CoreAgentStatus.ACTIVE),
-		[agents]
-	)
-
 	const agentLoadError = agentsError
 		? 'Error loading agents: NetworkError: Unable to connect to the server. Please check if the server is running.'
 		: undefined
@@ -115,11 +212,8 @@ export function AppSidebar({
 
 		// Invalidate queries that should be fresh on home page
 		void queryClient.invalidateQueries({ queryKey: ['agents'] })
-		void queryClient.invalidateQueries({ queryKey: ['servers'] })
-		void queryClient.invalidateQueries({ queryKey: ['channels'] }) // This is broad, consider more specific invalidations if performance is an issue
-		// Example: if you know active server IDs, invalidate ['channels', serverId]
 
-		if (location.pathname === '/') {
+		if (location.pathname === '/dashboard') {
 			clientLogger.info('[AppSidebar] Already on home page. Calling refreshHomePage().')
 			// refreshHomePage should ideally trigger a re-render/refetch in Home.tsx
 			// This can be done by changing a key prop on Home.tsx or further query invalidations if needed.
@@ -134,11 +228,11 @@ export function AppSidebar({
 		const navigate = useNavigate()
 
 		const handleCreateAgent = () => {
-			void navigate('/create')
+			//void navigate('/create')
 		}
 
 		const handleCreateGroup = () => {
-			void navigate('/group/new')
+			//void navigate('/group/new')
 		}
 
 		return (
@@ -191,7 +285,7 @@ export function AppSidebar({
 									<div className="flex flex-col pt-2 gap-1 items-start justify-center">
 										<img
 											alt="smedrec-logo"
-											src="/smedrec-logo-light.png"
+											src="/smedrec-logo-tmp.png"
 											className="w-32 max-w-full"
 										/>
 										<span className="text-xs font-mono text-muted-foreground">v{version}</span>
@@ -221,10 +315,7 @@ export function AppSidebar({
 
 					{!isLoadingAgents && !agentLoadError && (
 						<>
-							<AgentListSection
-								agents={[...onlineAgents, ...offlineAgents]}
-								activePath={location.pathname}
-							/>
+							<AgentListSection agents={agents} activePath={location.pathname} />
 							<OrganizationsListSection
 								organizations={organizations}
 								isLoadingOrganizations={isLoadingOrganizations}
@@ -237,10 +328,16 @@ export function AppSidebar({
 				{/* ---------- footer ---------- */}
 				<SidebarFooter className="px-2 py-4">
 					<SidebarMenu>
-						<FooterLink to="https://eliza.how/" Icon={Book} label="Documentation" />
-						<FooterLink to="/logs" Icon={TerminalIcon} label="Logs" />
-						<FooterLink to="/settings" Icon={Cog} label="Settings" />
-						<ConnectionStatus />
+						<FooterLink to="https://smedrec-67bbd.web.app/" Icon={Book} label="Documentation" />
+						<FooterLink to="/dashboard/audit" Icon={TerminalIcon} label="Logs" />
+						<FooterLink to="/dashboard/settings/account" Icon={CircleUser} label="Account" />
+						<FooterLink to="/dashboard/settings/security" Icon={Fingerprint} label="Security" />
+						<FooterLink to="/dashboard/settings/api-keys" Icon={Key} label="Api Keys" />
+						<FooterLink
+							to="/dashboard/settings/organization"
+							Icon={Hospital}
+							label="Organization Settings"
+						/>
 					</SidebarMenu>
 				</SidebarFooter>
 			</Sidebar>
@@ -269,12 +366,12 @@ const FooterLink = ({ to, Icon, label }: { to: string; Icon: typeof Book; label:
 
 	return (
 		<SidebarMenuItem>
-			<NavLink to={to}>
+			<Link to={to}>
 				<SidebarMenuButton>
 					<Icon className="h-4 w-4 mr-3" />
 					{label}
 				</SidebarMenuButton>
-			</NavLink>
+			</Link>
 		</SidebarMenuItem>
 	)
 }

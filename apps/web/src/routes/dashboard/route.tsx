@@ -1,209 +1,107 @@
-import {
-	ChatBubble,
-	ChatBubbleAction,
-	ChatBubbleAvatar,
-	ChatBubbleMessage,
-} from '@/components/ai/chat-bubble'
-import { ChatInput } from '@/components/ai/chat-input'
-import { ChatMessageList } from '@/components/ai/chat-message-list'
-import CodeDisplayBlock from '@/components/ai/code-display-block'
-import { AppSidebar } from '@/components/app-sidebar'
+import { AppSidebar } from '@/components/dashboard/app-sidebar'
 import { ModeToggle } from '@/components/mode-toggle'
-import { chat } from '@/lib/ai/chat'
-import { authClient } from '@/lib/auth-client'
+import { ai } from '@/lib/ai/client'
+import { STALE_TIMES } from '@/lib/constants'
+import clientLogger from '@/lib/logger'
 import { RedirectToSignIn, UserButton } from '@daveyplate/better-auth-ui'
-import { CopyIcon } from '@radix-ui/react-icons'
+import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Outlet, useLocation } from '@tanstack/react-router'
-import { CornerDownLeft, Mic, Paperclip, RefreshCcw, Volume2 } from 'lucide-react'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import Markdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
+import { Menu } from 'lucide-react'
+import { useState } from 'react'
 
-import {
-	Breadcrumb,
-	BreadcrumbItem,
-	BreadcrumbLink,
-	BreadcrumbList,
-	BreadcrumbPage,
-	BreadcrumbSeparator,
-} from '@repo/ui/components/ui/breadcrumb'
 import { Button } from '@repo/ui/components/ui/button'
-import { Separator } from '@repo/ui/components/ui/separator'
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@repo/ui/components/ui/sidebar'
+import { Sheet, SheetContent, SheetTrigger } from '@repo/ui/components/ui/sheet'
+import { SidebarInset, SidebarProvider } from '@repo/ui/components/ui/sidebar'
 import { useIsMobile } from '@repo/ui/hooks/use-mobile'
 
-import type { ChatRequest } from '@/lib/ai/chat'
+// Create a query client with optimized settings
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			staleTime: STALE_TIMES.STANDARD,
+			// Default to no polling unless specifically configured
+			refetchInterval: false,
+			// Make queries retry 3 times with exponential backoff
+			retry: 3,
+			retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+			// Refetch query on window focus
+			refetchOnWindowFocus: true,
+			// Enable refetch on reconnect
+			refetchOnReconnect: true,
+			// Fail queries that take too long
+		},
+		mutations: {
+			// Default to 3 retries for mutations too
+			retry: 3,
+			retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+		},
+	},
+})
 
-const ChatAiIcons = [
-	{
-		icon: CopyIcon,
-		label: 'Copy',
-	},
-	{
-		icon: RefreshCcw,
-		label: 'Refresh',
-	},
-	{
-		icon: Volume2,
-		label: 'Volume',
-	},
-]
+// Prefetch initial data with smarter error handling
+const prefetchInitialData = async () => {
+	try {
+		// Prefetch agents (real-time data so shorter stale time)
+		await queryClient.prefetchQuery({
+			queryKey: ['agents'],
+			queryFn: async () => {
+				const result = await ai.getAgents()
+				return { data: result }
+			},
+			staleTime: STALE_TIMES.FREQUENT,
+		})
+	} catch (error) {
+		console.error('Error prefetching initial data:', error)
+		// Don't throw, let the app continue loading with fallbacks
+	}
+}
+
+// Execute prefetch immediately
+void prefetchInitialData()
 
 export const Route = createFileRoute('/dashboard')({
 	component: DashboardLayout,
 })
 
-type Message = {
-	role: 'assistant' | 'user' | 'tool' | 'system'
-	content: string
-}
-
 function DashboardLayout() {
 	const isMobile = useIsMobile()
-	const { data: activeOrganization } = authClient.useActiveOrganization()
+	const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+	const [homeKey, setHomeKey] = useState(Date.now())
 	const pathname = useLocation({
 		select: (location) => location.pathname,
 	})
 
-	const [isGenerating, setIsGenerating] = useState(false)
-	const [status, setStatus] = useState<'submitted' | 'streaming' | 'ready' | 'error'>('ready')
-	const [isLoading, setIsLoading] = useState(false)
-	const [messages, setMessages] = useState<Message[]>([])
-	const [input, setInput] = useState('')
+	const queryClient = useQueryClient()
 
-	const messagesRef = useRef<HTMLDivElement>(null)
-	const formRef = useRef<HTMLFormElement>(null)
+	const refreshHomePage = () => {
+		clientLogger.info('[AppContent] refreshHomePage called. Current homeKey:', homeKey)
+		const newKey = Date.now()
+		setHomeKey(newKey)
+		clientLogger.info('[AppContent] New homeKey set to:', newKey)
 
-	useEffect(() => {
-		if (messagesRef.current) {
-			messagesRef.current.scrollTop = messagesRef.current.scrollHeight
-		}
-	}, [messages])
-
-	const handleInputChange = (e: any) => {
-		setInput(e.target.value)
+		clientLogger.info('[AppContent] Invalidating queries for Home page refresh.')
+		queryClient.invalidateQueries({ queryKey: ['agents'] })
 	}
-
-	const handleSubmit = useCallback(
-		async (event?: { preventDefault?: () => void }) => {
-			setIsLoading(true)
-			event?.preventDefault?.()
-
-			if (!input) return
-
-			const message: Message = {
-				role: 'user',
-				content: input,
-			}
-
-			const updatedMessages = [...messages, message]
-
-			setMessages(updatedMessages)
-
-			const chatRequest: ChatRequest = {
-				assistantId: 'assistantAgent',
-				message: message,
-			}
-
-			try {
-				const message = await chat({ data: chatRequest })
-				const updatedMessages = [...messages, message]
-				setMessages(updatedMessages)
-				setIsGenerating(false)
-			} catch (error) {
-				setIsGenerating(false)
-			}
-
-			setInput('')
-			setIsLoading(false)
-		},
-		[input, chat]
-	)
-
-	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault()
-		setIsGenerating(true)
-		void handleSubmit(e)
-	}
-
-	const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-		if (e.key === 'Enter' && !e.shiftKey) {
-			e.preventDefault()
-			if (isGenerating || isLoading || !input) return
-			setIsGenerating(true)
-			void onSubmit(e as unknown as React.FormEvent<HTMLFormElement>)
-		}
-	}
-
-	const handleActionClick = async (action: string, messageIndex: number) => {
-		console.log('Action clicked:', action, 'Message index:', messageIndex)
-		if (action === 'Refresh') {
-			setIsGenerating(true)
-			try {
-				await reload()
-			} catch (error) {
-				console.error('Error reloading:', error)
-			} finally {
-				setIsGenerating(false)
-			}
-		}
-
-		if (action === 'Copy') {
-			const message = messages[messageIndex]
-			if (message && message.role === 'assistant') {
-				void navigator.clipboard.writeText(message.content)
-			}
-		}
-	}
-
-	const reload = useCallback(async () => {
-		//const messages = messagesRef.current;
-
-		if (messages.length === 0) {
-			return null
-		}
-
-		// Remove last assistant message and retry last user message.
-		const lastMessage = messages[messages.length - 1]
-		const chatRequest: ChatRequest = {
-			assistantId: 'assistantAgent',
-			message:
-				lastMessage.role === 'assistant'
-					? messages[messages.length - 2] // get the previous user message
-					: lastMessage,
-		}
-		try {
-			const message = await chat({ data: chatRequest })
-			const updatedMessages = [...messages, message]
-			setMessages(updatedMessages)
-			setIsGenerating(false)
-		} catch (error) {
-			setIsGenerating(false)
-		}
-		return
-	}, [chat])
 
 	return (
 		<>
 			<RedirectToSignIn />
-			<SidebarProvider defaultOpen={true}>
-				<AppSidebar />
+			<SidebarProvider>
+				<AppSidebar refreshHomePage={refreshHomePage} />
 				<SidebarInset>
 					<header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-						<div className="flex flex-1 items-center gap-2 px-3">
-							<SidebarTrigger />
-							<Separator orientation="vertical" className="mr-2 h-4" />
-							<Breadcrumb>
-								<BreadcrumbList>
-									<BreadcrumbItem className="hidden md:block">
-										<BreadcrumbLink href="#">{activeOrganization?.name}</BreadcrumbLink>
-									</BreadcrumbItem>
-									<BreadcrumbSeparator className="hidden md:block" />
-									<BreadcrumbItem className="hidden md:block">
-										<BreadcrumbPage>Home</BreadcrumbPage>
-									</BreadcrumbItem>
-								</BreadcrumbList>
-							</Breadcrumb>
+						<div className="md:hidden absolute top-4 left-4 z-50">
+							<Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+								<SheetTrigger asChild>
+									<Button variant="ghost" size="icon" data-testid="mobile-menu-button">
+										<Menu className="h-5 w-5" />
+										<span className="sr-only">Toggle menu</span>
+									</Button>
+								</SheetTrigger>
+								<SheetContent side="left" className="w-80 p-0 z-50">
+									<AppSidebar isMobile={true} refreshHomePage={refreshHomePage} />
+								</SheetContent>
+							</Sheet>
 						</div>
 
 						<div className="ml-auto gap-2 px-3">
@@ -211,107 +109,7 @@ function DashboardLayout() {
 							<UserButton size={isMobile ? 'icon' : 'sm'} className="gap-2 px-3" />
 						</div>
 					</header>
-					{pathname != '/dashboard/ai/chat' && (
-						<>
-							<div className="w-full px-4 pb-4">
-								<ChatMessageList>
-									{/* Messages */}
-									{messages &&
-										messages.map((message, index) => (
-											<ChatBubble
-												key={index}
-												variant={message.role == 'user' ? 'sent' : 'received'}
-											>
-												<ChatBubbleAvatar src="" fallback={message.role == 'user' ? '👨🏽' : '🤖'} />
-												<ChatBubbleMessage>
-													{message.content.split('```').map((part: string, index: number) => {
-														if (index % 2 === 0) {
-															return (
-																<Markdown key={index} remarkPlugins={[remarkGfm]}>
-																	{part}
-																</Markdown>
-															)
-														} else {
-															return (
-																<pre className="whitespace-pre-wrap pt-2" key={index}>
-																	<CodeDisplayBlock code={part} lang="" />
-																</pre>
-															)
-														}
-													})}
 
-													{message.role === 'assistant' && messages.length - 1 === index && (
-														<div className="flex items-center mt-1.5 gap-1">
-															{!isGenerating && (
-																<>
-																	{ChatAiIcons.map((icon, iconIndex) => {
-																		const Icon = icon.icon
-																		return (
-																			<ChatBubbleAction
-																				variant="outline"
-																				className="size-5"
-																				key={iconIndex}
-																				icon={<Icon className="size-3" />}
-																				onClick={() => handleActionClick(icon.label, index)}
-																			/>
-																		)
-																	})}
-																</>
-															)}
-														</div>
-													)}
-												</ChatBubbleMessage>
-											</ChatBubble>
-										))}
-
-									{/* Loading */}
-									{isGenerating && (
-										<ChatBubble variant="received">
-											<ChatBubbleAvatar src="" fallback="🤖" />
-											<ChatBubbleMessage isLoading />
-										</ChatBubble>
-									)}
-								</ChatMessageList>
-							</div>
-							{/* Form and Footer fixed at the bottom */}
-							<div className="w-full px-4 pb-4">
-								<form
-									ref={formRef}
-									onSubmit={onSubmit}
-									className="relative rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring"
-								>
-									<ChatInput
-										value={input}
-										onKeyDown={onKeyDown}
-										onChange={handleInputChange}
-										placeholder="Hi! 👋 How can I assist you today?"
-										className="rounded-lg bg-background border-0 shadow-none focus-visible:ring-0"
-									/>
-									<div className="flex items-center p-3 pt-0">
-										<Button variant="ghost" size="icon">
-											<Paperclip className="size-4" />
-											<span className="sr-only">Attach file</span>
-										</Button>
-
-										<Button variant="ghost" size="icon">
-											<Mic className="size-4" />
-											<span className="sr-only">Use Microphone</span>
-										</Button>
-
-										<Button
-											disabled={!input || isLoading}
-											type="submit"
-											size="sm"
-											className="ml-auto gap-1.5"
-										>
-											Send Message
-											<CornerDownLeft className="size-3.5" />
-										</Button>
-									</div>
-								</form>
-							</div>
-						</>
-					)}
 					<Outlet />
 				</SidebarInset>
 			</SidebarProvider>

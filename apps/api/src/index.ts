@@ -31,8 +31,9 @@ import { registerConfigMailDelete } from './routes/config/mail/delete.js'
 import { registerConfigMailFind } from './routes/config/mail/find.js'
 import { registerConfigMailUpdate } from './routes/config/mail/update.js'
 import { registerLiveness } from './routes/liveness.js'
+import { registerVersion } from './routes/version.js'
 
-import type { Env } from '@/lib/hono/context.js'
+//import type { Env } from '@/lib/hono/context.js'
 
 const app = newApp()
 
@@ -64,6 +65,7 @@ app.on(['GET', 'POST'], '/auth/*', (c) => {
 	return auth.handler(c.req.raw)
 })
 
+registerVersion(app)
 registerLiveness(app)
 
 //registerUploadAvatar(app)
