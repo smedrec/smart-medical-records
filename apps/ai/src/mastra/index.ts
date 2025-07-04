@@ -5,6 +5,7 @@ import { getAuthInstance, initializeAuth } from '@/auth'
 import { getCerbosInstance, initializeCerbos } from '@/cerbos'
 import { getDbInstance, initializeDb } from '@/db'
 import { createFhirApiClient } from '@/fhir/client'
+import { notes } from '@/mastra/mcp/notes'
 import { allAuthWorkflows } from '@/mastra/workflows/auth'
 import { registerCopilotKit } from '@mastra/agui'
 import { Mastra } from '@mastra/core/mastra'
@@ -163,6 +164,7 @@ const mastra: Mastra = new Mastra({
 	storage: pgStorage,
 	mcpServers: {
 		fhirMCPServer,
+		notes,
 	},
 	logger: new PinoLogger({
 		name: 'Mastra',

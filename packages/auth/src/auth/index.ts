@@ -220,6 +220,22 @@ class Auth {
 								},
 							}
 						},
+						after: async (session) => {
+							const workflow = mastra.getWorkflow('newLoginWorkflow')
+							const { runId } = await workflow.createRun()
+							try {
+								void workflow.start({
+									runId: runId,
+									inputData: {
+										userId: session.userId,
+										ipAddress: session.ipAddress,
+										userAgent: session.userAgent,
+									},
+								})
+							} catch (e) {
+								console.log(e)
+							}
+						},
 					},
 				},
 				user: {

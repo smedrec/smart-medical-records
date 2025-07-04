@@ -1,4 +1,4 @@
-import { db } from '@/db'
+import { getDbInstance } from '@/db'
 import { eq } from 'drizzle-orm'
 
 import { note } from '@repo/app-db'
@@ -6,6 +6,7 @@ import { note } from '@repo/app-db'
 import type { MCPServerResources, Resource } from '@mastra/mcp'
 
 const listNotes = async (): Promise<Resource[]> => {
+	const db = getDbInstance()
 	try {
 		const notes = await db.app.select().from(note)
 		return notes.map((note) => {
@@ -24,6 +25,7 @@ const listNotes = async (): Promise<Resource[]> => {
 }
 
 const readNote = async (uri: string): Promise<string | null> => {
+	const db = getDbInstance()
 	const title = uri.replace('notes://', '')
 	try {
 		const content = await db.app.query.note.findFirst({
