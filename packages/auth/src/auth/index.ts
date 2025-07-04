@@ -220,7 +220,7 @@ class Auth {
 								},
 							}
 						},
-						after: async (session) => {
+						/**after: async (session) => {
 							const workflow = mastra.getWorkflow('newLoginWorkflow')
 							const { runId } = await workflow.createRun()
 							try {
@@ -235,7 +235,7 @@ class Auth {
 							} catch (e) {
 								console.log(e)
 							}
-						},
+						},*/
 					},
 				},
 				user: {

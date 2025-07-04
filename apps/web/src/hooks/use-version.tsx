@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import clientLogger from '../lib/logger'
+//import clientLogger from '../lib/logger'
 
 export interface ServerVersionInfo {
 	version: string
@@ -29,7 +29,7 @@ export function useServerVersion() {
 				const data = await response.json()
 				return data
 			} catch (error) {
-				clientLogger.error('Error fetching server version:', error)
+				console.error('Error fetching server version:', error)
 				throw error
 			}
 		},

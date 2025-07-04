@@ -2,7 +2,7 @@ import { AppSidebar } from '@/components/dashboard/app-sidebar'
 import { ModeToggle } from '@/components/mode-toggle'
 import { ai } from '@/lib/ai/client'
 import { STALE_TIMES } from '@/lib/constants'
-import clientLogger from '@/lib/logger'
+//import clientLogger from '@/lib/logger'
 import { RedirectToSignIn, UserButton } from '@daveyplate/better-auth-ui'
 import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Outlet, useLocation } from '@tanstack/react-router'
@@ -39,7 +39,7 @@ const queryClient = new QueryClient({
 })
 
 // Prefetch initial data with smarter error handling
-const prefetchInitialData = async () => {
+/**const prefetchInitialData = async () => {
 	try {
 		// Prefetch agents (real-time data so shorter stale time)
 		await queryClient.prefetchQuery({
@@ -54,10 +54,10 @@ const prefetchInitialData = async () => {
 		console.error('Error prefetching initial data:', error)
 		// Don't throw, let the app continue loading with fallbacks
 	}
-}
+}*/
 
 // Execute prefetch immediately
-void prefetchInitialData()
+//void prefetchInitialData()
 
 export const Route = createFileRoute('/dashboard')({
 	component: DashboardLayout,
@@ -74,12 +74,12 @@ function DashboardLayout() {
 	const queryClient = useQueryClient()
 
 	const refreshHomePage = () => {
-		clientLogger.info('[AppContent] refreshHomePage called. Current homeKey:', homeKey)
+		//clientLogger.info('[AppContent] refreshHomePage called. Current homeKey:', homeKey)
 		const newKey = Date.now()
 		setHomeKey(newKey)
-		clientLogger.info('[AppContent] New homeKey set to:', newKey)
+		//clientLogger.info('[AppContent] New homeKey set to:', newKey)
 
-		clientLogger.info('[AppContent] Invalidating queries for Home page refresh.')
+		//clientLogger.info('[AppContent] Invalidating queries for Home page refresh.')
 		queryClient.invalidateQueries({ queryKey: ['agents'] })
 	}
 

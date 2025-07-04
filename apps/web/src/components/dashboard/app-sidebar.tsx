@@ -40,17 +40,26 @@ import { cn } from '@repo/ui/lib/utils'
 
 import { useVersionString } from '../../hooks/use-version'
 import { authClient } from '../../lib/auth-client'
-import clientLogger from '../../lib/logger'
+
+//import clientLogger from '../../lib/logger'
 
 import type { GetAgentResponse } from '@mastra/client-js'
 import type { Organization } from 'better-auth/plugins/organization'
+
+type Agent = GetAgentResponse
+
+type AgentsObject = {
+	[key: string]: Agent
+}
+
+type AgentArrayItem = Agent & { id: string }
 
 const AgentRow = ({
 	agent,
 	isOnline,
 	active,
 }: {
-	agent: GetAgentResponse
+	agent: Agent
 	isOnline: boolean
 	active: boolean
 }) => (
@@ -82,31 +91,38 @@ const AgentListSection = ({
 }: {
 	agents: Record<string, GetAgentResponse>
 	activePath: string
-}) => (
-	<>
-		<div className="flex items-center px-4 pt-1 pb-0 text-muted-foreground">
-			<SectionHeader className="px-0 py-0 text-xs flex gap-1 mr-2">
-				<Bot className="size-4" />
-				<div>Agents</div>
-			</SectionHeader>
-			<Separator />
-		</div>
-		<SidebarGroup>
-			<SidebarGroupContent className="px-1 mt-0">
-				<SidebarMenu>
-					{agents.map((a) => (
-						<AgentRow
-							key={a?.id}
-							agent={a as Agent}
-							isOnline={true}
-							active={activePath.includes(`/dashboard/chat/${String(a?.id)}`)}
-						/>
-					))}
-				</SidebarMenu>
-			</SidebarGroupContent>
-		</SidebarGroup>
-	</>
-)
+}) => {
+	const agentsArray: AgentArrayItem[] = Object.entries(agents).map(([id, agent]) => ({
+		id,
+		...agent,
+	}))
+
+	return (
+		<>
+			<div className="flex items-center px-4 pt-1 pb-0 text-muted-foreground">
+				<SectionHeader className="px-0 py-0 text-xs flex gap-1 mr-2">
+					<Bot className="size-4" />
+					<div>Agents</div>
+				</SectionHeader>
+				<Separator />
+			</div>
+			<SidebarGroup>
+				<SidebarGroupContent className="px-1 mt-0">
+					<SidebarMenu>
+						{agentsArray.map((a) => (
+							<AgentRow
+								key={a?.id}
+								agent={a as Agent}
+								isOnline={true}
+								active={activePath.includes(`/dashboard/chat/${String(a?.id)}`)}
+							/>
+						))}
+					</SidebarMenu>
+				</SidebarGroupContent>
+			</SidebarGroup>
+		</>
+	)
+}
 
 const OrganizationsListSection = ({
 	organizations,
@@ -208,18 +224,18 @@ export function AppSidebar({
 
 	const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
 		e.preventDefault()
-		clientLogger.info('[AppSidebar] handleLogoClick triggered', { currentPath: location.pathname })
+		//clientLogger.info('[AppSidebar] handleLogoClick triggered', { currentPath: location.pathname })
 
 		// Invalidate queries that should be fresh on home page
 		void queryClient.invalidateQueries({ queryKey: ['agents'] })
 
 		if (location.pathname === '/dashboard') {
-			clientLogger.info('[AppSidebar] Already on home page. Calling refreshHomePage().')
+			//clientLogger.info('[AppSidebar] Already on home page. Calling refreshHomePage().')
 			// refreshHomePage should ideally trigger a re-render/refetch in Home.tsx
 			// This can be done by changing a key prop on Home.tsx or further query invalidations if needed.
 			refreshHomePage()
 		} else {
-			clientLogger.info('[AppSidebar] Not on home page. Navigating to "/".')
+			//clientLogger.info('[AppSidebar] Not on home page. Navigating to "/".')
 			void navigate('/dashboard')
 		}
 	}

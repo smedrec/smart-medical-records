@@ -1,4 +1,4 @@
-import { logger } from '@repo/logger'
+/**import { logger } from '@repo/logger'
 
 // Add client-specific context to logs
 const clientLogger = {
@@ -16,4 +16,4 @@ const clientLogger = {
 	},
 }
 
-export default clientLogger
+export default clientLogger*/

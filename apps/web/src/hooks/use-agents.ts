@@ -3,7 +3,7 @@
 import { useNetworkStatus } from '@/hooks/use-network-status'
 import { ai } from '@/lib/ai/client'
 import { STALE_TIMES } from '@/lib/constants'
-import clientLogger from '@/lib/logger'
+//import clientLogger from '@/lib/logger'
 import { useQuery } from '@tanstack/react-query'
 
 import type { GetAgentResponse } from '@mastra/client-js'
@@ -35,7 +35,8 @@ export function useAgents(options = {}): AgentsWithDetailsResult {
 					agents: result,
 				}
 			} catch (error: any) {
-				clientLogger.error('An error occurred:', error?.message)
+				//clientLogger.error('An error occurred:', error?.message)
+				console.error('An error occurred:', error?.message)
 				throw error
 			}
 		},

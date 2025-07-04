@@ -1,7 +1,7 @@
 import { useToast } from '@/hooks/use-toast'
 import { createElizaClient } from '@/lib/api-client-config'
 // Direct error handling
-import clientLogger from '@/lib/logger'
+//import clientLogger from '@/lib/logger'
 import { randomUUID } from '@/lib/utils'
 //import { ChannelType, getContentTypeFromMimeType, Media, UUID } from '@elizaos/core'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -143,7 +143,7 @@ export function useFileUpload({ agentId, channelId, chatType }: UseFileUploadPro
 						} as Media,
 					}
 				} catch (uploadError) {
-					clientLogger.error(`Failed to upload ${fileData.file.name}:`, uploadError)
+					//clientLogger.error(`Failed to upload ${fileData.file.name}:`, uploadError)
 
 					// Direct error handling
 					toast({
