@@ -1,10 +1,11 @@
-import { authClient } from '@/lib/auth-client'
 import { AuthQueryProvider } from '@daveyplate/better-auth-tanstack'
 import { AuthUIProviderTanstack } from '@daveyplate/better-auth-ui/tanstack'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Link, useRouter } from '@tanstack/react-router'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
+
+import { authClient } from './lib/auth-client'
 
 import type { ReactNode } from 'react'
 

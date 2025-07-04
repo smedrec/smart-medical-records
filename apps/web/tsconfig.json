@@ -1,3 +1,8 @@
 {
-	"extends": "@repo/typescript-config/tanstack-start.json"
+	"extends": "@repo/typescript-config/tanstack-start.json",
+	"compilerOptions": {
+		"paths": {
+			"@/*": ["./src/*"]
+		}
+	}
 }

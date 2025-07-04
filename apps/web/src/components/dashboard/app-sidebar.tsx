@@ -1,6 +1,11 @@
+import ConnectionStatus from '@/components/dashboard/connection-status'
+import { SectionHeader } from '@/components/dashboard/tiny-components'
+import { useAgents } from '@/hooks/use-agents'
 import { useQueryClient } from '@tanstack/react-query'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Book, Cog, Plus, TerminalIcon } from 'lucide-react'
+import { useMemo } from 'react'
+import { toast } from 'sonner'
 
 import { Button } from '@repo/ui/components/ui/button'
 import {
@@ -9,10 +14,13 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@repo/ui/components/ui/dropdown-menu'
+import { Separator } from '@repo/ui/components/ui/separator'
 import {
 	Sidebar,
 	SidebarContent,
 	SidebarFooter,
+	SidebarGroup,
+	SidebarGroupContent,
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
@@ -20,6 +28,55 @@ import {
 	SidebarMenuSkeleton,
 } from '@repo/ui/components/ui/sidebar'
 import { cn } from '@repo/ui/lib/utils'
+
+import { useVersionString } from '../../hooks/use-version'
+import { authClient } from '../../lib/auth-client'
+import clientLogger from '../../lib/logger'
+
+const OrganizationsListSection = ({
+	organizations,
+	isLoadingOrganizations,
+	activeOrganizationId,
+}: {
+	organizations: Organization[] | undefined
+	isLoadingOrganizations: boolean
+	activeOrganizationId: string
+}) => {
+	return (
+		<>
+			<div className="flex items-center px-4 pt-1 pb-0 text-muted-foreground">
+				<SectionHeader className="px-0 py-0 text-xs flex gap-1 mr-2">
+					<div>Organizations</div>
+				</SectionHeader>
+				<Separator />
+			</div>
+			<SidebarGroup>
+				<SidebarGroupContent className="px-1 mt-0">
+					<SidebarMenu>
+						{isLoadingOrganizations &&
+							Array.from({ length: 3 }).map((_, i) => (
+								<SidebarMenuItem key={`skel-group-${i}`}>
+									<SidebarMenuSkeleton />
+								</SidebarMenuItem>
+							))}
+						{organizations?.map((organization) => (
+							<GroupForOrganizations
+								key={organization.id}
+								organizationId={organization.id}
+								activeOrganizationId={activeOrganizationId}
+							/>
+						))}
+						{(!organizations || organizations.length === 0) && !isLoadingOrganizations && (
+							<SidebarMenuItem>
+								<div className="p-4 text-xs text-muted-foreground">No organizations found.</div>
+							</SidebarMenuItem>
+						)}
+					</SidebarMenu>
+				</SidebarGroupContent>
+			</SidebarGroup>
+		</>
+	)
+}
 
 /**
  * Renders the main application sidebar, displaying navigation, agent lists, group rooms, and utility links.
@@ -33,17 +90,15 @@ export function AppSidebar({
 	const location = useLocation()
 	const navigate = useNavigate()
 	const queryClient = useQueryClient() // Get query client instance
-	const version = useServerVersionString() // Get server version
+	const version = useVersionString() // Get api version
 
-	const {
-		data: agentsData,
-		error: agentsError,
-		isLoading: isLoadingAgents,
-	} = useAgentsWithDetails()
-	const { data: serversData, isLoading: isLoadingServers } = useServers()
+	const { data: agentsData, error: agentsError, isLoading: isLoadingAgents } = useAgents()
+	const { data: organizationsData, isPending: isLoadingOrganizations } =
+		authClient.useListOrganizations()
+	const { data: activeOrganization } = authClient.useActiveOrganization()
 
 	const agents = useMemo(() => agentsData?.agents || [], [agentsData])
-	const servers = useMemo(() => serversData?.data?.servers || [], [serversData])
+	const organizations = useMemo(() => organizationsData || [], [organizationsData])
 
 	const [onlineAgents, offlineAgents] = useMemo(
 		() => partition(agents, (a) => a.status === CoreAgentStatus.ACTIVE),
@@ -60,7 +115,6 @@ export function AppSidebar({
 
 		// Invalidate queries that should be fresh on home page
 		void queryClient.invalidateQueries({ queryKey: ['agents'] })
-		void queryClient.invalidateQueries({ queryKey: ['agentsWithDetails'] }) // if this is a separate key
 		void queryClient.invalidateQueries({ queryKey: ['servers'] })
 		void queryClient.invalidateQueries({ queryKey: ['channels'] }) // This is broad, consider more specific invalidations if performance is an issue
 		// Example: if you know active server IDs, invalidate ['channels', serverId]
@@ -72,7 +126,7 @@ export function AppSidebar({
 			refreshHomePage()
 		} else {
 			clientLogger.info('[AppSidebar] Not on home page. Navigating to "/".')
-			navigate('/')
+			void navigate('/dashboard')
 		}
 	}
 
@@ -80,11 +134,11 @@ export function AppSidebar({
 		const navigate = useNavigate()
 
 		const handleCreateAgent = () => {
-			navigate('/create')
+			void navigate('/create')
 		}
 
 		const handleCreateGroup = () => {
-			navigate('/group/new')
+			void navigate('/group/new')
 		}
 
 		return (
@@ -137,7 +191,7 @@ export function AppSidebar({
 									<div className="flex flex-col pt-2 gap-1 items-start justify-center">
 										<img
 											alt="smedrec-logo"
-											src="/elizaos-logo-light.png"
+											src="/smedrec-logo-light.png"
 											className="w-32 max-w-full"
 										/>
 										<span className="text-xs font-mono text-muted-foreground">v{version}</span>
@@ -171,10 +225,10 @@ export function AppSidebar({
 								agents={[...onlineAgents, ...offlineAgents]}
 								activePath={location.pathname}
 							/>
-							<GroupListSection
-								servers={servers}
-								isLoadingServers={isLoadingServers}
-								activePath={location.pathname}
+							<OrganizationsListSection
+								organizations={organizations}
+								isLoadingOrganizations={isLoadingOrganizations}
+								activeOrganizationId={activeOrganization?.id}
 							/>
 						</>
 					)}

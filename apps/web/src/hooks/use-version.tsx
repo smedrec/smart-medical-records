@@ -18,7 +18,7 @@ export function useServerVersion() {
 		queryKey: ['server-version'],
 		queryFn: async () => {
 			try {
-				const response = await fetch('/api/system/version')
+				const response = await fetch('/api/version')
 
 				if (!response.ok) {
 					throw new Error(
@@ -42,7 +42,7 @@ export function useServerVersion() {
 /**
  * Hook that returns just the version string for backwards compatibility
  */
-export function useServerVersionString() {
+export function useVersionString() {
 	const { data } = useServerVersion()
 	return data?.version || '0.0.0-loading'
 }

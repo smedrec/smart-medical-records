@@ -1,6 +1,6 @@
 {
 	"name": "@repo/logger",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"private": true,
 	"description": "A reusable TypeScript package for logging with support for Sentry and in-memory log buffering.",
 	"main": "./dist/index.js",
@@ -9,10 +9,10 @@
 		"dist"
 	],
 	"scripts": {
-		"build": "tsup src/index.ts --format cjs,esm --dts",
+		"build": "tsup src/index.ts --format cjs,esm",
 		"check:lint": "eslint . --ext .ts,.tsx",
 		"check:types": "tsc --noEmit",
-		"dev": "tsup src/index.ts --format cjs,esm --dts --watch"
+		"dev": "tsup src/index.ts --format cjs,esm --watch"
 	},
 	"dependencies": {
 		"@sentry/browser": "^9.34.0",

@@ -27,6 +27,7 @@
 		"@repo/audit-db": "workspace:*",
 		"@repo/fhir": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
+		"@repo/logger": "workspace:*",
 		"@repo/ui": "workspace:*",
 		"@solarahealth/fhir-r4": "1.2.0",
 		"@tabler/icons-react": "3.34.0",

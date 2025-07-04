@@ -140,9 +140,9 @@ const customLevels: Record<string, number> = {
 	success: 27,
 	debug: 20,
 	trace: 10,
-} as const; // Use "as const" to get literal types for keys
+} as const // Use "as const" to get literal types for keys
 
-type CustomLevel = keyof typeof customLevels;
+type CustomLevel = keyof typeof customLevels
 
 const raw = parseBooleanFromText(process?.env?.LOG_JSON_FORMAT) || false
 
@@ -224,7 +224,10 @@ const options: pino.LoggerOptions<CustomLevel> = {
 	level: effectiveLogLevel as CustomLevel, // Use more restrictive level unless in debug mode
 	customLevels,
 	hooks: {
-		logMethod(inputArgs: [string | Record<string, unknown>, ...unknown[]], method: pino.LogFn): void {
+		logMethod(
+			inputArgs: [string | Record<string, unknown>, ...unknown[]],
+			method: pino.LogFn
+		): void {
 			const [arg1, ...rest] = inputArgs
 			if (process.env.SENTRY_LOGGING !== 'false') {
 				if (arg1 instanceof Error) {
@@ -244,43 +247,43 @@ const options: pino.LoggerOptions<CustomLevel> = {
 			})
 
 			// The first argument to logMethod. inputArgs is [any, ...any[]]
-			const firstRealArg = inputArgs[0];
-			const restArgs = inputArgs.slice(1);
+			const firstRealArg = inputArgs[0]
+			const restArgs = inputArgs.slice(1)
 
 			if (firstRealArg instanceof Error) {
 				// logger.info(new Error("foo"))
 				// Becomes: pino.info({ err: ErrorDetails }, "Error message");
-				method({ err: formatError(firstRealArg) }, `(${firstRealArg.name}) ${firstRealArg.message}`);
+				method({ err: formatError(firstRealArg) }, `(${firstRealArg.name}) ${firstRealArg.message}`)
 			} else if (typeof firstRealArg === 'object' && firstRealArg !== null) {
 				// logger.info({ a: 1 }, "message %s", "val")
 				// Or logger.info({ a: 1, err: new Error("...") })
 				// Becomes: pino.info({ a: 1 }, "message %s", "val");
 				// Or pino.info({ a: 1, err: ErrorDetails }, "Error message if not in obj");
-				let message = "";
-				const formattingArgs = [];
-				let autoMessageFromError = "";
+				let message = ''
+				const formattingArgs = []
+				let autoMessageFromError = ''
 
 				if (firstRealArg.err instanceof Error) {
 					// If error is embedded, ensure its message contributes if no other message part exists
-					autoMessageFromError = `(${firstRealArg.err.name}) ${firstRealArg.err.message}`;
+					autoMessageFromError = `(${firstRealArg.err.name}) ${firstRealArg.err.message}`
 				}
 
 				for (const item of restArgs) {
 					if (typeof item === 'string') {
-						message += (message ? " " : "") + item;
+						message += (message ? ' ' : '') + item
 					} else {
 						// Non-string arguments are formatting arguments for pino (e.g., %s, %d, %o)
-						formattingArgs.push(item);
+						formattingArgs.push(item)
 					}
 				}
 
-				const finalMessage = message.trim() || autoMessageFromError;
+				const finalMessage = message.trim() || autoMessageFromError
 
 				if (finalMessage || formattingArgs.length > 0) {
-					method(firstRealArg, finalMessage, ...formattingArgs);
+					method(firstRealArg, finalMessage, ...formattingArgs)
 				} else {
 					// Only an object was passed, e.g. logger.info({a:1})
-					method(firstRealArg);
+					method(firstRealArg)
 				}
 			} else {
 				// logger.info("message %s", "val", {obj: "val"})
@@ -288,112 +291,116 @@ const options: pino.LoggerOptions<CustomLevel> = {
 				// Becomes: pino.info({obj: "val"}, "message %s", "val")
 				// Or pino.info({err: ErrorDetails}, "message (ErrorName) ErrorMessage")
 
-				const messageParts: unknown[] = [];
-				const context: Record<string, unknown> = {};
-				let hasContext = false;
+				const messageParts: unknown[] = []
+				const context: Record<string, unknown> = {}
+				let hasContext = false
 
 				// First arg is part of the message if it's not an object
-				messageParts.push(firstRealArg);
+				messageParts.push(firstRealArg)
 
 				for (const item of restArgs) {
 					if (item instanceof Error) {
-						Object.assign(context, { err: formatError(item) });
+						Object.assign(context, { err: formatError(item) })
 						// Append error message to main message string as pino does not automatically do this
 						// when err is in context but not the primary subject.
-						messageParts.push(`(${item.name}) ${item.message}`);
-						hasContext = true;
+						messageParts.push(`(${item.name}) ${item.message}`)
+						hasContext = true
 					} else if (typeof item === 'object' && item !== null) {
-						Object.assign(context, item);
-						hasContext = true;
+						Object.assign(context, item)
+						hasContext = true
 					} else {
-						messageParts.push(item);
+						messageParts.push(item)
 					}
 				}
 
 				// Construct the message string from all non-object parts
 				// Any remaining objects are in 'context'
 				const messageStr = messageParts
-					.filter(p => typeof p !== 'object' || p === null || p === undefined) // filter out context objects already handled
-					.map(p => String(p))
-					.join(' ');
+					.filter((p) => typeof p !== 'object' || p === null || p === undefined) // filter out context objects already handled
+					.map((p) => String(p))
+					.join(' ')
 
 				if (hasContext) {
-					method(context, messageStr);
+					method(context, messageStr)
 				} else {
-					method(messageStr);
+					method(messageStr)
 				}
 			}
 		},
 	},
-};
+}
 
 // allow runtime logger to inherent options set here
 const createLogger = (bindings: Record<string, unknown> | boolean = false) => {
-	const opts: pino.LoggerOptions<CustomLevel> = { ...options };
+	const opts: pino.LoggerOptions<CustomLevel> = { ...options }
 	if (typeof bindings === 'object' && bindings !== null) {
-		opts.base = bindings;
+		opts.base = bindings
 		opts.transport = {
 			target: 'pino-pretty',
 			options: { colorize: true, translateTime: 'SYS:standard', ignore: 'pid,hostname' },
-		};
+		}
 	} else if (bindings === true) {
 		opts.transport = {
 			target: 'pino-pretty',
 			options: { colorize: true, translateTime: 'SYS:standard', ignore: 'pid,hostname' },
-		};
-    }
-	const newLogger = pino<CustomLevel>(opts);
-	return newLogger;
-};
-
-// Create basic logger initially
-let logger: pino.Logger<CustomLevel> | LoggerWithClear = pino<CustomLevel>(options);
-
-
-type LoggerWithClear = pino.Logger<CustomLevel> & {
-	clear: () => void;
-};
-
-const pinoDestinationSymbol = Symbol.for('pino-destination');
-
-// Function to enhance a logger instance
-function enhanceLoggerWithClear(loggerInstance: pino.Logger<CustomLevel>, destination: InMemoryDestination): LoggerWithClear {
-	const enhancedLogger = loggerInstance as pino.Logger<CustomLevel> & { clear?: () => void } as LoggerWithClear;
-	(enhancedLogger as any)[pinoDestinationSymbol] = destination;
-	enhancedLogger.clear = () => {
-		const dest = (enhancedLogger as any)[pinoDestinationSymbol] as InMemoryDestination | undefined;
-		if (dest instanceof InMemoryDestination) {
-			dest.clear();
 		}
-	};
-	return enhancedLogger;
+	}
+	const newLogger = pino<CustomLevel>(opts)
+	return newLogger
 }
 
+// Create basic logger initially
+let logger: pino.Logger<CustomLevel> | LoggerWithClear = pino<CustomLevel>(options)
+
+type LoggerWithClear = pino.Logger<CustomLevel> & {
+	clear: () => void
+}
+
+const pinoDestinationSymbol = Symbol.for('pino-destination')
+
+// Function to enhance a logger instance
+function enhanceLoggerWithClear(
+	loggerInstance: pino.Logger<CustomLevel>,
+	destination: InMemoryDestination
+): LoggerWithClear {
+	const enhancedLogger = loggerInstance as pino.Logger<CustomLevel> & {
+		clear?: () => void
+	} as LoggerWithClear
+	;(enhancedLogger as any)[pinoDestinationSymbol] = destination
+	enhancedLogger.clear = () => {
+		const dest = (enhancedLogger as any)[pinoDestinationSymbol] as InMemoryDestination | undefined
+		if (dest instanceof InMemoryDestination) {
+			dest.clear()
+		}
+	}
+	return enhancedLogger
+}
 
 // Enhance logger with custom destination in Node.js environment
 if (typeof process !== 'undefined') {
-	let stream: DestinationStream | null = null;
+	let stream: DestinationStream | null = null
 
 	if (!raw) {
 		try {
-			const pretty = require('pino-pretty');
-			stream = pretty.default ? pretty.default(createPrettyConfig()) : null;
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
+			const pretty = require('pino-pretty')
+			stream = pretty.default ? pretty.default(createPrettyConfig()) : null
 		} catch (e) {
 			void createStream().then((prettyStream) => {
-				const destination = new InMemoryDestination(prettyStream || null);
-				const newLoggerBase = pino<CustomLevel>(options, destination);
-				logger = enhanceLoggerWithClear(newLoggerBase, destination);
-			});
+				const destination = new InMemoryDestination(prettyStream || null)
+				const newLoggerBase = pino<CustomLevel>(options, destination)
+				logger = enhanceLoggerWithClear(newLoggerBase, destination)
+			})
 		}
 	}
 
 	if (stream !== null || raw) {
-		const destination = new InMemoryDestination(stream);
-		const newLoggerBase = pino<CustomLevel>(options, destination);
-		logger = enhanceLoggerWithClear(newLoggerBase, destination);
+		const destination = new InMemoryDestination(stream)
+		const newLoggerBase = pino<CustomLevel>(options, destination)
+		logger = enhanceLoggerWithClear(newLoggerBase, destination)
 	}
 }
 
-export { createLogger, logger };
+export { createLogger, logger }
 
 export default logger
