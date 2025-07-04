@@ -1,0 +1,32 @@
+{
+	"name": "@repo/smart-client",
+	"version": "1.0.0",
+	"private": true,
+	"description": "A reusable TypeScript package for client authorization within a backend application.",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsup src/index.ts --format cjs,esm --dts",
+		"check:lint": "eslint . --ext .ts,.tsx",
+		"check:types": "tsc --noEmit",
+		"dev": "tsup src/index.ts --format cjs,esm --dts --watch"
+	},
+	"dependencies": {
+		"@sentry/browser": "^9.34.0",
+		"pino": "9.7.0",
+		"pino-pretty": "^13.0.0"
+	},
+	"devDependencies": {
+		"@repo/eslint-config": "workspace:*",
+		"@repo/typescript-config": "workspace:*",
+		"eslint": "9.27.0",
+		"tsup": "8.5.0",
+		"typescript": "5.5.4"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

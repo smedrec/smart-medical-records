@@ -1,6 +1,5 @@
-import { MastraClient } from '@mastra/client-js'
+import { ai } from '@/lib/ai/client'
 import { createServerFn } from '@tanstack/react-start'
-import { getHeaders } from '@tanstack/react-start/server'
 
 export type ChatRequest = {
 	assistantId: string
@@ -9,16 +8,6 @@ export type ChatRequest = {
 		content: string
 	}
 }
-
-export const ai = new MastraClient({
-	baseUrl: 'http://localhost:4111',
-	retries: 3,
-	backoffMs: 300,
-	maxBackoffMs: 5000,
-	headers: {
-		'X-Development': 'true',
-	},
-})
 
 export const chat = createServerFn({ method: 'GET' })
 	.validator((params: ChatRequest) => params)

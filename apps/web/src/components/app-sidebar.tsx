@@ -24,7 +24,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton size="lg" asChild>
-							<a href="https://github.com/joseantcordeiro/smart-medical-record" target="_blank">
+							<a href="https://github.com/smedrec/smart-medical-record" target="_blank">
 								<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
 									<GitHubIcon className="size-4" />
 								</div>

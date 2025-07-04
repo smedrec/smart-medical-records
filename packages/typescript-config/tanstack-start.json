@@ -1,11 +1,6 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
-	"include": [
-		"${configDir}/worker-configuration.d.ts",
-		"${configDir}/env.d.ts",
-		"${configDir}/**/*.ts",
-		"${configDir}/**/*.tsx"
-	],
+	"include": ["${configDir}/**/*.ts", "${configDir}/**/*.tsx"],
 	"exclude": [
 		"${configDir}/node_modules/",
 		"${configDir}/.tanstack/",
@@ -13,12 +8,22 @@
 		"${configDir}/eslint.config.ts"
 	],
 	"compilerOptions": {
+		"strict": true,
+		"esModuleInterop": true,
 		"jsx": "react-jsx",
-		"moduleResolution": "Bundler",
 		"module": "ESNext",
-		"target": "ES2022",
+		"moduleResolution": "Bundler",
+		"lib": ["DOM", "DOM.Iterable", "ES2022"],
+		"isolatedModules": true,
+		"resolveJsonModule": true,
 		"skipLibCheck": true,
-		"strictNullChecks": true,
-		"types": ["./worker-configuration.d.ts", "@cloudflare/vitest-pool-workers"]
+		"target": "ES2022",
+		"allowJs": true,
+		"forceConsistentCasingInFileNames": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./src/*"]
+		},
+		"noEmit": true
 	}
 }
