@@ -3,8 +3,9 @@ import { createTextResponse } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
+import type { FhirApiClient } from '@/fhir/client'
 import type { OperationOutcome } from '@/fhir/v4.0.1'
-import type { FhirApiClient, RuntimeContextSession } from '@/hono/types'
+import type { RuntimeContextSession } from '@/hono/types'
 import type { ToolCallResult } from '@/mastra/tools/types'
 import type { Audit } from '@repo/audit'
 import type { Cerbos } from '@repo/cerbos'
@@ -14,7 +15,7 @@ const defaultRoles = ['anonymous']
 const defaultOrganizationId = 'anonymous'
 
 export const fhirResourceValidateTool = createTool({
-	id: 'fhirResourceValidateTool',
+	id: 'fhirResourceValidate',
 	description:
 		'Perform basic validation to ensure required resource fields are present and conform to FHIR data types (e.g., date formats).',
 	inputSchema: z.object({
@@ -91,9 +92,12 @@ export const fhirResourceValidateTool = createTool({
 			outcomeDescription: 'Authorization granted by Cerbos.',
 		})
 		try {
-			const { data, error, response } = await fhirClient.POST(`/${resourceType}/$validate`, {
-				body: context.resource,
-			})
+			const { data, error, response } = await (fhirClient.POST as any)(
+				`/${resourceType}/$validate`,
+				{
+					body: context.resource,
+				}
+			)
 			if (error) {
 				const rText = await response.text()
 				const desc = `FHIR ${resourceType} validate failed: Status ${response.status}`

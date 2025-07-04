@@ -3,8 +3,9 @@ import { createTextResponse } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
+import type { FhirApiClient } from '@/fhir/client'
 import type { OperationOutcome } from '@/fhir/v4.0.1'
-import type { FhirApiClient, RuntimeContextSession } from '@/hono/types'
+import type { RuntimeContextSession } from '@/hono/types'
 import type { ToolCallResult } from '@/mastra/tools/types'
 import type { Audit } from '@repo/audit'
 import type { Cerbos } from '@repo/cerbos'
@@ -87,7 +88,7 @@ export const fhirResourceUpdateTool = createTool({
 			outcomeDescription: 'Authorization granted by Cerbos.',
 		})
 		try {
-			const { data, error, response } = await fhirClient.PUT(`/${resourceType}/{id}`, {
+			const { data, error, response } = await (fhirClient.PUT as any)(`/${resourceType}/{id}`, {
 				params: { path: { id: context.id } },
 				body: context.resource,
 			})

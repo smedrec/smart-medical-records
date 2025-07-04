@@ -3,7 +3,8 @@ import { createTextResponse } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
-import type { FhirApiClient, RuntimeContextSession } from '@/hono/types'
+import type { FhirApiClient } from '@/fhir/client'
+import type { RuntimeContextSession } from '@/hono/types'
 import type { ToolCallResult } from '@/mastra/tools/types'
 import type { Audit } from '@repo/audit'
 import type { Cerbos } from '@repo/cerbos'
@@ -88,7 +89,7 @@ export const fhirResourceReadTool = createTool({
 		})
 
 		try {
-			const { data, error, response } = await fhirClient.GET(`/${resourceType}/{id}`, {
+			const { data, error, response } = await (fhirClient.GET as any)(`/${resourceType}/{id}`, {
 				params: { path: { id: context.id } },
 			})
 			if (error) {

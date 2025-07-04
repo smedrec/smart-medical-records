@@ -1,10 +1,11 @@
+import { FhirApiClient } from '@/fhir/client'
 import { getInitialFhirSearchQueries } from '@/mastra/tools/fhir/fhirSearchQueries'
 import { IToolCallResult } from '@/mastra/tools/types'
 import { createTextResponse } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
-import type { FhirApiClient, RuntimeContextSession } from '@/hono/types'
+import type { RuntimeContextSession } from '@/hono/types'
 import type { ToolCallResult } from '@/mastra/tools/types'
 import type { Audit } from '@repo/audit'
 import type { Cerbos } from '@repo/cerbos'
@@ -106,9 +107,12 @@ export const fhirPatientReportSearchTool = createTool({
 
 				try {
 					console.log(JSON.stringify(query.params))
-					const { data, error, response } = await fhirClient.GET(`/${query.resourceType}`, {
-						params: { query: query.params },
-					})
+					const { data, error, response } = await (fhirClient.GET as any)(
+						`/${query.resourceType}`,
+						{
+							params: { query: query.params },
+						}
+					)
 					if (error) {
 						const rText = await response.text()
 						const outcomeDescription = `FHIR ${resourceType} read failed: Status ${response.status}`
