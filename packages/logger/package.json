@@ -1,8 +1,8 @@
 {
-	"name": "@repo/smart-client",
+	"name": "@repo/logger",
 	"version": "1.0.0",
 	"private": true,
-	"description": "A reusable TypeScript package for client authorization within a backend application.",
+	"description": "A reusable TypeScript package for logging with support for Sentry and in-memory log buffering.",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"files": [
