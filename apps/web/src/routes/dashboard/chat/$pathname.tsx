@@ -226,7 +226,7 @@ function RouteComponent() {
 						</ChatMessageList>
 					</div>
 					{/* Form and Footer fixed at the bottom */}
-					<div className="w-full px-4 pb-4">
+					<div className="w-full fixed bottom-0 px-4 pb-4">
 						<form
 							ref={formRef}
 							onSubmit={onSubmit}

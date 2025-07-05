@@ -1,13 +1,13 @@
 import { SectionHeader, SidebarSection } from '@/components/dashboard/tiny-components'
 import { useAgents } from '@/hooks/use-agents'
-import { useQueryClient } from '@tanstack/react-query'
-import { Link, useLocation, useNavigate } from '@tanstack/react-router'
+import { Link, useLocation } from '@tanstack/react-router'
 import {
 	Book,
 	Bot,
 	CircleUser,
 	Cog,
 	Fingerprint,
+	Github,
 	Hospital,
 	Key,
 	Plus,
@@ -169,23 +169,13 @@ const OrganizationsListSection = ({
 		</>
 	)
 }
-
-interface AppSidebarProps {
-	refreshHomePage: () => void
-}
-
 /**
  * Renders the main application sidebar, displaying navigation, agent lists, group rooms, and utility links.
  *
  * The sidebar includes sections for online and offline agents, group rooms, a create button for agents and groups, and footer links to documentation, logs, and settings. It handles loading and error states for agent and room data, and conditionally displays a group creation panel.
  */
-export function AppSidebar({
-	refreshHomePage,
-	isMobile = false,
-}: AppSidebarProps & { isMobile?: boolean }) {
+export function AppSidebar({ isMobile = false }: { isMobile?: boolean }) {
 	const location = useLocation()
-	const navigate = useNavigate()
-	const queryClient = useQueryClient() // Get query client instance
 	const version = useVersionString() // Get api version
 
 	const { data: agentsData, error: agentsError, isLoading: isLoadingAgents } = useAgents()
@@ -199,24 +189,6 @@ export function AppSidebar({
 	const agentLoadError = agentsError
 		? 'Error loading agents: NetworkError: Unable to connect to the server. Please check if the server is running.'
 		: undefined
-
-	const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-		e.preventDefault()
-		//clientLogger.info('[AppSidebar] handleLogoClick triggered', { currentPath: location.pathname })
-
-		// Invalidate queries that should be fresh on home page
-		void queryClient.invalidateQueries({ queryKey: ['agents'] })
-
-		if (location.pathname === '/dashboard') {
-			//clientLogger.info('[AppSidebar] Already on home page. Calling refreshHomePage().')
-			// refreshHomePage should ideally trigger a re-render/refetch in Home.tsx
-			// This can be done by changing a key prop on Home.tsx or further query invalidations if needed.
-			refreshHomePage()
-		} else {
-			//clientLogger.info('[AppSidebar] Not on home page. Navigating to "/".')
-			void navigate('/dashboard')
-		}
-	}
 
 	return (
 		<>
@@ -234,11 +206,7 @@ export function AppSidebar({
 					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuButton size="lg" asChild>
-								<a
-									href=""
-									onClick={handleLogoClick}
-									className="px-4 py-2 h-full sidebar-logo no-underline"
-								>
+								<Link to="/dashboard" className="px-4 py-2 h-full sidebar-logo no-underline">
 									<div className="flex flex-col pt-2 gap-1 items-start justify-center">
 										<img
 											alt="smedrec-logo"
@@ -247,7 +215,7 @@ export function AppSidebar({
 										/>
 										<span className="text-xs font-mono text-muted-foreground">v{version}</span>
 									</div>
-								</a>
+								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					</SidebarMenu>
@@ -284,6 +252,11 @@ export function AppSidebar({
 				<SidebarFooter className="px-2 py-4">
 					<SidebarMenu>
 						<FooterLink to="https://smedrec-67bbd.web.app/" Icon={Book} label="Documentation" />
+						<FooterLink
+							to="https://github.com/smedrec/smart-medical-records"
+							Icon={Github}
+							label="View Source"
+						/>
 						<FooterLink to="/dashboard/audit" Icon={TerminalIcon} label="Logs" />
 						<SectionHeader className="px-0 py-0 text-xs flex gap-1 mr-2">
 							<Settings className="size-4" />

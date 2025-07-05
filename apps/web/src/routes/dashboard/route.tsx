@@ -1,11 +1,8 @@
 import { AppSidebar } from '@/components/dashboard/app-sidebar'
 import { ModeToggle } from '@/components/mode-toggle'
-import { ai } from '@/lib/ai/client'
-import { STALE_TIMES } from '@/lib/constants'
 //import clientLogger from '@/lib/logger'
 import { RedirectToSignIn, UserButton } from '@daveyplate/better-auth-ui'
-import { QueryClient, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, Outlet, useLocation } from '@tanstack/react-router'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { Menu } from 'lucide-react'
 import { useState } from 'react'
 
@@ -14,30 +11,6 @@ import { Sheet, SheetContent, SheetTrigger } from '@repo/ui/components/ui/sheet'
 import { SidebarInset, SidebarProvider } from '@repo/ui/components/ui/sidebar'
 import { useIsMobile } from '@repo/ui/hooks/use-mobile'
 
-// Create a query client with optimized settings
-const queryClient = new QueryClient({
-	defaultOptions: {
-		queries: {
-			staleTime: STALE_TIMES.STANDARD,
-			// Default to no polling unless specifically configured
-			refetchInterval: false,
-			// Make queries retry 3 times with exponential backoff
-			retry: 3,
-			retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-			// Refetch query on window focus
-			refetchOnWindowFocus: true,
-			// Enable refetch on reconnect
-			refetchOnReconnect: true,
-			// Fail queries that take too long
-		},
-		mutations: {
-			// Default to 3 retries for mutations too
-			retry: 3,
-			retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-		},
-	},
-})
-
 export const Route = createFileRoute('/dashboard')({
 	component: DashboardLayout,
 })
@@ -45,28 +18,12 @@ export const Route = createFileRoute('/dashboard')({
 function DashboardLayout() {
 	const isMobile = useIsMobile()
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-	const [homeKey, setHomeKey] = useState(Date.now())
-	const pathname = useLocation({
-		select: (location) => location.pathname,
-	})
-
-	const queryClient = useQueryClient()
-
-	const refreshHomePage = () => {
-		//clientLogger.info('[AppContent] refreshHomePage called. Current homeKey:', homeKey)
-		const newKey = Date.now()
-		setHomeKey(newKey)
-		//clientLogger.info('[AppContent] New homeKey set to:', newKey)
-
-		//clientLogger.info('[AppContent] Invalidating queries for Home page refresh.')
-		queryClient.invalidateQueries({ queryKey: ['agents'] })
-	}
 
 	return (
 		<>
 			<RedirectToSignIn />
 			<SidebarProvider>
-				<AppSidebar refreshHomePage={refreshHomePage} />
+				<AppSidebar />
 				<SidebarInset>
 					<header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
 						<div className="md:hidden absolute top-4 left-4 z-50">
@@ -78,7 +35,7 @@ function DashboardLayout() {
 									</Button>
 								</SheetTrigger>
 								<SheetContent side="left" className="w-80 p-0 z-50">
-									<AppSidebar isMobile={true} refreshHomePage={refreshHomePage} />
+									<AppSidebar isMobile={true} />
 								</SheetContent>
 							</Sheet>
 						</div>
@@ -88,9 +45,9 @@ function DashboardLayout() {
 							<UserButton size={isMobile ? 'icon' : 'sm'} className="gap-2 px-3" />
 						</div>
 					</header>
-					<div className="flex flex-1 flex-col gap-4 p-4">
+					<main className="flex flex-1 flex-col gap-4 p-4">
 						<Outlet />
-					</div>
+					</main>
 				</SidebarInset>
 			</SidebarProvider>
 		</>
