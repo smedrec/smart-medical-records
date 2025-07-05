@@ -3,6 +3,7 @@ import { createId } from '@paralleldrive/cuid2'
 
 import { Audit } from '@repo/audit'
 import { AuthDb } from '@repo/auth-db'
+import { InfisicalKmsClient } from '@repo/infisical-kms'
 
 import { auth } from '../auth.js'
 import { cerbos } from '../cerbos/index.js'
@@ -69,6 +70,12 @@ export function init(): MiddlewareHandler<HonoEnv> {
 		// Get the Drizzle ORM instance
 		const db = authDbInstance.getDrizzleInstance()
 
+		const kms = new InfisicalKmsClient({
+			baseUrl: c.env.INFISICAL_URL!,
+			keyId: c.env.KMS_KEY_ID!,
+			accessToken: c.env.INFISICAL_ACCESS_TOKEN!,
+		})
+
 		//const cache = initCache(c);
 		//const cache = null
 
@@ -77,6 +84,7 @@ export function init(): MiddlewareHandler<HonoEnv> {
 			cerbos,
 			//fhir,
 			db,
+			kms,
 			//redis,
 			audit,
 			logger,

@@ -49,7 +49,7 @@ export type ConfigMailUpdateResponse = z.infer<
 
 export const registerConfigMailUpdate = (app: App) =>
 	app.openapi(route, async (c) => {
-		const { cerbos, db } = c.get('services')
+		const { cerbos, db, kms } = c.get('services')
 		const session = c.get('session')
 
 		if (!session)
@@ -78,6 +78,11 @@ export const registerConfigMailUpdate = (app: App) =>
 
 		const data = c.req.valid('json')
 
+		if (data.password) {
+			const encryptedPassword = await kms.encrypt(data.password!)
+			data.password = encryptedPassword.ciphertext
+		}
+
 		const result = await db
 			.update(emailProvider)
 			.set(data)
@@ -93,7 +98,6 @@ export const registerConfigMailUpdate = (app: App) =>
 		const response = {
 			...result[0],
 			provider: result[0].provider as 'smtp' | 'resend' | 'sendgrid',
-			password: result[0].password ?? undefined,
 			host: result[0].host ?? undefined,
 			port: result[0].port ?? undefined,
 			secure: result[0].secure ?? undefined,

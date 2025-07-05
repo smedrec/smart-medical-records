@@ -1,7 +1,6 @@
 import { createRoute, z } from '@hono/zod-openapi'
 
 import { ApiError, openApiErrorResponses } from '../../lib/errors/index.js'
-import { kms } from '../../lib/infisical/kms.js'
 
 import type { DecryptResponse } from '@repo/infisical-kms'
 import type { App } from '../../lib/hono/index.js'
@@ -50,7 +49,7 @@ export type KmsDecryptResponse = z.infer<
 
 export const registerKmsDecrypt = (app: App) =>
 	app.openapi(route, async (c) => {
-		//const { cerbos, db } = c.get('services')
+		const { kms } = c.get('services')
 		const session = c.get('session')
 
 		if (!session)

@@ -79,7 +79,6 @@ export const registerConfigMailFind = (app: App) =>
 		const response = {
 			...result[0],
 			provider: result[0].provider as 'smtp' | 'resend' | 'sendgrid',
-			password: result[0].password ?? undefined,
 			host: result[0].host ?? undefined,
 			port: result[0].port ?? undefined,
 			secure: result[0].secure ?? undefined,

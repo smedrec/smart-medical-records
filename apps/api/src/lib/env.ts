@@ -28,6 +28,10 @@ export const zEnv = z.object({
 	ENVIRONMENT: z.enum(['VITEST', 'development', 'staging', 'production']).default('development'),
 
 	APP_PUBLIC_URL: z.string().url(),
+
+	INFISICAL_URL: z.string().url(),
+	KMS_KEY_ID: z.string(),
+	INFISICAL_ACCESS_TOKEN: z.string(),
 })
 
 export type Env = z.infer<typeof zEnv>

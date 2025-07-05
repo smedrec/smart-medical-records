@@ -62,10 +62,6 @@ export const ConfigMailSelectSchema = z
 			description: 'The smtp username.',
 			example: 'user',
 		}),
-		password: z.string().optional().openapi({
-			description: 'The smtp password.',
-			example: 'password',
-		}),
 		apiKey: z.string().optional().openapi({
 			description: 'The api key for resend or sendgrid password.',
 			example: 'kjafhdoiuadmkkpom',

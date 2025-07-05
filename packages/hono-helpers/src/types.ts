@@ -64,6 +64,13 @@ export type SharedHonoEnv = {
 	 */
 	SMART_ISS: string
 	FHIR_BASE_URL: string
+
+	/**
+	 * KMS
+	 */
+	INFISICAL_URL: string
+	KMS_KEY_ID: string
+	INFISICAL_ACCESS_TOKEN: string
 }
 /** Global Hono variables */
 export type SharedHonoVariables = {

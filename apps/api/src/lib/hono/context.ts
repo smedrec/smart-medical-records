@@ -6,6 +6,7 @@ import type * as schema from '@repo/auth-db/dist/db/schema.js'
 //import type { fhir } from '@repo/fhir'
 import type { HonoApp } from '@repo/hono-helpers'
 import type { SharedHonoEnv, SharedHonoVariables } from '@repo/hono-helpers/src/types.js'
+import type { InfisicalKmsClient } from '@repo/infisical-kms'
 import type { cerbos } from '../cerbos/index.js'
 import type { Logger } from '../logs/index.js'
 
@@ -23,6 +24,7 @@ export type ServiceContext = {
 	//cache: Cache;
 	//db: { primary: Database; readonly: Database };
 	db: PostgresJsDatabase<typeof schema>
+	kms: InfisicalKmsClient
 	//redis:  Redis,
 	audit: Audit
 	logger: Logger

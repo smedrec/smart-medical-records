@@ -48,7 +48,7 @@ export type ConfigMailCreateResponse = z.infer<
 
 export const registerConfigMailCreate = (app: App) =>
 	app.openapi(route, async (c) => {
-		const { cerbos, db } = c.get('services')
+		const { cerbos, db, kms } = c.get('services')
 		const session = c.get('session')
 
 		if (!session)
@@ -76,8 +76,12 @@ export const registerConfigMailCreate = (app: App) =>
 		}
 
 		const rawData = c.req.valid('json')
+
+		const encryptedPassword = await kms.encrypt(rawData.password!)
+
 		const data = {
 			...rawData,
+			password: encryptedPassword.ciphertext,
 			organizationId: session.activeOrganizationId as string,
 		}
 
@@ -89,7 +93,6 @@ export const registerConfigMailCreate = (app: App) =>
 		const response = {
 			...result[0],
 			provider: result[0].provider as 'smtp' | 'resend' | 'sendgrid',
-			password: result[0].password ?? undefined,
 			host: result[0].host ?? undefined,
 			port: result[0].port ?? undefined,
 			secure: result[0].secure ?? undefined,
