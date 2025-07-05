@@ -116,6 +116,7 @@ async function getEmailProvider(organizationId: string, action: string): Promise
 		throw Error('Mailer connection details from database error.')
 	}
 
+	// TODO - improve the possible error
 	if (provider.password) {
 		const password = await kms.decrypt(provider.password!)
 		provider.password = password.plaintext
