@@ -21,6 +21,7 @@
 		"@opentelemetry/sdk-node": "0.202.0",
 		"@repo/audit": "workspace:*",
 		"@repo/auth-db": "workspace:*",
+		"@repo/infisical-kms": "workspace:*",
 		"@repo/mailer": "workspace:*",
 		"@repo/send-mail": "workspace:*",
 		"bullmq": "5.56.1",

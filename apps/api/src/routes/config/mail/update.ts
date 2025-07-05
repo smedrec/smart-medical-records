@@ -82,6 +82,10 @@ export const registerConfigMailUpdate = (app: App) =>
 			const encryptedPassword = await kms.encrypt(data.password!)
 			data.password = encryptedPassword.ciphertext
 		}
+		if (data.apiKey) {
+			const encryptedApiKey = await kms.encrypt(data.apiKey!)
+			data.apiKey = encryptedApiKey.ciphertext
+		}
 
 		const result = await db
 			.update(emailProvider)
@@ -102,7 +106,6 @@ export const registerConfigMailUpdate = (app: App) =>
 			port: result[0].port ?? undefined,
 			secure: result[0].secure ?? undefined,
 			user: result[0].user ?? undefined,
-			apiKey: result[0].apiKey ?? undefined,
 			fromName: result[0].fromName ?? undefined,
 			fromEmail: result[0].fromEmail ?? undefined,
 		}

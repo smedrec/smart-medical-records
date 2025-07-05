@@ -77,11 +77,17 @@ export const registerConfigMailCreate = (app: App) =>
 
 		const rawData = c.req.valid('json')
 
-		const encryptedPassword = await kms.encrypt(rawData.password!)
+		if (rawData.password) {
+			const encryptedPassword = await kms.encrypt(rawData.password!)
+			rawData.password = encryptedPassword.ciphertext
+		}
+		if (rawData.apiKey) {
+			const encryptedApiKey = await kms.encrypt(rawData.apiKey!)
+			rawData.apiKey = encryptedApiKey.ciphertext
+		}
 
 		const data = {
 			...rawData,
-			password: encryptedPassword.ciphertext,
 			organizationId: session.activeOrganizationId as string,
 		}
 

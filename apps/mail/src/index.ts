@@ -10,6 +10,7 @@ import { pino } from 'pino'
 
 import { Audit } from '@repo/audit'
 import { AuthDb, emailProvider } from '@repo/auth-db'
+import { InfisicalKmsClient } from '@repo/infisical-kms'
 import { NodeMailer, ResendMailer, SendGridMailer } from '@repo/mailer'
 
 import type { Job } from 'bullmq'
@@ -70,6 +71,12 @@ export { authDbService }
 
 const audit = new Audit('audit', process.env.AUDIT_REDIS_URL!)
 
+const kms = new InfisicalKmsClient({
+	baseUrl: process.env.INFISICAL_URL!,
+	keyId: process.env.KMS_KEY_ID!,
+	accessToken: process.env.INFISICAL_ACCESS_TOKEN!,
+})
+
 const mailerConfig: NodeMailerSmtpOptions = {
 	host: process.env.SMTP_HOST,
 	port: parseInt(process.env.SMTP_PORT!, 10), // Or 465 for SSL
@@ -109,6 +116,16 @@ async function getEmailProvider(organizationId: string, action: string): Promise
 		throw Error('Mailer connection details from database error.')
 	}
 
+	if (provider.password) {
+		const password = await kms.decrypt(provider.password!)
+		provider.password = password.plaintext
+	}
+
+	if (provider.apiKey) {
+		const apiKey = await kms.decrypt(provider.apiKey!)
+		provider.apiKey = apiKey.plaintext
+	}
+
 	transport.from = `${provider.fromName} <${provider.fromEmail}>`
 
 	switch (provider?.provider) {
@@ -119,7 +136,7 @@ async function getEmailProvider(organizationId: string, action: string): Promise
 				secure: provider.secure as boolean,
 				auth: {
 					user: provider.user!,
-					pass: provider.password!,
+					pass: provider.password,
 				},
 			})
 			break
