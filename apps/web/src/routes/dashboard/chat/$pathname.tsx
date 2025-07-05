@@ -146,7 +146,7 @@ function RouteComponent() {
 		// Remove last assistant message and retry last user message.
 		const lastMessage = messages[messages.length - 1]
 		const chatRequest: ChatRequest = {
-			assistantId: 'assistantAgent',
+			assistantId: pathname,
 			message:
 				lastMessage.role === 'assistant'
 					? messages[messages.length - 2] // get the previous user message
