@@ -10,7 +10,7 @@ import CodeDisplayBlock from '@/components/ai/code-display-block'
 import { chat } from '@/lib/ai/chat'
 import { CopyIcon } from '@radix-ui/react-icons'
 import { createFileRoute } from '@tanstack/react-router'
-import { CornerDownLeft, Mic, Paperclip, RefreshCcw, Volume2 } from 'lucide-react'
+import { Bot, CornerDownLeft, Mic, Paperclip, RefreshCcw, Volume2 } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -248,6 +248,11 @@ function RouteComponent() {
 								<Button variant="ghost" size="icon">
 									<Mic className="size-4" />
 									<span className="sr-only">Use Microphone</span>
+								</Button>
+
+								<Button variant="ghost" size="icon">
+									<Bot className="size-4" />
+									<span className="sr-only">{pathname}</span>
 								</Button>
 
 								<Button

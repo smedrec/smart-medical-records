@@ -1,15 +1,7 @@
 import { ai } from '@/lib/ai/client'
 import { createServerFn } from '@tanstack/react-start'
 
-import type { GetAgentResponse } from '@mastra/client-js'
-
-type Agent = GetAgentResponse
-
-type AgentsObject = {
-	[key: string]: Agent
-}
-
-type AgentArrayItem = Agent & { id: string }
+import type { AgentArrayItem } from '@/types/ai'
 
 export const getAgents = createServerFn({ method: 'GET' }).handler(async () => {
 	try {
