@@ -137,7 +137,7 @@ async function getEmailProvider(organizationId: string, action: string): Promise
 				secure: provider.secure as boolean,
 				auth: {
 					user: provider.user!,
-					pass: provider.password,
+					pass: provider.password!,
 				},
 			})
 			break
