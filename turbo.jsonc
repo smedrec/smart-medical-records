@@ -27,6 +27,7 @@
 		"CERBOS_URL",
 		"BETTER_AUTH_URL",
 		"APP_PUBLIC_URL",
+		"API_URL",
 		"SMTP_HOST",
 		"SMTP_PORT",
 		"SMTP_USER",
