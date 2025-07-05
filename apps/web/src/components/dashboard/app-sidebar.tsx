@@ -11,18 +11,12 @@ import {
 	Hospital,
 	Key,
 	Plus,
+	Settings,
 	TerminalIcon,
+	Users,
 } from 'lucide-react'
 import { useMemo } from 'react'
-import { toast } from 'sonner'
 
-import { Button } from '@repo/ui/components/ui/button'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from '@repo/ui/components/ui/dropdown-menu'
 import { Separator } from '@repo/ui/components/ui/separator'
 import {
 	Sidebar,
@@ -46,13 +40,7 @@ import { authClient } from '../../lib/auth-client'
 import type { GetAgentResponse } from '@mastra/client-js'
 import type { Organization } from 'better-auth/plugins/organization'
 
-type Agent = GetAgentResponse
-
-type AgentsObject = {
-	[key: string]: Agent
-}
-
-type AgentArrayItem = Agent & { id: string }
+type Agent = GetAgentResponse & { id: string }
 
 const AgentRow = ({
 	agent,
@@ -64,7 +52,7 @@ const AgentRow = ({
 	active: boolean
 }) => (
 	<SidebarMenuItem>
-		<Link to={`/dashboard/chat/${agent.name}`}>
+		<Link to={`/dashboard/chat/${agent.id}`}>
 			<SidebarMenuButton
 				isActive={active}
 				className="px-2 py-2 my-1 h-full rounded-md justify-between"
@@ -85,18 +73,7 @@ const AgentRow = ({
 	</SidebarMenuItem>
 )
 
-const AgentListSection = ({
-	agents,
-	activePath,
-}: {
-	agents: Record<string, GetAgentResponse>
-	activePath: string
-}) => {
-	const agentsArray: AgentArrayItem[] = Object.entries(agents).map(([id, agent]) => ({
-		id,
-		...agent,
-	}))
-
+const AgentListSection = ({ agents, activePath }: { agents: Agent[]; activePath: string }) => {
 	return (
 		<>
 			<div className="flex items-center px-4 pt-1 pb-0 text-muted-foreground">
@@ -109,7 +86,7 @@ const AgentListSection = ({
 			<SidebarGroup>
 				<SidebarGroupContent className="px-1 mt-0">
 					<SidebarMenu>
-						{agentsArray.map((a) => (
+						{agents.map((a) => (
 							<AgentRow
 								key={a?.id}
 								agent={a as Agent}
@@ -137,6 +114,7 @@ const OrganizationsListSection = ({
 		<>
 			<div className="flex items-center px-4 pt-1 pb-0 text-muted-foreground">
 				<SectionHeader className="px-0 py-0 text-xs flex gap-1 mr-2">
+					<Users className="size-4" />
 					<div>Organizations</div>
 				</SectionHeader>
 				<Separator />
@@ -215,7 +193,7 @@ export function AppSidebar({
 		authClient.useListOrganizations()
 	const { data: activeOrganization } = authClient.useActiveOrganization()
 
-	const agents = useMemo(() => agentsData?.agents || [], [agentsData])
+	const agents = useMemo(() => agentsData || [], [agentsData])
 	const organizations = useMemo(() => organizationsData || [], [organizationsData])
 
 	const agentLoadError = agentsError
@@ -240,43 +218,6 @@ export function AppSidebar({
 		}
 	}
 
-	function renderCreateNewButton() {
-		const navigate = useNavigate()
-
-		const handleCreateAgent = () => {
-			//void navigate('/create')
-		}
-
-		const handleCreateGroup = () => {
-			//void navigate('/group/new')
-		}
-
-		return (
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button
-						variant="outline"
-						className="w-full justify-start rounded-[8px] py-5 border-white"
-					>
-						<Plus className="size-4" />
-						Create New
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent
-					align="start"
-					className="w-full min-w-[var(--radix-dropdown-menu-trigger-width)]"
-				>
-					<DropdownMenuItem onClick={handleCreateAgent} className="w-full">
-						Create New Agent
-					</DropdownMenuItem>
-					<DropdownMenuItem onClick={handleCreateGroup} className="w-full">
-						Create New Group
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
-		)
-	}
-
 	return (
 		<>
 			<Sidebar
@@ -294,7 +235,7 @@ export function AppSidebar({
 						<SidebarMenuItem>
 							<SidebarMenuButton size="lg" asChild>
 								<a
-									href="/"
+									href=""
 									onClick={handleLogoClick}
 									className="px-4 py-2 h-full sidebar-logo no-underline"
 								>
@@ -321,8 +262,6 @@ export function AppSidebar({
           */}
 					{agentLoadError && <div className="px-4 py-2 text-xs text-red-500">{agentLoadError}</div>}
 
-					<div className="px-4 py-6">{renderCreateNewButton()}</div>
-
 					{isLoadingAgents && !agentLoadError && (
 						<SidebarSection title="Agents">
 							<SidebarMenuSkeleton />
@@ -346,6 +285,11 @@ export function AppSidebar({
 					<SidebarMenu>
 						<FooterLink to="https://smedrec-67bbd.web.app/" Icon={Book} label="Documentation" />
 						<FooterLink to="/dashboard/audit" Icon={TerminalIcon} label="Logs" />
+						<SectionHeader className="px-0 py-0 text-xs flex gap-1 mr-2">
+							<Settings className="size-4" />
+							<div>Settings</div>
+						</SectionHeader>
+						<Separator />
 						<FooterLink to="/dashboard/settings/account" Icon={CircleUser} label="Account" />
 						<FooterLink to="/dashboard/settings/security" Icon={Fingerprint} label="Security" />
 						<FooterLink to="/dashboard/settings/api-keys" Icon={Key} label="Api Keys" />

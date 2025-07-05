@@ -18,7 +18,7 @@ export function useServerVersion() {
 		queryKey: ['server-version'],
 		queryFn: async () => {
 			try {
-				const response = await fetch('/api/version')
+				const response = await fetch('http://localhost:8801/version')
 
 				if (!response.ok) {
 					throw new Error(

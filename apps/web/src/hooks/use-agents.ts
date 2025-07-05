@@ -1,45 +1,22 @@
 // Hook for fetching agents with smart polling
 
 import { useNetworkStatus } from '@/hooks/use-network-status'
-import { ai } from '@/lib/ai/client'
+import { getAgents } from '@/lib/ai/get-agents'
 import { STALE_TIMES } from '@/lib/constants'
 //import clientLogger from '@/lib/logger'
 import { useQuery } from '@tanstack/react-query'
-
-import type { GetAgentResponse } from '@mastra/client-js'
-
-/**
- * @returns {AgentsWithDetailsResult} Combined query results with both list and detailed data
- */
-interface AgentsWithDetailsResult {
-	data: {
-		agents: Record<string, GetAgentResponse>
-	}
-	isLoading: boolean
-	isError: boolean
-	error: unknown
-}
+import { useServerFn } from '@tanstack/react-start'
 
 /**
  * @returns {UseQueryResult} React Query result object with typed data and status properties
  */
-export function useAgents(options = {}): AgentsWithDetailsResult {
+export function useAgents(options = {}) {
 	const network = useNetworkStatus()
+	const queryAgents = useServerFn(getAgents)
 
-	const queryResult = useQuery<{ agents: Record<string, GetAgentResponse> }, unknown>({
+	const queryResult = useQuery({
 		queryKey: ['agents'],
-		queryFn: async () => {
-			try {
-				const result = await ai.getAgents()
-				return {
-					agents: result,
-				}
-			} catch (error: any) {
-				//clientLogger.error('An error occurred:', error?.message)
-				console.error('An error occurred:', error?.message)
-				throw error
-			}
-		},
+		queryFn: async () => queryAgents(),
 		staleTime: STALE_TIMES.FREQUENT,
 		refetchInterval: !network.isOffline ? STALE_TIMES.FREQUENT : false,
 		refetchIntervalInBackground: false,
@@ -51,9 +28,7 @@ export function useAgents(options = {}): AgentsWithDetailsResult {
 	})
 
 	return {
-		data: {
-			agents: queryResult.data?.agents ?? {},
-		},
+		data: queryResult.data,
 		isLoading: queryResult.isLoading,
 		isError: queryResult.isError,
 		error: queryResult.error,

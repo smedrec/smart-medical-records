@@ -38,27 +38,6 @@ const queryClient = new QueryClient({
 	},
 })
 
-// Prefetch initial data with smarter error handling
-/**const prefetchInitialData = async () => {
-	try {
-		// Prefetch agents (real-time data so shorter stale time)
-		await queryClient.prefetchQuery({
-			queryKey: ['agents'],
-			queryFn: async () => {
-				const result = await ai.getAgents()
-				return { data: result }
-			},
-			staleTime: STALE_TIMES.FREQUENT,
-		})
-	} catch (error) {
-		console.error('Error prefetching initial data:', error)
-		// Don't throw, let the app continue loading with fallbacks
-	}
-}*/
-
-// Execute prefetch immediately
-//void prefetchInitialData()
-
 export const Route = createFileRoute('/dashboard')({
 	component: DashboardLayout,
 })
@@ -109,8 +88,9 @@ function DashboardLayout() {
 							<UserButton size={isMobile ? 'icon' : 'sm'} className="gap-2 px-3" />
 						</div>
 					</header>
-
-					<Outlet />
+					<div className="flex flex-1 flex-col gap-4 p-4">
+						<Outlet />
+					</div>
 				</SidebarInset>
 			</SidebarProvider>
 		</>
