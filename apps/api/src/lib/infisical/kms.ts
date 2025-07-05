@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 import { InfisicalKmsClient } from '@repo/infisical-kms'
 
 const kms = new InfisicalKmsClient({

@@ -51,10 +51,6 @@ console.log('Decrypted data:', decryptedData.plaintext)
 └── tsconfig.json    # TypeScript configuration
 ```
 
-## Dependencies
-
-- [axios](https://www.npmjs.com/package/axios): ^1.7.2
-
 ## How to Contribute
 
 Contributions are welcome! Please feel free to submit a pull request or open an issue for any bugs or feature requests.
