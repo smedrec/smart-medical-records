@@ -4,20 +4,20 @@ globs:
 alwaysApply: false
 ---
 
-# Workers Monorepo Template - Project Structure
+# Node.js Monorepo Template - Project Structure
 
-This is a Cloudflare Workers monorepo template built with Turborepo, pnpm workspaces, and modern tooling.
+This is a Node.js monorepo template built with Turborepo, pnpm workspaces, and modern tooling, designed for building scalable server-side applications and shared libraries.
 
 ## Repository Layout
 
 ### Core Directories
 
-- **`apps/`** - Individual Cloudflare Worker applications (deployable units)
+- **`apps/`** - Individual Node.js applications or services (deployable units).
+  - Each subdirectory is typically a separate application (e.g., an API server, a background job processor).
+  - Example: `apps/api-service/` - could be an Express.js or NestJS application.
+  - Example: `apps/data-processor/` - could be a standalone Node.js script or service.
 
-  - Each subdirectory is a separate worker project
-  - Example: [apps/example-worker-echoback/](mdc:apps/example-worker-echoback/) - demonstrates basic worker functionality
-
-- **`packages/`** - Shared libraries, utilities, and configurations
+- **`packages/`** - Shared libraries, utilities, and configurations used by applications in the `apps/` directory or other packages.
   - [packages/eslint-config/](mdc:packages/eslint-config/) - Shared ESLint configuration
   - [packages/typescript-config/](mdc:packages/typescript-config/) - Shared TypeScript configuration
   - [packages/hono-helpers/](mdc:packages/hono-helpers/) - Hono framework utilities and middleware
@@ -35,10 +35,11 @@ This is a Cloudflare Workers monorepo template built with Turborepo, pnpm worksp
 
 ### Code Generation
 
-- **`turbo/generators/`** - Turbo gen templates for scaffolding
-  - `templates/fetch-worker/` - Basic Cloudflare Worker template
-  - `templates/fetch-worker-vite/` - Worker template with Vite bundling
-  - `templates/package/` - Shared package template
+- **`turbo/generators/`** - Turbo `gen` templates for scaffolding new applications and packages.
+  - `templates/node-service/` - Example: Template for a basic Node.js service (e.g., using Express or Fastify).
+  - `templates/library-package/` - Template for a shared library package.
+  - `templates/package/` - Generic shared package template (as before, likely still useful).
+  *(Update these paths and descriptions to match your actual Node.js application/service templates.)*
 
 ### Build & Development
 
@@ -48,7 +49,7 @@ This is a Cloudflare Workers monorepo template built with Turborepo, pnpm worksp
 
 ## Key Concepts
 
-- **Monorepo Benefits**: Shared dependencies, atomic commits, consistent tooling, easier refactoring
-- **pnpm Workspaces**: Efficient dependency management across packages
-- **Turborepo**: Build orchestration with intelligent caching and parallelization
-- **Code Generation**: Use `just new-worker` to scaffold new workers from templates
+- **Monorepo Benefits**: Shared dependencies, atomic commits, consistent tooling, easier refactoring across multiple Node.js applications and libraries.
+- **pnpm Workspaces**: Efficient dependency management and linking for local development across packages.
+- **Turborepo**: Build orchestration, intelligent caching, and parallelization of tasks like building, testing, and linting.
+- **Code Generation**: Use `just new-app` (or your project's specific command) to scaffold new Node.js applications or services from predefined templates.

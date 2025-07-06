@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Package and Dependency Management
 
-This guide covers how to manage packages and dependencies in the Workers monorepo using pnpm workspaces and syncpack.
+This guide covers how to manage packages and dependencies in the Node.js monorepo using pnpm workspaces and syncpack.
 
 ## Workspace Structure
 
@@ -95,21 +95,23 @@ just update-deps
 
 ### Shared Scripts via Tools Package
 
-Most packages reference scripts from [packages/tools/](mdc:packages/tools):
+Most packages reference scripts from [packages/tools/](mdc:packages/tools/) or define them directly. Common scripts include:
 
 ```json
 {
 	"scripts": {
-		"build:wrangler": "run-wrangler-build",
-		"check:lint": "run-eslint",
-		"check:types": "run-tsc",
-		"deploy": "run-wrangler-deploy",
-		"dev": "run-wrangler-dev",
-		"fix:workers-types": "run-wrangler-types",
-		"test": "run-vitest"
+		"build": "tsc -p .", // Or your specific build command, e.g., for esbuild, swc, webpack
+		"check:lint": "eslint . --ext .ts,.tsx",
+		"check:types": "tsc --noEmit",
+		"deploy": "node scripts/deploy.js", // Example: replace with your deployment script
+		"dev": "nodemon src/index.ts", // Or `node --watch src/index.ts`
+		"start": "node dist/index.js", // To run the built application
+		"test": "vitest run",
+		"test:watch": "vitest"
 	}
 }
 ```
+Ensure these scripts in `packages/tools/` (if used) or individual `package.json` files are updated for a Node.js environment. Cloudflare-specific scripts like `build:wrangler`, `run-wrangler-deploy`, `run-wrangler-dev`, and `run-wrangler-types` should be replaced or removed.
 
 ### Benefits
 
