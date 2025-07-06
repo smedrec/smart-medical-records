@@ -20,9 +20,7 @@
 		"fix:deps": "run-fix-deps",
 		"fix:format": "prettier . --write --cache",
 		"fix:lint": "FIX_ESLINT=1 run-eslint",
-		"fix:workers-types": "turbo fix:workers-types",
 		"format:dependency": "syncpack format",
-		"new-worker": "run-turbo-gen",
 		"test": "vitest",
 		"test:ci": "run-vitest-ci",
 		"update-deps": "run-update-deps"

@@ -1,20 +1,20 @@
 {
-	"extends": "@repo/typescript-config/workers-lib.json",
+	"extends": "@repo/typescript-config/lib.json", // Changed from workers-lib.json
 	"compilerOptions": {
 		"noEmit": false,
 		"outDir": "./dist",
 		"declaration": true,
-		"declarationMap": true
-		// We inherit module, target, moduleResolution ('bundler'), strict, etc., from the base.
-		// moduleResolution: "bundler" should still work fine for tsc producing .js files
-		// that Node.js (or another bundler) will consume.
+		"declarationMap": true,
+		"lib": ["es2022", "dom"], // Explicitly add "dom" for Web APIs used by Hono
+		// module, target, moduleResolution ('bundler'), strict, etc., are inherited from lib.json -> base.json
+		"types": ["node"] // Add node types for a Node.js environment
 	},
-	"include": ["src/**/*"], // Ensure we only compile files from src
+	"include": ["src/**/*"],
 	"exclude": [
 		"node_modules",
 		"dist",
-		"eslint.config.ts", // If present
-		"**/*.test.ts", // Assuming tests shouldn't be part of the dist output
-		"**/*.spec.ts" // Assuming tests shouldn't be part of the dist output
+		"eslint.config.ts",
+		"**/*.test.ts",
+		"**/*.spec.ts"
 	]
 }

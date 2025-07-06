@@ -11,6 +11,19 @@
 	"directories": {
 		"bin": "bin"
 	},
+	"bin": {
+		"get-branch": "./bin/get-branch",
+		"get-version": "./bin/get-version",
+		"run-changeset-new": "./bin/run-changeset-new",
+		"run-eslint": "./bin/run-eslint",
+		"run-fix-deps": "./bin/run-fix-deps",
+		"run-tsc": "./bin/run-tsc",
+		"run-turbo-gen": "./bin/run-turbo-gen",
+		"run-update-deps": "./bin/run-update-deps",
+		"run-vitest": "./bin/run-vitest",
+		"run-vitest-ci": "./bin/run-vitest-ci",
+		"runx": "./bin/runx"
+	},
 	"scripts": {
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",

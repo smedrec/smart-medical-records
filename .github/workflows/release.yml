@@ -30,13 +30,12 @@ jobs:
         run: pnpm test:ci
       - name: Deploy
         run: pnpm turbo deploy
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        # env: # Cloudflare specific env vars removed
+        #   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        #   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
   create-release-pr:
-    # For Workers, we always deploy on commits to main.
-    # Release PRs are for adding changelogs only (for convenience)
+    # Release PRs are for adding changelogs. Deployment is handled by the 'test-and-deploy' job.
     name: Create Release PR
     runs-on: ubuntu-latest
     timeout-minutes: 5

@@ -17,12 +17,12 @@ const config = {
 			pinVersion: '5.5.4',
 		},
 		{
-			label: `pin eslint and all it's plugins for eslint v8`,
+			label: `pin eslint (v9+) and its plugins`,
 			dependencies: [
 				'eslint',
 				'@types/eslint',
 				'eslint-config-prettier',
-				'eslint-plugin-react-hooks',
+				// 'eslint-plugin-react-hooks', // Removed as it's React-specific
 				'eslint-plugin-unused-imports',
 				'@typescript-eslint/eslint-plugin',
 				'@typescript-eslint/parser',
