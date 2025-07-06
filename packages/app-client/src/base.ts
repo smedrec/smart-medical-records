@@ -39,6 +39,7 @@ export class BaseResource {
 							: options.body
 								? JSON.stringify(options.body)
 								: undefined,
+					credentials: 'include',
 				})
 
 				if (!response.ok) {
