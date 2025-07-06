@@ -32,8 +32,8 @@ export class AppClient extends BaseResource {
 	 * Retrieves api version
 	 * @returns Promise contains api version
 	 */
-	public async version(): Promise<VersionResponse> {
-		return await this.request(`/version`)
+	public version(): Promise<VersionResponse> {
+		return this.request(`/version`)
 	}
 
 	/**
