@@ -6,7 +6,7 @@ const getVersion = createServerFn({ method: 'GET' }).handler(async () => {
 		const data = await app.version()
 		return data
 	} catch (error) {
-		console.error('Error getting the agents:', error)
+		console.error('Error getting the api version:', error)
 		throw new Error(error as string)
 	}
 })
