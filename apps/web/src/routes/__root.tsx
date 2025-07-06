@@ -15,8 +15,8 @@ export const Route = createRootRoute({
 				content: 'width=device-width, initial-scale=1',
 			},
 			...seo({
-				title: 'Smart Medical Record | Opensource FHIR compatible',
-				description: `Smart Medical Record is a type-safe, client-first, full-stack FHIR framework. `,
+				title: 'Smart Medical Record | Opensource Medical institutions management FHIR compatible',
+				description: `Smart Medical Record is a type-safe, client-first, full-stack AI FHIR framework. `,
 			}),
 		],
 		links: [
