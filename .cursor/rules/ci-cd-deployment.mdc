@@ -6,7 +6,7 @@ alwaysApply: false
 
 # CI/CD and Deployment
 
-This guide covers the continuous integration, deployment, and release processes for the Workers monorepo.
+This guide covers the continuous integration, deployment, and release processes for the Node.js monorepo.
 
 ## GitHub Actions Workflows
 
@@ -24,7 +24,7 @@ This guide covers the continuous integration, deployment, and release processes 
    - ESLint linting
 3. Run tests (`pnpm test:ci`)
    - Unit tests across all packages
-   - Integration tests for workers
+    - Integration tests for applications/services
 
 ### Release Workflow - `.github/workflows/release.yml`
 
@@ -37,8 +37,8 @@ This guide covers the continuous integration, deployment, and release processes 
 - Install dependencies
 - Run full CI checks
 - Run test suite
-- **Deploy all workers** (`pnpm turbo deploy`)
-- Requires secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
+- **Deploy all applications/services** (`pnpm turbo deploy` or project-specific deployment script)
+- Requires secrets: `NPM_TOKEN` (for package publishing, if any), and any environment-specific secrets for deployment (e.g., `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `DOCKER_HUB_TOKEN`, etc.)
 
 #### 2. Create Release PR
 
@@ -48,55 +48,83 @@ This guide covers the continuous integration, deployment, and release processes 
 
 ## Deployment Requirements
 
-### Cloudflare Secrets
+### Deployment Secrets
 
-Configure in GitHub repository settings:
+Configure necessary secrets in GitHub repository settings. Examples include:
 
 ```bash
-# Required for worker deployment
-CLOUDFLARE_API_TOKEN=your_api_token
-CLOUDFLARE_ACCOUNT_ID=your_account_id
+# For publishing packages to npm (if applicable)
+NPM_TOKEN=your_npm_token
+
+# For deploying to AWS (if applicable)
+AWS_ACCESS_KEY_ID=your_aws_access_key_id
+AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
+
+# For deploying to Docker Hub (if applicable)
+DOCKER_HUB_USERNAME=your_docker_username
+DOCKER_HUB_TOKEN=your_docker_hub_token
+
+# Add other platform-specific secrets as needed
+# AZURE_CREDENTIALS=your_azure_credentials
+# GCP_SA_KEY=your_gcp_service_account_key
 ```
 
-### Worker Configuration
+### Application Configuration
 
-Each worker needs [wrangler.jsonc](mdc:apps/example-worker-echoback/wrangler.jsonc) with:
+Each Node.js application/service might have its own configuration file (e.g., `config.json`, `.env` files, or environment-specific config files). Key aspects to configure typically include:
 
-```jsonc
+- **Port**: The port the application will listen on.
+- **Database connections**: Connection strings and credentials.
+- **External service URLs**: Endpoints for other services.
+- **Logging levels**: Verbosity of logs.
+- **Environment-specific settings**: Such as `NODE_ENV` (development, staging, production).
+
+Example (`config/default.json` or environment variables):
+```json
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "worker-name",
-	"main": "src/index.ts",
-	"compatibility_date": "2025-04-28",
-	"compatibility_flags": ["nodejs_compat"],
-	"routes": [],
-	"logpush": true,
-	"observability": {
-		"enabled": true,
-	},
-	"vars": {
-		"ENVIRONMENT": "development", // overridden during deployment
-		"SENTRY_RELEASE": "unknown", // overridden during deployment
-	},
+  "server": {
+    "port": 3000
+  },
+  "database": {
+    "url": "mongodb://localhost:27017/mydatabase"
+  },
+  "logging": {
+    "level": "info"
+  },
+  "ENVIRONMENT": "development" // Often set via process.env.NODE_ENV
 }
 ```
+Ensure that sensitive information is not hardcoded but managed through environment variables or a secure secret management system.
 
-## Local Deployment
+## Local Development and Deployment
 
-### Single Worker
+### Running a Single Application/Service Locally
 
 ```bash
-# Deploy specific worker
-pnpm turbo -F worker-name deploy
+# Start a specific application in development mode
+pnpm turbo -F app-name dev
 
-# Deploy to specific environment
-pnpm turbo -F worker-name deploy -- -e production
+# Or, if deployment involves a build step followed by running the built output:
+pnpm turbo -F app-name build
+node apps/app-name/dist/index.js # Or your specific start command
 ```
 
-### All Workers
+### Deploying a Single Application/Service
+
+Deployment commands will vary based on your chosen hosting platform and tools (e.g., Docker, PM2, serverless framework, custom scripts).
 
 ```bash
-# Deploy all workers
+# Example: Deploy specific application (replace with actual command)
+pnpm turbo -F app-name deploy
+
+# Example: Deploy to a specific environment
+pnpm turbo -F app-name deploy -- --env production
+```
+
+### Deploying All Applications/Services
+
+```bash
+# Deploy all applications (replace with actual command if pnpm turbo deploy is not used)
 just deploy
 # or
 pnpm turbo deploy
@@ -104,8 +132,8 @@ pnpm turbo deploy
 
 ### Environment Variables
 
-- **Local Development**: Use `.dev.vars` files
-- **Production**: Configure in Cloudflare dashboard or wrangler.jsonc
+- **Local Development**: Use `.env` files at the root of each application or a centralized configuration management tool.
+- **Staging/Production**: Configure environment variables directly in your hosting provider's dashboard, through CI/CD pipeline variables, or using a secret management service.
 
 ## Turborepo Deployment Pipeline
 
@@ -118,17 +146,23 @@ pnpm turbo deploy
 	"deploy": {
 		"cache": false,
 		"dependsOn": ["build", "topo"],
-		"env": ["CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_API_TOKEN"]
+		"env": [
+			"NODE_ENV",
+			// Add any other environment variables that affect the build/deployment process
+			// e.g., "DATABASE_URL_STAGING", "API_KEY_PRODUCTION"
+		],
+		// "outputs" can be configured if your deployment process creates specific artifacts
+		// "outputs": ["dist/**", "docker-image.tar"]
 	}
 }
 ```
 
 **Flow**:
 
-1. Build shared packages (`^build`)
-2. Build worker applications
-3. Generate deployment artifacts
-4. Deploy to Cloudflare
+1. Build shared packages (`^build`).
+2. Build application(s).
+3. Generate deployment artifacts (e.g., Docker images, serverless function packages, compiled code).
+4. Deploy to the target Node.js environment (e.g., a PaaS, Kubernetes, VMs).
 
 ### Caching Strategy
 
@@ -184,31 +218,40 @@ Currently focused on internal packages:
 
 ## Deployment Best Practices
 
-1. **Environment Separation**: Use different worker names for dev/staging/prod
-2. **Secret Management**: Never commit secrets, use GitHub secrets or Cloudflare dashboard
-3. **Atomic Deployments**: Deploy all related workers together using `turbo deploy`
-4. **Testing**: Ensure integration tests pass before deployment
-5. **Rollback Strategy**: Keep previous versions available for quick rollbacks
-6. **Monitoring**: Set up alerts and monitoring for deployed workers
+1. **Environment Separation**: Use distinct configurations (e.g., environment variables, configuration files) for `development`, `staging`, and `production` environments. Consider using different deployment targets or namespaces.
+2. **Secret Management**: Never commit secrets to version control. Utilize GitHub Actions secrets for CI/CD and a secure secret management solution for your runtime environments (e.g., HashiCorp Vault, AWS Secrets Manager, environment variables injected by the platform).
+3. **Atomic Deployments**: If deploying multiple interdependent services, aim for atomic or coordinated deployments to minimize downtime and ensure consistency. Tools like `pnpm turbo deploy` can help if your deployment scripts are set up appropriately.
+4. **Comprehensive Testing**: Ensure unit, integration, and potentially end-to-end tests pass before any deployment. Automate this in your CI pipeline.
+5. **Rollback Strategy**: Have a well-defined rollback plan. This might involve redeploying a previous stable version/tag, or using blue/green or canary deployment strategies.
+6. **Monitoring and Logging**: Implement robust logging and monitoring for your deployed applications. Use tools to track performance, errors, and system health.
+7. **Infrastructure as Code (IaC)**: If applicable, manage your deployment infrastructure (servers, databases, load balancers) using IaC tools like Terraform or CloudFormation for reproducibility and version control.
+8. **Dependency Management**: Keep dependencies up to date and regularly scan for vulnerabilities.
 
 ## Troubleshooting Deployment
 
 ### Common Issues
 
 ```bash
-# Clear Turborepo cache
+# Clear Turborepo cache (useful if you suspect stale build artifacts)
 pnpm turbo clean
 
-# Rebuild all packages
+# Rebuild all packages forcefully
 pnpm turbo build --force
+
+# Check application logs (specific commands depend on your logging setup and platform)
+# Example: View logs for a PM2 managed app
+pm2 logs app-name
+
+# Example: View logs for a Docker container
+docker logs <container_id_or_name>
 ```
 
-### Debug Deployment
+### Debugging Deployment Issues
 
-```bash
-# Dry run deployment
-pnpm -F worker-name wrangler deploy --dry-run
-
-# Check worker logs
-pnpm -F worker-name wrangler tail
-```
+- **Check CI/CD Logs**: Detailed logs from your GitHub Actions workflows can often pinpoint where a deployment failed.
+- **Validate Configurations**: Ensure all environment variables, configuration files, and service discovery mechanisms are correctly set for the target environment.
+- **Connectivity**: Verify network connectivity between services, databases, and other dependencies.
+- **Resource Limits**: Ensure your deployment environment has sufficient CPU, memory, and disk space.
+- **Permissions**: Check that the deployment process and runtime application have the necessary permissions to access resources.
+- **Local Reproduction**: If possible, try to reproduce the issue in a local environment that closely mimics production.
+- **Incremental Deployment**: If deploying a large change, consider breaking it down and deploying incrementally to isolate potential issues.
