@@ -45,9 +45,9 @@ function DashboardLayout() {
 							<UserButton size={isMobile ? 'icon' : 'sm'} className="gap-2 px-3" />
 						</div>
 					</header>
-					<main className="flex flex-1 flex-col gap-4 p-4">
+					<div className="flex flex-1 flex-col gap-4 p-4">
 						<Outlet />
-					</main>
+					</div>
 				</SidebarInset>
 			</SidebarProvider>
 		</>
