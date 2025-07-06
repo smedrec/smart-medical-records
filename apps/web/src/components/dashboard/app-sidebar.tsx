@@ -195,12 +195,11 @@ export function AppSidebar({ isMobile = false }: { isMobile?: boolean }) {
 			<Sidebar
 				className={cn(
 					'bg-background border-r overflow-hidden',
-					isMobile ? 'p-3 pt-12 w-full h-full' : 'fixed left-0 top-0 z-40 h-screen', // Removed p-4 and w-72 for non-mobile
+					isMobile ? 'p-3 pt-12 w-full h-full' : 'p-4 w-72 fixed left-0 top-0 z-40 h-screen',
 					!isMobile && 'hidden md:flex md:flex-col'
 				)}
 				collapsible="none"
 				variant="inset" // Added variant="inset"
-				style={{ '--sidebar-width': '18rem' } as React.CSSProperties} // Ensure gap matches w-72
 				data-testid="app-sidebar"
 			>
 				{/* ---------- header ---------- */}
@@ -225,11 +224,6 @@ export function AppSidebar({ isMobile = false }: { isMobile?: boolean }) {
 
 				{/* ---------- content ---------- */}
 				<SidebarContent className="flex-1 overflow-y-auto">
-					{/* create agent button - moved from old CreateButton dropdown */}
-					{/* This section is for the "Agents" list.
-              The "Create Agent" button should ideally be next to the "Agents" title.
-              Let's adjust the structure slightly if needed or place it prominently.
-          */}
 					{agentLoadError && <div className="px-4 py-2 text-xs text-red-500">{agentLoadError}</div>}
 
 					{isLoadingAgents && !agentLoadError && (

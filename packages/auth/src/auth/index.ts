@@ -1,6 +1,5 @@
-import { betterAuth, unknown } from 'better-auth'
+import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { nextCookies } from 'better-auth/next-js'
 import { admin, apiKey, mcp, oidcProvider, openAPI, organization } from 'better-auth/plugins'
 import Redis from 'ioredis'
 
@@ -408,7 +407,6 @@ class Auth {
 			}
 		}),*/
 				openAPI(),
-				nextCookies(),
 			],
 			account: {
 				accountLinking: {

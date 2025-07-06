@@ -7,22 +7,31 @@ import { STALE_TIMES } from '@/lib/constants'
 import { useQuery } from '@tanstack/react-query'
 import { useServerFn } from '@tanstack/react-start'
 
+import type { AgentArrayItem } from '@/types/ai'
+
+interface UseAgentsResult {
+	data: AgentArrayItem[] | undefined
+	isLoading: boolean
+	isError: boolean
+	error: Error | null
+}
+
 /**
- * @returns {UseQueryResult} React Query result object with typed data and status properties
+ * @returns {UseAgentsResult} React Query result object with typed data and status properties
  */
-export function useAgents(options = {}) {
+function useAgents(options = {}): UseAgentsResult {
 	const network = useNetworkStatus()
 	const queryAgents = useServerFn(getAgents)
 
 	const queryResult = useQuery({
 		queryKey: ['agents'],
 		queryFn: async () => queryAgents(),
-		staleTime: STALE_TIMES.FREQUENT,
-		refetchInterval: !network.isOffline ? STALE_TIMES.FREQUENT : false,
+		staleTime: STALE_TIMES.RARE,
+		refetchInterval: !network.isOffline ? STALE_TIMES.RARE : false,
 		refetchIntervalInBackground: false,
 		...(!network.isOffline &&
 			network.effectiveType === 'slow-2g' && {
-				refetchInterval: STALE_TIMES.STANDARD,
+				refetchInterval: STALE_TIMES.RARE,
 			}),
 		...options,
 	})
@@ -34,3 +43,5 @@ export function useAgents(options = {}) {
 		error: queryResult.error,
 	}
 }
+
+export { useAgents }
