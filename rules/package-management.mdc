@@ -59,7 +59,7 @@ pnpm -F @repo/package-name add -D dependency-name
 
 ```bash
 # Reference another workspace package
-pnpm -F worker-name add '@repo/hono-helpers@workspace:*'
+pnpm -F app-name add '@repo/hono-helpers@workspace:*'
 
 # Uses workspace:* protocol in package.json
 ```
@@ -111,6 +111,7 @@ Most packages reference scripts from [packages/tools/](mdc:packages/tools/) or d
 	}
 }
 ```
+
 Ensure these scripts in `packages/tools/` (if used) or individual `package.json` files are updated for a Node.js environment. Cloudflare-specific scripts like `build:wrangler`, `run-wrangler-deploy`, `run-wrangler-dev`, and `run-wrangler-types` should be replaced or removed.
 
 ### Benefits
