@@ -1,28 +1,28 @@
-import 'dotenv/config'
-
+import { getVersion } from '@/lib/app/get-version'
 import { useQuery } from '@tanstack/react-query'
+import { useServerFn } from '@tanstack/react-start'
 
 //import clientLogger from '../lib/logger'
 
 export interface ServerVersionInfo {
 	version: string
-	source: string
-	timestamp: string
-	environment: string
-	uptime: number
+	//source: string
+	//timestamp: string
+	//environment: string
+	//uptime: number
 }
-
-const API_URL = process.env.API_PUBLIC_URL || 'http://localhost:8801'
 
 /**
  * Hook to fetch version information from the API
  */
 export function useServerVersion() {
+	const queryVersion = useServerFn(getVersion)
 	return useQuery<ServerVersionInfo>({
 		queryKey: ['server-version'],
 		queryFn: async () => {
 			try {
-				const response = await fetch(`${API_URL}/version`)
+				const data = queryVersion()
+				/**const response = await fetch(`${API_URL}/version`)
 
 				if (!response.ok) {
 					throw new Error(
@@ -30,7 +30,7 @@ export function useServerVersion() {
 					)
 				}
 
-				const data = await response.json()
+				const data = await response.json()*/
 				return data
 			} catch (error) {
 				console.error('Error fetching server version:', error)

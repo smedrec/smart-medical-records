@@ -24,8 +24,8 @@ export class AppClient extends BaseResource {
 	 * Check if the Auth API is working
 	 * @returns Promise ...
 	 */
-	public async ok(): Promise<{ ok: boolean }> {
-		return await this.request(`/auth/ok`)
+	public ok(): Promise<{ ok: boolean }> {
+		return this.request(`/auth/ok`)
 	}
 
 	/**
@@ -41,8 +41,8 @@ export class AppClient extends BaseResource {
 	 * @param plaintext Plaintext to be encrypted
 	 * @returns Promise contains ciphertext
 	 */
-	public async encrypt(plaintext: string): Promise<EncryptResponse> {
-		return await this.request(`/encrypt`, { method: 'POST', body: { plaintext: plaintext } })
+	public encrypt(plaintext: string): Promise<EncryptResponse> {
+		return this.request(`/encrypt`, { method: 'POST', body: { plaintext: plaintext } })
 	}
 
 	/**
@@ -50,7 +50,7 @@ export class AppClient extends BaseResource {
 	 * @param ciphertext Ciphertext to be decrypt
 	 * @returns Promise contains plaintext
 	 */
-	public async decrypt(ciphertext: string): Promise<DecryptResponse> {
-		return await this.request(`/decrypt`, { method: 'POST', body: { ciphertext: ciphertext } })
+	public decrypt(ciphertext: string): Promise<DecryptResponse> {
+		return this.request(`/decrypt`, { method: 'POST', body: { ciphertext: ciphertext } })
 	}
 }

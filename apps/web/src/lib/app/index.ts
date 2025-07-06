@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 import { getHeaders } from '@tanstack/react-start/server'
 
 import { AppClient } from '@repo/app-client'
