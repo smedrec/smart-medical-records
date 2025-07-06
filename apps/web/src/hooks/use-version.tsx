@@ -1,13 +1,14 @@
+import { app } from '@/lib/app'
 import { useQuery } from '@tanstack/react-query'
 
 //import clientLogger from '../lib/logger'
 
 export interface ServerVersionInfo {
 	version: string
-	source: string
-	timestamp: string
-	environment: string
-	uptime: number
+	//source: string
+	//timestamp: string
+	//environment: string
+	//uptime: number
 }
 
 /**
@@ -18,16 +19,9 @@ export function useServerVersion() {
 		queryKey: ['server-version'],
 		queryFn: async () => {
 			try {
-				const response = await fetch(`${process.env.APP_PUBLIC_URL}/version`)
-
-				if (!response.ok) {
-					throw new Error(
-						`Failed to fetch server version: ${response.status} ${response.statusText}`
-					)
-				}
-
-				const data = await response.json()
-				return data
+				app.version()
+				const response = await app.version()
+				return response
 			} catch (error) {
 				console.error('Error fetching server version:', error)
 				throw error
@@ -40,7 +34,7 @@ export function useServerVersion() {
 }
 
 /**
- * Hook that returns just the version string for backwards compatibility
+ * Hook that returns just the version string
  */
 export function useVersionString() {
 	const { data } = useServerVersion()
