@@ -1,5 +1,6 @@
 import { betterAuth, unknown } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { nextCookies } from 'better-auth/next-js'
 import { admin, apiKey, mcp, oidcProvider, openAPI, organization } from 'better-auth/plugins'
 import Redis from 'ioredis'
 
@@ -59,6 +60,7 @@ class Auth {
 		const authDbService = new AuthDb(effectiveConfig.AUTH_DB_URL)
 		const db = authDbService.getDrizzleInstance()
 
+		// TODO - see who to fix the async question
 		//if (await authDbService.checkAuthDbConnection()) {
 		console.info('🟢 Connected to Postgres for Better Auth service.')
 		//} else {
@@ -406,6 +408,7 @@ class Auth {
 			}
 		}),*/
 				openAPI(),
+				nextCookies(),
 			],
 			account: {
 				accountLinking: {

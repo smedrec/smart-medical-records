@@ -1,46 +1,137 @@
+'use client'
+
 import { ChatBubble, ChatBubbleAvatar, ChatBubbleMessage } from '@/components/ai/chat-bubble'
 import { ChatInput } from '@/components/ai/chat-input'
 import { ChatMessageList } from '@/components/ai/chat-message-list'
+import CodeDisplayBlock from '@/components/ai/code-display-block'
 import {
 	ExpandableChat,
 	ExpandableChatBody,
 	ExpandableChatFooter,
 	ExpandableChatHeader,
 } from '@/components/ai/expandable-chat'
+import { useChat } from '@ai-sdk/react'
 import { Send } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 import { Button } from '@repo/ui/components/ui/button'
 
 // TODO - improve the layout and add the support agent
 
 export default function ChatSupport() {
-	const message = {
-		role: 'assistant',
-		content: 'Hello there',
+	const [isGenerating, setIsGenerating] = useState(false)
+	const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+		onResponse(response) {
+			if (response) {
+				setIsGenerating(false)
+			}
+		},
+		onError(error) {
+			if (error) {
+				setIsGenerating(false)
+			}
+		},
+	})
+
+	const messagesRef = useRef<HTMLDivElement>(null)
+	const formRef = useRef<HTMLFormElement>(null)
+
+	useEffect(() => {
+		if (messagesRef.current) {
+			messagesRef.current.scrollTop = messagesRef.current.scrollHeight
+		}
+	}, [messages])
+
+	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault()
+		setIsGenerating(true)
+		handleSubmit(e)
 	}
+
+	const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault()
+			if (isGenerating || isLoading || !input) return
+			setIsGenerating(true)
+			void onSubmit(e as unknown as React.FormEvent<HTMLFormElement>)
+		}
+	}
+
 	return (
-		<ExpandableChat size="lg" position="bottom-right">
-			<ExpandableChatHeader className="flex-col text-center justify-center">
+		<ExpandableChat size="md" position="bottom-right">
+			<ExpandableChatHeader className="bg-muted/60 flex-col text-center justify-center">
 				<h1 className="text-xl font-semibold">Chat with our AI ✨</h1>
 				<p>Ask any question for our AI to answer</p>
 				<div className="flex gap-2 items-center pt-2">
-					<Button variant="secondary">New Chat</Button>
+					<Button variant="secondary" onClick={() => setMessages([])}>
+						New Chat
+					</Button>
 					<Button variant="secondary">See FAQ</Button>
 				</div>
 			</ExpandableChatHeader>
 			<ExpandableChatBody>
-				<ChatMessageList>
-					<ChatBubble>
-						<ChatBubbleAvatar />
-						<ChatBubbleMessage>{message.content}</ChatBubbleMessage>
+				<ChatMessageList className="bg-muted/25" ref={messagesRef}>
+					{/* Initial message */}
+					<ChatBubble variant="received">
+						<ChatBubbleAvatar src="" fallback="🤖" />
+						<ChatBubbleMessage>
+							Hello! I'm the AI assistant. How can I help you today?
+						</ChatBubbleMessage>
 					</ChatBubble>
+
+					{/* Messages */}
+					{messages &&
+						messages.map((message, index) => (
+							<ChatBubble key={index} variant={message.role == 'user' ? 'sent' : 'received'}>
+								<ChatBubbleAvatar src="" fallback={message.role == 'user' ? '👨🏽' : '🤖'} />
+								<ChatBubbleMessage variant={message.role == 'user' ? 'sent' : 'received'}>
+									{message.content.split('```').map((part: string, index: number) => {
+										if (index % 2 === 0) {
+											return (
+												<Markdown key={index} remarkPlugins={[remarkGfm]}>
+													{part}
+												</Markdown>
+											)
+										} else {
+											return (
+												<pre className=" pt-2" key={index}>
+													<CodeDisplayBlock code={part} lang="" />
+												</pre>
+											)
+										}
+									})}
+								</ChatBubbleMessage>
+							</ChatBubble>
+						))}
+
+					{/* Loading */}
+					{isGenerating && (
+						<ChatBubble variant="received">
+							<ChatBubbleAvatar src="" fallback="🤖" />
+							<ChatBubbleMessage isLoading />
+						</ChatBubble>
+					)}
 				</ChatMessageList>
 			</ExpandableChatBody>
-			<ExpandableChatFooter>
-				<ChatInput />
-				<Button type="submit" size="icon">
-					<Send className="size-4" />
-				</Button>
+			<ExpandableChatFooter className="bg-muted/25">
+				<form ref={formRef} className="flex relative gap-2" onSubmit={onSubmit}>
+					<ChatInput
+						value={input}
+						onChange={handleInputChange}
+						onKeyDown={onKeyDown}
+						className="min-h-12 bg-background shadow-none "
+					/>
+					<Button
+						className="absolute top-1/2 right-2 transform  -translate-y-1/2"
+						type="submit"
+						size="icon"
+						disabled={isLoading || isGenerating || !input}
+					>
+						<Send className="size-4" />
+					</Button>
+				</form>
 			</ExpandableChatFooter>
 		</ExpandableChat>
 	)
