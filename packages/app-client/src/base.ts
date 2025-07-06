@@ -20,7 +20,10 @@ export class BaseResource {
 			retries = 3,
 			backoffMs = 100,
 			maxBackoffMs = 1000,
-			headers = {},
+			headers = {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
 		} = this.options
 
 		let delay = backoffMs
