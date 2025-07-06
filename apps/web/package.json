@@ -5,13 +5,12 @@
 	"sideEffects": false,
 	"type": "module",
 	"scripts": {
-		"build": "run-vite-build",
+		"build": "vite build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
-		"dev": "run-vite-dev",
-		"preview": "run-vite-preview",
-		"test": "run-vitest",
-		"vite:dev": "vite dev --port 3000"
+		"dev": "vite dev",
+		"preview": "vite preview",
+		"test": "run-vitest"
 	},
 	"dependencies": {
 		"@ai-sdk/react": "2.0.0-beta.7",
@@ -68,7 +67,6 @@
 		"workers-tagged-logger": "0.13.1"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.49",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
