@@ -41,3 +41,11 @@ export interface DeleteObjectResponse {
 export interface VersionResponse {
 	version: string
 }
+
+export interface EncryptResponse {
+	ciphertext: string
+}
+
+export interface DecryptResponse {
+	plaintext: string
+}

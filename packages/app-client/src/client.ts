@@ -13,7 +13,7 @@
  */
 import { BaseResource } from './base.js'
 
-import type { ClientOptions, VersionResponse } from './types.js'
+import type { ClientOptions, DecryptResponse, EncryptResponse, VersionResponse } from './types.js'
 
 export class AppClient extends BaseResource {
 	constructor(options: ClientOptions) {
@@ -21,7 +21,7 @@ export class AppClient extends BaseResource {
 	}
 
 	/**
-	 * Check if the API is working
+	 * Check if the Auth API is working
 	 * @returns Promise ...
 	 */
 	public ok(): Promise<{ ok: boolean }> {
@@ -34,5 +34,23 @@ export class AppClient extends BaseResource {
 	 */
 	public version(): Promise<VersionResponse> {
 		return this.request(`/version`)
+	}
+
+	/**
+	 * Encrypt a plaintext string
+	 * @param plaintext Plaintext to be encrypted
+	 * @returns Promise contains ciphertext
+	 */
+	public encrypt(plaintext: string): Promise<EncryptResponse> {
+		return this.request(`/encrypt`, { method: 'POST', body: { plaintext: plaintext } })
+	}
+
+	/**
+	 * Decrypt a ciphertext string
+	 * @param ciphertext Ciphertext to be decrypt
+	 * @returns Promise contains plaintext
+	 */
+	public Decrypt(ciphertext: string): Promise<DecryptResponse> {
+		return this.request(`/encrypt`, { method: 'POST', body: { ciphertext: ciphertext } })
 	}
 }
