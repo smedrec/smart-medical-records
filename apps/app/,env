@@ -1,0 +1,4 @@
+ENVIRONMENT=development
+BETTER_AUTH_URL=http://localhost:8801/auth
+APP_PUBLIC_URL=http://localhost:8801
+MASTRA_PUBLIC_URL=http://localhost:4111

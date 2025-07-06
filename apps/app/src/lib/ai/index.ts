@@ -1,16 +1,21 @@
+'use server'
+
 import { MastraClient } from '@mastra/client-js'
 import { headers } from 'next/headers'
 
-const nextHeaders = await headers()
+const MASTRA_URL = process.env.MASTRA_PUBLIC_URL || 'http://localhost:4111'
 
-const ai = new MastraClient({
-	baseUrl: 'http://localhost:4111',
-	retries: 3,
-	backoffMs: 300,
-	maxBackoffMs: 5000,
-	headers: {
-		...nextHeaders.entries,
-	},
-})
+const ai = async () => {
+	const nextHeaders = await headers()
+	return new MastraClient({
+		baseUrl: MASTRA_URL,
+		retries: 3,
+		backoffMs: 300,
+		maxBackoffMs: 5000,
+		headers: {
+			...nextHeaders.entries,
+		},
+	})
+}
 
 export { ai }

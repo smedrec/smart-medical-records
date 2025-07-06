@@ -1,7 +1,9 @@
+'use client'
+
 import { STALE_TIMES } from '@/lib/constants'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ThemeProvider } from 'next-themes'
-import { Toaster } from 'sonner'
 
 import type { ReactNode } from 'react'
 
@@ -29,22 +31,20 @@ const queryClient = new QueryClient({
 	},
 })
 
-export function Providers({ children }: { children: ReactNode }) {
+function Providers({ children }: { children: ReactNode }) {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<ThemeProvider
 				attribute="class"
 				defaultTheme="system"
-				enableSystem
+				enableSystem={true}
 				disableTransitionOnChange
-				themeColor={{
-					light: 'oklch(1 0 0)',
-					dark: 'oklch(0.145 0 0)',
-				}}
 			>
 				{children}
-				<Toaster />
 			</ThemeProvider>
+			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>
 	)
 }
+
+export { Providers }
