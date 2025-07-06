@@ -13,8 +13,7 @@ This guide covers testing strategies, patterns, and tools used across the Worker
 ### Core Testing Tools
 
 - **[Vitest](https://vitest.dev/)** - Fast unit testing framework
-- **[@cloudflare/vitest-pool-workers](https://github.com/cloudflare/workers-sdk/tree/main/packages/vitest-pool-workers)** - Worker runtime testing
-- **[Cloudflare Test Environment](https://developers.cloudflare.com/workers/testing/)** - Integration testing utilities
+- **[Node Test Environment](https://nodejs.org/api/test.html)** - Integration testing utilities
 
 ### Configuration
 
@@ -23,10 +22,10 @@ This guide covers testing strategies, patterns, and tools used across the Worker
 
 ## Test Structure
 
-### Worker Testing Pattern
+### App Testing Pattern
 
 ```
-apps/worker-name/
+apps/app-name/
 └── src/
     ├── index.ts
     └── test/
@@ -94,10 +93,10 @@ describe('Worker Integration Tests', () => {
 
 ```typescript
 // Mock environment variables
-describe('Worker with Environment', () => {
+describe('App with Environment', () => {
 	it('uses environment variables', async () => {
-		// env object is automatically populated from .dev.vars
-		expect(env.SOME_SECRET).toBeDefined()
+		// env object is automatically populated from .env
+		expect(process.env.SOME_SECRET).toBeDefined()
 
 		const request = new Request('http://example.com/config')
 		const ctx = createExecutionContext()
@@ -205,32 +204,22 @@ pnpm turbo test
 import { defineWorkspace } from 'vitest/config'
 
 export default defineWorkspace([
-	// Worker applications
+	// App applications
 	'apps/*/vitest.config.{ts,js}',
 	// Shared packages
 	'packages/*/vitest.config.{ts,js}',
 ])
 ```
 
-### Worker Vitest Config
+### App Vitest Config
 
 ```typescript
-// apps/worker-name/vitest.config.ts
+// apps/app-name/vitest.config.ts
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
 	test: {
 		environment: 'node',
-		pool: '@cloudflare/vitest-pool-workers',
-		poolOptions: {
-			workers: {
-				wrangler: { configPath: './wrangler.jsonc' },
-				miniflare: {
-					// Miniflare options
-					compatibilityDate: '2024-01-01',
-				},
-			},
-		},
 	},
 })
 ```
@@ -245,6 +234,10 @@ export default defineConfig({
 	test: {
 		environment: 'node',
 		globals: true,
+		coverage: {
+			provider: 'v8', // or 'istanbul'
+			reporter: ['text', 'json', 'html'],
+		},
 	},
 })
 ```
@@ -253,13 +246,13 @@ export default defineConfig({
 
 ### 1. Test Structure
 
-- **Integration tests** for workers (`src/test/integration/`)
+- **Integration tests** for apps (`src/test/integration/`)
 - **Unit tests** for packages (`src/test/` or alongside source files)
 - **Consistent naming**: `*.test.ts` pattern
 
 ### 2. Environment Setup
 
-- Use `.dev.vars` for test environment variables
+- Use `.env` for test environment variables
 - Mock external services appropriately
 - Test both success and error cases
 
@@ -316,13 +309,4 @@ it('handles errors gracefully', async () => {
 })
 ```
 
-### Test Worker Bindings
-
-```typescript
-it('uses KV storage', async () => {
-	// env.TEST_KV is available from wrangler.jsonc bindings
-	await env.TEST_KV.put('key', 'value')
-	const value = await env.TEST_KV.get('key')
-	expect(value).toBe('value')
-})
-```
+### Test Async Operations

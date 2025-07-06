@@ -89,9 +89,8 @@ pnpm run fix:format
 #### Deployment
 
 ```bash
-# Deploy all workers
+# Deploy all apps
 just deploy
-# Requires CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID
 ```
 
 ## Workspace Commands
@@ -160,6 +159,6 @@ Always use `pnpm` instead of `npm` or `yarn` to maintain workspace consistency.
 ## Important Notes
 
 - **TypeScript Configs**: When extending configs, always use fully qualified paths (e.g., `@repo/typescript-config/base.json`) instead of relative paths
-- **Worker Types**: Don't add 'WebWorker' to TypeScript config for Workers - these types are included in worker-configuration.d.ts or @cloudflare/workers-types  
+- **Worker Types**: Don't add 'WebWorker' to TypeScript config for Workers - these types are included in worker-configuration.d.ts or @cloudflare/workers-types
 - **Lint Checking**: First `cd` to the package directory, then run: `pnpm turbo check:types check:lint`
 - **Dependencies**: Use `workspace:*` protocol for internal dependencies
