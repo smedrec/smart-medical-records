@@ -7,7 +7,7 @@
 		"target": "ESNext",
 		"module": "ESNext",
 		"moduleDetection": "force",
-		"jsx": "react-jsx",
+		// "jsx": "react-jsx", // Removed as tools scripts typically don't use JSX
 		"allowImportingTsExtensions": true,
 		"noFallthroughCasesInSwitch": true
 	}

@@ -31,7 +31,13 @@ export function getRequestLogData<T extends HonoApp>(
 		path: c.req.path,
 		routePath: c.req.routePath,
 		searchParams: redactedUrl.searchParams.toString(),
-		headers: JSON.stringify(Array.from(c.req.raw.headers)),
+		headers: (() => {
+			const obj: Record<string, string> = {};
+			c.req.raw.headers.forEach((value, key) => {
+				obj[key] = value;
+			});
+			return JSON.stringify(obj);
+		})(),
 		ip:
 			c.req.header('cf-connecting-ip') ||
 			c.req.header('x-real-ip') ||

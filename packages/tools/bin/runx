@@ -1,13 +1,46 @@
-#!/usr/bin/env sh
-set -eu
+#!/usr/bin/env node
+// This script is an ESM shim to execute the actual TypeScript CLI script.
+// It uses Node's --import flag to register tsx's ESM loader.
 
-script_path="$(realpath "$(dirname $0)/../src/bin/runx.ts")"
+import { spawn } from 'node:child_process';
+import path from 'node:path';
+import fs from 'node:fs';
 
-bin_dir="$(realpath "$(dirname $0)")"
-tsx_path="$(realpath "$bin_dir/../node_modules/.bin/tsx")"
+// Resolve the true directory of this script, following symlinks
+const __filename = fs.realpathSync(process.argv[1]);
+const __dirname_from_filename = path.dirname(__filename); // This should be <@repo/tools>/bin
 
-if command -v bun >/dev/null 2>&1; then
-	bun "$script_path" "$@"
-else
-	"$tsx_path" "$script_path" "$@"
-fi
+const targetTypeScriptFile = path.join(__dirname_from_filename, '..', 'src', 'bin', 'runx.ts');
+const args = process.argv.slice(2);
+
+if (!fs.existsSync(targetTypeScriptFile)) {
+    console.error(`Error: Target TypeScript file not found at ${targetTypeScriptFile}`);
+    console.error(`  (Resolved script directory: ${__dirname_from_filename})`);
+    process.exit(1);
+}
+
+const child = spawn(
+    process.execPath, // Path to the current Node.js executable
+    [
+        '--import=tsx/esm', // tsx ESM loader
+        targetTypeScriptFile,
+        ...args
+    ],
+    { stdio: 'inherit' }
+);
+
+child.on('error', (err) => {
+    console.error(`Failed to start subprocess with Node.js and tsx loader.`, err);
+    process.exit(1);
+});
+
+child.on('exit', (code, signal) => {
+    if (signal) {
+        console.error(`Subprocess killed with signal ${signal}`);
+        process.exit(1);
+    }
+    if (code !== 0) {
+        process.exit(code);
+    }
+    process.exit(0);
+});
