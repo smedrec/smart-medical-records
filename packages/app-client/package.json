@@ -12,7 +12,8 @@
 	"scripts": {
 		"build": "tsup src/index.ts --format cjs,esm --dts",
 		"check:lint": "run-eslint",
-		"check:types": "run-tsc"
+		"check:types": "run-tsc",
+		"test": "vitest run"
 	},
 	"dependencies": {},
 	"devDependencies": {
