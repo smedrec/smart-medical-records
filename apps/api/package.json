@@ -10,10 +10,8 @@
 		"build": "tsc",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
-		"deploy": "run-wrangler-deploy",
 		"dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
 		"dev:vite": "vite --port 8801",
-		"dev:wrangler": "run-wrangler-dev",
 		"test": "run-vitest"
 	},
 	"dependencies": {

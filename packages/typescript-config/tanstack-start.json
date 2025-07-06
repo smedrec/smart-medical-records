@@ -1,0 +1,25 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"include": ["${configDir}/**/*.ts", "${configDir}/**/*.tsx"],
+	"exclude": [
+		"${configDir}/node_modules/",
+		"${configDir}/.tanstack/",
+		"${configDir}/.turbo/",
+		"${configDir}/eslint.config.ts"
+	],
+	"compilerOptions": {
+		"strict": true,
+		"esModuleInterop": true,
+		"jsx": "react-jsx",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"lib": ["DOM", "DOM.Iterable", "ES2022"],
+		"isolatedModules": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"target": "ES2022",
+		"allowJs": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": true
+	}
+}
