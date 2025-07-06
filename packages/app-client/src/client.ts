@@ -50,8 +50,7 @@ export class AppClient extends BaseResource {
 	 * @param ciphertext Ciphertext to be decrypt
 	 * @returns Promise contains plaintext
 	 */
-	// TODO: Standardize naming convention (e.g., to decrypt) in a future refactor.
-	public Decrypt(ciphertext: string): Promise<DecryptResponse> {
+	public decrypt(ciphertext: string): Promise<DecryptResponse> {
 		return this.request(`/decrypt`, { method: 'POST', body: { ciphertext: ciphertext } })
 	}
 }
