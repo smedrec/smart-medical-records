@@ -31,6 +31,7 @@ import { registerConfigMailDelete } from './routes/config/mail/delete.js'
 import { registerConfigMailFind } from './routes/config/mail/find.js'
 import { registerConfigMailUpdate } from './routes/config/mail/update.js'
 import { registerLiveness } from './routes/liveness.js'
+import { registerSecretGet } from './routes/secrets/get.js'
 import { registerVersion } from './routes/version.js'
 
 //import type { Env } from '@/lib/hono/context.js'
@@ -90,6 +91,7 @@ registerAiIndexes(app)
 // KMS
 registerKmsEncrypt(app)
 registerKmsDecrypt(app)
+registerSecretGet(app)
 
 const server = serve({
 	fetch: app.fetch,

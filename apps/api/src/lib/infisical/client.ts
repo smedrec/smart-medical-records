@@ -1,22 +1,31 @@
-import { InfisicalSDK } from '@infisical/sdk'
+import { Infisical } from '@repo/infisical'
 
-export const INFISICAL_PROJECT_ID = process.env.INFISICAL_PROJECT_ID!
+import type { InfisicalClientOptions, ProjectOptions } from '@repo/infisical'
 
-const infisical = new InfisicalSDK({
-	siteUrl: 'https://infisical.teachhowtofish.org', // Optional, defaults to https://app.infisical.com
-})
+async function initializeInfisicalClient() {
+	const clientAuthOptions: InfisicalClientOptions = {
+		siteUrl: process.env.INFISICAL_SITE_URL!, // e.g., "https://app.infisical.com"
+		clientId: process.env.INFISICAL_CLIENT_ID!,
+		clientSecret: process.env.INFISICAL_CLIENT_SECRET!,
+	}
 
-// Authenticate with Infisical
-await infisical.auth().universalAuth.login({
-	clientId: process.env.INFISICAL_CLIENT_ID!,
-	clientSecret: process.env.INFISICAL_CLIENT_SECRET!,
-})
+	const projectConfig: ProjectOptions = {
+		projectId: process.env.INFISICAL_PROJECT_ID!, // Your Infisical Project ID
+		environment: process.env.INFISICAL_ENVIRONMENT!, // e.g., "dev", "prod", "stg"
+	}
 
-export { infisical }
+	try {
+		const infisicalClient = new Infisical(
+			Infisical.WithConfig(projectConfig),
+			await Infisical.init(clientAuthOptions)
+		)
+		console.log('Infisical client initialized successfully.')
+		return infisicalClient
+	} catch (error) {
+		console.error('Failed to initialize Infisical client:', error)
+		// Handle initialization error (e.g., exit application, retry, etc.)
+		process.exit(1)
+	}
+}
 
-/**const allSecrets = await client.secrets().listSecrets({
-  environment: "dev", // stg, dev, prod, or custom environment slugs
-  projectId: INFISICAL_PROJECT_ID
-});
-
-console.log("Fetched secrets", allSecrets)*/
+export { initializeInfisicalClient }
