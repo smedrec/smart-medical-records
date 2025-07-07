@@ -31,7 +31,7 @@ export class SendMail {
 
 		if (!effectiveRedisUrl) {
 			throw new Error(
-				'Send Mail Service: Redis URL not provided and could not be found in environment variables (AUDIT_REDIS_URL).'
+				'Send Mail Service: Redis URL not provided and could not be found in environment variables (MAIL_REDIS_URL).'
 			)
 		}
 
