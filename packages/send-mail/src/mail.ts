@@ -6,18 +6,25 @@ import type { RedisOptions } from 'ioredis'
 import type { SendMailEvent } from './types.js'
 
 /**
- * Retrieves an environment variable.
- * This function checks `process.env` for Node.js environments.
+ * Retrieves an environment variable from Cloudflare Workers or Node.js process.env.
+ * This function checks `process.env` for Node.js environments
+ * and `env` for Cloudflare Workers environments.
  *
  * @param variableName - The name of the environment variable to retrieve.
  * @returns The value of the environment variable, or `undefined` if not found.
  */
 function getEnv(variableName: string): string | undefined {
+	// Check Cloudflare Workers env
+	// @ts-expect-error Hides `Cannot find name 'env'.` when not in CF Worker context.
+	if (typeof env !== 'undefined' && env[variableName]) {
+		// @ts-expect-error
+		return env[variableName]
+	}
 	// Check Node.js process.env
 	if (typeof process !== 'undefined' && process.env && process.env[variableName]) {
 		return process.env[variableName]
 	}
-	// TODO: Add support for other environments like Cloudflare Workers `env` if needed.
+
 	return undefined
 }
 
@@ -80,7 +87,10 @@ export class SendMail {
 		} catch (err) {
 			// This catch block might only capture immediate instantiation errors from ioredis,
 			// most connection issues are asynchronous.
-			console.error(`[SendMailService] Failed to create Redis instance for queue ${this.queueName}:`, err)
+			console.error(
+				`[SendMailService] Failed to create Redis instance for queue ${this.queueName}:`,
+				err
+			)
 			throw new Error(
 				`[SendMailService] Failed to initialize Redis connection for queue ${this.queueName}. Please check Redis configuration and availability. Error: ${err instanceof Error ? err.message : String(err)}`
 			)
@@ -131,7 +141,12 @@ export class SendMail {
 		if (!this.bullmq_queue) {
 			throw new Error('[SendMailService] Cannot send event: BullMQ queue is not initialized.')
 		}
-		if (!this.connection || (this.connection.status !== 'ready' && this.connection.status !== 'connecting' && this.connection.status !== 'reconnecting')) {
+		if (
+			!this.connection ||
+			(this.connection.status !== 'ready' &&
+				this.connection.status !== 'connecting' &&
+				this.connection.status !== 'reconnecting')
+		) {
 			// While ioredis handles reconnections, sending a command when not 'ready' (or in a state that will soon be ready)
 			// might lead to errors if maxRetriesPerRequest is not null or if the connection is truly down.
 			// BullMQ itself also has robustness, so this is an additional safeguard/log.
@@ -176,9 +191,14 @@ export class SendMail {
 			if ((this.connection.status as string) !== 'end') {
 				try {
 					await this.connection.quit()
-					console.info(`[SendMailService] Redis connection for queue '${this.queueName}' quit gracefully.`)
+					console.info(
+						`[SendMailService] Redis connection for queue '${this.queueName}' quit gracefully.`
+					)
 				} catch (err) {
-					console.error(`[SendMailService] Error quitting Redis connection for queue '${this.queueName}':`, err)
+					console.error(
+						`[SendMailService] Error quitting Redis connection for queue '${this.queueName}':`,
+						err
+					)
 					// Fallback to disconnect if quit fails or times out (ioredis default timeout is 2s for quit)
 					if (this.connection.status !== 'end') {
 						await this.connection.disconnect()

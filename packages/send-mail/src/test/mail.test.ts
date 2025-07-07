@@ -1,8 +1,10 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { Queue } from 'bullmq'
 import { Redis } from 'ioredis'
-import { SendMail } from './mail'
-import type { SendMailEvent } from './types'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { SendMail } from '../mail'
+
+import type { SendMailEvent } from '../types'
 
 // Mock dependencies
 vi.mock('bullmq')
@@ -118,13 +120,17 @@ describe('SendMail', () => {
 		it('should log Redis connection events', () => {
 			new SendMail(mockQueueName, mockRedisUrl)
 			// Simulate events
-			const connectCallback = mockRedisInstance.on.mock.calls.find((call: any) => call[0] === 'connect')[1]
+			const connectCallback = mockRedisInstance.on.mock.calls.find(
+				(call: any) => call[0] === 'connect'
+			)[1]
 			connectCallback()
 			expect(console.info).toHaveBeenCalledWith(
 				`[SendMailService] Successfully connected to Redis for queue ${mockQueueName}.`
 			)
 
-			const errorCallback = mockRedisInstance.on.mock.calls.find((call: any) => call[0] === 'error')[1]
+			const errorCallback = mockRedisInstance.on.mock.calls.find(
+				(call: any) => call[0] === 'error'
+			)[1]
 			const testError = new Error('Test Redis error')
 			errorCallback(testError)
 			expect(console.error).toHaveBeenCalledWith(
@@ -132,15 +138,21 @@ describe('SendMail', () => {
 				testError
 			)
 
-			const closeCallback = mockRedisInstance.on.mock.calls.find((call: any) => call[0] === 'close')[1]
+			const closeCallback = mockRedisInstance.on.mock.calls.find(
+				(call: any) => call[0] === 'close'
+			)[1]
 			closeCallback()
-			expect(console.info).toHaveBeenCalledWith(`[SendMailService] Redis connection closed for queue ${mockQueueName}.`)
+			expect(console.info).toHaveBeenCalledWith(
+				`[SendMailService] Redis connection closed for queue ${mockQueueName}.`
+			)
 
 			const reconnectingCallback = mockRedisInstance.on.mock.calls.find(
 				(call: any) => call[0] === 'reconnecting'
 			)[1]
 			reconnectingCallback()
-			expect(console.info).toHaveBeenCalledWith(`[SendMailService] Reconnecting to Redis for queue ${mockQueueName}...`)
+			expect(console.info).toHaveBeenCalledWith(
+				`[SendMailService] Reconnecting to Redis for queue ${mockQueueName}...`
+			)
 		})
 	})
 
@@ -211,7 +223,9 @@ describe('SendMail', () => {
 			expect(mockQueueInstance.close).toHaveBeenCalledTimes(1)
 			expect(mockRedisInstance.quit).toHaveBeenCalledTimes(1)
 			expect(mockRedisInstance.disconnect).not.toHaveBeenCalled()
-			expect(console.info).toHaveBeenCalledWith(`[SendMailService] BullMQ queue '${mockQueueName}' closed successfully.`)
+			expect(console.info).toHaveBeenCalledWith(
+				`[SendMailService] BullMQ queue '${mockQueueName}' closed successfully.`
+			)
 			expect(console.info).toHaveBeenCalledWith(
 				`[SendMailService] Redis connection for queue '${mockQueueName}' quit gracefully.`
 			)
