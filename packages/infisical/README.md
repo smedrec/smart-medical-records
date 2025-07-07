@@ -63,8 +63,8 @@ async function initializeInfisicalClient() {
 
 	try {
 		const infisicalClient = new Infisical(
-			Infisical.WithConfig(initializeInfisicalClient),
-			await Infisical.init(projectConfig)
+			Infisical.WithConfig(projectConfig),
+			await Infisical.init(clientAuthOptions)
 		)
 		console.log('Infisical client initialized successfully.')
 		return infisicalClient
@@ -148,7 +148,7 @@ The package exports custom error types for better error management:
 - `InfisicalClientNotInitializedError`: Thrown if you attempt to use `getSecret` or `allSecrets` before the client has been successfully initialized (i.e., `Infisical.init()` was not called or did not complete).
 - `InfisicalError`: A general error for issues occurring during interaction with the Infisical SDK (e.g., authentication failure, secret not found, network issues). This error includes a `cause` property which may contain the original error from the SDK.
 
-Always wrap calls to `Infisical.init()`, `client.getSecret()`, and `client.allSecrets()` in `try...catch` blocks to handle potential errors gracefully.
+Always wrap calls to `client.getSecret()`, and `client.allSecrets()` in `try...catch` blocks to handle potential errors gracefully.
 
 ```typescript
 import { Infisical, InfisicalClientNotInitializedError, InfisicalError } from '@repo/infisical'

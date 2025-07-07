@@ -1,6 +1,6 @@
 import { createRoute, z } from '@hono/zod-openapi'
 
-import { Infisical } from '@repo/infisical'
+import { Infisical, InfisicalClientNotInitializedError, InfisicalError } from '@repo/infisical'
 
 import { ApiError, openApiErrorResponses } from '../../lib/errors/index.js'
 
@@ -79,7 +79,13 @@ export const registerSecretGet = (app: App) =>
 			const value = await infisicalClient.getSecret(key)
 			return c.json([{ key: key, value: value }], 200)
 		} catch (error) {
-			const message = error instanceof Error ? error.message : 'An unknown error occurred'
+			const message =
+				error instanceof InfisicalError || error instanceof InfisicalClientNotInitializedError
+					? error.message
+					: 'An unknown error occurred'
+			if (error instanceof InfisicalError) {
+				throw new ApiError({ code: 'NOT_FOUND', message })
+			}
 			throw new ApiError({ code: 'INTERNAL_SERVER_ERROR', message })
 		}
 

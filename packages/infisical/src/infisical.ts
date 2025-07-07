@@ -13,9 +13,7 @@ type InfisicalOption = (s: Infisical) => void
  * Error thrown when the Infisical client is not initialized before use.
  */
 export class InfisicalClientNotInitializedError extends Error {
-	constructor(
-		message = 'Infisical client has not been initialized. Call and await Infisical.init() before using client methods.'
-	) {
+	constructor(message = 'Infisical client has not been initialized.') {
 		super(message)
 		this.name = 'InfisicalClientNotInitializedError'
 	}
@@ -121,7 +119,9 @@ export class Infisical {
 				s.apiClient = apiClient
 			}
 		} catch (error) {
-			throw new InfisicalError('Failed to initialize or authenticate Infisical client.', error)
+			throw new InfisicalClientNotInitializedError(
+				'Failed to initialize or authenticate Infisical client.'
+			)
 		}
 	}
 
