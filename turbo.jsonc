@@ -8,7 +8,10 @@
 		"VITEST",
 		"DEV",
 		"ENVIRONMENT",
-		"LOG_LEVEL"
+		"LOG_LEVEL",
+		"BETTER_AUTH_URL",
+		"API_PUBLIC_URL",
+		"AI_PUBLIC_URL"
 		// Removed many service-specific environment variables.
 		// Projects should define their own necessary env vars or load them via .env files.
 	],
@@ -51,10 +54,10 @@
 		"check:ci": {
 			"dependsOn": [
 				"check:format", // Uncommented
-				"check:deps",   // Uncommented
+				"check:deps", // Uncommented
 				"check:types",
 				"check:lint:all", // Uncommented
-				"test:ci",      // Was already active, kept "test:ci" instead of "//#test:ci"
+				"test:ci", // Was already active, kept "test:ci" instead of "//#test:ci"
 				"topo"
 			],
 			"outputLogs": "new-only"
@@ -72,14 +75,17 @@
 			"outputLogs": "new-only",
 			"env": ["FIX_ESLINT"]
 		},
-		"check:format": { // Added definition for check:format used in check:ci
+		"check:format": {
+			// Added definition for check:format used in check:ci
 			"dependsOn": [],
 			"outputLogs": "new-only"
 		},
-		"check:deps": { // Added definition for check:deps used in check:ci
+		"check:deps": {
+			// Added definition for check:deps used in check:ci
 			"outputLogs": "new-only"
 		},
-		"check:lint:all": { // Added definition for check:lint:all used in check:ci
+		"check:lint:all": {
+			// Added definition for check:lint:all used in check:ci
 			"outputLogs": "new-only",
 			"outputs": ["node_modules/.cache/eslint/.eslintcache"], // Adjusted path
 			"env": ["FIX_ESLINT"]

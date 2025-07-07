@@ -33,7 +33,7 @@ import {
 import { cn } from '@repo/ui/lib/utils'
 
 import { useVersionString } from '../../hooks/use-version'
-import { authClient } from '../../lib/auth-client'
+import { authClient } from '../../lib/auth'
 
 //import clientLogger from '../../lib/logger'
 

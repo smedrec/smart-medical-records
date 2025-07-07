@@ -1,3 +1,6 @@
+import 'dotenv/config'
+
+//import { getConfigInstance } from '@/lib/config'
 import {
 	adminClient,
 	apiKeyClient,
@@ -6,8 +9,9 @@ import {
 } from 'better-auth/client/plugins'
 import { createAuthClient } from 'better-auth/react'
 
+//const config = getConfigInstance()
+
 export const authClient = createAuthClient({
-	//baseURL: env.BETTER_AUTH_URL,
 	baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:8801/auth',
 	plugins: [organizationClient(), adminClient(), apiKeyClient(), oidcClient()],
 })

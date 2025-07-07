@@ -1,8 +1,10 @@
+//import { getConfigInstance } from '@/lib/config'
 import { createServerFn } from '@tanstack/react-start'
-import { getHeaders } from '@tanstack/react-start/server'
 import { desc, eq } from 'drizzle-orm'
 
 import { AuditDb, auditLog } from '@repo/audit-db'
+
+//const config = getConfigInstance()
 
 type GetAuditLogsParams = {
 	principalId?: string

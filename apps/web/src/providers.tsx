@@ -6,7 +6,7 @@ import { Link, useRouter } from '@tanstack/react-router'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
 
-import { authClient } from './lib/auth-client'
+import { authClient } from './lib/auth'
 
 import type { ReactNode } from 'react'
 
