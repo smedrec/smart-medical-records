@@ -18,8 +18,8 @@ export interface ResendMailerOptions {
  * @property {number} [statusCode] - HTTP status code of the error response.
  */
 interface ResendError extends Error {
-  name?: string;
-  statusCode?: number;
+	name: string
+	statusCode?: number
 }
 
 /**
@@ -58,21 +58,19 @@ export class ResendMailer implements MailerProvider {
 				...(options.text && { text: options.text }),
 			})
 		} catch (error) {
-			let details = String(error);
-      if (error instanceof Error) {
-        details = error.message;
-        const resendError = error as ResendError;
-        if (resendError.name) {
-          details += ` (Name: ${resendError.name})`;
-        }
-        if (resendError.statusCode) {
-          details += ` (Status Code: ${resendError.statusCode})`;
-        }
-      }
+			let details = String(error)
+			if (error instanceof Error) {
+				details = error.message
+				const resendError = error as ResendError
+				if (resendError.name) {
+					details += ` (Name: ${resendError.name})`
+				}
+				if (resendError.statusCode) {
+					details += ` (Status Code: ${resendError.statusCode})`
+				}
+			}
 			// console.error('Error sending email with ResendMailer:', error);
-			throw new Error(
-				`ResendMailer: Failed to send email. ${details}`
-			)
+			throw new Error(`ResendMailer: Failed to send email. ${details}`)
 		}
 	}
 }
