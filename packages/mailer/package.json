@@ -2,6 +2,7 @@
 	"name": "@repo/mailer",
 	"version": "0.1.0",
 	"private": true,
+	"description": "A shared package for sending emails via different providers.",
 	"sideEffects": false,
 	"type": "module",
 	"main": "dist/index.js",
@@ -11,13 +12,12 @@
 		"src"
 	],
 	"scripts": {
-		"build": "tsc --build",
+		"build": "tsup src/index.ts --format cjs,esm --dts",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"test": "run-vitest"
 	},
 	"dependencies": {
-		"@repo/hono-helpers": "workspace:*",
 		"@sendgrid/mail": "8.1.5",
 		"nodemailer": "7.0.4",
 		"resend": "4.6.0"
@@ -30,6 +30,7 @@
 		"@types/nodemailer": "6.4.17",
 		"@vitest/coverage-v8": "3.2.4",
 		"jest-mock-extended": "4.0.0",
+		"tsup": "8.5.0",
 		"typescript": "5.5.4",
 		"vitest": "3.2.4"
 	}

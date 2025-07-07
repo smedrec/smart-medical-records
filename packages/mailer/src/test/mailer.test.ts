@@ -3,18 +3,15 @@ import { mock } from 'jest-mock-extended'
 import nodemailer from 'nodemailer'
 import { Resend } from 'resend'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { Email, WorkerMailer } from 'worker-mailer'
 
-import { NodeMailer } from './node.js'
-import { ResendMailer } from './resend.js'
-import { SendGridMailer } from './sendgrid.js'
-import { WorkersMailer } from './workers.js'
+import { NodeMailer } from '../email/node.js'
+import { ResendMailer } from '../email/resend.js'
+import { SendGridMailer } from '../email/sendgrid.js'
 
-import type { MailerSendOptions } from './base.js'
-import type { NodeMailerSmtpOptions } from './node.js'
-import type { ResendMailerOptions } from './resend.js'
-import type { SendGridMailerOptions } from './sendgrid.js'
-import type { WorkerMailerOptions } from './workers.js'
+import type { MailerSendOptions } from '../email/base.js'
+import type { ResendMailerOptions } from '../email/resend.js'
+import type { SendGridMailerOptions } from '../email/sendgrid.js'
+import type { NodeMailerSmtpOptions } from '../index.js'
 
 // Mocks
 vi.mock('nodemailer')
@@ -114,98 +111,6 @@ describe('@repo/mailer', () => {
 			;(mockTransporter.sendMail as vi.Mock).mockRejectedValueOnce(sendError)
 			await expect(mailer.send(mockSendOptions)).rejects.toThrow(
 				'NodeMailer: Failed to send email. SMTP Send Failure String'
-			)
-		})
-	})
-
-	describe('WorkersMailer', () => {
-		const mockWorkerOptions: WorkerMailerOptions = {
-			host: 'smtp.example.com',
-			port: 587,
-			auth: { user: 'user', pass: 'pass' },
-			from: 'default@example.com',
-		}
-		// Define the shape of the mocked instance, including its 'send' method
-		let mockWorkerMailerInstance: { send: vi.Mock }
-
-		beforeEach(async () => {
-			vi.clearAllMocks()
-			mockWorkerMailerInstance = {
-				send: vi.fn(),
-			}
-			// Ensure the mock for WorkerMailer.connect resolves with this shaped mock
-			;(WorkerMailer.connect as vi.Mock).mockResolvedValue(mockWorkerMailerInstance)
-		})
-
-		it('should throw error if SMTP options are not provided', () => {
-			expect(() => new WorkersMailer(undefined as any)).toThrow(
-				'WorkersMailer: SMTP connection options are required.'
-			)
-		})
-
-		it('should connect and send an email successfully', async () => {
-			const mailer = new WorkersMailer(mockWorkerOptions)
-			await mailer.send(mockSendOptions)
-
-			expect(WorkerMailer.connect).toHaveBeenCalledWith(mockWorkerOptions)
-			// Check for the object structure that our mock Email constructor produces
-			expect(mockWorkerMailerInstance.send).toHaveBeenCalledWith(
-				expect.objectContaining({
-					from: { address: mockSendOptions.from },
-					to: expect.arrayContaining([expect.objectContaining({ address: mockSendOptions.to })]),
-					subject: mockSendOptions.subject,
-					html: mockSendOptions.html,
-					text: mockSendOptions.text,
-				})
-			)
-
-			const emailArgument = (mockWorkerMailerInstance.send as vi.Mock).mock.calls[0][0]
-			expect(emailArgument.from.address).toBe(mockSendOptions.from)
-			expect(emailArgument.to.map((t) => t.address)).toEqual([mockSendOptions.to])
-			expect(emailArgument.subject).toBe(mockSendOptions.subject)
-			expect(emailArgument.html).toBe(mockSendOptions.html)
-			expect(emailArgument.text).toBe(mockSendOptions.text)
-		})
-
-		it('should connect only once for multiple sends', async () => {
-			const mailer = new WorkersMailer(mockWorkerOptions)
-			await mailer.send(mockSendOptions)
-			await mailer.send(mockSendOptions)
-			expect(WorkerMailer.connect).toHaveBeenCalledTimes(1)
-			expect(mockWorkerMailerInstance.send).toHaveBeenCalledTimes(2)
-		})
-
-		it('should throw an error if WorkerMailer.connect fails', async () => {
-			;(WorkerMailer.connect as vi.Mock).mockRejectedValueOnce(new Error('Connection Failed'))
-			const mailer = new WorkersMailer(mockWorkerOptions)
-			await expect(mailer.send(mockSendOptions)).rejects.toThrow(
-				'WorkersMailer: Failed to connect. Connection Failed'
-			)
-		})
-
-		it('should throw an error if mailer.send fails', async () => {
-			;(mockWorkerMailerInstance.send as vi.Mock).mockRejectedValueOnce(new Error('Send Failed'))
-			const mailer = new WorkersMailer(mockWorkerOptions)
-			await expect(mailer.send(mockSendOptions)).rejects.toThrow(
-				'WorkersMailer: Failed to send email. Send Failed'
-			)
-		})
-
-		it('should throw stringified non-Error if connect fails with non-Error', async () => {
-			;(WorkerMailer.connect as vi.Mock).mockRejectedValueOnce('Connection Failure String')
-			const mailer = new WorkersMailer(mockWorkerOptions)
-			await expect(mailer.send(mockSendOptions)).rejects.toThrow(
-				'WorkersMailer: Failed to connect. Connection Failure String'
-			)
-		})
-
-		it('should throw stringified non-Error if mailer.send fails with non-Error', async () => {
-			;(mockWorkerMailerInstance.send as vi.Mock).mockRejectedValueOnce('Send Failure String')
-			const mailer = new WorkersMailer(mockWorkerOptions)
-			// Ensure connect resolves to allow send to be called
-			;(WorkerMailer.connect as vi.Mock).mockResolvedValue(mockWorkerMailerInstance)
-			await expect(mailer.send(mockSendOptions)).rejects.toThrow(
-				'WorkersMailer: Failed to send email. Send Failure String'
 			)
 		})
 	})
@@ -322,7 +227,6 @@ describe('@repo/mailer', () => {
 					errors: [{ message: 'Detailed SG Error' }],
 				},
 			}
-
 			;(sgMail.send as vi.Mock).mockRejectedValueOnce(sendError)
 			await expect(mailer.send(mockSendOptions)).rejects.toThrow(
 				'SendGridMailer: Failed to send email. [{"message":"Detailed SG Error"}]'
