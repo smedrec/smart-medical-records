@@ -1,3 +1,5 @@
+import { getSecret } from '@/infisical'
+
 import { AppDb } from '@repo/app-db'
 import { AuthDb } from '@repo/auth-db'
 
@@ -18,10 +20,10 @@ export { authDbService }
 
 export function initializeDb() {
 	if (!appDbService) {
-		appDbService = new AppDb(process.env.APP_DB_URL)
+		appDbService = new AppDb()
 	}
 	if (!authDbService) {
-		authDbService = new AuthDb(process.env.AUTH_DB_URL)
+		authDbService = new AuthDb()
 	}
 
 	return { appDbService, authDbService }

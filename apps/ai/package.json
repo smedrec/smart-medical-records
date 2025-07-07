@@ -30,6 +30,7 @@
 		"@repo/auth-db": "workspace:*",
 		"@repo/cerbos": "workspace:*",
 		"@repo/fhir": "workspace:*",
+		"@repo/infisical": "workspace:*",
 		"@repo/mailer": "workspace:*",
 		"@repo/send-mail": "workspace:*",
 		"ai": "4.3.16",
