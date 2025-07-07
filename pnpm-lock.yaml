@@ -1118,6 +1118,28 @@ importers:
         specifier: 3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@24.0.10)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
 
+  packages/infisical:
+    dependencies:
+      '@infisical/sdk':
+        specifier: 4.0.2
+        version: 4.0.2
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      eslint:
+        specifier: 9.27.0
+        version: 9.27.0(jiti@2.4.2)
+      tsup:
+        specifier: 8.5.0
+        version: 8.5.0(jiti@2.4.2)(postcss@8.5.6)(tsx@4.20.3)(typescript@5.5.4)(yaml@2.8.0)
+      typescript:
+        specifier: 5.5.4
+        version: 5.5.4
+
   packages/infisical-kms:
     devDependencies:
       '@repo/eslint-config':

@@ -1,8 +1,8 @@
 {
-	"name": "@repo/infisical-kms",
+	"name": "@repo/infisical",
 	"version": "0.1.0",
 	"private": true,
-	"description": "A reusable TypeScript package for encrypt/decrypt data within a backend application.",
+	"description": "A reusable TypeScript package for get secrets from Infisical to a backend application.",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"files": [
@@ -13,6 +13,9 @@
 		"check:lint": "eslint . --ext .ts,.tsx",
 		"check:types": "tsc --noEmit",
 		"dev": "tsup src/index.ts --format cjs,esm --dts --watch"
+	},
+	"dependencies": {
+		"@infisical/sdk": "4.0.2"
 	},
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",
