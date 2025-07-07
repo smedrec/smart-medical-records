@@ -96,12 +96,24 @@ describe('@repo/mailer', () => {
 			expect(mockTransporter.close).toHaveBeenCalled()
 		})
 
-		it('should throw an error if sendMail fails', async () => {
+		it('should throw an error if sendMail fails with details', async () => {
 			const mailer = new NodeMailer(mockSmtpOptions)
-			const sendError = new Error('SMTP Send Error')
+			const sendError = new Error('SMTP Send Error') as any
+			sendError.code = 'EENVELOPE'
+			sendError.responseCode = 550
+			sendError.command = 'RCPT TO'
 			;(mockTransporter.sendMail as vi.Mock).mockRejectedValueOnce(sendError)
 			await expect(mailer.send(mockSendOptions)).rejects.toThrow(
-				'NodeMailer: Failed to send email. SMTP Send Error'
+				'NodeMailer: Failed to send email. SMTP Send Error (Code: EENVELOPE) (Response Code: 550) (Command: RCPT TO)'
+			)
+		})
+
+		it('should throw basic error if sendMail fails without details', async () => {
+			const mailer = new NodeMailer(mockSmtpOptions)
+			const sendError = new Error('SMTP Generic Error')
+			;(mockTransporter.sendMail as vi.Mock).mockRejectedValueOnce(sendError)
+			await expect(mailer.send(mockSendOptions)).rejects.toThrow(
+				'NodeMailer: Failed to send email. SMTP Generic Error'
 			)
 		})
 
@@ -156,12 +168,23 @@ describe('@repo/mailer', () => {
 			})
 		})
 
-		it('should throw an error if resend.emails.send fails', async () => {
+		it('should throw an error if resend.emails.send fails with details', async () => {
 			const mailer = new ResendMailer(mockResendOptions)
-			const sendError = new Error('Resend API Error')
+			const sendError = new Error('Resend API Error') as any
+			sendError.name = 'validation_error'
+			sendError.statusCode = 422
 			;(mockResendInstance.emails.send as vi.Mock).mockRejectedValueOnce(sendError)
 			await expect(mailer.send(mockSendOptions)).rejects.toThrow(
-				'ResendMailer: Failed to send email. Resend API Error'
+				'ResendMailer: Failed to send email. Resend API Error (Name: validation_error) (Status Code: 422)'
+			)
+		})
+
+		it('should throw basic error if resend.emails.send fails without details', async () => {
+			const mailer = new ResendMailer(mockResendOptions)
+			const sendError = new Error('Resend Generic Error')
+			;(mockResendInstance.emails.send as vi.Mock).mockRejectedValueOnce(sendError)
+			await expect(mailer.send(mockSendOptions)).rejects.toThrow(
+				'ResendMailer: Failed to send email. Resend Generic Error'
 			)
 		})
 

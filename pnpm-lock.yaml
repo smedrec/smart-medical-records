@@ -1203,9 +1203,6 @@ importers:
 
   packages/mailer:
     dependencies:
-      '@repo/hono-helpers':
-        specifier: workspace:*
-        version: link:../hono-helpers
       '@sendgrid/mail':
         specifier: 8.1.5
         version: 8.1.5
@@ -1237,6 +1234,9 @@ importers:
       jest-mock-extended:
         specifier: 4.0.0
         version: 4.0.0(@jest/globals@30.0.3)(jest@30.0.3(@types/node@24.0.10)(esbuild-register@3.6.0(esbuild@0.25.5))(ts-node@10.9.2(@types/node@24.0.10)(typescript@5.5.4)))(typescript@5.5.4)
+      tsup:
+        specifier: 8.5.0
+        version: 8.5.0(jiti@2.4.2)(postcss@8.5.6)(tsx@4.20.3)(typescript@5.5.4)(yaml@2.8.0)
       typescript:
         specifier: 5.5.4
         version: 5.5.4
