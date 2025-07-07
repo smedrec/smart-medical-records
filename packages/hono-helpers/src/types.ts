@@ -71,6 +71,10 @@ export type SharedHonoEnv = {
 	INFISICAL_URL: string
 	KMS_KEY_ID: string
 	INFISICAL_ACCESS_TOKEN: string
+	INFISICAL_CLIENT_ID: string
+	INFISICAL_CLIENT_SECRET: string
+	INFISICAL_PROJECT_ID: string
+	INFISICAL_ENVIRONMENT: string
 }
 /** Global Hono variables */
 export type SharedHonoVariables = {

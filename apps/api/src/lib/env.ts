@@ -32,6 +32,10 @@ export const zEnv = z.object({
 	INFISICAL_URL: z.string().url(),
 	KMS_KEY_ID: z.string(),
 	INFISICAL_ACCESS_TOKEN: z.string(),
+	INFISICAL_CLIENT_ID: z.string(),
+	INFISICAL_CLIENT_SECRET: z.string(),
+	INFISICAL_ENVIRONMENT: z.enum(['dev', 'stg', 'prod']).default('dev'),
+	INFISICAL_PROJECT_ID: z.string(),
 })
 
 export type Env = z.infer<typeof zEnv>

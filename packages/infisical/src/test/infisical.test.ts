@@ -61,40 +61,15 @@ describe('Infisical', () => {
 
 		it('should construct and apply init and WithConfig options', async () => {
 			mockLogin.mockResolvedValueOnce(undefined)
-			const initOpt = await Infisical.init(clientOptions)
-			const client = new Infisical(initOpt, Infisical.WithConfig(projectOptions))
+			const client = new Infisical(
+				Infisical.WithConfig(projectOptions),
+				await Infisical.init(clientOptions)
+			)
 
 			// @ts-expect-error Accessing private member for test
 			expect(client.apiClient).toBeDefined()
 			// @ts-expect-error Accessing private member for test
 			expect(client.project).toEqual(projectOptions)
-		})
-	})
-
-	describe('init', () => {
-		it('should initialize and authenticate successfully', async () => {
-			mockLogin.mockResolvedValueOnce(undefined)
-			const initOpt = await Infisical.init(clientOptions)
-			const client = new Infisical(initOpt)
-
-			expect(mockLogin).toHaveBeenCalledWith({
-				clientId: clientOptions.clientId,
-				clientSecret: clientOptions.clientSecret,
-			})
-			// @ts-expect-error Accessing private member for test
-			expect(client.apiClient).toBeDefined()
-		})
-
-		it('should throw InfisicalError if authentication fails', async () => {
-			const authError = new Error('Authentication failed')
-			mockLogin.mockRejectedValueOnce(authError)
-
-			await expect(Infisical.init(clientOptions)).rejects.toThrow(InfisicalError)
-			await expect(Infisical.init(clientOptions)).rejects.toSatisfy((err: InfisicalError) => {
-				expect(err.message).toBe('Failed to initialize or authenticate Infisical client.')
-				expect(err.cause).toBe(authError)
-				return true
-			})
 		})
 	})
 
@@ -110,8 +85,10 @@ describe('Infisical', () => {
 			mockLogin.mockResolvedValueOnce(undefined)
 			mockGetSecret.mockResolvedValueOnce({ secretValue: 'supersecret' })
 
-			const initOpt = await Infisical.init(clientOptions)
-			const client = new Infisical(initOpt, Infisical.WithConfig(projectOptions))
+			const client = new Infisical(
+				Infisical.WithConfig(projectOptions),
+				await Infisical.init(clientOptions)
+			)
 
 			const secretValue = await client.getSecret('MY_SECRET')
 
@@ -127,8 +104,10 @@ describe('Infisical', () => {
 			mockLogin.mockResolvedValueOnce(undefined)
 			mockGetSecret.mockResolvedValueOnce({ secretValue: 'prodsecret' })
 
-			const initOpt = await Infisical.init(clientOptions)
-			const client = new Infisical(initOpt, Infisical.WithConfig(projectOptions)) // Default 'dev'
+			const client = new Infisical(
+				Infisical.WithConfig(projectOptions),
+				await Infisical.init(clientOptions)
+			)
 
 			const secretValue = await client.getSecret('MY_SECRET', {
 				environment: 'prod',
@@ -148,8 +127,10 @@ describe('Infisical', () => {
 			const sdkError = new Error('SDK secret retrieval failed')
 			mockGetSecret.mockRejectedValueOnce(sdkError)
 
-			const initOpt = await Infisical.init(clientOptions)
-			const client = new Infisical(initOpt, Infisical.WithConfig(projectOptions))
+			const client = new Infisical(
+				Infisical.WithConfig(projectOptions),
+				await Infisical.init(clientOptions)
+			)
 
 			await expect(client.getSecret('MY_SECRET')).rejects.toThrow(InfisicalError)
 			await expect(client.getSecret('MY_SECRET')).rejects.toSatisfy((err: InfisicalError) => {
@@ -174,8 +155,10 @@ describe('Infisical', () => {
 			]
 			mockListSecrets.mockResolvedValueOnce(sdkSecretsResponse)
 
-			const initOpt = await Infisical.init(clientOptions)
-			const client = new Infisical(initOpt, Infisical.WithConfig(projectOptions))
+			const client = new Infisical(
+				Infisical.WithConfig(projectOptions),
+				await Infisical.init(clientOptions)
+			)
 
 			const secrets = await client.allSecrets()
 
@@ -194,8 +177,10 @@ describe('Infisical', () => {
 			const sdkSecretsResponse = [{ secretKey: 'PRODKEY1', secretValue: 'PRODVALUE1', id: '1' }]
 			mockListSecrets.mockResolvedValueOnce(sdkSecretsResponse)
 
-			const initOpt = await Infisical.init(clientOptions)
-			const client = new Infisical(initOpt, Infisical.WithConfig(projectOptions)) // Default 'dev'
+			const client = new Infisical(
+				Infisical.WithConfig(projectOptions),
+				await Infisical.init(clientOptions)
+			) // Default 'dev'
 
 			const secrets = await client.allSecrets({ environment: 'prod', projectId: 'prod-project' })
 
@@ -211,8 +196,10 @@ describe('Infisical', () => {
 			const sdkError = new Error('SDK list secrets failed')
 			mockListSecrets.mockRejectedValueOnce(sdkError)
 
-			const initOpt = await Infisical.init(clientOptions)
-			const client = new Infisical(initOpt, Infisical.WithConfig(projectOptions))
+			const client = new Infisical(
+				Infisical.WithConfig(projectOptions),
+				await Infisical.init(clientOptions)
+			)
 
 			await expect(client.allSecrets()).rejects.toThrow(InfisicalError)
 			await expect(client.allSecrets()).rejects.toSatisfy((err: InfisicalError) => {
