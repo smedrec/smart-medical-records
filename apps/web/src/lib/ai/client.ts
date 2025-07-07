@@ -1,5 +1,3 @@
-import 'dotenv/config'
-
 import { MastraClient } from '@mastra/client-js'
 import { getHeaders } from '@tanstack/react-start/server'
 
