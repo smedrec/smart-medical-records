@@ -12,14 +12,18 @@
 		"build": "tsup src/index.ts --format cjs,esm --dts",
 		"check:lint": "eslint . --ext .ts,.tsx",
 		"check:types": "tsc --noEmit",
-		"dev": "tsup src/index.ts --format cjs,esm --dts --watch"
+		"dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"coverage": "vitest run --coverage"
 	},
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"eslint": "9.27.0",
 		"tsup": "8.5.0",
-		"typescript": "5.5.4"
+		"typescript": "5.5.4",
+		"vitest": "^1.6.0"
 	},
 	"publishConfig": {
 		"access": "public"
