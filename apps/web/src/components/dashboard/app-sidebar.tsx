@@ -270,8 +270,6 @@ export function AppSidebar({ isMobile = false }: { isMobile?: boolean }) {
 					</SidebarMenu>
 				</SidebarFooter>
 			</Sidebar>
-
-			{/* Server management hidden - using single default server */}
 		</>
 	)
 }
