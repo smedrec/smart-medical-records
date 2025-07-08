@@ -1,15 +1,5 @@
-import { MastraClient } from '@mastra/client-js'
+import { ai } from '@/lib/ai/client'
 import { createServerFileRoute } from '@tanstack/react-start/server'
-
-export const ai = new MastraClient({
-	baseUrl: 'http://localhost:4111',
-	retries: 3,
-	backoffMs: 300,
-	maxBackoffMs: 5000,
-	headers: {
-		'X-Development': 'true',
-	},
-})
 
 export const ServerRoute = createServerFileRoute('/api/chat/$id').methods({
 	POST: async ({ request, params }) => {
@@ -20,7 +10,7 @@ export const ServerRoute = createServerFileRoute('/api/chat/$id').methods({
 
 		try {
 			const agent = ai.getAgent(id)
-			const response = await agent.generate({
+			const response = await agent.stream({
 				messages: messages,
 				memoryOptions: {
 					workingMemory: {
@@ -37,11 +27,7 @@ export const ServerRoute = createServerFileRoute('/api/chat/$id').methods({
 					? lastMessage.content
 					: (lastMessage?.content?.text ?? '')*/
 
-			return new Response(JSON.stringify(response.response.messages), {
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			})
+			return response.toDataStreamResponse()
 		} catch (error) {
 			console.error('Development error:', error)
 			throw new Error(error as string)
