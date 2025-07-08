@@ -10,7 +10,7 @@ import { activeOrganization, apikey, AuthDb, member } from '@repo/auth-db'
 
 //import type { Organization, Person } from '@solarahealth/fhir-r4'
 
-// Using environment variable AUDIT_DB_URL
+// Using environment variable AUTH_DB_URL
 const authDbService = new AuthDb()
 const db = authDbService.getDrizzleInstance()
 

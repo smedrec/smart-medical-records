@@ -1,3 +1,4 @@
+import { processHeaders } from '@/lib/utils'
 import { getHeaders } from '@tanstack/react-start/server'
 
 import { AppClient } from '@repo/app-client'
@@ -9,10 +10,7 @@ const app = new AppClient({
 	retries: 3,
 	backoffMs: 300,
 	maxBackoffMs: 5000,
-	headers: {
-		'X-Development': 'true',
-		...headers,
-	},
+	headers: processHeaders(headers),
 })
 
 export { app }

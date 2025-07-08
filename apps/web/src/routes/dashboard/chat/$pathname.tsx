@@ -16,6 +16,7 @@ import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
 import { Button } from '@repo/ui/components/ui/button'
+import { InfiniteScroll } from '@repo/ui/components/ui/infinite-scroll'
 
 import type { ChatRequest } from '@/lib/ai/chat'
 
@@ -169,6 +170,67 @@ function RouteComponent() {
 				<h1 className="text-2xl font-bold">Chat with {pathname}</h1>
 				<>
 					<div className="w-full px-4 pb-4">
+						<InfiniteScroll
+							items={messages}
+							hasNextPage={hasNext}
+							isLoading={loading}
+							onLoadMore={loadMore}
+							threshold={200}
+							initialLoad={true}
+							renderItem={(message, index) => (
+								<ChatBubble key={index} variant={message.role == 'user' ? 'sent' : 'received'}>
+									<ChatBubbleAvatar src="" fallback={message.role == 'user' ? '👨🏽' : '🤖'} />
+									<ChatBubbleMessage>
+										{message.content.split('```').map((part: string, index: number) => {
+											if (index % 2 === 0) {
+												return (
+													<Markdown key={index} remarkPlugins={[remarkGfm]}>
+														{part}
+													</Markdown>
+												)
+											} else {
+												return (
+													<pre className="whitespace-pre-wrap pt-2" key={index}>
+														<CodeDisplayBlock code={part} lang="" />
+													</pre>
+												)
+											}
+										})}
+
+										{message.role === 'assistant' && messages.length - 1 === index && (
+											<div className="flex items-center mt-1.5 gap-1">
+												{!isGenerating && (
+													<>
+														{ChatAiIcons.map((icon, iconIndex) => {
+															const Icon = icon.icon
+															return (
+																<ChatBubbleAction
+																	variant="outline"
+																	className="size-5"
+																	key={iconIndex}
+																	icon={<Icon className="size-3" />}
+																	onClick={() => handleActionClick(icon.label, index)}
+																/>
+															)
+														})}
+													</>
+												)}
+											</div>
+										)}
+									</ChatBubbleMessage>
+								</ChatBubble>
+							)}
+							loader={() => (
+								<div className="flex justify-center py-4">
+									<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
+								</div>
+							)}
+							endMessage={
+								<div className="text-center py-4 text-muted-foreground">
+									<p>You've reached the end! 🎉</p>
+								</div>
+							}
+						/>
 						<ChatMessageList>
 							{/* Messages */}
 							{messages &&

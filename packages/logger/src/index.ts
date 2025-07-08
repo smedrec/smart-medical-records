@@ -3,17 +3,13 @@ import pino from 'pino'
 import { Sentry } from './sentry/instrument.js'
 
 import type { DestinationStream, LogFn } from 'pino'
+import type { LogEntry } from './types.js'
 
 // Local utility function to avoid circular dependency
 function parseBooleanFromText(value: string | undefined | null): boolean {
 	if (!value) return false
 	const normalized = value.toLowerCase().trim()
 	return normalized === 'true' || normalized === '1' || normalized === 'yes' || normalized === 'on'
-}
-
-interface LogEntry {
-	time?: number
-	[key: string]: unknown
 }
 
 // Custom destination that maintains recent logs in memory

@@ -1,9 +1,10 @@
 import { ApiError, openApiErrorResponses } from '@/lib/errors/index.js'
 import { idParamsSchema } from '@/shared/types.js'
 import { createRoute, z } from '@hono/zod-openapi'
+import { and, eq } from 'drizzle-orm'
 
 import { authClient } from '@repo/auth'
-import { activeOrganization } from '@repo/auth-db'
+import { activeOrganization, member } from '@repo/auth-db'
 
 import type { App } from '@/lib/hono/index.js'
 
@@ -42,6 +43,7 @@ export const registerOrganizationSetActive = (app: App) =>
 		const { db } = c.get('services')
 		const session = c.get('session')
 		const { id } = c.req.valid('param')
+		let role
 
 		if (!session)
 			throw new ApiError({
@@ -50,16 +52,32 @@ export const registerOrganizationSetActive = (app: App) =>
 			})
 
 		try {
+			const result = await db.query.member.findFirst({
+				where: and(eq(member.userId, session.userId), eq(member.organizationId, id)),
+			})
+			if (result) {
+				role = result.role
+			} else {
+				throw new ApiError({ code: 'NOT_FOUND', message: 'The user is not member.' })
+			}
+		} catch (error) {
+			throw new ApiError({
+				code: 'INTERNAL_SERVER_ERROR',
+				message: `An error occurred while setting the active organization. ${error instanceof Error ? error.message : 'Unknown error'}`,
+			})
+		}
+
+		try {
 			const result = await db
 				.insert(activeOrganization)
 				.values({
 					userId: session.userId,
 					organizationId: id,
-					role: session.activeOrganizationRole!,
+					role: role,
 				})
 				.onConflictDoUpdate({
 					target: activeOrganization.userId,
-					set: { organizationId: id, role: session.activeOrganizationRole! },
+					set: { organizationId: id, role: role },
 				})
 				.returning()
 
