@@ -10,16 +10,8 @@ type MastraClientContextType = {
 
 const MastraClientContext = createContext<MastraClientContextType | undefined>(undefined)
 
-export const MastraClientProvider = ({
-	children,
-	baseUrl,
-	headers,
-}: {
-	children: ReactNode
-	baseUrl?: string
-	headers?: Record<string, string>
-}) => {
-	const client = createMastraClient(baseUrl, headers)
+export const MastraClientProvider = ({ children }: { children: ReactNode }) => {
+	const client = createMastraClient()
 
 	return <MastraClientContext.Provider value={{ client }}>{children}</MastraClientContext.Provider>
 }

@@ -51,6 +51,8 @@ function RouteComponent() {
 	const [isLoading, setIsLoading] = useState(false)
 	const [messages, setMessages] = useState<Message[]>([])
 	const [input, setInput] = useState('')
+	const [hasNext, setHasNext] = useState(false)
+	const [loading, setLoading] = useState(false)
 
 	const messagesRef = useRef<HTMLDivElement>(null)
 	const formRef = useRef<HTMLFormElement>(null)
@@ -164,6 +166,22 @@ function RouteComponent() {
 		return
 	}, [chat])
 
+	const loadMore = useCallback(async () => {
+		return
+		setLoading(true)
+		try {
+			const response = await fetch(`/api/items?page=${Math.floor(messages.length / 10) + 1}`)
+			const data = await response.json()
+
+			setMessages((prev) => [...prev, ...data.items])
+			setHasNext(data.hasMore)
+		} catch (error) {
+			console.error('Failed to load items:', error)
+		} finally {
+			setLoading(false)
+		}
+	}, [messages.length])
+
 	return (
 		<div className="flex items-center justify-between mb-4 p-3">
 			<div className="flex gap-1 sm:gap-2 items-center flex-shrink-0">
@@ -177,49 +195,61 @@ function RouteComponent() {
 							onLoadMore={loadMore}
 							threshold={200}
 							initialLoad={true}
-							renderItem={(message, index) => (
-								<ChatBubble key={index} variant={message.role == 'user' ? 'sent' : 'received'}>
-									<ChatBubbleAvatar src="" fallback={message.role == 'user' ? '👨🏽' : '🤖'} />
-									<ChatBubbleMessage>
-										{message.content.split('```').map((part: string, index: number) => {
-											if (index % 2 === 0) {
-												return (
-													<Markdown key={index} remarkPlugins={[remarkGfm]}>
-														{part}
-													</Markdown>
-												)
-											} else {
-												return (
-													<pre className="whitespace-pre-wrap pt-2" key={index}>
-														<CodeDisplayBlock code={part} lang="" />
-													</pre>
-												)
-											}
-										})}
+							reverse={true}
+							renderItem={(message, index) => {
+								return (
+									<>
+										<ChatBubble key={index} variant={message.role == 'user' ? 'sent' : 'received'}>
+											<ChatBubbleAvatar src="" fallback={message.role == 'user' ? '👨🏽' : '🤖'} />
+											<ChatBubbleMessage>
+												{message.content.split('```').map((part: string, index: number) => {
+													if (index % 2 === 0) {
+														return (
+															<Markdown key={index} remarkPlugins={[remarkGfm]}>
+																{part}
+															</Markdown>
+														)
+													} else {
+														return (
+															<pre className="whitespace-pre-wrap pt-2" key={index}>
+																<CodeDisplayBlock code={part} lang="" />
+															</pre>
+														)
+													}
+												})}
 
-										{message.role === 'assistant' && messages.length - 1 === index && (
-											<div className="flex items-center mt-1.5 gap-1">
-												{!isGenerating && (
-													<>
-														{ChatAiIcons.map((icon, iconIndex) => {
-															const Icon = icon.icon
-															return (
-																<ChatBubbleAction
-																	variant="outline"
-																	className="size-5"
-																	key={iconIndex}
-																	icon={<Icon className="size-3" />}
-																	onClick={() => handleActionClick(icon.label, index)}
-																/>
-															)
-														})}
-													</>
+												{message.role === 'assistant' && messages.length - 1 === index && (
+													<div className="flex items-center mt-1.5 gap-1">
+														{!isGenerating && (
+															<>
+																{ChatAiIcons.map((icon, iconIndex) => {
+																	const Icon = icon.icon
+																	return (
+																		<ChatBubbleAction
+																			variant="outline"
+																			className="size-5"
+																			key={iconIndex}
+																			icon={<Icon className="size-3" />}
+																			onClick={() => handleActionClick(icon.label, index)}
+																		/>
+																	)
+																})}
+															</>
+														)}
+													</div>
 												)}
-											</div>
+											</ChatBubbleMessage>
+										</ChatBubble>
+										{/* Loading */}
+										{isGenerating && (
+											<ChatBubble variant="received">
+												<ChatBubbleAvatar src="" fallback="🤖" />
+												<ChatBubbleMessage isLoading />
+											</ChatBubble>
 										)}
-									</ChatBubbleMessage>
-								</ChatBubble>
-							)}
+									</>
+								)
+							}}
 							loader={() => (
 								<div className="flex justify-center py-4">
 									<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
@@ -231,8 +261,8 @@ function RouteComponent() {
 								</div>
 							}
 						/>
-						<ChatMessageList>
-							{/* Messages */}
+						{/*<ChatMessageList>
+							
 							{messages &&
 								messages.map((message, index) => (
 									<ChatBubble key={index} variant={message.role == 'user' ? 'sent' : 'received'}>
@@ -278,14 +308,14 @@ function RouteComponent() {
 									</ChatBubble>
 								))}
 
-							{/* Loading */}
+							
 							{isGenerating && (
 								<ChatBubble variant="received">
 									<ChatBubbleAvatar src="" fallback="🤖" />
 									<ChatBubbleMessage isLoading />
 								</ChatBubble>
 							)}
-						</ChatMessageList>
+						</ChatMessageList> */}
 					</div>
 					{/* Form and Footer fixed at the bottom */}
 					<div className="w-full fixed bottom-0 px-4 pb-4">
