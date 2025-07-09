@@ -5,16 +5,21 @@ import { Worker } from 'bullmq'
 import { BullMQOtel } from 'bullmq-otel'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
-import { Redis } from 'ioredis'
+// import { Redis } from 'ioredis' // Removed ioredis import
 import { pino } from 'pino'
 
 import { Audit } from '@repo/audit'
 import { AuthDb, emailProvider } from '@repo/auth-db'
 import { InfisicalKmsClient } from '@repo/infisical-kms'
 import { NodeMailer, ResendMailer, SendGridMailer } from '@repo/mailer'
+import {
+	getSharedRedisConnection,
+	closeSharedRedisConnection,
+	getRedisConnectionStatus,
+} from '@repo/redis-client' // Added import for shared connection
 
 import type { Job } from 'bullmq'
-import type { RedisOptions } from 'ioredis'
+// import type { RedisOptions } from 'ioredis' // Removed ioredis import
 import type { LogLevel } from 'workers-tagged-logger'
 import type { NodeMailerSmtpOptions } from '@repo/mailer'
 import type { SendMailEvent } from '@repo/send-mail'
@@ -26,15 +31,19 @@ interface Mailer {
 
 const LOG_LEVEL = (process.env.LOG_LEVEL || 'info') as LogLevel
 const MAIL_QUEUE_NAME = process.env.MAIL_QUEUE_NAME || 'mail'
-const REDIS_URL = process.env.MAIL_REDIS_URL
+// const REDIS_URL = process.env.MAIL_REDIS_URL // No longer needed directly
 const AUTH_DB_URL = process.env.AUTH_DB_URL
 
-if (!REDIS_URL) {
+// Check for REDIS_URL (used by shared client) is implicitly handled by the shared client.
+// We still need to check for AUTH_DB_URL for this specific worker.
+/*
+if (!process.env.REDIS_URL) { // Optional: Check if REDIS_URL (used by shared client) is set
 	console.error(
-		'🔴 MAIL_REDIS_URL environment variable is not set. Please check your .env file or environment configuration.'
+		'🔴 REDIS_URL environment variable is not set for the shared Redis client. Please check your .env file or environment configuration.'
 	)
 	process.exit(1)
 }
+*/
 
 if (!AUTH_DB_URL) {
 	console.error(
@@ -45,25 +54,18 @@ if (!AUTH_DB_URL) {
 
 const logger = pino({ name: 'mail-worker', level: LOG_LEVEL })
 
-// TODO - see the question maxRetriesPerRequest
-// Initialize Redis connection for BullMQ
-// BullMQ recommends not using maxRetriesPerRequest: null in newer versions,
-// but rather relying on built-in retry mechanisms or handling errors appropriately.
-// For now, keeping it simple as per existing patterns in the repo.
-const defaultOptions: RedisOptions = { maxRetriesPerRequest: null }
-const connection = new Redis(REDIS_URL!, {
-	...defaultOptions, // Consistent with package/audit but consider BullMQ best practices
-	// enableReadyCheck: false, // May be needed depending on Redis setup/version
-})
+// Initialize Redis connection using the shared client
+// The shared client's default options include maxRetriesPerRequest: null.
+const connection = getSharedRedisConnection()
 
-connection.on('connect', () => {
-	logger.info('🟢 Connected to Redis for BullMQ email worker.')
-})
+// Optional: Log connection status from the shared client
+logger.info(`Shared Redis connection status: ${getRedisConnectionStatus()}`)
 
+// Events 'connect' and 'error' are handled within the shared client.
+// Adding a specific error handler for this worker if needed.
 connection.on('error', (err) => {
-	logger.error('🔴 Redis connection error for BullMQ email worker:', err)
-	// Depending on the error, you might want to exit or implement a retry mechanism for the worker itself.
-	// For now, this will prevent the worker from starting or stop it if the connection is lost later.
+	logger.error('🔴 Shared Redis connection error impacting BullMQ mail worker:', err)
+	// Consider if process should exit or if shared client's reconnection logic is sufficient.
 })
 
 let authDbService: AuthDb | undefined = undefined
@@ -178,7 +180,7 @@ async function main() {
 		logger.error('🔴 Halting worker start due to database connection failure.')
 		// Optionally, implement retry logic here or ensure process exits.
 		// For simplicity, exiting if DB is not available on startup.
-		await connection.quit() // Close Redis connection before exiting
+		await closeSharedRedisConnection() // Use shared client's close function
 		process.exit(1)
 	}
 
@@ -273,7 +275,7 @@ async function main() {
 		logger.info(`🚦 Received ${signal}. Shutting down gracefully...`)
 		server.close()
 		await worker.close()
-		await connection.quit()
+		await closeSharedRedisConnection() // Use shared client's close function
 		await authDbService?.end()
 		logger.info('🚪 Mail Worker, Redis and Postgres connections closed. Exiting.')
 		process.exit(0)
@@ -287,5 +289,6 @@ async function main() {
 main().catch(async (error) => {
 	logger.error('💥 Unhandled error in main application scope:', error)
 	await authDbService?.end()
-	void connection.quit().finally(() => process.exit(1))
+	// Ensure shared Redis connection is closed on fatal error
+	closeSharedRedisConnection().finally(() => process.exit(1))
 })

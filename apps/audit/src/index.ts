@@ -1,49 +1,58 @@
 import 'dotenv/config'
 
+import 'dotenv/config'
+
 import { serve } from '@hono/node-server'
 import { Worker } from 'bullmq'
 import { Hono } from 'hono'
-import { Redis } from 'ioredis'
+// import { Redis } from 'ioredis' // Removed ioredis import
 import { pino } from 'pino'
 
 import { AuditDb, auditLog as auditLogTableSchema } from '@repo/audit-db'
+import {
+	getSharedRedisConnection,
+	closeSharedRedisConnection,
+	getRedisConnectionStatus,
+} from '@repo/redis-client' // Added import for shared connection
 
 import type { Job } from 'bullmq'
-import type { RedisOptions } from 'ioredis'
+// import type { RedisOptions } from 'ioredis' // Removed ioredis import
 import type { LogLevel } from 'workers-tagged-logger'
 import type { AuditLogEvent } from '@repo/audit'
 
 const LOG_LEVEL = (process.env.LOG_LEVEL || 'info') as LogLevel
 const AUDIT_QUEUE_NAME = process.env.AUDIT_QUEUE_NAME || 'audit'
-const REDIS_URL = process.env.AUDIT_REDIS_URL
+// const REDIS_URL = process.env.AUDIT_REDIS_URL // No longer needed directly, shared client handles REDIS_URL
 
-if (!REDIS_URL) {
+// Check for REDIS_URL is now handled by the shared client,
+// but we might want a specific check for AUDIT_REDIS_URL if it were different.
+// For now, assuming REDIS_URL is the one used by the shared client.
+/*
+if (!process.env.REDIS_URL) { // Optional: Check if REDIS_URL (used by shared client) is set
 	console.error(
-		'🔴 REDIS_URL environment variable is not set. Please check your .env file or environment configuration.'
+		'🔴 REDIS_URL environment variable is not set for the shared Redis client. Please check your .env file or environment configuration.'
 	)
 	process.exit(1)
 }
+*/
 
 const logger = pino({ name: 'audit-worker', level: LOG_LEVEL })
 
-// Initialize Redis connection for BullMQ
+// Initialize Redis connection using the shared client
 // BullMQ recommends not using maxRetriesPerRequest: null in newer versions,
 // but rather relying on built-in retry mechanisms or handling errors appropriately.
-// For now, keeping it simple as per existing patterns in the repo.
-const defaultOptions: RedisOptions = { maxRetriesPerRequest: null }
-const connection = new Redis(REDIS_URL!, {
-	...defaultOptions, // Consistent with package/audit but consider BullMQ best practices
-	// enableReadyCheck: false, // May be needed depending on Redis setup/version
-})
+// The shared client's default options include maxRetriesPerRequest: null.
+const connection = getSharedRedisConnection()
 
-connection.on('connect', () => {
-	logger.info('🟢 Connected to Redis for BullMQ worker.')
-})
+// Optional: Log connection status from the shared client
+logger.info(`Shared Redis connection status: ${getRedisConnectionStatus()}`)
 
+// Events 'connect' and 'error' are handled within the shared client.
+// We can add listeners here too, but it might be redundant if the shared client's logging is sufficient.
+// For example, if specific actions for this worker are needed on 'error':
 connection.on('error', (err) => {
-	logger.error('🔴 Redis connection error for BullMQ worker:', err)
-	// Depending on the error, you might want to exit or implement a retry mechanism for the worker itself.
-	// For now, this will prevent the worker from starting or stop it if the connection is lost later.
+	logger.error('🔴 Shared Redis connection error impacting BullMQ worker:', err)
+	// Consider if process should exit or if shared client's reconnection logic is sufficient.
 })
 
 // Using environment variable AUDIT_DB_URL
@@ -70,7 +79,7 @@ async function main() {
 		logger.error('🔴 Halting worker start due to database connection failure.')
 		// Optionally, implement retry logic here or ensure process exits.
 		// For simplicity, exiting if DB is not available on startup.
-		await connection.quit() // Close Redis connection before exiting
+		await closeSharedRedisConnection() // Use shared client's close function
 		process.exit(1)
 	}
 
@@ -156,7 +165,7 @@ async function main() {
 		logger.info(`🚦 Received ${signal}. Shutting down gracefully...`)
 		server.close()
 		await worker.close()
-		await connection.quit()
+		await closeSharedRedisConnection() // Use shared client's close function
 		await auditDbService?.end()
 		logger.info('🚪 Worker, Postgres and Redis connections closed. Exiting.')
 		process.exit(0)
@@ -170,5 +179,6 @@ async function main() {
 main().catch(async (error) => {
 	logger.error('💥 Unhandled error in main application scope:', error)
 	await auditDbService?.end()
-	void connection.quit().finally(() => process.exit(1))
+	// Ensure shared Redis connection is closed on fatal error
+	closeSharedRedisConnection().finally(() => process.exit(1))
 })
