@@ -77,11 +77,7 @@ export class InfisicalKmsClient {
 			// Check if the API response is successful.
 			if (!response.ok) {
 				// Throw an error with status and statusText for better debugging.
-				throw new KmsEncryptionError(
-					`Failed to encrypt data`,
-					response.status,
-					response.statusText
-				)
+				throw new KmsEncryptionError(`Failed to encrypt data`, response.status, response.statusText)
 			}
 
 			const data = await response.json()
@@ -91,7 +87,9 @@ export class InfisicalKmsClient {
 				throw error
 			}
 			// Catch network errors or other unexpected errors during fetch or JSON parsing.
-			throw new KmsEncryptionError(`Encryption request failed: ${error instanceof Error ? error.message : String(error)}`)
+			throw new KmsEncryptionError(
+				`Encryption request failed: ${error instanceof Error ? error.message : String(error)}`
+			)
 		}
 	}
 
@@ -120,11 +118,7 @@ export class InfisicalKmsClient {
 			// Check if the API response is successful.
 			if (!response.ok) {
 				// Throw an error with status and statusText for better debugging.
-				throw new KmsDecryptionError(
-					`Failed to decrypt data`,
-					response.status,
-					response.statusText
-				)
+				throw new KmsDecryptionError(`Failed to decrypt data`, response.status, response.statusText)
 			}
 
 			const data = await response.json()
@@ -139,7 +133,9 @@ export class InfisicalKmsClient {
 				throw error
 			}
 			// Catch network errors or other unexpected errors during fetch, JSON parsing, or atob.
-			throw new KmsDecryptionError(`Decryption request failed: ${error instanceof Error ? error.message : String(error)}`)
+			throw new KmsDecryptionError(
+				`Decryption request failed: ${error instanceof Error ? error.message : String(error)}`
+			)
 		}
 	}
 }

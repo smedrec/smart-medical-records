@@ -1213,11 +1213,11 @@
 					var t = Object.keys(e)
 					if (Object.getOwnPropertySymbols) {
 						var o = Object.getOwnPropertySymbols(e)
-						r &&
+						;(r &&
 							(o = o.filter(function (r) {
 								return Object.getOwnPropertyDescriptor(e, r).enumerable
 							})),
-							t.push.apply(t, o)
+							t.push.apply(t, o))
 					}
 					return t
 				}
@@ -2632,10 +2632,10 @@
 						},
 						n: function n() {
 							var r = t.next()
-							return (a = r.done), r
+							return ((a = r.done), r)
 						},
 						e: function e(r) {
-							;(u = !0), (o = r)
+							;((u = !0), (o = r))
 						},
 						f: function f() {
 							try {
@@ -2669,11 +2669,11 @@
 					var t = Object.keys(e)
 					if (Object.getOwnPropertySymbols) {
 						var o = Object.getOwnPropertySymbols(e)
-						r &&
+						;(r &&
 							(o = o.filter(function (r) {
 								return Object.getOwnPropertyDescriptor(e, r).enumerable
 							})),
-							t.push.apply(t, o)
+							t.push.apply(t, o))
 					}
 					return t
 				}
@@ -2704,7 +2704,7 @@
 					) {
 						if (t && null != (n = r[t])) return n.call(r)
 						if (o && null != (n = r[o])) return new AsyncFromSyncIterator(n.call(r))
-						;(t = '@@asyncIterator'), (o = '@@iterator')
+						;((t = '@@asyncIterator'), (o = '@@iterator'))
 					}
 					throw new TypeError('Object is not async iterable')
 				}
@@ -2718,7 +2718,7 @@
 					}
 					return (
 						(AsyncFromSyncIterator = function AsyncFromSyncIterator(r) {
-							;(this.s = r), (this.n = r.next)
+							;((this.s = r), (this.n = r.next))
 						}),
 						(AsyncFromSyncIterator.prototype = {
 							s: null,
@@ -3486,9 +3486,9 @@
 											while (1)
 												switch ((_context10.prev = _context10.next)) {
 													case 0:
-														;(_ref = requestOptions || {}),
+														;((_ref = requestOptions || {}),
 															(limit = _ref.limit),
-															(options = (0, _objectWithoutProperties2.default)(_ref, _excluded))
+															(options = (0, _objectWithoutProperties2.default)(_ref, _excluded)))
 														fetchPage = function fetchPage(url) {
 															return _this2.fhirRequest(url, options)
 														}
@@ -3977,11 +3977,11 @@
 					var t = Object.keys(e)
 					if (Object.getOwnPropertySymbols) {
 						var o = Object.getOwnPropertySymbols(e)
-						r &&
+						;(r &&
 							(o = o.filter(function (r) {
 								return Object.getOwnPropertyDescriptor(e, r).enumerable
 							})),
-							t.push.apply(t, o)
+							t.push.apply(t, o))
 					}
 					return t
 				}
@@ -4373,11 +4373,11 @@
 					var t = Object.keys(e)
 					if (Object.getOwnPropertySymbols) {
 						var o = Object.getOwnPropertySymbols(e)
-						r &&
+						;(r &&
 							(o = o.filter(function (r) {
 								return Object.getOwnPropertyDescriptor(e, r).enumerable
 							})),
-							t.push.apply(t, o)
+							t.push.apply(t, o))
 					}
 					return t
 				}
@@ -5321,11 +5321,11 @@
 					var t = Object.keys(e)
 					if (Object.getOwnPropertySymbols) {
 						var o = Object.getOwnPropertySymbols(e)
-						r &&
+						;(r &&
 							(o = o.filter(function (r) {
 								return Object.getOwnPropertyDescriptor(e, r).enumerable
 							})),
-							t.push.apply(t, o)
+							t.push.apply(t, o))
 					}
 					return t
 				}
@@ -5839,11 +5839,11 @@
 					var t = Object.keys(e)
 					if (Object.getOwnPropertySymbols) {
 						var o = Object.getOwnPropertySymbols(e)
-						r &&
+						;(r &&
 							(o = o.filter(function (r) {
 								return Object.getOwnPropertyDescriptor(e, r).enumerable
 							})),
-							t.push.apply(t, o)
+							t.push.apply(t, o))
 					}
 					return t
 				}
@@ -6085,7 +6085,7 @@
 										case 11:
 											// ------------------------------------------------------------------------
 											// Obtain input
-											;(clientSecret = params.clientSecret),
+											;((clientSecret = params.clientSecret),
 												(fakeTokenResponse = params.fakeTokenResponse),
 												(encounterId = params.encounterId),
 												(target = params.target),
@@ -6094,8 +6094,8 @@
 												(pkceMode = params.pkceMode),
 												(clientPublicKeySetUrl = params.clientPublicKeySetUrl),
 												(redirect_uri = params.redirect_uri),
-												(client_id = params.client_id)
-											;(iss = params.iss),
+												(client_id = params.client_id))
+											;((iss = params.iss),
 												(launch = params.launch),
 												(patientId = params.patientId),
 												(fhirServiceUrl = params.fhirServiceUrl),
@@ -6106,7 +6106,7 @@
 												(clientId = params.clientId),
 												(completeInTarget = params.completeInTarget),
 												(clientPrivateJwk = params.clientPrivateJwk),
-												(stateKey = params.stateKey)
+												(stateKey = params.stateKey))
 											storage = env.getStorage() // For these, a url param takes precedence over inline option
 											iss = url.searchParams.get('iss') || iss
 											fhirServiceUrl = url.searchParams.get('fhirServiceUrl') || fhirServiceUrl
@@ -6502,7 +6502,7 @@
 												break
 											}
 											url.searchParams.set('complete', '1')
-											;(href = url.href), (origin = url.origin)
+											;((href = url.href), (origin = url.origin))
 											if (inFrame) {
 												parent.postMessage(
 													{
@@ -6673,15 +6673,15 @@
 								while (1)
 									switch ((_context3.prev = _context3.next)) {
 										case 0:
-											;(code = _ref.code),
+											;((code = _ref.code),
 												(state = _ref.state),
 												(clientPublicKeySetUrl = _ref.clientPublicKeySetUrl),
-												(privateKey = _ref.privateKey)
-											;(redirectUri = state.redirectUri),
+												(privateKey = _ref.privateKey))
+											;((redirectUri = state.redirectUri),
 												(clientSecret = state.clientSecret),
 												(tokenUri = state.tokenUri),
 												(clientId = state.clientId),
-												(codeVerifier = state.codeVerifier)
+												(codeVerifier = state.codeVerifier))
 											;(0, lib_1.assert)(redirectUri, 'Missing state.redirectUri')
 											;(0, lib_1.assert)(tokenUri, 'Missing state.tokenUri')
 											;(0, lib_1.assert)(clientId, 'Missing state.clientId')
@@ -6958,10 +6958,10 @@
 									}
 									return get
 								})(),
-								/**
-								 * Sets the `value` on `key` and returns a promise that will be resolved
-								 * with the value that was set.
-								 */
+							/**
+							 * Sets the `value` on `key` and returns a promise that will be resolved
+							 * with the value that was set.
+							 */
 						},
 						{
 							key: 'set',
@@ -8216,11 +8216,11 @@
   \**************************************************************/
 			/***/ function (module) {
 				function _OverloadYield(e, d) {
-					;(this.v = e), (this.k = d)
+					;((this.v = e), (this.k = d))
 				}
-				;(module.exports = _OverloadYield),
+				;((module.exports = _OverloadYield),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8235,9 +8235,9 @@
 					for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]
 					return n
 				}
-				;(module.exports = _arrayLikeToArray),
+				;((module.exports = _arrayLikeToArray),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8253,9 +8253,9 @@
 				function _arrayWithoutHoles(r) {
 					if (Array.isArray(r)) return arrayLikeToArray(r)
 				}
-				;(module.exports = _arrayWithoutHoles),
+				;((module.exports = _arrayWithoutHoles),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8270,9 +8270,9 @@
 						throw new ReferenceError("this hasn't been initialised - super() hasn't been called")
 					return e
 				}
-				;(module.exports = _assertThisInitialized),
+				;((module.exports = _assertThisInitialized),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8307,9 +8307,9 @@
 						})
 					}
 				}
-				;(module.exports = _asyncToGenerator),
+				;((module.exports = _asyncToGenerator),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8325,9 +8325,9 @@
 				function _awaitAsyncGenerator(e) {
 					return new OverloadYield(e, 0)
 				}
-				;(module.exports = _awaitAsyncGenerator),
+				;((module.exports = _awaitAsyncGenerator),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8340,9 +8340,9 @@
 				function _classCallCheck(a, n) {
 					if (!(a instanceof n)) throw new TypeError('Cannot call a class as a function')
 				}
-				;(module.exports = _classCallCheck),
+				;((module.exports = _classCallCheck),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8363,11 +8363,11 @@
 					var o = [null]
 					o.push.apply(o, e)
 					var p = new (t.bind.apply(t, o))()
-					return r && setPrototypeOf(p, r.prototype), p
+					return (r && setPrototypeOf(p, r.prototype), p)
 				}
-				;(module.exports = _construct),
+				;((module.exports = _construct),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8383,10 +8383,10 @@
 				function _defineProperties(e, r) {
 					for (var t = 0; t < r.length; t++) {
 						var o = r[t]
-						;(o.enumerable = o.enumerable || !1),
+						;((o.enumerable = o.enumerable || !1),
 							(o.configurable = !0),
 							'value' in o && (o.writable = !0),
-							Object.defineProperty(e, toPropertyKey(o.key), o)
+							Object.defineProperty(e, toPropertyKey(o.key), o))
 					}
 				}
 				function _createClass(e, r, t) {
@@ -8399,9 +8399,9 @@
 						e
 					)
 				}
-				;(module.exports = _createClass),
+				;((module.exports = _createClass),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8427,9 +8427,9 @@
 						e
 					)
 				}
-				;(module.exports = _defineProperty),
+				;((module.exports = _defineProperty),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8459,9 +8459,9 @@
 						_get.apply(null, arguments)
 					)
 				}
-				;(module.exports = _get),
+				;((module.exports = _get),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8484,9 +8484,9 @@
 						_getPrototypeOf(t)
 					)
 				}
-				;(module.exports = _getPrototypeOf),
+				;((module.exports = _getPrototypeOf),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8502,7 +8502,7 @@
 				function _inherits(t, e) {
 					if ('function' != typeof e && null !== e)
 						throw new TypeError('Super expression must either be null or a function')
-					;(t.prototype = Object.create(e && e.prototype, {
+					;((t.prototype = Object.create(e && e.prototype, {
 						constructor: {
 							value: t,
 							writable: !0,
@@ -8512,11 +8512,11 @@
 						Object.defineProperty(t, 'prototype', {
 							writable: !1,
 						}),
-						e && setPrototypeOf(t, e)
+						e && setPrototypeOf(t, e))
 				}
-				;(module.exports = _inherits),
+				;((module.exports = _inherits),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8533,9 +8533,9 @@
 								default: e,
 							}
 				}
-				;(module.exports = _interopRequireDefault),
+				;((module.exports = _interopRequireDefault),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8552,9 +8552,9 @@
 						return 'function' == typeof t
 					}
 				}
-				;(module.exports = _isNativeFunction),
+				;((module.exports = _isNativeFunction),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8575,9 +8575,9 @@
 					(module.exports.__esModule = true),
 					(module.exports['default'] = module.exports))()
 				}
-				;(module.exports = _isNativeReflectConstruct),
+				;((module.exports = _isNativeReflectConstruct),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8594,9 +8594,9 @@
 					)
 						return Array.from(r)
 				}
-				;(module.exports = _iterableToArray),
+				;((module.exports = _iterableToArray),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8611,9 +8611,9 @@
 						'Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
 					)
 				}
-				;(module.exports = _nonIterableSpread),
+				;((module.exports = _nonIterableSpread),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8634,13 +8634,14 @@
 					if (Object.getOwnPropertySymbols) {
 						var n = Object.getOwnPropertySymbols(e)
 						for (r = 0; r < n.length; r++)
-							(o = n[r]), -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o])
+							((o = n[r]),
+								-1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]))
 					}
 					return i
 				}
-				;(module.exports = _objectWithoutProperties),
+				;((module.exports = _objectWithoutProperties),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8660,9 +8661,9 @@
 						}
 					return t
 				}
-				;(module.exports = _objectWithoutPropertiesLoose),
+				;((module.exports = _objectWithoutPropertiesLoose),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8684,9 +8685,9 @@
 						throw new TypeError('Derived constructors may only return object or undefined')
 					return assertThisInitialized(t)
 				}
-				;(module.exports = _possibleConstructorReturn),
+				;((module.exports = _possibleConstructorReturn),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -8701,12 +8702,12 @@
 				)['default']
 				function _regeneratorRuntime() {
 					'use strict' /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */
-					;(module.exports = _regeneratorRuntime =
+					;((module.exports = _regeneratorRuntime =
 						function _regeneratorRuntime() {
 							return r
 						}),
 						(module.exports.__esModule = true),
-						(module.exports['default'] = module.exports)
+						(module.exports['default'] = module.exports))
 					var t,
 						r = {},
 						e = Object.prototype,
@@ -8830,7 +8831,7 @@
 										)
 									: r.resolve(f).then(
 											function (t) {
-												;(h.value = t), a(h)
+												;((h.value = t), a(h))
 											},
 											function (t) {
 												return e('throw', t, a, u)
@@ -8870,7 +8871,7 @@
 							)
 						var i = s(o, r.i, e.arg)
 						if ('throw' === i.type)
-							return (e.method = 'throw'), (e.arg = i.arg), (e.delegate = null), f
+							return ((e.method = 'throw'), (e.arg = i.arg), (e.delegate = null), f)
 						var a = i.arg
 						return a
 							? a.done
@@ -8890,10 +8891,10 @@
 					}
 					function m(r) {
 						var e = r[4] || {}
-						;(e.type = 'normal'), (e.arg = t), (r[4] = e)
+						;((e.type = 'normal'), (e.arg = t), (r[4] = e))
 					}
 					function Context(t) {
-						;(this.tryEntries = [[-1]]), t.forEach(w, this), this.reset(!0)
+						;((this.tryEntries = [[-1]]), t.forEach(w, this), this.reset(!0))
 					}
 					function x(r) {
 						if (null != r) {
@@ -8904,8 +8905,8 @@
 								var o = -1,
 									a = function e() {
 										for (; ++o < r.length; )
-											if (n.call(r, o)) return (e.value = r[o]), (e.done = !1), e
-										return (e.value = t), (e.done = !0), e
+											if (n.call(r, o)) return ((e.value = r[o]), (e.done = !1), e)
+										return ((e.value = t), (e.done = !0), e)
 									}
 								return (a.next = a)
 							}
@@ -8965,8 +8966,8 @@
 								e = []
 							for (var n in r) e.unshift(n)
 							return function t() {
-								for (; e.length; ) if ((n = e.pop()) in r) return (t.value = n), (t.done = !1), t
-								return (t.done = !0), t
+								for (; e.length; ) if ((n = e.pop()) in r) return ((t.value = n), (t.done = !1), t)
+								return ((t.done = !0), t)
 							}
 						}),
 						(r.values = x),
@@ -8996,7 +8997,7 @@
 								if (this.done) throw r
 								var e = this
 								function n(t) {
-									;(a.type = 'throw'), (a.arg = r), (e.next = t)
+									;((a.type = 'throw'), (a.arg = r), (e.next = t))
 								}
 								for (var o = e.tryEntries.length - 1; o >= 0; --o) {
 									var i = this.tryEntries[o],
@@ -9004,11 +9005,11 @@
 										u = this.prev,
 										c = i[1],
 										h = i[2]
-									if (-1 === i[0]) return n('end'), !1
+									if (-1 === i[0]) return (n('end'), !1)
 									if (!c && !h) throw Error('try statement without catch or finally')
 									if (null != i[0] && i[0] <= u) {
-										if (u < c) return (this.method = 'next'), (this.arg = t), n(c), !0
-										if (u < h) return n(h), !1
+										if (u < c) return ((this.method = 'next'), (this.arg = t), n(c), !0)
+										if (u < h) return (n(h), !1)
 									}
 								}
 							},
@@ -9044,7 +9045,7 @@
 							finish: function finish(t) {
 								for (var r = this.tryEntries.length - 1; r >= 0; --r) {
 									var e = this.tryEntries[r]
-									if (e[2] === t) return this.complete(e[4], e[3]), m(e), f
+									if (e[2] === t) return (this.complete(e[4], e[3]), m(e), f)
 								}
 							},
 							catch: function _catch(t) {
@@ -9076,9 +9077,9 @@
 						r
 					)
 				}
-				;(module.exports = _regeneratorRuntime),
+				;((module.exports = _regeneratorRuntime),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -9094,16 +9095,16 @@
 							Object.setPrototypeOf
 								? Object.setPrototypeOf.bind()
 								: function (t, e) {
-										return (t.__proto__ = e), t
+										return ((t.__proto__ = e), t)
 									}),
 						(module.exports.__esModule = true),
 						(module.exports['default'] = module.exports),
 						_setPrototypeOf(t, e)
 					)
 				}
-				;(module.exports = _setPrototypeOf),
+				;((module.exports = _setPrototypeOf),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -9120,9 +9121,9 @@
 					for (; !{}.hasOwnProperty.call(t, o) && null !== (t = getPrototypeOf(t)); );
 					return t
 				}
-				;(module.exports = _superPropBase),
+				;((module.exports = _superPropBase),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -9152,9 +9153,9 @@
 						nonIterableSpread()
 					)
 				}
-				;(module.exports = _toConsumableArray),
+				;((module.exports = _toConsumableArray),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -9177,9 +9178,9 @@
 					}
 					return ('string' === r ? String : Number)(t)
 				}
-				;(module.exports = toPrimitive),
+				;((module.exports = toPrimitive),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -9199,9 +9200,9 @@
 					var i = toPrimitive(t, 'string')
 					return 'symbol' == _typeof(i) ? i : i + ''
 				}
-				;(module.exports = toPropertyKey),
+				;((module.exports = toPropertyKey),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -9233,9 +9234,9 @@
 						_typeof(o)
 					)
 				}
-				;(module.exports = _typeof),
+				;((module.exports = _typeof),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -9262,9 +9263,9 @@
 						)
 					}
 				}
-				;(module.exports = _unsupportedIterableToArray),
+				;((module.exports = _unsupportedIterableToArray),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -9325,7 +9326,7 @@
 						}
 						;(r = r.next) ? resume(r.key, r.arg) : (t = null)
 					}
-					;(this._invoke = function (e, n) {
+					;((this._invoke = function (e, n) {
 						return new Promise(function (o, u) {
 							var i = {
 								key: e,
@@ -9337,9 +9338,9 @@
 							t ? (t = t.next = i) : ((r = t = i), resume(e, n))
 						})
 					}),
-						'function' != typeof e['return'] && (this['return'] = void 0)
+						'function' != typeof e['return'] && (this['return'] = void 0))
 				}
-				;(AsyncGenerator.prototype[
+				;((AsyncGenerator.prototype[
 					('function' == typeof Symbol && Symbol.asyncIterator) || '@@asyncIterator'
 				] = function () {
 					return this
@@ -9352,10 +9353,10 @@
 					}),
 					(AsyncGenerator.prototype['return'] = function (e) {
 						return this._invoke('return', e)
-					})
-				;(module.exports = _wrapAsyncGenerator),
+					}))
+				;((module.exports = _wrapAsyncGenerator),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -9409,9 +9410,9 @@
 						_wrapNativeSuper(t)
 					)
 				}
-				;(module.exports = _wrapNativeSuper),
+				;((module.exports = _wrapNativeSuper),
 					(module.exports.__esModule = true),
-					(module.exports['default'] = module.exports)
+					(module.exports['default'] = module.exports))
 
 				/***/
 			},
@@ -25130,7 +25131,7 @@
 					}
 
 					function a2s(s) {
-						;(s += '==='), (s = s.slice(0, -s.length % 4))
+						;((s += '==='), (s = s.slice(0, -s.length % 4)))
 						return atob(s.replace(/-/g, '+').replace(/_/g, '/'))
 					}
 
@@ -25237,14 +25238,14 @@
 
 					function jwk2b(k) {
 						var jwk = b2jwk(k)
-						if (isIE) (jwk['extractable'] = jwk.ext), delete jwk.ext
+						if (isIE) ((jwk['extractable'] = jwk.ext), delete jwk.ext)
 						return s2b(unescape(encodeURIComponent(JSON.stringify(jwk)))).buffer
 					}
 
 					function pkcs2jwk(k) {
 						var info = b2der(k),
 							prv = false
-						if (info.length > 2) (prv = true), info.shift() // remove version from PKCS#8 PrivateKeyInfo structure
+						if (info.length > 2) ((prv = true), info.shift()) // remove version from PKCS#8 PrivateKeyInfo structure
 						var jwk = { ext: true }
 						switch (info[0][0]) {
 							case '1.2.840.113549.1.1.1':
@@ -25274,9 +25275,9 @@
 								for (var i = 0; i < rsaComp.length; i++) {
 									if (!(rsaComp[i] in k)) break
 									var b = (rsaKey[i] = s2b(a2s(k[rsaComp[i]])))
-									if (b[0] & 0x80) (rsaKey[i] = new Uint8Array(b.length + 1)), rsaKey[i].set(b, 1)
+									if (b[0] & 0x80) ((rsaKey[i] = new Uint8Array(b.length + 1)), rsaKey[i].set(b, 1))
 								}
-								if (rsaKey.length > 2) (prv = true), rsaKey.unshift(new Uint8Array([0])) // add version to PKCS#1 RSAPrivateKey structure
+								if (rsaKey.length > 2) ((prv = true), rsaKey.unshift(new Uint8Array([0]))) // add version to PKCS#1 RSAPrivateKey structure
 								info[0][0] = '1.2.840.113549.1.1.1'
 								key = rsaKey
 								break
@@ -25304,7 +25305,7 @@
 						if (len >= 0x80) {
 							len &= 0x7f
 							if (ctx.end - ctx.pos < len) throw new RangeError('Malformed DER')
-							for (var xlen = 0; len--; ) (xlen <<= 8), (xlen |= buf[ctx.pos++])
+							for (var xlen = 0; len--; ) ((xlen <<= 8), (xlen |= buf[ctx.pos++]))
 							len = xlen
 						}
 
@@ -25352,31 +25353,31 @@
 
 						if (val instanceof Uint8Array) {
 							// Universal Primitive INTEGER
-							;(tag = 0x02), (len = val.length)
+							;((tag = 0x02), (len = val.length))
 							for (var i = 0; i < len; i++) buf.push(val[i])
 						} else if (val instanceof ArrayBuffer) {
 							// Universal Primitive OCTET STRING
-							;(tag = 0x04), (len = val.byteLength), (val = new Uint8Array(val))
+							;((tag = 0x04), (len = val.byteLength), (val = new Uint8Array(val)))
 							for (var i = 0; i < len; i++) buf.push(val[i])
 						} else if (val === null) {
 							// Universal Primitive NULL
-							;(tag = 0x05), (len = 0)
+							;((tag = 0x05), (len = 0))
 						} else if (typeof val === 'string' && val in str2oid) {
 							// Universal Primitive OBJECT IDENTIFIER
 							var oid = s2b(atob(str2oid[val]))
-							;(tag = 0x06), (len = oid.length)
+							;((tag = 0x06), (len = oid.length))
 							for (var i = 0; i < len; i++) buf.push(oid[i])
 						} else if (val instanceof Array) {
 							// Universal Constructed SEQUENCE
 							for (var i = 0; i < val.length; i++) der2b(val[i], buf)
-							;(tag = 0x30), (len = buf.length - pos)
+							;((tag = 0x30), (len = buf.length - pos))
 						} else if (
 							typeof val === 'object' &&
 							val.tag === 0x03 &&
 							val.value instanceof ArrayBuffer
 						) {
 							// Tag hint
-							;(val = new Uint8Array(val.value)), (tag = 0x03), (len = val.byteLength)
+							;((val = new Uint8Array(val.value)), (tag = 0x03), (len = val.byteLength))
 							buf.push(0)
 							for (var i = 0; i < len; i++) buf.push(val[i])
 							len++
@@ -25395,7 +25396,7 @@
 								(xlen >> 8) & 0xff,
 								xlen & 0xff
 							)
-							while (len > 1 && !(xlen >> 24)) (xlen <<= 8), len--
+							while (len > 1 && !(xlen >> 24)) ((xlen <<= 8), len--)
 							if (len < 4) buf.splice(pos, 4 - len)
 							len |= 0x80
 						}
@@ -25448,10 +25449,10 @@
 
 							switch (m) {
 								case 'generateKey':
-									;(ka = alg(a)), (kx = b), (ku = c)
+									;((ka = alg(a)), (kx = b), (ku = c))
 									break
 								case 'importKey':
-									;(ka = alg(c)), (kx = args[3]), (ku = args[4])
+									;((ka = alg(c)), (kx = args[3]), (ku = args[4]))
 									if (a === 'jwk') {
 										b = b2jwk(b)
 										if (!b.alg) b.alg = jwkAlg(ka)
@@ -25466,7 +25467,7 @@
 									}
 									break
 								case 'unwrapKey':
-									;(ka = args[4]), (kx = args[5]), (ku = args[6])
+									;((ka = args[4]), (kx = args[5]), (ku = args[6]))
 									args[2] = c._key
 									break
 							}
@@ -25490,7 +25491,7 @@
 								ka.name === 'RSASSA-PKCS1-v1_5' &&
 								(!ka.modulusLength || ka.modulusLength >= 2048)
 							) {
-								;(a = alg(a)), (a.name = 'RSAES-PKCS1-v1_5'), delete a.hash
+								;((a = alg(a)), (a.name = 'RSAES-PKCS1-v1_5'), delete a.hash)
 								return _subtle
 									.generateKey(a, true, ['encrypt', 'decrypt'])
 									.then(function (k) {
@@ -25501,8 +25502,8 @@
 									})
 									.then(function (keys) {
 										keys[0].alg = keys[1].alg = jwkAlg(ka)
-										;(keys[0].key_ops = ku.filter(isPubKeyUse)),
-											(keys[1].key_ops = ku.filter(isPrvKeyUse))
+										;((keys[0].key_ops = ku.filter(isPubKeyUse)),
+											(keys[1].key_ops = ku.filter(isPrvKeyUse)))
 										return Promise.all([
 											_subtle.importKey('jwk', keys[0], ka, true, keys[0].key_ops),
 											_subtle.importKey('jwk', keys[1], ka, kx, keys[1].key_ops),
@@ -25578,7 +25579,6 @@
 							return op
 						}
 					})
-
 					;['exportKey', 'wrapKey'].forEach(function (m) {
 						var _fn = _subtle[m]
 
@@ -25590,7 +25590,7 @@
 									args[1] = b._key
 									break
 								case 'wrapKey':
-									;(args[1] = b._key), (args[2] = c._key)
+									;((args[1] = b._key), (args[2] = c._key))
 									break
 							}
 
@@ -25669,7 +25669,6 @@
 							return op
 						}
 					})
-
 					;['encrypt', 'decrypt', 'sign', 'verify'].forEach(function (m) {
 						var _fn = _subtle[m]
 
@@ -25682,8 +25681,8 @@
 
 							if (isIE && m === 'decrypt' && ka.name === 'AES-GCM') {
 								var tl = a.tagLength >> 3
-								;(args[2] = (c.buffer || c).slice(0, c.byteLength - tl)),
-									(a.tag = (c.buffer || c).slice(c.byteLength - tl))
+								;((args[2] = (c.buffer || c).slice(0, c.byteLength - tl)),
+									(a.tag = (c.buffer || c).slice(c.byteLength - tl)))
 							}
 
 							args[1] = b._key

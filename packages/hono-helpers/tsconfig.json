@@ -10,11 +10,5 @@
 		"types": ["node"] // Add node types for a Node.js environment
 	},
 	"include": ["src/**/*"],
-	"exclude": [
-		"node_modules",
-		"dist",
-		"eslint.config.ts",
-		"**/*.test.ts",
-		"**/*.spec.ts"
-	]
+	"exclude": ["node_modules", "dist", "eslint.config.ts", "**/*.test.ts", "**/*.spec.ts"]
 }

@@ -39,13 +39,11 @@ export default function() { ... }
 ### Key Formatting Rules
 
 1. **Single Quotes**
-
    - Use single quotes (`'`) for strings
    - Rationale: Consistent with TypeScript default and most modern JS projects
    - Exception: JSX attributes use double quotes (`"`) for HTML compatibility
 
 2. **Trailing Commas**
-
    - Always add trailing commas in object declarations
    - Benefits: Easier version control diffs and future-proofing for multi-line objects
    - Example:
@@ -65,13 +63,11 @@ export default function() { ... }
    ```
 
 3. **2-Space Indentation**
-
    - Use 2-space indentation for all code
    - Reason: Matches Prettier's default and improves readability in most code editors
    - Configuration: `"tabWidth": 2` in [packages/typescript-config/workers.json](mdc:packages/typescript-config/workers.json)
 
 4. **Semicolons**
-
    - Always add semicolons at the end of statements
    - Rationale: Prevents ASI (Automatic Semicolon Insertion) issues and ensures explicit statement termination
    - Example:
@@ -85,7 +81,6 @@ export default function() { ... }
    ```
 
 5. **Object Literal Spacing**
-
    - Add spaces between brackets in object literals
    - Rationale: Improves readability of object declarations
    - Example:

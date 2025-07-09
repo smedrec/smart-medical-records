@@ -4247,7 +4247,7 @@
 					}
 
 					function a2s(s) {
-						;(s += '==='), (s = s.slice(0, -s.length % 4))
+						;((s += '==='), (s = s.slice(0, -s.length % 4)))
 						return atob(s.replace(/-/g, '+').replace(/_/g, '/'))
 					}
 
@@ -4354,14 +4354,14 @@
 
 					function jwk2b(k) {
 						var jwk = b2jwk(k)
-						if (isIE) (jwk['extractable'] = jwk.ext), delete jwk.ext
+						if (isIE) ((jwk['extractable'] = jwk.ext), delete jwk.ext)
 						return s2b(unescape(encodeURIComponent(JSON.stringify(jwk)))).buffer
 					}
 
 					function pkcs2jwk(k) {
 						var info = b2der(k),
 							prv = false
-						if (info.length > 2) (prv = true), info.shift() // remove version from PKCS#8 PrivateKeyInfo structure
+						if (info.length > 2) ((prv = true), info.shift()) // remove version from PKCS#8 PrivateKeyInfo structure
 						var jwk = { ext: true }
 						switch (info[0][0]) {
 							case '1.2.840.113549.1.1.1':
@@ -4391,9 +4391,9 @@
 								for (var i = 0; i < rsaComp.length; i++) {
 									if (!(rsaComp[i] in k)) break
 									var b = (rsaKey[i] = s2b(a2s(k[rsaComp[i]])))
-									if (b[0] & 0x80) (rsaKey[i] = new Uint8Array(b.length + 1)), rsaKey[i].set(b, 1)
+									if (b[0] & 0x80) ((rsaKey[i] = new Uint8Array(b.length + 1)), rsaKey[i].set(b, 1))
 								}
-								if (rsaKey.length > 2) (prv = true), rsaKey.unshift(new Uint8Array([0])) // add version to PKCS#1 RSAPrivateKey structure
+								if (rsaKey.length > 2) ((prv = true), rsaKey.unshift(new Uint8Array([0]))) // add version to PKCS#1 RSAPrivateKey structure
 								info[0][0] = '1.2.840.113549.1.1.1'
 								key = rsaKey
 								break
@@ -4421,7 +4421,7 @@
 						if (len >= 0x80) {
 							len &= 0x7f
 							if (ctx.end - ctx.pos < len) throw new RangeError('Malformed DER')
-							for (var xlen = 0; len--; ) (xlen <<= 8), (xlen |= buf[ctx.pos++])
+							for (var xlen = 0; len--; ) ((xlen <<= 8), (xlen |= buf[ctx.pos++]))
 							len = xlen
 						}
 
@@ -4469,31 +4469,31 @@
 
 						if (val instanceof Uint8Array) {
 							// Universal Primitive INTEGER
-							;(tag = 0x02), (len = val.length)
+							;((tag = 0x02), (len = val.length))
 							for (var i = 0; i < len; i++) buf.push(val[i])
 						} else if (val instanceof ArrayBuffer) {
 							// Universal Primitive OCTET STRING
-							;(tag = 0x04), (len = val.byteLength), (val = new Uint8Array(val))
+							;((tag = 0x04), (len = val.byteLength), (val = new Uint8Array(val)))
 							for (var i = 0; i < len; i++) buf.push(val[i])
 						} else if (val === null) {
 							// Universal Primitive NULL
-							;(tag = 0x05), (len = 0)
+							;((tag = 0x05), (len = 0))
 						} else if (typeof val === 'string' && val in str2oid) {
 							// Universal Primitive OBJECT IDENTIFIER
 							var oid = s2b(atob(str2oid[val]))
-							;(tag = 0x06), (len = oid.length)
+							;((tag = 0x06), (len = oid.length))
 							for (var i = 0; i < len; i++) buf.push(oid[i])
 						} else if (val instanceof Array) {
 							// Universal Constructed SEQUENCE
 							for (var i = 0; i < val.length; i++) der2b(val[i], buf)
-							;(tag = 0x30), (len = buf.length - pos)
+							;((tag = 0x30), (len = buf.length - pos))
 						} else if (
 							typeof val === 'object' &&
 							val.tag === 0x03 &&
 							val.value instanceof ArrayBuffer
 						) {
 							// Tag hint
-							;(val = new Uint8Array(val.value)), (tag = 0x03), (len = val.byteLength)
+							;((val = new Uint8Array(val.value)), (tag = 0x03), (len = val.byteLength))
 							buf.push(0)
 							for (var i = 0; i < len; i++) buf.push(val[i])
 							len++
@@ -4512,7 +4512,7 @@
 								(xlen >> 8) & 0xff,
 								xlen & 0xff
 							)
-							while (len > 1 && !(xlen >> 24)) (xlen <<= 8), len--
+							while (len > 1 && !(xlen >> 24)) ((xlen <<= 8), len--)
 							if (len < 4) buf.splice(pos, 4 - len)
 							len |= 0x80
 						}
@@ -4565,10 +4565,10 @@
 
 							switch (m) {
 								case 'generateKey':
-									;(ka = alg(a)), (kx = b), (ku = c)
+									;((ka = alg(a)), (kx = b), (ku = c))
 									break
 								case 'importKey':
-									;(ka = alg(c)), (kx = args[3]), (ku = args[4])
+									;((ka = alg(c)), (kx = args[3]), (ku = args[4]))
 									if (a === 'jwk') {
 										b = b2jwk(b)
 										if (!b.alg) b.alg = jwkAlg(ka)
@@ -4583,7 +4583,7 @@
 									}
 									break
 								case 'unwrapKey':
-									;(ka = args[4]), (kx = args[5]), (ku = args[6])
+									;((ka = args[4]), (kx = args[5]), (ku = args[6]))
 									args[2] = c._key
 									break
 							}
@@ -4607,7 +4607,7 @@
 								ka.name === 'RSASSA-PKCS1-v1_5' &&
 								(!ka.modulusLength || ka.modulusLength >= 2048)
 							) {
-								;(a = alg(a)), (a.name = 'RSAES-PKCS1-v1_5'), delete a.hash
+								;((a = alg(a)), (a.name = 'RSAES-PKCS1-v1_5'), delete a.hash)
 								return _subtle
 									.generateKey(a, true, ['encrypt', 'decrypt'])
 									.then(function (k) {
@@ -4618,8 +4618,8 @@
 									})
 									.then(function (keys) {
 										keys[0].alg = keys[1].alg = jwkAlg(ka)
-										;(keys[0].key_ops = ku.filter(isPubKeyUse)),
-											(keys[1].key_ops = ku.filter(isPrvKeyUse))
+										;((keys[0].key_ops = ku.filter(isPubKeyUse)),
+											(keys[1].key_ops = ku.filter(isPrvKeyUse)))
 										return Promise.all([
 											_subtle.importKey('jwk', keys[0], ka, true, keys[0].key_ops),
 											_subtle.importKey('jwk', keys[1], ka, kx, keys[1].key_ops),
@@ -4695,7 +4695,6 @@
 							return op
 						}
 					})
-
 					;['exportKey', 'wrapKey'].forEach(function (m) {
 						var _fn = _subtle[m]
 
@@ -4707,7 +4706,7 @@
 									args[1] = b._key
 									break
 								case 'wrapKey':
-									;(args[1] = b._key), (args[2] = c._key)
+									;((args[1] = b._key), (args[2] = c._key))
 									break
 							}
 
@@ -4786,7 +4785,6 @@
 							return op
 						}
 					})
-
 					;['encrypt', 'decrypt', 'sign', 'verify'].forEach(function (m) {
 						var _fn = _subtle[m]
 
@@ -4799,8 +4797,8 @@
 
 							if (isIE && m === 'decrypt' && ka.name === 'AES-GCM') {
 								var tl = a.tagLength >> 3
-								;(args[2] = (c.buffer || c).slice(0, c.byteLength - tl)),
-									(a.tag = (c.buffer || c).slice(c.byteLength - tl))
+								;((args[2] = (c.buffer || c).slice(0, c.byteLength - tl)),
+									(a.tag = (c.buffer || c).slice(c.byteLength - tl)))
 							}
 
 							args[1] = b._key
@@ -4946,7 +4944,8 @@
 	})()
 	/******/
 	/******/ /* webpack/runtime/global */
-	/******/ ;(() => {
+	/******/
+	;(() => {
 		/******/ __webpack_require__.g = (function () {
 			/******/ if (typeof globalThis === 'object') return globalThis
 			/******/ try {
@@ -4962,7 +4961,8 @@
 	})()
 	/******/
 	/******/ /* webpack/runtime/hasOwnProperty shorthand */
-	/******/ ;(() => {
+	/******/
+	;(() => {
 		/******/ __webpack_require__.o = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop)
 		/******/
 	})()

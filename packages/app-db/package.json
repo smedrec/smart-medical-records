@@ -20,19 +20,19 @@
 		"test": "run-vitest"
 	},
 	"dependencies": {
-		"@better-auth/utils": "0.2.5",
+		"@better-auth/utils": "0.2.6",
 		"@repo/audit": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
 		"drizzle-orm": "0.44.2",
 		"postgres": "3.4.7"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.49",
-		"@cloudflare/workers-types": "4.20250705.0",
+		"@cloudflare/vitest-pool-workers": "0.8.50",
+		"@cloudflare/workers-types": "4.20250709.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/node": "24.0.10",
+		"@types/node": "24.0.12",
 		"drizzle-kit": "0.31.4",
 		"vitest": "3.2.4"
 	}

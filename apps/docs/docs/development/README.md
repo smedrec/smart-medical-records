@@ -17,15 +17,12 @@ actions:
 This directory contains key documentation for the Smart Medical Records project. All documentation files follow markdown component (mdc) links for easy navigation.
 
 1. [Code Style Guidelines](./CodeStyleGuidelines.html)
-
    - TypeScript, React, ESLint, and file structure conventions
 
 2. [Technical Design Specification](./TechnicalDesign.html)
-
    - Architecture overview and technology stack details
 
 3. [Testing Strategy](./TestingStrategy.html)
-
    - Unit, integration, and end-to-end testing approach
 
 4. [Security Compliance](./SecurityCompliance.html)

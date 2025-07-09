@@ -12,17 +12,17 @@
 		"zod:generate": "ts-to-zod src/schema/r5.d.ts src/schema/r5.ts"
 	},
 	"dependencies": {
-		"@better-auth/utils": "0.2.5",
+		"@better-auth/utils": "0.2.6",
 		"@repo/hono-helpers": "workspace:*",
 		"@solarahealth/fhir-r4": "1.2.0",
 		"drizzle-orm": "0.44.2",
 		"pg": "8.16.3",
 		"postgres": "3.4.7",
-		"zod": "3.25.74"
+		"zod": "3.25.76"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.49",
-		"@cloudflare/workers-types": "4.20250705.0",
+		"@cloudflare/vitest-pool-workers": "0.8.50",
+		"@cloudflare/workers-types": "4.20250709.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",

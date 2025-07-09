@@ -17,7 +17,7 @@ export interface SendGridMailerOptions {
  * @property {Array<{message: string; field?: string; help?: string}>} [errors] - An array of error objects.
  */
 interface SendGridErrorResponse {
-  errors?: Array<{message: string; field?: string; help?: string}>;
+	errors?: Array<{ message: string; field?: string; help?: string }>
 }
 
 /**
@@ -28,12 +28,11 @@ interface SendGridErrorResponse {
  * @property {number} [code] - The HTTP status code of the error response (less common directly on error, often on response).
  */
 interface SendGridError extends Error {
-  response?: {
-    body?: SendGridErrorResponse | string; // Body can be an object or a string
-  };
-  code?: number; // SendGrid errors might have a 'code' property for status
+	response?: {
+		body?: SendGridErrorResponse | string // Body can be an object or a string
+	}
+	code?: number // SendGrid errors might have a 'code' property for status
 }
-
 
 /**
  * @class SendGridMailer
@@ -71,31 +70,32 @@ export class SendGridMailer implements MailerProvider {
 			})
 		} catch (error) {
 			// console.error('Error sending email with SendGridMailer:', error);
-			let details = '';
-			const sgError = error as SendGridError;
+			let details = ''
+			const sgError = error as SendGridError
 
 			if (typeof sgError === 'object' && sgError !== null) {
 				if (sgError.response && sgError.response.body) {
-					const body = sgError.response.body;
+					const body = sgError.response.body
 					if (typeof body === 'string') {
-						details = body;
+						details = body
 					} else if (body.errors && Array.isArray(body.errors)) {
-						details = JSON.stringify(body.errors);
+						details = JSON.stringify(body.errors)
 					} else {
-						details = JSON.stringify(body); // Fallback for unexpected body structure
+						details = JSON.stringify(body) // Fallback for unexpected body structure
 					}
 				} else if (sgError.message) {
-					details = sgError.message; // Standard error message
-					if (sgError.code) { // Include status code if available directly on error
-						details += ` (Code: ${sgError.code})`;
+					details = sgError.message // Standard error message
+					if (sgError.code) {
+						// Include status code if available directly on error
+						details += ` (Code: ${sgError.code})`
 					}
 				} else {
-					details = String(error); // Fallback for other objects
+					details = String(error) // Fallback for other objects
 				}
 			} else {
-				details = String(error); // Fallback for non-objects (strings, numbers, etc.)
+				details = String(error) // Fallback for non-objects (strings, numbers, etc.)
 			}
-			throw new Error(`SendGridMailer: Failed to send email. ${details}`);
+			throw new Error(`SendGridMailer: Failed to send email. ${details}`)
 		}
 	}
 }

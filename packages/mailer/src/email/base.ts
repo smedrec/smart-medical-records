@@ -8,11 +8,11 @@
  * @property {string} [text] - Optional plain text content of the email.
  */
 export interface MailerSendOptions {
-  from: string;
-  to: string | string[];
-  subject: string;
-  html: string;
-  text?: string;
+	from: string
+	to: string | string[]
+	subject: string
+	html: string
+	text?: string
 }
 
 /**
@@ -21,11 +21,11 @@ export interface MailerSendOptions {
  * Any mailer implementation (e.g., NodeMailer, ResendMailer) must implement this interface.
  */
 export interface MailerProvider {
-  /**
-   * Sends an email.
-   * @param {MailerSendOptions} options - The options for the email to be sent.
-   * @returns {Promise<void>} A promise that resolves when the email has been processed for sending.
-   * @throws {Error} If an error occurs during the sending process.
-   */
-  send(options: MailerSendOptions): Promise<void>;
+	/**
+	 * Sends an email.
+	 * @param {MailerSendOptions} options - The options for the email to be sent.
+	 * @returns {Promise<void>} A promise that resolves when the email has been processed for sending.
+	 * @throws {Error} If an error occurs during the sending process.
+	 */
+	send(options: MailerSendOptions): Promise<void>
 }

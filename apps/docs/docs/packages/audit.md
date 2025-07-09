@@ -45,35 +45,35 @@ The exact implementation details (like function names and parameters) can be fou
 ```typescript
 // Presuming an AuditClient is exported from '@repo/audit'
 // and has been initialized (e.g., during application startup)
-import { auditClient, AuditLogEvent } from '@repo/audit'; // Actual exports may vary
+import { auditClient, AuditLogEvent } from '@repo/audit' // Actual exports may vary
 
 async function recordUserLogin(userId: string, ipAddress: string, success: boolean) {
-  const event: AuditLogEvent = {
-    actor: { type: 'USER', id: userId },
-    action: 'USER_LOGIN',
-    target: { type: 'SYSTEM', id: 'AuthenticationService' },
-    outcome: success ? 'SUCCESS' : 'FAILURE',
-    timestamp: new Date(),
-    details: {
-      ipAddress,
-      userAgent: 'some-user-agent', // Example detail
-    },
-  };
+	const event: AuditLogEvent = {
+		actor: { type: 'USER', id: userId },
+		action: 'USER_LOGIN',
+		target: { type: 'SYSTEM', id: 'AuthenticationService' },
+		outcome: success ? 'SUCCESS' : 'FAILURE',
+		timestamp: new Date(),
+		details: {
+			ipAddress,
+			userAgent: 'some-user-agent', // Example detail
+		},
+	}
 
-  try {
-    await auditClient.sendEvent(event);
-    console.log('Audit event sent successfully.');
-  } catch (error) {
-    console.error('Failed to send audit event:', error);
-    // Implement appropriate error handling (e.g., retry, log to a fallback)
-  }
+	try {
+		await auditClient.sendEvent(event)
+		console.log('Audit event sent successfully.')
+	} catch (error) {
+		console.error('Failed to send audit event:', error)
+		// Implement appropriate error handling (e.g., retry, log to a fallback)
+	}
 }
 
 // Example usage
-recordUserLogin('user-123', '192.168.1.100', true);
+recordUserLogin('user-123', '192.168.1.100', true)
 ```
 
-**Note**: The above is a *conceptual* example. Refer to the actual exports and API documentation within the `@repo/audit` package for precise usage instructions. The `packages/audit/README.md` or source files like `packages/audit/src/index.ts` and `packages/audit/src/context.ts` would be the authoritative sources.
+**Note**: The above is a _conceptual_ example. Refer to the actual exports and API documentation within the `@repo/audit` package for precise usage instructions. The `packages/audit/README.md` or source files like `packages/audit/src/index.ts` and `packages/audit/src/context.ts` would be the authoritative sources.
 
 ## Configuration
 
@@ -90,4 +90,7 @@ This configuration is often provided via environment variables or a configuratio
 - Avoid logging overly verbose or sensitive data directly in audit logs unless necessary and properly secured. Use the `details` field judiciously.
 - Ensure that the actor, action, and target are clearly identifiable.
 - Handle potential errors during event submission gracefully (e.g., network issues when sending to Redis).
+
+```
+
 ```

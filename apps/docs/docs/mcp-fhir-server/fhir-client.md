@@ -25,12 +25,10 @@ The FHIR client, particularly its authentication functions (`authorizeSmartClien
 The following parameters are vital for the SMART on FHIR authentication flow:
 
 - **`SMART_CLIENT_ID` (or `clientId` option):**
-
   - **Purpose:** The OAuth 2.0 Client ID assigned to the MCP FHIR Server application. This ID is obtained when registering the application with the FHIR Identity Provider (IdP).
   - **Required:** Yes.
 
 - **`SMART_REDIRECT_URI` (and the `redirectUri` option for `authorizeSmartClient`):**
-
   - **Purpose:** The callback URL where the IdP redirects the user after authentication. This **must exactly match** one of the redirect URIs registered with the IdP for your client application.
   - **Configuration & Usage:**
     - The `/auth/login` route in the MCP server dynamically constructs the `redirectUri` passed to `authorizeSmartClient` using the request's origin (e.g., `https://<your-worker-domain>/auth/callback`). This ensures the correct origin is used when initiating the redirect to the IdP.

@@ -20,7 +20,7 @@
 		"@repo/eslint-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"tsup": "8.5.0",
-		"typescript": "5.8.3",
+		"typescript": "5.5.4",
 		"vitest": "3.2.4"
 	}
 }

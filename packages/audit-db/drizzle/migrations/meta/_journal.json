@@ -1,34 +1,34 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1750836729725,
-      "tag": "0000_sturdy_gateway",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1750871202911,
-      "tag": "0001_glamorous_silver_fox",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1750878022215,
-      "tag": "0002_even_morlun",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1750878058991,
-      "tag": "0003_sad_retro_girl",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "7",
+			"when": 1750836729725,
+			"tag": "0000_sturdy_gateway",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1750871202911,
+			"tag": "0001_glamorous_silver_fox",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1750878022215,
+			"tag": "0002_even_morlun",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1750878058991,
+			"tag": "0003_sad_retro_girl",
+			"breakpoints": true
+		}
+	]
 }

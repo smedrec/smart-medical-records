@@ -197,17 +197,19 @@ By following this prompt, the FHIR Scheduling Coordinator agent will be able to 
 ## Tools
 
 The agent has access to the following tools:
+
 - `emailSendTool` (imported from `../tools/email-tools`)
 - Implicitly, FHIR tools (`fhirResourceCreateTool`, `fhirResourceReadTool`, `fhirResourceUpdateTool`, `fhirResourceDeleteTool`, `fhirResourceSearchTool`) as described in the instructions for interacting with the MCP server.
 
 ## Memory
 
 The agent uses a `Memory` instance with the following configuration:
+
 - **Embedder:** `ollama.embedding('nomic-embed-text:latest')`
 - **Storage:** `pgStorage` (PostgreSQL)
 - **Vector:** `pgVector` (PostgreSQL vector search)
 - **Options:**
-    - `lastMessages: 10`
-    - `semanticRecall: { topK: 3, messageRange: 2 }`
+  - `lastMessages: 10`
+  - `semanticRecall: { topK: 3, messageRange: 2 }`
 
-*The `scheduling-agent.ts` file also includes a JSDoc comment describing the workflow module's focus on coordinating activities within and across systems.*
+_The `scheduling-agent.ts` file also includes a JSDoc comment describing the workflow module's focus on coordinating activities within and across systems._

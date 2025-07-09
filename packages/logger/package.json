@@ -15,7 +15,7 @@
 		"dev": "tsup src/index.ts --format cjs,esm --watch"
 	},
 	"dependencies": {
-		"@sentry/browser": "9.34.0",
+		"@sentry/browser": "9.35.0",
 		"pino": "9.7.0",
 		"pino-pretty": "13.0.0"
 	},

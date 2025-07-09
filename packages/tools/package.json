@@ -8,9 +8,6 @@
 		".": "./src/lib/index.ts",
 		"./zx": "./src/lib/zx.ts"
 	},
-	"directories": {
-		"bin": "bin"
-	},
 	"bin": {
 		"get-branch": "./bin/get-branch",
 		"get-version": "./bin/get-version",
@@ -24,6 +21,9 @@
 		"run-vitest-ci": "./bin/run-vitest-ci",
 		"runx": "./bin/runx"
 	},
+	"directories": {
+		"bin": "bin"
+	},
 	"scripts": {
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
@@ -33,15 +33,15 @@
 		"@commander-js/extra-typings": "14.0.0",
 		"@jahands/cli-tools": "0.10.12",
 		"@types/fs-extra": "11.0.4",
-		"@types/node": "24.0.10",
+		"@types/node": "24.0.12",
 		"cli-table3": "0.6.5",
 		"commander": "14.0.0",
 		"empathic": "2.0.0",
-		"esbuild": "0.25.5",
+		"esbuild": "0.25.6",
 		"memoize-one": "6.0.0",
 		"ts-pattern": "5.7.1",
 		"tsx": "4.20.3",
-		"zod": "3.25.74",
+		"zod": "3.25.76",
 		"zx": "8.6.1"
 	},
 	"devDependencies": {

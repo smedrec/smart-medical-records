@@ -49,9 +49,9 @@ The worker is configured primarily through environment variables:
 1.  **Connection**: The worker establishes connections to Redis (for the queue) and PostgreSQL (for data storage).
 2.  **Listening**: It actively listens to the designated BullMQ queue for incoming jobs.
 3.  **Job Consumption**: When a new job (representing an `AuditLogEvent`) is picked up:
-    a.  The event data is parsed and validated.
-    b.  The data is mapped to the `audit_log` schema.
-    c.  The record is inserted into the PostgreSQL database using Drizzle ORM.
+    a. The event data is parsed and validated.
+    b. The data is mapped to the `audit_log` schema.
+    c. The record is inserted into the PostgreSQL database using Drizzle ORM.
 4.  **Acknowledgement**: Upon successful insertion, the job is marked as complete in the queue. If an error occurs, BullMQ's retry strategy is invoked.
 
 ## Importance for the Platform

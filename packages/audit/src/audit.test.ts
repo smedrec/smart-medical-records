@@ -1,7 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { Audit } from './audit' // Assuming Audit is exported from ./audit
 import { Queue as BullMQQueue } from 'bullmq'
 import { Redis as IORedis } from 'ioredis'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { Audit } from './audit' // Assuming Audit is exported from ./audit
+
 import type { AuditLogEvent } from './types'
 
 // Mock ioredis
@@ -209,7 +211,8 @@ describe('Audit Service', () => {
 
 	describe('closeConnection method', () => {
 		let audit: Audit // Declare audit here
-		beforeEach(() => { // Add beforeEach to define audit
+		beforeEach(() => {
+			// Add beforeEach to define audit
 			audit = new Audit(mockQueueName, mockRedisUrl)
 		})
 
@@ -247,7 +250,7 @@ describe('Audit Service', () => {
 			// or make `connection` on `audit` null after construction.
 			// The current setup makes `lastRedisInstance` available.
 			// A more direct way to test this specific line in closeConnection:
-			(audit as any).connection = null
+			;(audit as any).connection = null
 			await expect(audit.closeConnection()).resolves.toBeUndefined()
 		})
 

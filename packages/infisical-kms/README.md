@@ -39,15 +39,14 @@ try {
 } catch (error) {
 	// Handle specific KMS errors
 	if (error instanceof KmsApiError) {
-		console.error(`KMS API Error: ${error.message}`, `Status: ${error.status}`);
+		console.error(`KMS API Error: ${error.message}`, `Status: ${error.status}`)
 	} else if (error instanceof KmsEncryptionError) {
-		console.error(`Encryption Error: ${error.message}`);
+		console.error(`Encryption Error: ${error.message}`)
 	} else if (error instanceof KmsDecryptionError) {
-		console.error(`Decryption Error: ${error.message}`);
+		console.error(`Decryption Error: ${error.message}`)
 	} else if (error instanceof KmsError) {
-		console.error(`KMS Error: ${error.message}`);
-	}
-	 else {
+		console.error(`KMS Error: ${error.message}`)
+	} else {
 		console.error('An unexpected error occurred:', error)
 	}
 }
@@ -68,9 +67,9 @@ You can use `instanceof` to catch and handle these errors specifically:
 import {
 	InfisicalKmsClient,
 	KmsApiError,
-	KmsEncryptionError,
 	KmsDecryptionError,
-	KmsError
+	KmsEncryptionError,
+	KmsError,
 } from '@repo/infisical-kms'
 
 // ... client setup ...
@@ -80,19 +79,19 @@ try {
 } catch (error) {
 	if (error instanceof KmsEncryptionError) {
 		// Handle encryption-specific error
-		console.error('Encryption failed:', error.message, 'Status:', error.status);
+		console.error('Encryption failed:', error.message, 'Status:', error.status)
 	} else if (error instanceof KmsDecryptionError) {
 		// Handle decryption-specific error
-		console.error('Decryption failed:', error.message, 'Status:', error.status);
+		console.error('Decryption failed:', error.message, 'Status:', error.status)
 	} else if (error instanceof KmsApiError) {
 		// Handle other API errors
-		console.error('KMS API error:', error.message, 'Status:', error.status);
+		console.error('KMS API error:', error.message, 'Status:', error.status)
 	} else if (error instanceof KmsError) {
 		// Handle other KMS client errors
-		console.error('KMS client error:', error.message);
+		console.error('KMS client error:', error.message)
 	} else {
 		// Handle other unexpected errors
-		console.error('An unexpected error occurred:', error);
+		console.error('An unexpected error occurred:', error)
 	}
 }
 ```

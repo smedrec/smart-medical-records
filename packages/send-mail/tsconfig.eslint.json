@@ -1,12 +1,9 @@
 {
-  "extends": "./tsconfig.json", // Inherit from the main tsconfig
-  "include": [
-    "src/**/*.ts", // Source files
-    "src/**/*.test.ts", // Test files
-    "vitest.config.ts"  // Vitest configuration
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+	"extends": "./tsconfig.json", // Inherit from the main tsconfig
+	"include": [
+		"src/**/*.ts", // Source files
+		"src/**/*.test.ts", // Test files
+		"vitest.config.ts" // Vitest configuration
+	],
+	"exclude": ["node_modules", "dist"]
 }

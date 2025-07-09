@@ -12,10 +12,10 @@ import type { MailerProvider, MailerSendOptions } from './base.js'
  * @property {string} [command] - The SMTP command that failed.
  */
 interface NodeMailerError extends Error {
-  code?: string;
-  response?: string;
-  responseCode?: number;
-  command?: string;
+	code?: string
+	response?: string
+	responseCode?: number
+	command?: string
 }
 
 /**
@@ -54,28 +54,26 @@ export class NodeMailer implements MailerProvider {
 				text: options.text,
 			})
 		} catch (error) {
-			let details = String(error);
+			let details = String(error)
 			if (error instanceof Error) {
-				details = error.message;
-				const nodeError = error as NodeMailerError;
+				details = error.message
+				const nodeError = error as NodeMailerError
 				if (nodeError.code) {
-					details += ` (Code: ${nodeError.code})`;
+					details += ` (Code: ${nodeError.code})`
 				}
 				if (nodeError.responseCode) {
-					details += ` (Response Code: ${nodeError.responseCode})`;
+					details += ` (Response Code: ${nodeError.responseCode})`
 				}
 				if (nodeError.command) {
-					details += ` (Command: ${nodeError.command})`;
+					details += ` (Command: ${nodeError.command})`
 				}
 				// Avoid duplicating the response if it's already in the message for some error types
 				if (nodeError.response && !details.includes(nodeError.response)) {
-					details += ` (Response: ${nodeError.response})`;
+					details += ` (Response: ${nodeError.response})`
 				}
 			}
 			// console.error('Error sending email with NodeMailer:', error);
-			throw new Error(
-				`NodeMailer: Failed to send email. ${details}`
-			)
+			throw new Error(`NodeMailer: Failed to send email. ${details}`)
 		}
 	}
 

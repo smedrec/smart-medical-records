@@ -4,7 +4,8 @@ import {
 	FHIR_AUTH_STATE_COOKIE,
 	FHIR_PKCE_VERIFIER_COOKIE,
 	FHIR_SESSION_COOKIE,
-} from '../../lib/auth-constants' // Updated import path
+} from '../../lib/auth-constants'
+// Updated import path
 import handler from '../../worker' // Assuming this is the entry point for the Hono app
 
 // Mock global fetch

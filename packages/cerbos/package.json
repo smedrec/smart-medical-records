@@ -22,11 +22,11 @@
 		"@repo/hono-helpers": "workspace:*"
 	},
 	"devDependencies": {
+		"@cerbos/core": "0.23.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/node": "24.0.10",
-		"vitest": "3.2.4",
-		"@cerbos/core": "0.23.0"
+		"@types/node": "24.0.12",
+		"vitest": "3.2.4"
 	}
 }

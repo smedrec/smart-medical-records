@@ -1,19 +1,13 @@
 {
-  "extends": "@repo/typescript-config/lib.json",
-  "compilerOptions": {
-    "noEmit": false,
-    "outDir": "./dist",
-    "declaration": true,
-    "declarationMap": true,
-    "types": ["node"]
-    // We inherit module, target, moduleResolution ('bundler'), lib, strict, etc., from the base.
-  },
-  "include": ["src/**/*"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "eslint.config.ts",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ]
+	"extends": "@repo/typescript-config/lib.json",
+	"compilerOptions": {
+		"noEmit": false,
+		"outDir": "./dist",
+		"declaration": true,
+		"declarationMap": true,
+		"types": ["node"]
+		// We inherit module, target, moduleResolution ('bundler'), lib, strict, etc., from the base.
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist", "eslint.config.ts", "**/*.test.ts", "**/*.spec.ts"]
 }

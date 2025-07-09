@@ -29,7 +29,6 @@ It consumes messages produced by services using the `@repo/audit` package.
     ```
 
     Edit `apps/audit/.env` with your actual `DATABASE_URL` and `REDIS_URL`. Required variables:
-
     - `DATABASE_URL`: Connection string for PostgreSQL (e.g., `postgresql://user:password@localhost:5432/auditdb`)
     - `REDIS_URL`: Connection string for Redis (e.g., `redis://localhost:6379`)
     - `AUDIT_QUEUE_NAME`: Name of the BullMQ queue to process (defaults to `audit`)

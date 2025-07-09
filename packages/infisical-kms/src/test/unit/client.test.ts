@@ -1,10 +1,12 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import {
 	InfisicalKmsClient,
-	KmsEncryptionError,
+	KmsApiError,
 	KmsDecryptionError,
-	KmsApiError
+	KmsEncryptionError,
 } from '../../client'
+
 import type { InfisicalKmsClientConfig } from '../../types'
 
 // Mock global fetch

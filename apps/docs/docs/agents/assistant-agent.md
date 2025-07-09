@@ -115,15 +115,17 @@ By adhering to these guidelines, you will function as a highly effective, safe, 
 ## Tools
 
 The agent has access to the following tools:
+
 - All FHIR tools (imported from `../tools/fhir-tools`)
 - `emailSendTool` (imported from `../tools/email-tools`)
 
 ## Memory
 
 The agent uses a `Memory` instance with the following configuration:
+
 - **Embedder:** `ollama.embedding('nomic-embed-text:latest')`
 - **Storage:** `pgStorage` (PostgreSQL)
 - **Vector:** `pgVector` (PostgreSQL vector search)
 - **Options:**
-    - `lastMessages: 10`
-    - `semanticRecall: { topK: 3, messageRange: 2 }`
+  - `lastMessages: 10`
+  - `semanticRecall: { topK: 3, messageRange: 2 }`

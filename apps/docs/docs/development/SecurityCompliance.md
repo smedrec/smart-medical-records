@@ -33,7 +33,6 @@
 ## Compliance Standards
 
 - **HIPAA**:
-
   - Signed BAA with Cloudflare
   - Audit logs in [apps/api/src/lib/logs/hipaa.ts](mdc:apps/api/src/lib/logs/hipaa.ts)
   - PII handling in [apps/api/src/lib/utils/pii.ts](mdc:apps/api/src/lib/utils/pii.ts)
@@ -46,12 +45,10 @@
 ## Security Testing
 
 - **SAST**:
-
   - Run via GitHub Actions on every PR
   - Rules from [packages/eslint-config/src/security.config.ts](mdc:packages/eslint-config/src/security.config.ts)
 
 - **DAST**:
-
   - OWASP ZAP scans nightly
   - Results in [test/artifacts/zap-reports/](mdc:apps/api/src/test/artifacts/zap-reports/)
 

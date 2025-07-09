@@ -18,14 +18,14 @@
 	},
 	"dependencies": {
 		"@repo/hono-helpers": "workspace:*",
-		"bullmq": "5.56.1",
+		"bullmq": "5.56.2",
 		"ioredis": "5.6.1"
 	},
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/node": "24.0.10",
+		"@types/node": "24.0.12",
 		"tsup": "8.5.0",
 		"typescript": "5.5.4",
 		"vitest": "3.2.4"

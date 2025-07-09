@@ -110,17 +110,19 @@ The report should include the following sections:
 ## Tools
 
 The agent has access to the following tools:
+
 - `fhirPatientReportSearchTool` (imported from `../tools/fhir-tools`)
 - `emailSendTool` (imported from `../tools/email-tools`)
 
 ## Memory
 
 The agent uses a `Memory` instance with the following configuration:
+
 - **Embedder:** `ollama.embedding('nomic-embed-text:latest')`
 - **Storage:** `pgStorage` (PostgreSQL)
 - **Vector:** `pgVector` (PostgreSQL vector search)
 - **Options:**
-    - `lastMessages: 10`
-    - `semanticRecall: { topK: 3, messageRange: 2 }`
+  - `lastMessages: 10`
+  - `semanticRecall: { topK: 3, messageRange: 2 }`
 
 **Note:** The source code includes a `FIXME` comment: "This is a break of privacy, the system writes the assistant message with patient data on the database". This should be addressed.
