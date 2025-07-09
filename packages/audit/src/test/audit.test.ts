@@ -2,9 +2,9 @@ import { Queue as BullMQQueue } from 'bullmq'
 import { Redis as IORedis } from 'ioredis'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { Audit } from './audit' // Assuming Audit is exported from ./audit
+import { Audit } from '../audit' // Assuming Audit is exported from ./audit
 
-import type { AuditLogEvent } from './types'
+import type { AuditLogEvent } from '../types'
 
 // Mock ioredis
 vi.mock('ioredis', () => {
