@@ -1,137 +1,144 @@
 import { Queue } from 'bullmq'
-import { BullMQOtel } from 'bullmq-otel'
-import { Redis } from 'ioredis'
-
-import type { RedisOptions } from 'ioredis'
+// import { BullMQOtel } from 'bullmq-otel' // BullMQOtel can be added if telemetry is configured
+import { Redis as RedisInstance } from 'ioredis' // Renamed to avoid conflict
+import type { RedisOptions, Redis as RedisType } from 'ioredis' // RedisType for type usage
+import { getSharedRedisConnection } from '@repo/redis-client'
 import type { SendMailEvent } from './types.js'
 
-/**
- * Retrieves an environment variable from Cloudflare Workers or Node.js process.env.
- * This function checks `process.env` for Node.js environments
- * and `env` for Cloudflare Workers environments.
- *
- * @param variableName - The name of the environment variable to retrieve.
- * @returns The value of the environment variable, or `undefined` if not found.
- */
-function getEnv(variableName: string): string | undefined {
-	// Check Cloudflare Workers env
-	// @ts-expect-error Hides `Cannot find name 'env'.` when not in CF Worker context.
-	if (typeof env !== 'undefined' && env[variableName]) {
-		// @ts-expect-error
-		return env[variableName]
-	}
-	// Check Node.js process.env
-	if (typeof process !== 'undefined' && process.env && process.env[variableName]) {
-		return process.env[variableName]
-	}
-
-	return undefined
-}
+// The getEnv function is removed as REDIS_URL is now primarily handled by @repo/redis-client
+// However, MAIL_REDIS_URL can still be used for overrides if a direct connection is made.
 
 /**
  * Represents a client for sending mail tasks to a BullMQ queue.
  * This class encapsulates the connection to Redis and the BullMQ queue,
  * providing a simple interface to enqueue mail sending events.
+ * It can use a shared Redis connection or establish its own.
  */
 export class SendMail {
-	/**
-	 * The IORedis connection instance.
-	 * @private
-	 */
-	private connection: Redis
-	/**
-	 * The name of the BullMQ queue used for mail events.
-	 * @private
-	 */
+	private connection: RedisType
 	private queueName: string
-	/**
-	 * The BullMQ Queue instance.
-	 * @private
-	 */
 	private bullmq_queue: Queue
+	private isSharedConnection: boolean
 
 	/**
 	 * Constructs a new `SendMail` instance.
 	 *
-	 * @param queueName - The name of the BullMQ queue to interact with.
-	 * @param redisUrl - Optional. The Redis connection URL.
-	 *                   If not provided, the constructor will attempt to retrieve it from the
-	 *                   `MAIL_REDIS_URL` environment variable.
-	 * @param redisConnectionOptions - Optional. Additional options to pass to the IORedis connection.
-	 *                                 These options will be merged with default options.
-	 * @throws {Error} If the Redis URL is not provided and cannot be found in the environment variables.
-	 * @throws {Error} If there is an issue establishing the initial Redis connection (though most connection errors are handled by ioredis internally and emitted as 'error' events).
+	 * If `redisOrUrlOrOptions` is a string (Redis URL) or if `directConnectionOptions` are provided,
+	 * a new Redis connection will be created. The URL can also be from `MAIL_REDIS_URL` env var.
+	 * If `redisOrUrlOrOptions` is an existing `Redis` instance, it will be used.
+	 * Otherwise, it defaults to using the shared Redis connection from `@repo/redis-client`.
+	 *
+	 * @param queueName The name of the BullMQ queue.
+	 * @param redisOrUrlOrOptions Optional. Can be:
+	 *                          - A Redis connection URL (string).
+	 *                          - An existing IORedis connection instance.
+	 *                          - An object with `url` and/or `options` for IORedis.
+	 * @param directConnectionOptions Optional. IORedis options for a new direct connection.
+	 * @throws Error if a direct Redis URL is required but not found, or on Redis instantiation failure.
 	 */
-	constructor(queueName: string, redisUrl?: string, redisConnectionOptions?: RedisOptions) {
+	constructor(
+		queueName: string,
+		redisOrUrlOrOptions?: string | RedisType | { url?: string; options?: RedisOptions },
+		directConnectionOptions?: RedisOptions
+	) {
 		this.queueName = queueName
-		const effectiveRedisUrl = redisUrl || getEnv('MAIL_REDIS_URL')
+		this.isSharedConnection = false
 
-		if (!effectiveRedisUrl) {
-			throw new Error(
-				`[SendMailService] Initialization failed: Redis URL was not provided directly and could not be found in the environment variable 'MAIL_REDIS_URL'.`
-			)
-		}
-
-		const defaultOptions: RedisOptions = {
-			maxRetriesPerRequest: null, // Important for BullMQ: allows BullMQ to handle retries
-			// Enable auto-resend of commands during reconnection.
-			// This is generally safe for BullMQ as it uses commands that are idempotent or managed by BullMQ's logic.
+		const defaultDirectOptions: RedisOptions = {
+			maxRetriesPerRequest: null,
 			enableAutoPipelining: true,
 		}
 
-		try {
-			this.connection = new Redis(effectiveRedisUrl, {
-				...defaultOptions,
-				...redisConnectionOptions,
-			})
-		} catch (err) {
-			// This catch block might only capture immediate instantiation errors from ioredis,
-			// most connection issues are asynchronous.
-			console.error(
-				`[SendMailService] Failed to create Redis instance for queue ${this.queueName}:`,
-				err
+		if (redisOrUrlOrOptions && typeof redisOrUrlOrOptions === 'object' && 'status' in redisOrUrlOrOptions) {
+			// Scenario 1: An existing ioredis instance is provided
+			this.connection = redisOrUrlOrOptions
+			this.isSharedConnection = false // Assume externally managed
+			console.log(`[SendMailService] Using provided Redis instance for queue "${this.queueName}".`)
+		} else if (
+			typeof redisOrUrlOrOptions === 'string' ||
+			(typeof redisOrUrlOrOptions === 'object' && (redisOrUrlOrOptions.url || redisOrUrlOrOptions.options)) ||
+			directConnectionOptions
+		) {
+			// Scenario 2: URL string, options object, or directConnectionOptions provided for a direct connection
+			this.isSharedConnection = false
+			let url: string | undefined
+			let options: RedisOptions = { ...defaultDirectOptions, ...directConnectionOptions }
+
+			if (typeof redisOrUrlOrOptions === 'string') {
+				url = redisOrUrlOrOptions
+			} else if (typeof redisOrUrlOrOptions === 'object') {
+				url = redisOrUrlOrOptions.url
+				options = { ...options, ...redisOrUrlOrOptions.options }
+			}
+
+			const finalUrl = url || process.env['MAIL_REDIS_URL'] // Legacy env var for direct connections
+
+			if (!finalUrl) {
+				console.warn(
+					`[SendMailService] Attempting direct Redis connection for queue "${this.queueName}" but no URL specified and MAIL_REDIS_URL not set. Falling back to shared connection.`
+				)
+				this.connection = getSharedRedisConnection()
+				this.isSharedConnection = true
+			} else {
+				try {
+					console.log(
+						`[SendMailService] Creating new direct Redis connection to ${finalUrl.split('@').pop()} for queue "${this.queueName}".`
+					)
+					this.connection = new RedisInstance(finalUrl, options)
+				} catch (err) {
+					console.error(
+						`[SendMailService] Failed to create direct Redis instance for queue ${this.queueName}:`,
+						err
+					)
+					throw new Error(
+						`[SendMailService] Failed to initialize direct Redis connection. Error: ${err instanceof Error ? err.message : String(err)}`
+					)
+				}
+			}
+		} else {
+			// Scenario 3: No specific connection info, use the shared connection
+			console.log(
+				`[SendMailService] Using shared Redis connection for queue "${this.queueName}".`
 			)
-			throw new Error(
-				`[SendMailService] Failed to initialize Redis connection for queue ${this.queueName}. Please check Redis configuration and availability. Error: ${err instanceof Error ? err.message : String(err)}`
-			)
+			this.connection = getSharedRedisConnection()
+			this.isSharedConnection = true
 		}
 
 		this.bullmq_queue = new Queue(this.queueName, {
 			connection: this.connection,
-			// Assuming BullMQOtel is correctly configured and its version is stable.
-			// '0.1.0' could be dynamic or sourced from package.json if needed.
-			// telemetry: new BullMQOtel(this.queueName, '0.1.0'), // TODO: Consider making telemetry optional or configurable
+			// TODO: Telemetry (e.g., BullMQOtel) could be added here if needed and made configurable.
+			// Example: telemetry: new BullMQOtel(this.queueName, 'package-version'),
 		})
 
-		this.connection.on('connect', () => {
-			console.info(
-				`[SendMailService] Successfully connected to Redis for queue "${this.queueName}".`
-			)
-		})
-
-		this.connection.on('ready', () => {
-			console.log(`[SendMailService] Redis connection ready for queue "${this.queueName}".`)
-		})
-
-		this.connection.on('error', (err: Error) => {
-			// Log Redis connection errors. These errors are typically handled by ioredis automatically (e.g., reconnection attempts).
-			// Avoid throwing here as it could crash the application if not handled by the consumer.
-			// The application should ideally have its own monitoring for Redis health.
-			console.error(
-				`[SendMailService] Redis connection error for queue '${this.queueName}': ${err.message}. Attempting to reconnect...`,
-				err
-			)
-			// TODO: Consider adding a status flag or emitting an event that consuming applications can listen to
-			// if they need to react to Redis unavailability (e.g., disable features).
-		})
-
-		this.connection.on('close', () => {
-			console.info(`[SendMailService] Redis connection closed for queue ${this.queueName}.`)
-		})
-
-		this.connection.on('reconnecting', () => {
-			console.info(`[SendMailService] Reconnecting to Redis for queue ${this.queueName}...`)
-		})
+		// Attach listeners only if this instance created the connection
+		if (!this.isSharedConnection && !(redisOrUrlOrOptions && typeof redisOrUrlOrOptions === 'object' && 'status' in redisOrUrlOrOptions)) {
+			this.connection.on('connect', () => {
+				console.info(
+					`[SendMailService] Successfully connected to Redis (direct connection for queue "${this.queueName}").`
+				)
+			})
+			this.connection.on('ready', () => {
+				console.log(
+					`[SendMailService] Redis connection ready (direct connection for queue "${this.queueName}").`
+				)
+			})
+			this.connection.on('error', (err: Error) => {
+				console.error(
+					`[SendMailService] Redis connection error (direct for queue '${this.queueName}'): ${err.message}.`,
+					err
+				)
+			})
+			this.connection.on('close', () => {
+				console.info(
+					`[SendMailService] Redis connection closed (direct for queue ${this.queueName}).`
+				)
+			})
+			this.connection.on('reconnecting', () => {
+				console.info(
+					`[SendMailService] Reconnecting to Redis (direct for queue ${this.queueName})...`
+				)
+			})
+		}
 	}
 
 	/**
