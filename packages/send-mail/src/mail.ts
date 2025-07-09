@@ -104,7 +104,13 @@ export class SendMail {
 		})
 
 		this.connection.on('connect', () => {
-			console.info(`[SendMailService] Successfully connected to Redis for queue ${this.queueName}.`)
+			console.info(
+				`[SendMailService] Successfully connected to Redis for queue "${this.queueName}".`
+			)
+		})
+
+		this.connection.on('ready', () => {
+			console.log(`[SendMailService] Redis connection ready for queue "${this.queueName}".`)
 		})
 
 		this.connection.on('error', (err: Error) => {
