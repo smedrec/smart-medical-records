@@ -82,11 +82,25 @@ export class Audit {
 		const defaultOptions: RedisOptions = {
 			maxRetriesPerRequest: null, // Important for BullMQ, means commands are not retried by ioredis itself.
 			// enableReadyCheck: false, // Can be useful in some environments, but BullMQ handles its own readiness.
+			enableAutoPipelining: true,
 		}
-		this.connection = new Redis(effectiveRedisUrl, {
-			...defaultOptions,
-			...redisConnectionOptions,
-		})
+
+		try {
+			this.connection = new Redis(effectiveRedisUrl, {
+				...defaultOptions,
+				...redisConnectionOptions,
+			})
+		} catch (err) {
+			// This catch block might only capture immediate instantiation errors from ioredis,
+			// most connection issues are asynchronous.
+			console.error(
+				`[AuditService] Failed to create Redis instance for queue ${this.queueName}:`,
+				err
+			)
+			throw new Error(
+				`[AuditService] Failed to initialize Redis connection for queue ${this.queueName}. Please check Redis configuration and availability. Error: ${err instanceof Error ? err.message : String(err)}`
+			)
+		}
 
 		// Initialize the BullMQ queue with the established Redis connection.
 		// The queue name used here is the one jobs will be added to via `this.bullmq_queue.add(this.queueName, ...)`
@@ -151,6 +165,23 @@ export class Audit {
 				"[AuditService] Log Error: Missing required event properties. 'action' and 'status' must be provided."
 			)
 		}
+		if (!this.bullmq_queue) {
+			throw new Error('[AuditService] Cannot send event: BullMQ queue is not initialized.')
+		}
+		if (
+			!this.connection ||
+			(this.connection.status !== 'ready' &&
+				this.connection.status !== 'connecting' &&
+				this.connection.status !== 'reconnecting')
+		) {
+			// While ioredis handles reconnections, sending a command when not 'ready' (or in a state that will soon be ready)
+			// might lead to errors if maxRetriesPerRequest is not null or if the connection is truly down.
+			// BullMQ itself also has robustness, so this is an additional safeguard/log.
+			console.warn(
+				`[AuditService] Attempting to send mail while Redis connection status is '${this.connection.status}' for queue ${this.queueName}. This might fail if Redis is unavailable.`
+			)
+		}
+
 		const timestamp = new Date().toISOString()
 		const event: AuditLogEvent = {
 			timestamp,
@@ -164,7 +195,7 @@ export class Audit {
 			// Here, using this.queueName as the job name as well.
 			await this.bullmq_queue.add(this.queueName, event, {
 				removeOnComplete: true, // Remove job from queue once processed successfully.
-				removeOnFail: true, // Remove job from queue if it fails (consider dead-letter queue for production).
+				removeOnFail: false, // Remove job from queue if it fails (consider dead-letter queue for production).
 				// Other BullMQ job options could be exposed or configured if needed.
 			})
 		} catch (error) {
@@ -173,9 +204,9 @@ export class Audit {
 				`[AuditService] Failed to add event to BullMQ queue "${this.queueName}":`,
 				error
 			)
-			// Rethrow or handle more gracefully depending on desired behavior.
-			// For now, rethrowing allows the caller to be aware of the failure to log.
-			throw error
+			throw new Error(
+				`[AuditService] Failed to send mail event to queue '${this.queueName}'. Error: ${error instanceof Error ? error.message : String(error)}`
+			)
 		}
 	}
 
@@ -189,29 +220,38 @@ export class Audit {
 	 * @returns A Promise that resolves once the connection has been closed, or immediately if no action was needed.
 	 */
 	async closeConnection(): Promise<void> {
-		if (
-			this.connection &&
-			(this.connection.status === 'ready' ||
-				this.connection.status === 'connect' ||
-				this.connection.status === 'reconnecting')
-		) {
+		if (this.bullmq_queue) {
 			try {
-				await this.connection.quit()
-				console.log(
-					`[AuditService] Successfully closed Redis connection for queue "${this.queueName}".`
-				)
+				await this.bullmq_queue.close() // Close the queue first
+				console.info(`[AuditService] BullMQ queue '${this.queueName}' closed successfully.`)
 			} catch (err) {
-				console.error(
-					`[AuditService] Error while closing Redis connection for queue "${this.queueName}":`,
-					err
-				)
-				// Depending on the error, you might want to throw or handle it.
-				// For a close operation, logging might be sufficient.
+				console.error(`[AuditService] Error closing BullMQ queue '${this.queueName}':`, err)
+				// Decide if to rethrow or just log. For shutdown, logging might be sufficient.
 			}
-		} else if (this.connection) {
-			console.log(
-				`[AuditService] Redis connection for queue "${this.queueName}" was not in a closable state (current status: ${this.connection.status}). No action taken.`
-			)
+		}
+		if (this.connection) {
+			// Check if status is 'ready' or any other state that allows 'quit'
+			// 'quit' waits for pending commands to be processed, 'disconnect' is immediate.
+			if ((this.connection.status as string) !== 'end') {
+				try {
+					await this.connection.quit()
+					console.info(
+						`[AuditService] Redis connection for queue '${this.queueName}' quit gracefully.`
+					)
+				} catch (err) {
+					console.error(
+						`[AuditService] Error quitting Redis connection for queue '${this.queueName}':`,
+						err
+					)
+					// Fallback to disconnect if quit fails or times out (ioredis default timeout is 2s for quit)
+					if (this.connection.status !== 'end') {
+						await this.connection.disconnect()
+						console.info(
+							`[AuditService] Redis connection for queue '${this.queueName}' disconnected forcefully after quit error.`
+						)
+					}
+				}
+			}
 		}
 	}
 }

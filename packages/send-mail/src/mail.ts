@@ -100,7 +100,7 @@ export class SendMail {
 			connection: this.connection,
 			// Assuming BullMQOtel is correctly configured and its version is stable.
 			// '0.1.0' could be dynamic or sourced from package.json if needed.
-			telemetry: new BullMQOtel(this.queueName, '0.1.0'), // TODO: Consider making telemetry optional or configurable
+			// telemetry: new BullMQOtel(this.queueName, '0.1.0'), // TODO: Consider making telemetry optional or configurable
 		})
 
 		this.connection.on('connect', () => {
@@ -158,7 +158,7 @@ export class SendMail {
 			// These job options could also be made configurable if needed.
 			await this.bullmq_queue.add(this.queueName, eventDetails, {
 				removeOnComplete: true,
-				removeOnFail: true, // Consider if failed jobs should be kept for inspection
+				removeOnFail: false, // Consider if failed jobs should be kept for inspection
 			})
 		} catch (error) {
 			console.error(`[SendMailService] Failed to add job to queue '${this.queueName}':`, error)
