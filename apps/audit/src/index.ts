@@ -60,7 +60,7 @@ let auditDbService: AuditDb | undefined = undefined
 export { auditDbService }
 
 // Simple healthcheck server for audit worker
-const port = process.env.AUDIT_WORKER_PORT
+const port = parseInt(process.env.AUDIT_WORKER_PORT!, 10) || 5600
 const app = new Hono()
 app.get('/healthz', (c) => c.text('OK'))
 const server = serve(app)
@@ -155,7 +155,7 @@ async function main() {
 
 	serve({
 		fetch: app.fetch,
-		port: 5600,
+		port: port,
 	})
 
 	logger.info(`👂 Healthcheck server listening on port ${port}`)

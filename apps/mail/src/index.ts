@@ -96,7 +96,7 @@ const mailerConfig: NodeMailerSmtpOptions = {
 const mailer = new NodeMailer(mailerConfig)
 
 // Simple healthcheck server for mail worker
-const port = process.env.MAIL_WORKER_PORT
+const port = parseInt(process.env.MAIL_WORKER_PORT!, 10) || 5601
 const app = new Hono()
 app.get('/healthz', (c) => c.text('OK'))
 const server = serve(app)
@@ -267,7 +267,7 @@ async function main() {
 
 	serve({
 		fetch: app.fetch,
-		port: 5601,
+		port: port,
 	})
 
 	logger.info(`👂 Healthcheck server listening on port ${port}`)

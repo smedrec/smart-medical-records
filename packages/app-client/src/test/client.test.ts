@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { AppClient } from './client'
+import { AppClient } from '../client'
 
-import type { ClientOptions } from './types'
+import type { ClientOptions } from '../types'
 
 // Mock global fetch
 global.fetch = vi.fn()
