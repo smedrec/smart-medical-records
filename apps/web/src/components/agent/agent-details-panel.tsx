@@ -1,15 +1,21 @@
+import { useAgent } from '@/hooks/use-agent'
+
 import { Badge } from '@repo/ui/components/ui/badge'
+import { Loader } from '@repo/ui/components/ui/loader'
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area'
 import { Separator } from '@repo/ui/components/ui/separator'
 
-import type { AgentArrayItem } from '@/types/ai'
-
 interface AgentDetailsPanelProps {
-	agent: AgentArrayItem
+	agentId: string
 }
 
-export default function AgentDetailsPanel({ agent }: AgentDetailsPanelProps) {
+function AgentDetailsPanel({ agentId }: AgentDetailsPanelProps) {
 	const isActive = true
+
+	const { data: agent, isLoading, isError } = useAgent(agentId)
+
+	if (isLoading) return <Loader />
+	if (isError) return null
 
 	const tools = Object.entries(agent.tools).map(([id, tool]) => ({
 		...tool,
@@ -160,3 +166,5 @@ export default function AgentDetailsPanel({ agent }: AgentDetailsPanelProps) {
 		</div>
 	)
 }
+
+export { AgentDetailsPanel }

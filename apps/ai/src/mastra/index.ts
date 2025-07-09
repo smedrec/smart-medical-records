@@ -107,6 +107,18 @@ const mastra: Mastra = new Mastra({
 				},
 				path: '/api/*',
 			},
+			{
+				handler: async (c, next) => {
+					const body = await c.req.json()
+					if ('state' in body && body.state == null) {
+						delete body.state
+						delete body.tools
+						c.req.json = async () => body
+						return next()
+					}
+				},
+				path: '/api/agents/*/stream',
+			},
 
 			async (c, next) => {
 				const start = Date.now()

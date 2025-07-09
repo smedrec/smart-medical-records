@@ -1,3 +1,4 @@
+import { AgentDetailsPanel } from '@/components/agent/agent-details-panel'
 import {
 	ChatBubble,
 	ChatBubbleAction,
@@ -14,9 +15,11 @@ import { Bot, CornerDownLeft, Mic, Paperclip, RefreshCcw, Volume2 } from 'lucide
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { toast } from 'sonner'
 
 import { Button } from '@repo/ui/components/ui/button'
 import { InfiniteScroll } from '@repo/ui/components/ui/infinite-scroll'
+import { Sheet, SheetContent, SheetTrigger } from '@repo/ui/components/ui/sheet'
 
 import type { ChatRequest } from '@/lib/ai/chat'
 
@@ -135,6 +138,7 @@ function RouteComponent() {
 			const message = messages[messageIndex]
 			if (message && message.role === 'assistant') {
 				void navigator.clipboard.writeText(message.content)
+				toast.info('Message copied to clipboard')
 			}
 		}
 	}
@@ -188,7 +192,7 @@ function RouteComponent() {
 				<h1 className="text-2xl font-bold">Chat with {pathname}</h1>
 				<>
 					<div className="w-full px-4 pb-4">
-						<InfiniteScroll
+						{/*<InfiniteScroll
 							items={messages}
 							hasNextPage={hasNext}
 							isLoading={loading}
@@ -240,7 +244,7 @@ function RouteComponent() {
 												)}
 											</ChatBubbleMessage>
 										</ChatBubble>
-										{/* Loading */}
+										
 										{isGenerating && (
 											<ChatBubble variant="received">
 												<ChatBubbleAvatar src="" fallback="🤖" />
@@ -260,9 +264,8 @@ function RouteComponent() {
 									<p>You've reached the end! 🎉</p>
 								</div>
 							}
-						/>
-						{/*<ChatMessageList>
-							
+						/> */}
+						<ChatMessageList>
 							{messages &&
 								messages.map((message, index) => (
 									<ChatBubble key={index} variant={message.role == 'user' ? 'sent' : 'received'}>
@@ -308,14 +311,14 @@ function RouteComponent() {
 									</ChatBubble>
 								))}
 
-							
+							{/* Loading */}
 							{isGenerating && (
 								<ChatBubble variant="received">
 									<ChatBubbleAvatar src="" fallback="🤖" />
 									<ChatBubbleMessage isLoading />
 								</ChatBubble>
 							)}
-						</ChatMessageList> */}
+						</ChatMessageList>
 					</div>
 					{/* Form and Footer fixed at the bottom */}
 					<div className="w-full fixed bottom-0 px-4 pb-4">
@@ -342,10 +345,17 @@ function RouteComponent() {
 									<span className="sr-only">Use Microphone</span>
 								</Button>
 
-								<Button variant="ghost" size="icon">
-									<Bot className="size-4" />
-									<span className="sr-only">{pathname}</span>
-								</Button>
+								<Sheet>
+									<SheetTrigger>
+										<Button variant="ghost" size="icon">
+											<Bot className="size-4" />
+											<span className="sr-only">{pathname}</span>
+										</Button>
+									</SheetTrigger>
+									<SheetContent>
+										<AgentDetailsPanel agentId={pathname} />
+									</SheetContent>
+								</Sheet>
 
 								<Button
 									disabled={!input || isLoading}

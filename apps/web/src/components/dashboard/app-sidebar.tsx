@@ -174,7 +174,13 @@ const OrganizationsListSection = ({
  *
  * The sidebar includes sections for online and offline agents, group rooms, a create button for agents and groups, and footer links to documentation, logs, and settings. It handles loading and error states for agent and room data, and conditionally displays a group creation panel.
  */
-export function AppSidebar({ isMobile = false }: { isMobile?: boolean }) {
+export function AppSidebar({
+	isMobile = false,
+	...props
+}: {
+	isMobile?: boolean
+	props?: React.ComponentProps<typeof Sidebar>
+}) {
 	const location = useLocation()
 	const version = useVersionString() // Get api version
 
@@ -201,6 +207,7 @@ export function AppSidebar({ isMobile = false }: { isMobile?: boolean }) {
 				collapsible="none"
 				variant="inset" // Added variant="inset"
 				data-testid="app-sidebar"
+				{...props}
 			>
 				{/* ---------- header ---------- */}
 				<SidebarHeader>

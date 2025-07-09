@@ -1,4 +1,9 @@
+import { createServerFn } from '@tanstack/react-start'
+import { getHeaders } from '@tanstack/react-start/server'
+
 import type { HTTPHeaderName } from '@tanstack/react-start/server'
+
+const headers = getHeaders()
 
 type TransformedHeaders = Record<string, string> | undefined
 
@@ -16,5 +21,9 @@ function processHeaders(
 	}
 	return filtered
 }
+
+export const testHeaders = createServerFn().handler(async () => {
+	return processHeaders(headers)
+})
 
 export { processHeaders }

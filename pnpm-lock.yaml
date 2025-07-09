@@ -498,6 +498,15 @@ importers:
       '@ai-sdk/react':
         specifier: 2.0.0-beta.7
         version: 2.0.0-beta.7(react@19.1.0)(zod@3.25.74)
+      '@assistant-ui/react':
+        specifier: ^0.10.24
+        version: 0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
+      '@assistant-ui/react-ai-sdk':
+        specifier: ^0.10.14
+        version: 0.10.14(@assistant-ui/react@0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0)))(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
+      '@assistant-ui/react-markdown':
+        specifier: ^0.10.5
+        version: 0.10.5(@assistant-ui/react@0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0)))(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@better-auth/utils':
         specifier: 0.2.5
         version: 0.2.5
@@ -1440,6 +1449,9 @@ importers:
       react-dom:
         specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
+      react-resizable-panels:
+        specifier: ^3.0.3
+        version: 3.0.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       recharts:
         specifier: 3.0.2
         version: 3.0.2(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react-is@18.3.1)(react@19.1.0)(redux@5.0.1)
@@ -1612,6 +1624,53 @@ packages:
   '@apidevtools/json-schema-ref-parser@11.9.3':
     resolution: {integrity: sha512-60vepv88RwcJtSHrD6MjIL6Ta3SOYbgfnkHb+ppAVK+o9mXprRtulx7VlRl3lN3bbvysAfCS7WMVfhUYemB0IQ==}
     engines: {node: '>= 16'}
+
+  '@assistant-ui/react-ai-sdk@0.10.14':
+    resolution: {integrity: sha512-kU4NBqzyVJrYR5n6cBEreoiGYpbQkw897mkVvkG6d60h8oh2DuaqB9fdVaJs+rnKMM/1iDLJFoP0gOHhOSy/yA==}
+    peerDependencies:
+      '@assistant-ui/react': ^0.10.24
+      '@types/react': '*'
+      react: ^18 || ^19 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
+  '@assistant-ui/react-edge@0.2.12':
+    resolution: {integrity: sha512-95Y912lW8ASMT52qZd6ZHRiF+T7WxbeJ1yb2z/I0lCKegPt0q3spGy92YnO7mwz0uJaNjqu4/oZZybYfeIDzJg==}
+    peerDependencies:
+      '@assistant-ui/react': '*'
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^18 || ^19 || ^19.0.0-rc
+      react-dom: ^18 || ^19 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
+  '@assistant-ui/react-markdown@0.10.5':
+    resolution: {integrity: sha512-1TSP9k1Dv7qirGHWDIshVmk+ZQEYykbKTVa+JJqTg16BxJVP3hgYQcnxKdH4c/3YrDfyr6MBOMSov0C1FG/QAg==}
+    peerDependencies:
+      '@assistant-ui/react': ^0.10.24
+      '@types/react': '*'
+      react: ^18 || ^19 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
+  '@assistant-ui/react@0.10.24':
+    resolution: {integrity: sha512-9UOjVK7ISeDCLeJYnVGXUORcUxRFGB3NRJLBzaTbbHy2adkvlMqLXwwOBU2AMOJDW8Jb9s9aG8GUduXvvGvzZA==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^18 || ^19 || ^19.0.0-rc
+      react-dom: ^18 || ^19 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
 
   '@asteasolutions/zod-to-openapi@7.3.4':
     resolution: {integrity: sha512-/2rThQ5zPi9OzVwes6U7lK1+Yvug0iXu25olp7S0XsYmOqnyMfxH7gdSQjn/+DSOHRg7wnotwGJSyL+fBKdnEA==}
@@ -5880,6 +5939,19 @@ packages:
       '@types/react-dom':
         optional: true
 
+  '@radix-ui/react-popover@1.1.14':
+    resolution: {integrity: sha512-ODz16+1iIbGUfFEfKx2HTPKizg2MN39uIOV8MXeHnmdd3i/N9Wt7vU46wbHsqA0xoaQyXVcs0KIlBdOA2Y95bw==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
   '@radix-ui/react-popper@1.2.7':
     resolution: {integrity: sha512-IUFAccz1JyKcf/RjB552PlWwxjeCJB8/4KxT7EhBHOJM+mN7LdW+B3kacJXILm32xawcMMjb2i0cIZpo+f9kiQ==}
     peerDependencies:
@@ -8398,6 +8470,12 @@ packages:
     resolution: {integrity: sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA==}
     engines: {node: '>=12'}
 
+  assistant-cloud@0.0.2:
+    resolution: {integrity: sha512-9QH7WLTgKpTzOm4+8oqSJTcKZA3AKDwX1JQdfbHDYoVGkeiXUVMonTTvvlHuIKpa/PVdknA04EWO/S8GQO0LiQ==}
+
+  assistant-stream@0.2.17:
+    resolution: {integrity: sha512-uUZTK6qSMNMu35WqqmEaNCz68xE7X86fqj8nW1EHalarfe/LnzOAMxB66Kk2rijGkjtvunyPGNfBf386+9P4tQ==}
+
   ast-module-types@6.0.1:
     resolution: {integrity: sha512-WHw67kLXYbZuHTmcdbIrVArCq5wxo6NEuj3hiYAWr8mwJeC+C2mMCIBIWCiDoCye/OF/xelc+teJ1ERoWmnEIA==}
     engines: {node: '>=18'}
@@ -8911,6 +8989,9 @@ packages:
 
   class-variance-authority@0.7.1:
     resolution: {integrity: sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==}
+
+  classnames@2.5.1:
+    resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
 
   clean-stack@2.2.0:
     resolution: {integrity: sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A==}
@@ -14080,6 +14161,12 @@ packages:
       '@types/react':
         optional: true
 
+  react-resizable-panels@3.0.3:
+    resolution: {integrity: sha512-7HA8THVBHTzhDK4ON0tvlGXyMAJN1zBeRpuyyremSikgYh2ku6ltD7tsGQOcXx4NKPrZtYCm/5CBr+dkruTGQw==}
+    peerDependencies:
+      react: ^16.14.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+      react-dom: ^16.14.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+
   react-style-singleton@2.2.3:
     resolution: {integrity: sha512-b6jSvxvVnyptAiLjbkWLE/lOnR4lfTtDAl+eUC7RZy+QQWc6wRzIV2CE6xBuMmDxc2qIihtDCZD5NPOFl7fRBQ==}
     engines: {node: '>=10'}
@@ -14094,6 +14181,12 @@ packages:
     resolution: {integrity: sha512-OqJ2/vL7lEeV5zTJyG7kmARppUjiB9h9udl4qHQjjgEos66z00Ia0OckwYfRxCSFrW8RJIBnsBwQsHZbVPspqg==}
     peerDependencies:
       react: '>= 0.14.0'
+
+  react-textarea-autosize@8.5.9:
+    resolution: {integrity: sha512-U1DGlIQN5AwgjTyOEnI1oCcMuEr1pv1qOtklB2l4nyMGbHzWrI0eFsYK0zos2YWqAolJyG0IWJaqWmWj5ETh0A==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   react-tracked@1.7.14:
     resolution: {integrity: sha512-6UMlgQeRAGA+uyYzuQGm7kZB6ZQYFhc7sntgP7Oxwwd6M0Ud/POyb4K3QWT1eXvoifSa80nrAWnXWFGpOvbwkw==}
@@ -14596,6 +14689,9 @@ packages:
 
   secure-json-parse@2.7.0:
     resolution: {integrity: sha512-6aU+Rwsezw7VR8/nyvKTx8QpWH9FrcYiXXlqC4z5d5XQBDRqtbfsRjnwGyqbi3gddNtWHuEk9OANUotL26qKUw==}
+
+  secure-json-parse@4.0.0:
+    resolution: {integrity: sha512-dxtLJO6sc35jWidmLxo7ij+Eg48PM/kleBsxpC8QJE0qJICe+KawkDQmvCMZUr9u7WKVHgMW6vy3fQ7zMiFZMA==}
 
   selderee@0.11.0:
     resolution: {integrity: sha512-5TF+l7p4+OsnP8BCCvSyZiSPc4x4//p5uPwK8TCnVPJYRmU2aYKMpOXvw8zM5a5JvuuCGN1jmsMwuU2W02ukfA==}
@@ -15879,6 +15975,15 @@ packages:
       '@types/react':
         optional: true
 
+  use-composed-ref@1.4.0:
+    resolution: {integrity: sha512-djviaxuOOh7wkj0paeO1Q/4wMZ8Zrnag5H6yBvzN7AKKe8beOaED9SF5/ByLqsku8NP4zQqsvM2u3ew/tJK8/w==}
+    peerDependencies:
+      '@types/react': '*'
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
   use-context-selector@1.4.4:
     resolution: {integrity: sha512-pS790zwGxxe59GoBha3QYOwk8AFGp4DN6DOtH+eoqVmgBBRXVx4IlPDhJmmMiNQAgUaLlP+58aqRC3A4rdaSjg==}
     peerDependencies:
@@ -15896,6 +16001,24 @@ packages:
     resolution: {integrity: sha512-94iG+dEdEP/Sl3WWde+w9StIunlV8Dgj+vkt5wTwMoFQLaijiEZSXXy8KtcStpmEDtIptRJiNeD4ACTtVvnIKA==}
     peerDependencies:
       react: '>=16.8.0'
+
+  use-isomorphic-layout-effect@1.2.1:
+    resolution: {integrity: sha512-tpZZ+EX0gaghDAiFR37hj5MgY6ZN55kLiPkJsKxBMZ6GZdOSPJXiOzPM984oPYZ5AnehYx5WQp1+ME8I/P/pRA==}
+    peerDependencies:
+      '@types/react': '*'
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
+  use-latest@1.3.0:
+    resolution: {integrity: sha512-mhg3xdm9NaM8q+gLT8KryJPnRFOz1/5XPBhmDEVZK1webPzDjrPk7f/mbpeLqTgB9msytYWANxgALOCJKnLvcQ==}
+    peerDependencies:
+      '@types/react': '*'
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
 
   use-sidecar@1.1.3:
     resolution: {integrity: sha512-Fedw0aZvkhynoPYlA5WXrMCAMm+nSWdZt6lzJQ7Ok8S6Q+VsHmHpRWndVRJ8Be0ZbkfPc5LRYH+5XrzXcEeLRQ==}
@@ -16775,6 +16898,82 @@ snapshots:
       '@types/json-schema': 7.0.15
       js-yaml: 4.1.0
 
+  '@assistant-ui/react-ai-sdk@0.10.14(@assistant-ui/react@0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0)))(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))':
+    dependencies:
+      '@ai-sdk/react': 1.2.12(react@19.1.0)(zod@3.25.74)
+      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.74)
+      '@assistant-ui/react': 0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
+      '@assistant-ui/react-edge': 0.2.12(@assistant-ui/react@0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0)))(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-use-callback-ref': 1.1.1(@types/react@19.1.8)(react@19.1.0)
+      '@types/json-schema': 7.0.15
+      react: 19.1.0
+      zod: 3.25.74
+      zustand: 5.0.6(@types/react@19.1.8)(immer@10.1.1)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
+    optionalDependencies:
+      '@types/react': 19.1.8
+    transitivePeerDependencies:
+      - '@types/react-dom'
+      - immer
+      - react-dom
+      - use-sync-external-store
+
+  '@assistant-ui/react-edge@0.2.12(@assistant-ui/react@0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0)))(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@ai-sdk/provider': 1.1.3
+      '@assistant-ui/react': 0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
+      assistant-stream: 0.2.17
+      json-schema: 0.4.0
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      zod: 3.25.74
+      zod-to-json-schema: 3.24.6(zod@3.25.74)
+    optionalDependencies:
+      '@types/react': 19.1.8
+      '@types/react-dom': 19.1.6(@types/react@19.1.8)
+
+  '@assistant-ui/react-markdown@0.10.5(@assistant-ui/react@0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0)))(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@assistant-ui/react': 0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-use-callback-ref': 1.1.1(@types/react@19.1.8)(react@19.1.0)
+      '@types/hast': 3.0.4
+      classnames: 2.5.1
+      react: 19.1.0
+      react-markdown: 10.1.0(@types/react@19.1.8)(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.1.8
+    transitivePeerDependencies:
+      - '@types/react-dom'
+      - react-dom
+      - supports-color
+
+  '@assistant-ui/react@0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(immer@10.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))':
+    dependencies:
+      '@radix-ui/primitive': 1.1.2
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.1.8)(react@19.1.0)
+      '@radix-ui/react-context': 1.1.2(@types/react@19.1.8)(react@19.1.0)
+      '@radix-ui/react-popover': 1.1.14(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot': 1.2.3(@types/react@19.1.8)(react@19.1.0)
+      '@radix-ui/react-use-callback-ref': 1.1.1(@types/react@19.1.8)(react@19.1.0)
+      '@radix-ui/react-use-escape-keydown': 1.1.1(@types/react@19.1.8)(react@19.1.0)
+      '@standard-schema/spec': 1.0.0
+      assistant-cloud: 0.0.2
+      assistant-stream: 0.2.17
+      json-schema: 0.4.0
+      nanoid: 5.1.5
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      react-textarea-autosize: 8.5.9(@types/react@19.1.8)(react@19.1.0)
+      zod: 3.25.74
+      zustand: 5.0.6(@types/react@19.1.8)(immer@10.1.1)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
+    optionalDependencies:
+      '@types/react': 19.1.8
+      '@types/react-dom': 19.1.6(@types/react@19.1.8)
+    transitivePeerDependencies:
+      - immer
+      - use-sync-external-store
+
   '@asteasolutions/zod-to-openapi@7.3.4(zod@3.25.74)':
     dependencies:
       openapi3-ts: 4.5.0
@@ -17435,7 +17634,7 @@ snapshots:
       '@babel/traverse': 7.28.0
       '@babel/types': 7.28.0
       convert-source-map: 2.0.0
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -17488,7 +17687,7 @@ snapshots:
       '@babel/core': 7.28.0
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       lodash.debounce: 4.0.8
       resolve: 1.22.10
     transitivePeerDependencies:
@@ -18047,7 +18246,7 @@ snapshots:
       '@babel/parser': 7.28.0
       '@babel/template': 7.27.2
       '@babel/types': 7.28.0
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -18985,7 +19184,7 @@ snapshots:
   '@eslint/config-array@0.20.1':
     dependencies:
       '@eslint/object-schema': 2.1.6
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -19003,7 +19202,7 @@ snapshots:
   '@eslint/eslintrc@3.3.1':
     dependencies:
       ajv: 6.12.6
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       espree: 10.4.0
       globals: 14.0.0
       ignore: 5.3.2
@@ -19056,7 +19255,7 @@ snapshots:
       ci-info: 3.9.0
       compression: 1.8.0
       connect: 3.7.0
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       env-editor: 0.4.2
       freeport-async: 2.0.0
       getenv: 2.0.0
@@ -19108,7 +19307,7 @@ snapshots:
       '@expo/plist': 0.3.4
       '@expo/sdk-runtime-versions': 1.0.0
       chalk: 4.1.2
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       getenv: 2.0.0
       glob: 10.4.5
       resolve-from: 5.0.0
@@ -19146,7 +19345,7 @@ snapshots:
   '@expo/devcert@1.2.0':
     dependencies:
       '@expo/sudo-prompt': 9.3.2
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       glob: 10.4.5
     transitivePeerDependencies:
       - supports-color
@@ -19155,7 +19354,7 @@ snapshots:
   '@expo/env@1.0.6':
     dependencies:
       chalk: 4.1.2
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       dotenv: 16.4.7
       dotenv-expand: 11.0.7
       getenv: 2.0.0
@@ -19168,7 +19367,7 @@ snapshots:
       '@expo/spawn-async': 1.7.2
       arg: 5.0.2
       chalk: 4.1.2
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       find-up: 5.0.0
       getenv: 2.0.0
       glob: 10.4.5
@@ -19211,7 +19410,7 @@ snapshots:
       '@expo/json-file': 9.1.4
       '@expo/spawn-async': 1.7.2
       chalk: 4.1.2
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       dotenv: 16.4.7
       dotenv-expand: 11.0.7
       getenv: 2.0.0
@@ -19256,7 +19455,7 @@ snapshots:
       '@expo/image-utils': 0.7.5
       '@expo/json-file': 9.1.4
       '@react-native/normalize-colors': 0.79.4
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       resolve-from: 5.0.0
       semver: 7.7.2
       xml2js: 0.6.0
@@ -20152,7 +20351,7 @@ snapshots:
     dependencies:
       consola: 3.4.2
       detect-libc: 2.0.4
-      https-proxy-agent: 7.0.6(supports-color@10.0.0)
+      https-proxy-agent: 7.0.6
       node-fetch: 2.7.0
       nopt: 8.1.0
       semver: 7.7.2
@@ -20922,7 +21121,7 @@ snapshots:
   '@opensearch-project/opensearch@3.5.1':
     dependencies:
       aws4: 1.13.2
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       hpagent: 1.2.0
       json11: 2.0.2
       ms: 2.1.3
@@ -22673,6 +22872,29 @@ snapshots:
       '@types/react': 19.1.8
       '@types/react-dom': 19.1.6(@types/react@19.1.8)
 
+  '@radix-ui/react-popover@1.1.14(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/primitive': 1.1.2
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.1.8)(react@19.1.0)
+      '@radix-ui/react-context': 1.1.2(@types/react@19.1.8)(react@19.1.0)
+      '@radix-ui/react-dismissable-layer': 1.1.10(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-focus-guards': 1.1.2(@types/react@19.1.8)(react@19.1.0)
+      '@radix-ui/react-focus-scope': 1.1.7(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-id': 1.1.1(@types/react@19.1.8)(react@19.1.0)
+      '@radix-ui/react-popper': 1.2.7(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-portal': 1.1.9(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-presence': 1.1.4(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot': 1.2.3(@types/react@19.1.8)(react@19.1.0)
+      '@radix-ui/react-use-controllable-state': 1.2.2(@types/react@19.1.8)(react@19.1.0)
+      aria-hidden: 1.2.6
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      react-remove-scroll: 2.7.1(@types/react@19.1.8)(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.1.8
+      '@types/react-dom': 19.1.6(@types/react@19.1.8)
+
   '@radix-ui/react-popper@1.2.7(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@floating-ui/react-dom': 2.1.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -23183,7 +23405,7 @@ snapshots:
     dependencies:
       '@react-native/dev-middleware': 0.80.1
       chalk: 4.1.2
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       invariant: 2.2.4
       metro: 0.82.4
       metro-config: 0.82.4
@@ -23208,7 +23430,7 @@ snapshots:
       chrome-launcher: 0.15.2
       chromium-edge-launcher: 0.2.0
       connect: 3.7.0
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       invariant: 2.2.4
       nullthrows: 1.1.1
       open: 7.4.2
@@ -23227,7 +23449,7 @@ snapshots:
       chrome-launcher: 0.15.2
       chromium-edge-launcher: 0.2.0
       connect: 3.7.0
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       invariant: 2.2.4
       nullthrows: 1.1.1
       open: 7.4.2
@@ -24876,7 +25098,7 @@ snapshots:
       '@typescript-eslint/types': 8.32.1
       '@typescript-eslint/typescript-estree': 8.32.1(typescript@5.5.4)
       '@typescript-eslint/visitor-keys': 8.32.1
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       eslint: 9.27.0(jiti@2.4.2)
       typescript: 5.5.4
     transitivePeerDependencies:
@@ -24888,7 +25110,7 @@ snapshots:
       '@typescript-eslint/types': 8.35.1
       '@typescript-eslint/typescript-estree': 8.35.1(typescript@5.5.4)
       '@typescript-eslint/visitor-keys': 8.35.1
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       eslint: 9.27.0(jiti@2.4.2)
       typescript: 5.5.4
     transitivePeerDependencies:
@@ -24898,7 +25120,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/tsconfig-utils': 8.35.1(typescript@5.5.4)
       '@typescript-eslint/types': 8.35.1
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       typescript: 5.5.4
     transitivePeerDependencies:
       - supports-color
@@ -24907,7 +25129,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/tsconfig-utils': 8.35.1(typescript@5.8.3)
       '@typescript-eslint/types': 8.35.1
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
@@ -24934,7 +25156,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 8.32.1(typescript@5.5.4)
       '@typescript-eslint/utils': 8.32.1(eslint@9.27.0(jiti@2.4.2))(typescript@5.5.4)
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       eslint: 9.27.0(jiti@2.4.2)
       ts-api-utils: 2.1.0(typescript@5.5.4)
       typescript: 5.5.4
@@ -24945,7 +25167,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 8.35.1(typescript@5.5.4)
       '@typescript-eslint/utils': 8.35.1(eslint@9.27.0(jiti@2.4.2))(typescript@5.5.4)
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       eslint: 9.27.0(jiti@2.4.2)
       ts-api-utils: 2.1.0(typescript@5.5.4)
       typescript: 5.5.4
@@ -24960,7 +25182,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.32.1
       '@typescript-eslint/visitor-keys': 8.32.1
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
@@ -24976,7 +25198,7 @@ snapshots:
       '@typescript-eslint/tsconfig-utils': 8.35.1(typescript@5.5.4)
       '@typescript-eslint/types': 8.35.1
       '@typescript-eslint/visitor-keys': 8.35.1
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
@@ -24992,7 +25214,7 @@ snapshots:
       '@typescript-eslint/tsconfig-utils': 8.35.1(typescript@5.8.3)
       '@typescript-eslint/types': 8.35.1
       '@typescript-eslint/visitor-keys': 8.35.1
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
@@ -25036,7 +25258,7 @@ snapshots:
 
   '@typescript/vfs@1.6.1(typescript@5.8.3)':
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
@@ -25188,7 +25410,7 @@ snapshots:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 1.0.2
       ast-v8-to-istanbul: 0.3.3
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       istanbul-lib-coverage: 3.2.2
       istanbul-lib-report: 3.0.1
       istanbul-lib-source-maps: 5.0.6
@@ -25668,7 +25890,7 @@ snapshots:
       '@types/fs-extra': 11.0.4
       '@types/hash-sum': 1.0.2
       '@vuepress/shared': 2.0.0-rc.23
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       fs-extra: 11.3.0
       globby: 14.1.0
       hash-sum: 2.0.0
@@ -25784,7 +26006,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -25975,6 +26197,16 @@ snapshots:
   assertion-error@1.1.0: {}
 
   assertion-error@2.0.1: {}
+
+  assistant-cloud@0.0.2:
+    dependencies:
+      assistant-stream: 0.2.17
+
+  assistant-stream@0.2.17:
+    dependencies:
+      '@types/json-schema': 7.0.15
+      nanoid: 5.1.5
+      secure-json-parse: 4.0.0
 
   ast-module-types@6.0.1: {}
 
@@ -26209,7 +26441,7 @@ snapshots:
       babel-plugin-react-native-web: 0.19.13
       babel-plugin-syntax-hermes-parser: 0.25.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.28.0)
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       react-refresh: 0.14.2
       resolve-from: 5.0.0
     transitivePeerDependencies:
@@ -26303,7 +26535,7 @@ snapshots:
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       depd: 2.0.0
       destroy: 1.2.0
       http-errors: 2.0.0
@@ -26320,7 +26552,7 @@ snapshots:
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       http-errors: 2.0.0
       iconv-lite: 0.6.3
       on-finished: 2.4.1
@@ -26684,6 +26916,8 @@ snapshots:
     dependencies:
       clsx: 2.1.1
 
+  classnames@2.5.1: {}
+
   clean-stack@2.2.0: {}
 
   clean-stack@3.0.1:
@@ -26875,7 +27109,7 @@ snapshots:
     dependencies:
       bytes: 3.1.2
       compressible: 2.0.18
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       negotiator: 0.6.4
       on-headers: 1.0.2
       safe-buffer: 5.2.1
@@ -26906,7 +27140,7 @@ snapshots:
 
   connect@3.7.0:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       finalhandler: 1.1.2
       parseurl: 1.3.3
       utils-merge: 1.0.1
@@ -27583,7 +27817,7 @@ snapshots:
 
   esbuild-register@3.6.0(esbuild@0.25.5):
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       esbuild: 0.25.5
     transitivePeerDependencies:
       - supports-color
@@ -27734,7 +27968,7 @@ snapshots:
 
   eslint-import-resolver-node@0.3.9:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       is-core-module: 2.16.1
       resolve: 1.22.10
     transitivePeerDependencies:
@@ -27742,7 +27976,7 @@ snapshots:
 
   eslint-import-resolver-typescript@4.4.4(eslint-plugin-import@2.32.0)(eslint@9.27.0(jiti@2.4.2)):
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       eslint: 9.27.0(jiti@2.4.2)
       eslint-import-context: 0.1.9(unrs-resolver@1.9.2)
       get-tsconfig: 4.10.1
@@ -27757,7 +27991,7 @@ snapshots:
 
   eslint-module-utils@2.12.1(@typescript-eslint/parser@8.32.1(eslint@9.27.0(jiti@2.4.2))(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@4.4.4)(eslint@9.27.0(jiti@2.4.2)):
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
     optionalDependencies:
       '@typescript-eslint/parser': 8.32.1(eslint@9.27.0(jiti@2.4.2))(typescript@5.5.4)
       eslint: 9.27.0(jiti@2.4.2)
@@ -27773,7 +28007,7 @@ snapshots:
       array.prototype.findlastindex: 1.2.6
       array.prototype.flat: 1.3.3
       array.prototype.flatmap: 1.3.3
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       doctrine: 2.1.0
       eslint: 9.27.0(jiti@2.4.2)
       eslint-import-resolver-node: 0.3.9
@@ -27836,7 +28070,7 @@ snapshots:
       ajv: 6.12.6
       chalk: 4.1.2
       cross-spawn: 7.0.6
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       escape-string-regexp: 4.0.0
       eslint-scope: 8.4.0
       eslint-visitor-keys: 4.2.1
@@ -28085,7 +28319,7 @@ snapshots:
       content-type: 1.0.5
       cookie: 0.7.1
       cookie-signature: 1.0.6
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       depd: 2.0.0
       encodeurl: 2.0.0
       escape-html: 1.0.3
@@ -28120,7 +28354,7 @@ snapshots:
       content-type: 1.0.5
       cookie: 0.7.2
       cookie-signature: 1.2.2
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
@@ -28162,7 +28396,7 @@ snapshots:
 
   extract-zip@2.0.1:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       get-stream: 5.2.0
       yauzl: 2.10.0
     optionalDependencies:
@@ -28245,7 +28479,7 @@ snapshots:
       abortcontroller-polyfill: 1.7.8
       core-js: 3.43.0
       cross-fetch: 3.2.0
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       isomorphic-webcrypto: 2.3.8(expo@53.0.15(@babel/core@7.28.0)(graphql@16.11.0)(react-native@0.80.1(@babel/core@7.28.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.80.1(@babel/core@7.28.0)(@types/react@19.1.8)(react@19.1.0))
       jose: 4.15.9
       js-base64: 3.7.7
@@ -28287,7 +28521,7 @@ snapshots:
 
   finalhandler@1.1.2:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       encodeurl: 1.0.2
       escape-html: 1.0.3
       on-finished: 2.3.0
@@ -28300,7 +28534,7 @@ snapshots:
 
   finalhandler@1.3.1:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       encodeurl: 2.0.0
       escape-html: 1.0.3
       on-finished: 2.4.1
@@ -28312,7 +28546,7 @@ snapshots:
 
   finalhandler@2.1.0:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       encodeurl: 2.0.0
       escape-html: 1.0.3
       on-finished: 2.4.1
@@ -28367,7 +28601,7 @@ snapshots:
 
   follow-redirects@1.15.9(debug@4.4.1):
     optionalDependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
 
   fontfaceobserver@2.3.0:
     optional: true
@@ -28501,7 +28735,7 @@ snapshots:
   gaxios@6.7.1:
     dependencies:
       extend: 3.0.2
-      https-proxy-agent: 7.0.6(supports-color@10.0.0)
+      https-proxy-agent: 7.0.6
       is-stream: 2.0.1
       node-fetch: 2.7.0
       uuid: 9.0.1
@@ -28599,7 +28833,7 @@ snapshots:
     dependencies:
       basic-ftp: 5.0.5
       data-uri-to-buffer: 6.0.2
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -29065,7 +29299,7 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -29074,7 +29308,14 @@ snapshots:
   https-proxy-agent@5.0.1:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  https-proxy-agent@7.0.6:
+    dependencies:
+      agent-base: 7.1.3
+      debug: 4.4.1(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -29106,7 +29347,7 @@ snapshots:
       '@types/tough-cookie': 4.0.5
       axios: 1.10.0(debug@4.4.1)
       camelcase: 6.3.0
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       dotenv: 16.6.1
       extend: 3.0.2
       file-type: 16.5.4
@@ -29244,7 +29485,7 @@ snapshots:
     dependencies:
       '@ioredis/commands': 1.2.0
       cluster-key-slot: 1.1.2
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       denque: 2.1.0
       lodash.defaults: 4.2.0
       lodash.isarguments: 3.1.0
@@ -29573,7 +29814,7 @@ snapshots:
   istanbul-lib-source-maps@5.0.6:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.29
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       istanbul-lib-coverage: 3.2.2
     transitivePeerDependencies:
       - supports-color
@@ -30247,7 +30488,7 @@ snapshots:
 
   lighthouse-logger@1.4.2:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       marky: 1.3.0
     transitivePeerDependencies:
       - supports-color
@@ -30863,7 +31104,7 @@ snapshots:
     dependencies:
       exponential-backoff: 3.1.2
       flow-enums-runtime: 0.0.6
-      https-proxy-agent: 7.0.6(supports-color@10.0.0)
+      https-proxy-agent: 7.0.6
       metro-core: 0.82.4
     transitivePeerDependencies:
       - supports-color
@@ -30894,7 +31135,7 @@ snapshots:
 
   metro-file-map@0.82.4:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       fb-watchman: 2.0.2
       flow-enums-runtime: 0.0.6
       graceful-fs: 4.2.11
@@ -30998,7 +31239,7 @@ snapshots:
       chalk: 4.1.2
       ci-info: 2.0.0
       connect: 3.7.0
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       error-stack-parser: 2.1.4
       flow-enums-runtime: 0.0.6
       graceful-fs: 4.2.11
@@ -31328,7 +31569,7 @@ snapshots:
   micromark@3.2.0:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       decode-named-character-reference: 1.2.0
       micromark-core-commonmark: 1.1.0
       micromark-factory-space: 1.1.0
@@ -31350,7 +31591,7 @@ snapshots:
   micromark@4.0.2:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       decode-named-character-reference: 1.2.0
       devlop: 1.1.0
       micromark-core-commonmark: 2.0.3
@@ -32177,10 +32418,10 @@ snapshots:
     dependencies:
       '@tootallnate/quickjs-emscripten': 0.23.0
       agent-base: 7.1.3
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       get-uri: 6.0.4
       http-proxy-agent: 7.0.2
-      https-proxy-agent: 7.0.6(supports-color@10.0.0)
+      https-proxy-agent: 7.0.6
       pac-resolver: 7.0.1
       socks-proxy-agent: 8.0.5
     transitivePeerDependencies:
@@ -32742,9 +32983,9 @@ snapshots:
   proxy-agent@6.5.0:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       http-proxy-agent: 7.0.2
-      https-proxy-agent: 7.0.6(supports-color@10.0.0)
+      https-proxy-agent: 7.0.6
       lru-cache: 7.18.3
       pac-proxy-agent: 7.2.0
       proxy-from-env: 1.1.0
@@ -33036,6 +33277,11 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.1.8
 
+  react-resizable-panels@3.0.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+
   react-style-singleton@2.2.3(@types/react@19.1.8)(react@19.1.0):
     dependencies:
       get-nonce: 1.0.1
@@ -33053,6 +33299,15 @@ snapshots:
       prismjs: 1.30.0
       react: 19.1.0
       refractor: 3.6.0
+
+  react-textarea-autosize@8.5.9(@types/react@19.1.8)(react@19.1.0):
+    dependencies:
+      '@babel/runtime': 7.27.6
+      react: 19.1.0
+      use-composed-ref: 1.4.0(@types/react@19.1.8)(react@19.1.0)
+      use-latest: 1.3.0(@types/react@19.1.8)(react@19.1.0)
+    transitivePeerDependencies:
+      - '@types/react'
 
   react-tracked@1.7.14(react-dom@19.1.0(react@19.1.0))(react-native@0.80.1(@babel/core@7.28.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0):
     dependencies:
@@ -33356,7 +33611,7 @@ snapshots:
 
   require-in-the-middle@7.5.2:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       module-details-from-path: 1.0.4
       resolve: 1.22.10
     transitivePeerDependencies:
@@ -33452,7 +33707,7 @@ snapshots:
 
   rollup-plugin-esbuild@6.2.1(esbuild@0.25.5)(rollup@4.44.1):
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       es-module-lexer: 1.7.0
       esbuild: 0.25.5
       get-tsconfig: 4.10.1
@@ -33504,7 +33759,7 @@ snapshots:
 
   router@2.2.0:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       depd: 2.0.0
       is-promise: 4.0.0
       parseurl: 1.3.3
@@ -33656,6 +33911,8 @@ snapshots:
 
   secure-json-parse@2.7.0: {}
 
+  secure-json-parse@4.0.0: {}
+
   selderee@0.11.0:
     dependencies:
       parseley: 0.12.1
@@ -33668,7 +33925,7 @@ snapshots:
 
   send@0.19.0:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       depd: 2.0.0
       destroy: 1.2.0
       encodeurl: 1.0.2
@@ -33686,7 +33943,7 @@ snapshots:
 
   send@0.19.1:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       depd: 2.0.0
       destroy: 1.2.0
       encodeurl: 2.0.0
@@ -33705,7 +33962,7 @@ snapshots:
 
   send@1.2.0:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
@@ -33976,7 +34233,7 @@ snapshots:
   socks-proxy-agent@8.0.5:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       socks: 2.8.5
     transitivePeerDependencies:
       - supports-color
@@ -34385,7 +34642,7 @@ snapshots:
 
   tcp-port-used@1.0.2:
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       is2: 2.0.9
     transitivePeerDependencies:
       - supports-color
@@ -34441,7 +34698,7 @@ snapshots:
   threads@1.7.0:
     dependencies:
       callsites: 3.1.0
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       is-observable: 2.1.0
       observable-fns: 0.6.1
     optionalDependencies:
@@ -34638,7 +34895,7 @@ snapshots:
       cac: 6.7.14
       chokidar: 4.0.3
       consola: 3.4.2
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       esbuild: 0.25.5
       fix-dts-default-cjs-exports: 1.0.1
       joycon: 3.1.1
@@ -34666,7 +34923,7 @@ snapshots:
       cac: 6.7.14
       chokidar: 4.0.3
       consola: 3.4.2
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       esbuild: 0.25.5
       fix-dts-default-cjs-exports: 1.0.1
       joycon: 3.1.1
@@ -35152,6 +35409,12 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.1.8
 
+  use-composed-ref@1.4.0(@types/react@19.1.8)(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+    optionalDependencies:
+      '@types/react': 19.1.8
+
   use-context-selector@1.4.4(react-dom@19.1.0(react@19.1.0))(react-native@0.80.1(@babel/core@7.28.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)(scheduler@0.26.0):
     dependencies:
       react: 19.1.0
@@ -35164,6 +35427,19 @@ snapshots:
     dependencies:
       dequal: 2.0.3
       react: 19.1.0
+
+  use-isomorphic-layout-effect@1.2.1(@types/react@19.1.8)(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+    optionalDependencies:
+      '@types/react': 19.1.8
+
+  use-latest@1.3.0(@types/react@19.1.8)(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      use-isomorphic-layout-effect: 1.2.1(@types/react@19.1.8)(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.1.8
 
   use-sidecar@1.1.3(@types/react@19.1.8)(react@19.1.0):
     dependencies:
@@ -35280,7 +35556,7 @@ snapshots:
   vite-node@1.6.1(@types/node@24.0.10)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1):
     dependencies:
       cac: 6.7.14
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       pathe: 1.1.2
       picocolors: 1.1.1
       vite: 5.4.19(@types/node@24.0.10)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1)
@@ -35298,7 +35574,7 @@ snapshots:
   vite-node@2.1.9(@types/node@24.0.10)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1):
     dependencies:
       cac: 6.7.14
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       es-module-lexer: 1.7.0
       pathe: 1.1.2
       vite: 5.4.19(@types/node@24.0.10)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1)
@@ -35316,7 +35592,7 @@ snapshots:
   vite-node@3.2.4(@types/node@24.0.10)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0):
     dependencies:
       cac: 6.7.14
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       es-module-lexer: 1.7.0
       pathe: 2.0.3
       vite: 7.0.2(@types/node@24.0.10)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
@@ -35336,7 +35612,7 @@ snapshots:
 
   vite-tsconfig-paths@5.1.4(typescript@5.8.3)(vite@7.0.2(@types/node@24.0.10)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)):
     dependencies:
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       globrex: 0.1.2
       tsconfck: 3.1.6(typescript@5.8.3)
     optionalDependencies:
@@ -35402,7 +35678,7 @@ snapshots:
       '@vitest/utils': 1.6.1
       acorn-walk: 8.3.4
       chai: 4.5.0
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       execa: 8.0.1
       local-pkg: 0.5.1
       magic-string: 0.30.17
@@ -35437,7 +35713,7 @@ snapshots:
       '@vitest/spy': 2.1.9
       '@vitest/utils': 2.1.9
       chai: 5.2.0
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       expect-type: 1.2.1
       magic-string: 0.30.17
       pathe: 1.1.2
@@ -35473,7 +35749,7 @@ snapshots:
       '@vitest/spy': 3.2.4
       '@vitest/utils': 3.2.4
       chai: 5.2.0
-      debug: 4.4.1(supports-color@10.0.0)
+      debug: 4.4.1(supports-color@5.5.0)
       expect-type: 1.2.1
       magic-string: 0.30.17
       pathe: 2.0.3
