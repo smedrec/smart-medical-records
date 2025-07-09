@@ -109,7 +109,7 @@ app.get('/healthz', async (c) => {
 
 	const redisStatus = getRedisConnectionStatus()
 	// Ensure authDbService is not undefined before calling checkAuthDbConnection
-	const dbConnected = authDbService ? await authDbService.checkAuthDbConnection() : false;
+	const dbConnected = authDbService ? await authDbService.checkAuthDbConnection() : false
 
 	if (redisStatus === 'ready' && dbConnected) {
 		return c.text('OK')
@@ -322,5 +322,5 @@ main().catch(async (error) => {
 	logger.error('💥 Unhandled error in main application scope:', error)
 	await authDbService?.end()
 	// Ensure shared Redis connection is closed on fatal error
-	closeSharedRedisConnection().finally(() => process.exit(1))
+	void closeSharedRedisConnection().finally(() => process.exit(1))
 })

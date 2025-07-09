@@ -14,7 +14,7 @@ services:
       - LOG_LEVEL=${LOG_LEVEL}
       - AUDIT_WORKER_PORT=${AUDIT_WORKER_PORT}
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:5600/healthz']
+      test: ['CMD', 'curl', '-f', 'http://localhost:${AUDIT_WORKER_PORT}/healthz']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -37,7 +37,7 @@ services:
       - LOG_LEVEL=${LOG_LEVEL}
       - MAIL_WORKER_PORT=${MAIL_WORKER_PORT}
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:5601/healthz']
+      test: ['CMD', 'curl', '-f', 'http://localhost:${MAIL_WORKER_PORT}/healthz']
       interval: 10s
       timeout: 5s
       retries: 5

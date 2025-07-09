@@ -59,7 +59,7 @@ export class AuditDb {
 	public async checkAuditDbConnection() {
 		try {
 			await this.client`SELECT 1` // Simple query to check connection
-			console.log('🟢 Database connection successful.')
+			//console.log('🟢 Database connection successful.')
 			return true
 		} catch (error) {
 			console.error('🔴 Database connection failed:', error)
