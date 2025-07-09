@@ -65,7 +65,7 @@ describe('SendMail', () => {
 			})
 			expect(Queue).toHaveBeenCalledWith(mockQueueName, {
 				connection: mockRedisInstance,
-				telemetry: expect.any(Object), // BullMQOtel mock
+				// telemetry: expect.any(Object), // Telemetry was removed/commented out
 			})
 			expect(mailService).toBeInstanceOf(SendMail)
 			expect(mockRedisInstance.on).toHaveBeenCalledWith('connect', expect.any(Function))
@@ -84,35 +84,49 @@ describe('SendMail', () => {
 			})
 			expect(Queue).toHaveBeenCalledWith(mockQueueName, {
 				connection: mockRedisInstance,
-				telemetry: expect.any(Object),
+				// telemetry: expect.any(Object), // Telemetry was removed/commented out
 			})
 			expect(mailService).toBeInstanceOf(SendMail)
 			delete process.env.MAIL_REDIS_URL // Clean up env var
 		})
 
-		it('should throw error if Redis URL is not provided and not in environment', () => {
+		it('should default to shared Redis connection if Redis URL is not provided and not in environment', () => {
 			const originalEnv = process.env.MAIL_REDIS_URL
 			delete process.env.MAIL_REDIS_URL // Ensure it's not set
 
-			expect(() => new SendMail(mockQueueName)).toThrow(
-				"[SendMailService] Initialization failed: Redis URL was not provided directly and could not be found in the environment variable 'MAIL_REDIS_URL'."
-			)
+			let mailService: SendMail | null = null
+			// Expect no error to be thrown
+			expect(() => {
+				mailService = new SendMail(mockQueueName)
+			}).not.toThrow()
+
+			// Verify that Redis (mock) was called, implying getSharedRedisConnection was used
+			// and subsequently called the mocked Redis constructor.
+			// The actual URL/options for shared connection are handled by @repo/redis-client,
+			// so here we just check it was instantiated.
+			expect(Redis).toHaveBeenCalled()
+			// Verify Queue was initialized with a connection
+			expect(Queue).toHaveBeenCalledWith(mockQueueName, {
+				connection: mockRedisInstance, // mockRedisInstance is returned by the mocked Redis constructor
+				// telemetry: expect.any(Object), // Telemetry was removed/commented out
+			})
+			expect(mailService).toBeInstanceOf(SendMail)
 
 			if (originalEnv !== undefined) {
 				process.env.MAIL_REDIS_URL = originalEnv // Restore if it was originally set
 			}
 		})
 
-		it('should handle Redis instantiation errors', () => {
+		it('should handle Redis instantiation errors when a direct connection is attempted', () => {
 			const instantiationError = new Error('Redis init failed')
 			;(Redis as any).mockImplementationOnce(() => {
 				throw instantiationError
 			})
 			expect(() => new SendMail(mockQueueName, mockRedisUrl)).toThrow(
-				`[SendMailService] Failed to initialize Redis connection for queue ${mockQueueName}. Please check Redis configuration and availability. Error: ${instantiationError.message}`
+				`[SendMailService] Failed to initialize direct Redis connection. Error: ${instantiationError.message}`
 			)
 			expect(console.error).toHaveBeenCalledWith(
-				`[SendMailService] Failed to create Redis instance for queue ${mockQueueName}:`,
+				`[SendMailService] Failed to create direct Redis instance for queue ${mockQueueName}:`,
 				instantiationError
 			)
 		})
@@ -125,7 +139,7 @@ describe('SendMail', () => {
 			)[1]
 			connectCallback()
 			expect(console.info).toHaveBeenCalledWith(
-				`[SendMailService] Successfully connected to Redis for queue ${mockQueueName}.`
+				`[SendMailService] Successfully connected to Redis (direct connection for queue "${mockQueueName}").`
 			)
 
 			const errorCallback = mockRedisInstance.on.mock.calls.find(
@@ -134,7 +148,7 @@ describe('SendMail', () => {
 			const testError = new Error('Test Redis error')
 			errorCallback(testError)
 			expect(console.error).toHaveBeenCalledWith(
-				`[SendMailService] Redis connection error for queue '${mockQueueName}': ${testError.message}. Attempting to reconnect...`,
+				`[SendMailService] Redis connection error (direct for queue '${mockQueueName}'): ${testError.message}.`,
 				testError
 			)
 
@@ -143,7 +157,7 @@ describe('SendMail', () => {
 			)[1]
 			closeCallback()
 			expect(console.info).toHaveBeenCalledWith(
-				`[SendMailService] Redis connection closed for queue ${mockQueueName}.`
+		`[SendMailService] Redis connection closed (direct for queue ${mockQueueName}).`
 			)
 
 			const reconnectingCallback = mockRedisInstance.on.mock.calls.find(
@@ -151,7 +165,7 @@ describe('SendMail', () => {
 			)[1]
 			reconnectingCallback()
 			expect(console.info).toHaveBeenCalledWith(
-				`[SendMailService] Reconnecting to Redis for queue ${mockQueueName}...`
+		`[SendMailService] Reconnecting to Redis (direct for queue ${mockQueueName})...`
 			)
 		})
 	})
@@ -177,7 +191,7 @@ describe('SendMail', () => {
 			await mailService.send(eventDetails)
 			expect(mockQueueInstance.add).toHaveBeenCalledWith(mockQueueName, eventDetails, {
 				removeOnComplete: true,
-				removeOnFail: true,
+				removeOnFail: false, // This was changed in source
 			})
 		})
 

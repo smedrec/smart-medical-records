@@ -89,6 +89,11 @@
 			"outputLogs": "new-only",
 			"outputs": ["node_modules/.cache/eslint/.eslintcache"], // Adjusted path
 			"env": ["FIX_ESLINT"]
+		},
+		"test": {
+			"dependsOn": ["^build", "topo"],
+			"outputs": [],
+			"outputLogs": "new-only"
 		}
 		// "fix:workers-types": {} // Removed Cloudflare-specific task
 	}
