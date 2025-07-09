@@ -90,30 +90,25 @@ export class Audit {
 			(typeof redisOrUrlOrOptions === 'object' && (redisOrUrlOrOptions.url || redisOrUrlOrOptions.options)) ||
 			directConnectionOptions
 		) {
-			// Scenario 2: URL string, options object, or directConnectionOptions are provided, create a direct connection
+			// Scenario 2: URL string, options object, or directConnectionOptions are provided for a direct connection
 			this.isSharedConnection = false
 			let url: string | undefined
 			let options: RedisOptions = { ...defaultDirectOptions, ...directConnectionOptions }
 
 			if (typeof redisOrUrlOrOptions === 'string') {
 				url = redisOrUrlOrOptions
-			} else if (typeof redisOrUrlOrOptions === 'object') {
+			} else if (typeof redisOrUrlOrOptions === 'object' && (redisOrUrlOrOptions.url || redisOrUrlOrOptions.options)) {
+				// Check this condition specifically for object with url/options
 				url = redisOrUrlOrOptions.url
 				options = { ...options, ...redisOrUrlOrOptions.options }
 			}
+			// Note: directConnectionOptions are already merged into options
 
-			const finalUrl = url || process.env['AUDIT_REDIS_URL'] // Legacy env var support for direct connections
+			const envUrl = process.env['AUDIT_REDIS_URL']
+			const finalUrl = url || envUrl // Prioritize explicitly passed URL/options object over env var
 
-			if (!finalUrl) {
-				// This path should ideally not be hit if logic is to default to shared connection,
-				// but indicates a misconfiguration if trying to force a direct connection without a URL.
-				console.warn(
-					`[AuditService] Attempting direct Redis connection for queue "${this.queueName}" but no URL specified and AUDIT_REDIS_URL not set. Falling back to shared connection.`
-				)
-				// Fallback to shared:
-				this.connection = getSharedRedisConnection()
-				this.isSharedConnection = true
-			} else {
+			if (finalUrl) {
+				// If any URL (explicit, from object, or env) is found, attempt direct connection
 				try {
 					console.log(
 						`[AuditService] Creating new direct Redis connection to ${finalUrl.split('@').pop()} for queue "${this.queueName}".`
@@ -128,9 +123,43 @@ export class Audit {
 						`[AuditService] Failed to initialize direct Redis connection for queue ${this.queueName}. Error: ${err instanceof Error ? err.message : String(err)}`
 					)
 				}
+			} else if (url || redisOrUrlOrOptions || directConnectionOptions) {
+				// This case means an attempt for direct connection was made (e.g. empty string URL, or empty options object)
+				// but resulted in no usable URL, and AUDIT_REDIS_URL was also not set.
+				console.warn(
+					`[AuditService] Attempted direct Redis connection for queue "${this.queueName}" but no valid URL could be determined (explicitly or via AUDIT_REDIS_URL). Falling back to shared connection.`
+				)
+				this.connection = getSharedRedisConnection()
+				this.isSharedConnection = true
+			} else {
+				// Scenario 3: No explicit direct connection info at all, and no env var, use the shared connection
+				console.log(
+					`[AuditService] Using shared Redis connection for queue "${this.queueName}".`
+				)
+				this.connection = getSharedRedisConnection()
+				this.isSharedConnection = true
+			}
+		} else if (process.env['AUDIT_REDIS_URL']) {
+			// Scenario 2b: Only AUDIT_REDIS_URL is provided (no redisOrUrlOrOptions or directConnectionOptions)
+			this.isSharedConnection = false
+			const envUrl = process.env['AUDIT_REDIS_URL']
+			const options: RedisOptions = { ...defaultDirectOptions } // directConnectionOptions is undefined here
+			try {
+				console.log(
+					`[AuditService] Creating new direct Redis connection using AUDIT_REDIS_URL to ${envUrl.split('@').pop()} for queue "${this.queueName}".`
+				)
+				this.connection = new RedisInstance(envUrl, options)
+			} catch (err) {
+				console.error(
+					`[AuditService] Failed to create direct Redis instance using AUDIT_REDIS_URL for queue ${this.queueName}:`,
+					err
+				)
+				throw new Error(
+					`[AuditService] Failed to initialize direct Redis connection using AUDIT_REDIS_URL for queue ${this.queueName}. Error: ${err instanceof Error ? err.message : String(err)}`
+				)
 			}
 		} else {
-			// Scenario 3: No specific connection info, use the shared connection
+			// Scenario 3: No specific connection info at all, use the shared connection
 			console.log(
 				`[AuditService] Using shared Redis connection for queue "${this.queueName}".`
 			)

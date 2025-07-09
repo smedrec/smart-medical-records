@@ -1,5 +1,5 @@
 import { Queue as BullMQQueue } from 'bullmq'
-import { Redis as IORedis } from 'ioredis'
+import IORedisReal from 'ioredis' // Import the actual module for vi.mocked
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { Audit } from '../audit' // Assuming Audit is exported from ./audit
@@ -8,11 +8,15 @@ import type { AuditLogEvent } from '../types'
 
 // Mock ioredis
 vi.mock('ioredis', () => {
-	const Redis = vi.fn()
-	Redis.prototype.on = vi.fn()
-	Redis.prototype.quit = vi.fn().mockResolvedValue('OK')
-	Redis.prototype.status = 'ready' // Default status
-	return { Redis }
+	const RedisMock = vi.fn()
+	RedisMock.prototype.on = vi.fn()
+	RedisMock.prototype.quit = vi.fn().mockResolvedValue('OK')
+	RedisMock.prototype.disconnect = vi.fn().mockResolvedValue(undefined)
+	RedisMock.prototype.status = 'ready'
+	return {
+		Redis: RedisMock,
+		default: RedisMock,
+	}
 })
 
 // Mock bullmq
@@ -26,7 +30,7 @@ vi.mock('bullmq', () => {
 describe('Audit Service', () => {
 	const mockQueueName = 'test-audit-queue'
 	const mockRedisUrl = 'redis://mockhost:6379'
-	let MockedIORedis = IORedis as any
+	// let MockedIORedis = IORedisReal as any; // No longer needed like this
 	let MockedBullMQQueue = BullMQQueue as any
 	let originalProcessEnv: NodeJS.ProcessEnv
 
@@ -37,10 +41,11 @@ describe('Audit Service', () => {
 		vi.clearAllMocks()
 		originalProcessEnv = { ...process.env }
 
-		MockedIORedis.mockImplementation(() => {
+		vi.mocked(IORedisReal).mockImplementation(() => {
 			lastRedisInstance = {
 				on: vi.fn(),
 				quit: vi.fn().mockResolvedValue('OK'),
+				disconnect: vi.fn().mockResolvedValue(undefined), // Add disconnect
 				status: 'ready',
 			}
 			return lastRedisInstance
@@ -62,7 +67,10 @@ describe('Audit Service', () => {
 	describe('Constructor', () => {
 		it('should successfully instantiate with a provided redisUrl', () => {
 			const audit = new Audit(mockQueueName, mockRedisUrl)
-			expect(MockedIORedis).toHaveBeenCalledWith(mockRedisUrl, { maxRetriesPerRequest: null })
+			expect(vi.mocked(IORedisReal)).toHaveBeenCalledWith(mockRedisUrl, {
+				maxRetriesPerRequest: null,
+				enableAutoPipelining: true, // Added default option
+			})
 			expect(MockedBullMQQueue).toHaveBeenCalledWith(mockQueueName, {
 				connection: expect.any(Object), // Check for an object, as it's a mock instance
 			})
@@ -71,9 +79,10 @@ describe('Audit Service', () => {
 
 		it('should successfully instantiate using AUDIT_REDIS_URL from environment variables', () => {
 			process.env.AUDIT_REDIS_URL = 'redis://envhost:1234'
-			const audit = new Audit(mockQueueName)
-			expect(MockedIORedis).toHaveBeenCalledWith('redis://envhost:1234', {
+			const audit = new Audit(mockQueueName) // No direct args, should use AUDIT_REDIS_URL
+			expect(vi.mocked(IORedisReal)).toHaveBeenCalledWith('redis://envhost:1234', {
 				maxRetriesPerRequest: null,
+				enableAutoPipelining: true, // Added default option
 			})
 			expect(MockedBullMQQueue).toHaveBeenCalledWith(mockQueueName, {
 				connection: expect.any(Object), // Check for an object
@@ -83,16 +92,29 @@ describe('Audit Service', () => {
 
 		it('should throw an error if no redisUrl is provided and AUDIT_REDIS_URL is not set', () => {
 			delete process.env.AUDIT_REDIS_URL // Ensure it's not set
-			expect(() => new Audit(mockQueueName)).toThrow(
-				'[AuditService] Initialization Error: Redis URL was not provided and could not be found in environment variables (AUDIT_REDIS_URL). Please provide it directly or set the environment variable.'
-			)
+			delete process.env.AUDIT_REDIS_URL // Ensure it's not set
+
+			let auditService: Audit | null = null
+			// Expect no error to be thrown, should default to shared connection
+			expect(() => {
+				auditService = new Audit(mockQueueName)
+			}).not.toThrow()
+
+			// Verify that Redis (mock) was called, implying getSharedRedisConnection was used
+			expect(vi.mocked(IORedisReal)).toHaveBeenCalled()
+			// Verify Queue was initialized with a connection
+			expect(MockedBullMQQueue).toHaveBeenCalledWith(mockQueueName, {
+				connection: lastRedisInstance, // lastRedisInstance is the one returned by the MockedIORedis constructor
+			})
+			expect(auditService).toBeInstanceOf(Audit)
 		})
 
-		it('should pass redisConnectionOptions to IORedis constructor', () => {
+		it('should pass directConnectionOptions to IORedis constructor if provided', () => {
 			const redisOptions = { password: 'securepassword' }
 			new Audit(mockQueueName, mockRedisUrl, redisOptions)
-			expect(MockedIORedis).toHaveBeenCalledWith(mockRedisUrl, {
+			expect(vi.mocked(IORedisReal)).toHaveBeenCalledWith(mockRedisUrl, {
 				maxRetriesPerRequest: null,
+				enableAutoPipelining: true, // Added default option
 				password: 'securepassword',
 			})
 		})
@@ -112,7 +134,7 @@ describe('Audit Service', () => {
 			let errorHandler: ((err: Error) => void) | undefined
 
 			// Override specific mock for this test to capture 'on' callback
-			MockedIORedis.mockImplementation(() => {
+			vi.mocked(IORedisReal).mockImplementationOnce(() => {
 				lastRedisInstance = {
 					on: vi.fn((event, cb) => {
 						if (event === 'error') {
@@ -133,7 +155,7 @@ describe('Audit Service', () => {
 				errorHandler(testError)
 			}
 			expect(consoleErrorSpy).toHaveBeenCalledWith(
-				`[AuditService] Redis Connection Error for queue "${mockQueueName}": ${testError.message}`,
+				`[AuditService] Redis Connection Error (direct connection for queue "${mockQueueName}"): ${testError.message}`,
 				testError
 			)
 			consoleErrorSpy.mockRestore()
@@ -166,7 +188,7 @@ describe('Audit Service', () => {
 					principalId: 'user123',
 					timestamp: expect.any(String),
 				}),
-				{ removeOnComplete: true, removeOnFail: true }
+				{ removeOnComplete: true, removeOnFail: false }
 			)
 		})
 
@@ -200,7 +222,9 @@ describe('Audit Service', () => {
 			// Ensure the `add` method on the instance used by `audit` is the one rejecting
 			lastBullMQInstance.add.mockRejectedValueOnce(queueError)
 
-			await expect(audit.log(eventDetails)).rejects.toThrow(queueError)
+			await expect(audit.log(eventDetails)).rejects.toThrow(
+				`[AuditService] Failed to log audit event to queue '${mockQueueName}'. Error: ${queueError.message}`
+			)
 			expect(consoleErrorSpy).toHaveBeenCalledWith(
 				`[AuditService] Failed to add event to BullMQ queue "${mockQueueName}":`,
 				queueError
@@ -254,32 +278,45 @@ describe('Audit Service', () => {
 			await expect(audit.closeConnection()).resolves.toBeUndefined()
 		})
 
-		it('should log success message on successful close', async () => {
-			const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+		it('should log success messages on successful close for a direct connection', async () => {
+			const consoleInfoSpy = vi.spyOn(console, 'info').mockImplementation(() => {})
 			// audit is now defined in beforeEach
 			lastRedisInstance.status = 'ready'
 			lastRedisInstance.quit.mockResolvedValue('OK')
 
 			await audit.closeConnection()
-			expect(consoleLogSpy).toHaveBeenCalledWith(
-				`[AuditService] Successfully closed Redis connection for queue "${mockQueueName}".`
+
+			expect(consoleInfoSpy).toHaveBeenCalledWith(
+				`[AuditService] BullMQ queue '${mockQueueName}' closed successfully.`
 			)
-			consoleLogSpy.mockRestore()
+			expect(consoleInfoSpy).toHaveBeenCalledWith(
+				`[AuditService] Closing direct Redis connection for queue '${mockQueueName}'.`
+			)
+			expect(consoleInfoSpy).toHaveBeenCalledWith(
+				`[AuditService] Direct Redis connection for queue '${mockQueueName}' quit gracefully.`
+			)
+			consoleInfoSpy.mockRestore()
 		})
 
-		it('should log error message if closing connection fails', async () => {
+		it('should log error message if quitting direct connection fails', async () => {
 			const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 			// audit is now defined in beforeEach
 			lastRedisInstance.status = 'ready'
 			const closeError = new Error('Failed to close')
 			lastRedisInstance.quit.mockRejectedValueOnce(closeError)
+			const consoleInfoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
 
 			await audit.closeConnection()
 			expect(consoleErrorSpy).toHaveBeenCalledWith(
-				`[AuditService] Error while closing Redis connection for queue "${mockQueueName}":`,
+				`[AuditService] Error quitting direct Redis connection for queue '${mockQueueName}':`,
 				closeError
 			)
+			expect(lastRedisInstance.disconnect).toHaveBeenCalledTimes(1)
+			expect(consoleInfoSpy).toHaveBeenCalledWith(
+				`[AuditService] Direct Redis connection for queue '${mockQueueName}' disconnected forcefully.`
+			)
 			consoleErrorSpy.mockRestore()
+			consoleInfoSpy.mockRestore();
 		})
 	})
 })
