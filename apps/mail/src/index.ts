@@ -98,7 +98,37 @@ const mailer = new NodeMailer(mailerConfig)
 // Simple healthcheck server for mail worker
 const port = parseInt(process.env.MAIL_WORKER_PORT!, 10) || 5601
 const app = new Hono()
-app.get('/healthz', (c) => c.text('OK'))
+
+app.get('/healthz', async (c) => {
+	if (!authDbService) {
+		// This case should ideally not happen if main() has initialized it
+		logger.warn('Health check called before authDbService is initialized.')
+		c.status(503)
+		return c.text('Service Unavailable: DB service not initialized')
+	}
+
+	const redisStatus = getRedisConnectionStatus()
+	// Ensure authDbService is not undefined before calling checkAuthDbConnection
+	const dbConnected = authDbService ? await authDbService.checkAuthDbConnection() : false;
+
+	if (redisStatus === 'ready' && dbConnected) {
+		return c.text('OK')
+	} else {
+		logger.warn(
+			`Health check failed: Redis status is "${redisStatus}", DB connected: ${dbConnected}`
+		)
+		c.status(503)
+		let errorMessages = []
+		if (redisStatus !== 'ready') {
+			errorMessages.push(`Redis not ready (status: ${redisStatus})`)
+		}
+		if (!dbConnected) {
+			errorMessages.push('Database not connected')
+		}
+		return c.text(`Service Unavailable: ${errorMessages.join(', ')}`)
+	}
+})
+
 const server = serve(app)
 
 async function getEmailProvider(organizationId: string, action: string): Promise<Mailer> {

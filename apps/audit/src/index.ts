@@ -62,7 +62,36 @@ export { auditDbService }
 // Simple healthcheck server for audit worker
 const port = parseInt(process.env.AUDIT_WORKER_PORT!, 10) || 5600
 const app = new Hono()
-app.get('/healthz', (c) => c.text('OK'))
+
+app.get('/healthz', async (c) => {
+	if (!auditDbService) {
+		// This case should ideally not happen if main() has initialized it
+		logger.warn('Health check called before auditDbService is initialized.')
+		c.status(503)
+		return c.text('Service Unavailable: DB service not initialized')
+	}
+
+	const redisStatus = getRedisConnectionStatus()
+	const dbConnected = await auditDbService.checkAuditDbConnection()
+
+	if (redisStatus === 'ready' && dbConnected) {
+		return c.text('OK')
+	} else {
+		logger.warn(
+			`Health check failed: Redis status is "${redisStatus}", DB connected: ${dbConnected}`
+		)
+		c.status(503)
+		let errorMessages = []
+		if (redisStatus !== 'ready') {
+			errorMessages.push(`Redis not ready (status: ${redisStatus})`)
+		}
+		if (!dbConnected) {
+			errorMessages.push('Database not connected')
+		}
+		return c.text(`Service Unavailable: ${errorMessages.join(', ')}`)
+	}
+})
+
 const server = serve(app)
 
 // Main function to start the worker
