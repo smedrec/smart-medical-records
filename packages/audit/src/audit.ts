@@ -6,22 +6,23 @@ import type { AuditLogEvent } from './types.js'
 
 /**
  * Retrieves an environment variable.
- * This function attempts to read environment variables from `process.env` (Node.js).
+ * This function attempts to read environment variables from Cloudflare Workers or Node.js process.env.
  * Note: In non-Node.js environments (like Cloudflare Workers), environment variables might be accessed differently (e.g., directly from `env`).
- * This implementation prioritizes `process.env`.
  *
  * @param variableName The name of the environment variable to retrieve.
  * @returns The value of the environment variable if found, otherwise `undefined`.
  */
-function getEnv(variableName: string): string | undefined {
+export function getEnv(variableName: string): string | undefined {
+	// Check Cloudflare Workers env
+	// @ts-expect-error Hides `Cannot find name 'env'.` when not in CF Worker context.
+	if (typeof env !== 'undefined' && env[variableName]) {
+		// @ts-expect-error
+		return env[variableName]
+	}
 	// Check Node.js process.env
 	if (typeof process !== 'undefined' && process.env && process.env[variableName]) {
 		return process.env[variableName]
 	}
-	// In other environments (e.g., Cloudflare Workers), `env` might be a global or passed object.
-	// This basic version doesn't assume a global `env` object to maintain broader compatibility
-	// and avoid potential ReferenceErrors if `env` is not defined.
-	// Consumers in such environments should pass the redisUrl directly or ensure `AUDIT_REDIS_URL` is accessible.
 	return undefined
 }
 

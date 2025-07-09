@@ -3,7 +3,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { admin, apiKey, mcp, oidcProvider, openAPI, organization } from 'better-auth/plugins'
 import Redis from 'ioredis'
 
-import { Audit } from '@repo/audit'
+//import { Audit } from '@repo/audit'
 import { AuthDb } from '@repo/auth-db'
 import { SendMail } from '@repo/send-mail'
 
@@ -68,7 +68,7 @@ class Auth {
 
 		const email = new SendMail('mail', effectiveConfig.MAIL_REDIS_URL!)
 
-		const audit = new Audit('audit', effectiveConfig.AUDIT_REDIS_URL)
+		//const audit = new Audit('audit', effectiveConfig.AUDIT_REDIS_URL)
 
 		this.auth = betterAuth({
 			...betterAuthOptions,

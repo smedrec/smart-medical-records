@@ -7,7 +7,14 @@
 
 import { AUTHError } from '../utils/errors.js'
 
-// Helper to try and get env variables from Cloudflare Workers or Node.js process.env
+/**
+ * Retrieves an environment variable.
+ * This function attempts to read environment variables from Cloudflare Workers or Node.js process.env.
+ * Note: In non-Node.js environments (like Cloudflare Workers), environment variables might be accessed differently (e.g., directly from `env`).
+ *
+ * @param variableName The name of the environment variable to retrieve.
+ * @returns The value of the environment variable if found, otherwise `undefined`.
+ */
 export function getEnv(variableName: string): string | undefined {
 	// Check Cloudflare Workers env
 	// @ts-expect-error Hides `Cannot find name 'env'.` when not in CF Worker context.
