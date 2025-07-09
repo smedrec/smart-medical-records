@@ -15,6 +15,7 @@
 		"build": "tsup src/index.ts --format cjs,esm --dts",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
+		"clean": "rm -rf dist node_modules",
 		"test": "run-vitest"
 	},
 	"dependencies": {
@@ -24,6 +25,7 @@
 		"@opentelemetry/sdk-node": "0.202.0",
 		"@repo/hono-helpers": "workspace:*",
 		"@repo/mailer": "workspace:*",
+		"@repo/redis-client": "workspace:*",
 		"bullmq": "5.56.2",
 		"bullmq-otel": "1.0.1",
 		"ioredis": "5.6.1"

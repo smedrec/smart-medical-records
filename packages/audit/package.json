@@ -18,6 +18,7 @@
 	},
 	"dependencies": {
 		"@repo/hono-helpers": "workspace:*",
+		"@repo/redis-client": "workspace:*",
 		"bullmq": "5.56.2",
 		"ioredis": "5.6.1"
 	},
