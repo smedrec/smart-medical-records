@@ -77,7 +77,7 @@ export const registerConfigMailFind = (app: App) =>
 
 		// Ensure the response matches the OpenAPI schema types
 		const response = {
-			...result[0],
+			organizationId: result[0].organizationId ?? undefined,
 			provider: result[0].provider as 'smtp' | 'resend' | 'sendgrid',
 			host: result[0].host ?? undefined,
 			port: result[0].port ?? undefined,

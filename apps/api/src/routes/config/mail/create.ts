@@ -97,7 +97,7 @@ export const registerConfigMailCreate = (app: App) =>
 			throw new ApiError({ code: 'INTERNAL_SERVER_ERROR', message: 'A machine readable error.' })
 
 		const response = {
-			...result[0],
+			organizationId: result[0].organizationId ?? undefined,
 			provider: result[0].provider as 'smtp' | 'resend' | 'sendgrid',
 			host: result[0].host ?? undefined,
 			port: result[0].port ?? undefined,

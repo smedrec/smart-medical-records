@@ -35,8 +35,7 @@ export interface EnvConfig {
 	BETTER_AUTH_SECRET: string
 	BETTER_AUTH_REDIS_URL: string
 	AUTH_DB_URL: string
-	AUDIT_REDIS_URL: string
-	MAIL_REDIS_URL: string
+	REDIS_URL: string
 	APP_PUBLIC_URL: string
 }
 
@@ -51,8 +50,7 @@ export function getEnvConfig(): EnvConfig {
 	const BETTER_AUTH_SECRET = getEnv('BETTER_AUTH_SECRET')
 	const BETTER_AUTH_REDIS_URL = getEnv('BETTER_AUTH_REDIS_URL')
 	const AUTH_DB_URL = getEnv('AUTH_DB_URL')
-	const AUDIT_REDIS_URL = getEnv('AUDIT_REDIS_URL')
-	const MAIL_REDIS_URL = getEnv('MAIL_REDIS_URL')
+	const REDIS_URL = getEnv('REDIS_URL')
 	const APP_PUBLIC_URL = getEnv('APP_PUBLIC_URL')
 
 	// Validate required core environment variables
@@ -79,14 +77,8 @@ export function getEnvConfig(): EnvConfig {
 		)
 	}
 
-	if (!AUDIT_REDIS_URL) {
-		throw new AUTHError(
-			`AUDIT_REDIS_URL environment variable not set. AUDIT_REDIS_URL is required.`
-		)
-	}
-
-	if (!MAIL_REDIS_URL) {
-		throw new AUTHError(`MAIL_REDIS_URL environment variable not set. MAIL_REDIS_URL is required.`)
+	if (!REDIS_URL) {
+		throw new AUTHError(`REDIS_URL environment variable not set. REDIS_URL is required.`)
 	}
 
 	if (!APP_PUBLIC_URL) {
@@ -111,8 +103,7 @@ export function getEnvConfig(): EnvConfig {
 		BETTER_AUTH_SECRET,
 		BETTER_AUTH_REDIS_URL,
 		AUTH_DB_URL,
-		AUDIT_REDIS_URL,
-		MAIL_REDIS_URL,
+		REDIS_URL,
 		APP_PUBLIC_URL,
 	}
 }

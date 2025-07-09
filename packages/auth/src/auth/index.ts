@@ -66,7 +66,7 @@ class Auth {
 		//	console.error('🔴 Postgres connection error for Better Auth service')
 		//}
 
-		const email = new SendMail('mail', effectiveConfig.MAIL_REDIS_URL!)
+		const email = new SendMail('mail')
 
 		//const audit = new Audit('audit', effectiveConfig.AUDIT_REDIS_URL)
 
