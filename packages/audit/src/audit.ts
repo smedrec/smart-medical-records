@@ -1,41 +1,26 @@
 import { Queue } from 'bullmq'
-import { Redis } from 'ioredis'
-
-import type { RedisOptions } from 'ioredis'
+import { Redis as RedisInstance } from 'ioredis' // Renamed to avoid conflict
+import type { RedisOptions, Redis as RedisType } from 'ioredis' // RedisType for type usage
+import { getSharedRedisConnection } from '@repo/redis-client'
 import type { AuditLogEvent } from './types.js'
 
-/**
- * Retrieves an environment variable.
- * This function attempts to read environment variables from Cloudflare Workers or Node.js process.env.
- * Note: In non-Node.js environments (like Cloudflare Workers), environment variables might be accessed differently (e.g., directly from `env`).
- *
- * @param variableName The name of the environment variable to retrieve.
- * @returns The value of the environment variable if found, otherwise `undefined`.
- */
-export function getEnv(variableName: string): string | undefined {
-	// Check Cloudflare Workers env
-	// @ts-expect-error Hides `Cannot find name 'env'.` when not in CF Worker context.
-	if (typeof env !== 'undefined' && env[variableName]) {
-		// @ts-expect-error
-		return env[variableName]
-	}
-	// Check Node.js process.env
-	if (typeof process !== 'undefined' && process.env && process.env[variableName]) {
-		return process.env[variableName]
-	}
-	return undefined
-}
+// The getEnv function is removed as REDIS_URL is now primarily handled by @repo/redis-client
+// However, AUDIT_REDIS_URL can still be used for overrides if a direct connection is made.
 
 /**
  * The `Audit` class provides a mechanism to log audit events to a BullMQ queue,
- * which is backed by Redis. It handles the connection to Redis and the queuing of audit messages.
+ * which is backed by Redis. It can use a shared Redis connection provided by `@repo/redis-client`
+ * or establish its own if connection details are explicitly provided.
  *
  * @example
  * ```typescript
  * import { Audit } from '@repo/audit';
  *
- * // Initialize with a queue name and optional Redis URL (or set AUDIT_REDIS_URL env var)
+ * // Recommended: Initialize with just a queue name to use the shared Redis connection
  * const auditService = new Audit('user-activity-queue');
+ *
+ * // Advanced: Initialize with specific Redis URL (e.g., for a different Redis instance)
+ * // const auditServiceSpecific = new Audit('user-activity-queue', 'redis://specific-redis:6379');
  *
  * async function recordUserLogin(userId: string, success: boolean) {
  *   await auditService.log({
@@ -47,92 +32,145 @@ export function getEnv(variableName: string): string | undefined {
  *   });
  * }
  *
- * // Call when your application is shutting down
- * // await auditService.closeConnection();
+ * // Call to clean up queue resources.
+ * // await auditService.closeConnection(); // Note: This no longer closes the shared Redis connection.
  * ```
  */
 export class Audit {
-	private connection: Redis
+	private connection: RedisType
 	private queueName: string
 	private bullmq_queue: Queue<AuditLogEvent, any, string>
+	private isSharedConnection: boolean
 
 	/**
-	 * Constructs an `Audit` instance, sets up the Redis connection, and initializes the BullMQ queue.
+	 * Constructs an `Audit` instance.
+	 * It initializes a BullMQ queue and connects to Redis.
 	 *
-	 * @param queueName The name of the BullMQ queue to be used for audit logs.
-	 *                  This name will be used when adding jobs to the queue.
-	 * @param redisUrl Optional. The Redis connection URL (e.g., "redis://localhost:6379").
-	 *                 If not provided, the constructor attempts to use the `AUDIT_REDIS_URL`
-	 *                 environment variable retrieved via `getEnv`.
-	 * @param redisConnectionOptions Optional. Additional options to be passed to the IORedis constructor.
-	 *                               These options will be merged with default settings.
-	 *                               Refer to IORedis documentation for available options.
-	 * @throws Error if `redisUrl` is not provided and `AUDIT_REDIS_URL` cannot be found in the environment.
+	 * If `redisOrUrl` is a string (Redis URL) or if `redisConnectionOptions` are provided,
+	 * a new Redis connection will be created specifically for this instance.
+	 * The URL can also be sourced from the `AUDIT_REDIS_URL` environment variable if `redisOrUrl` is not given.
+	 *
+	 * If `redisOrUrl` is an existing `Redis` instance, it will be used.
+	 *
+	 * If no connection details (`redisOrUrl` or `redisConnectionOptions`) are provided,
+	 * it defaults to using the shared Redis connection from `@repo/redis-client`.
+	 *
+	 * @param queueName The name of the BullMQ queue for audit logs.
+	 * @param redisOrUrlOrOptions Optional. Can be:
+	 *                          - A Redis connection URL (string).
+	 *                          - An existing IORedis connection instance.
+	 *                          - An object with `url` and/or `options` for IORedis.
+	 *                          If a URL string is provided, `redisConnectionOptions` can also be passed as the third argument.
+	 * @param directConnectionOptions Optional. IORedis options, used if creating a new direct connection.
+	 *                                Merged with default options. Ignored if `redisOrUrl` is an IORedis instance
+	 *                                or if using the shared connection.
+	 * @throws Error if a direct Redis URL is required (e.g., `AUDIT_REDIS_URL`) but cannot be resolved,
+	 *         or if there's an error during direct Redis client instantiation.
 	 */
-	constructor(queueName: string, redisUrl?: string, redisConnectionOptions?: RedisOptions) {
+	constructor(
+		queueName: string,
+		redisOrUrlOrOptions?: string | RedisType | { url?: string; options?: RedisOptions },
+		directConnectionOptions?: RedisOptions
+	) {
 		this.queueName = queueName
-		const effectiveRedisUrl = redisUrl || getEnv('AUDIT_REDIS_URL')
+		this.isSharedConnection = false
 
-		if (!effectiveRedisUrl) {
-			throw new Error(
-				'[AuditService] Initialization Error: Redis URL was not provided and could not be found in environment variables (AUDIT_REDIS_URL). Please provide it directly or set the environment variable.'
-			)
-		}
-
-		const defaultOptions: RedisOptions = {
-			maxRetriesPerRequest: null, // Important for BullMQ, means commands are not retried by ioredis itself.
-			// enableReadyCheck: false, // Can be useful in some environments, but BullMQ handles its own readiness.
+		const defaultDirectOptions: RedisOptions = {
+			maxRetriesPerRequest: null,
 			enableAutoPipelining: true,
 		}
 
-		try {
-			this.connection = new Redis(effectiveRedisUrl, {
-				...defaultOptions,
-				...redisConnectionOptions,
-			})
-		} catch (err) {
-			// This catch block might only capture immediate instantiation errors from ioredis,
-			// most connection issues are asynchronous.
-			console.error(
-				`[AuditService] Failed to create Redis instance for queue ${this.queueName}:`,
-				err
+		if (redisOrUrlOrOptions && typeof redisOrUrlOrOptions === 'object' && 'status' in redisOrUrlOrOptions) {
+			// Scenario 1: An existing ioredis instance is provided
+			this.connection = redisOrUrlOrOptions
+			this.isSharedConnection = false // Assume externally managed, could be shared or not
+			console.log(`[AuditService] Using provided Redis instance for queue "${this.queueName}".`)
+		} else if (
+			typeof redisOrUrlOrOptions === 'string' ||
+			(typeof redisOrUrlOrOptions === 'object' && (redisOrUrlOrOptions.url || redisOrUrlOrOptions.options)) ||
+			directConnectionOptions
+		) {
+			// Scenario 2: URL string, options object, or directConnectionOptions are provided, create a direct connection
+			this.isSharedConnection = false
+			let url: string | undefined
+			let options: RedisOptions = { ...defaultDirectOptions, ...directConnectionOptions }
+
+			if (typeof redisOrUrlOrOptions === 'string') {
+				url = redisOrUrlOrOptions
+			} else if (typeof redisOrUrlOrOptions === 'object') {
+				url = redisOrUrlOrOptions.url
+				options = { ...options, ...redisOrUrlOrOptions.options }
+			}
+
+			const finalUrl = url || process.env['AUDIT_REDIS_URL'] // Legacy env var support for direct connections
+
+			if (!finalUrl) {
+				// This path should ideally not be hit if logic is to default to shared connection,
+				// but indicates a misconfiguration if trying to force a direct connection without a URL.
+				console.warn(
+					`[AuditService] Attempting direct Redis connection for queue "${this.queueName}" but no URL specified and AUDIT_REDIS_URL not set. Falling back to shared connection.`
+				)
+				// Fallback to shared:
+				this.connection = getSharedRedisConnection()
+				this.isSharedConnection = true
+			} else {
+				try {
+					console.log(
+						`[AuditService] Creating new direct Redis connection to ${finalUrl.split('@').pop()} for queue "${this.queueName}".`
+					)
+					this.connection = new RedisInstance(finalUrl, options)
+				} catch (err) {
+					console.error(
+						`[AuditService] Failed to create direct Redis instance for queue ${this.queueName}:`,
+						err
+					)
+					throw new Error(
+						`[AuditService] Failed to initialize direct Redis connection for queue ${this.queueName}. Error: ${err instanceof Error ? err.message : String(err)}`
+					)
+				}
+			}
+		} else {
+			// Scenario 3: No specific connection info, use the shared connection
+			console.log(
+				`[AuditService] Using shared Redis connection for queue "${this.queueName}".`
 			)
-			throw new Error(
-				`[AuditService] Failed to initialize Redis connection for queue ${this.queueName}. Please check Redis configuration and availability. Error: ${err instanceof Error ? err.message : String(err)}`
-			)
+			this.connection = getSharedRedisConnection()
+			this.isSharedConnection = true
 		}
 
-		// Initialize the BullMQ queue with the established Redis connection.
-		// The queue name used here is the one jobs will be added to via `this.bullmq_queue.add(this.queueName, ...)`
-		// but BullMQ internally uses `bull:<queueName>:` as prefix for its Redis keys.
 		this.bullmq_queue = new Queue(this.queueName, { connection: this.connection })
 
-		this.connection.on('error', (err: Error) => {
-			// Log Redis connection errors.
-			// In a production system, you might want more sophisticated monitoring or alerting here.
-			// For this package, console.error is a reasonable default.
-			// It's important not to throw here as it could crash the application using this audit client.
-			console.error(
-				`[AuditService] Redis Connection Error for queue "${this.queueName}": ${err.message}`,
-				err
-			)
-		})
-
-		this.connection.on('connect', () => {
-			console.log(`[AuditService] Successfully connected to Redis for queue "${this.queueName}".`)
-		})
-
-		this.connection.on('ready', () => {
-			console.log(`[AuditService] Redis connection ready for queue "${this.queueName}".`)
-		})
-
-		this.connection.on('close', () => {
-			console.log(`[AuditService] Redis connection closed for queue "${this.queueName}".`)
-		})
-
-		this.connection.on('reconnecting', () => {
-			console.log(`[AuditService] Reconnecting to Redis for queue "${this.queueName}"...`)
-		})
+		// Attach listeners only if this instance created the connection (not shared and not provided externally)
+		// The shared connection manages its own listeners.
+		// If an external instance is provided, it's assumed its listeners are managed elsewhere.
+		if (!this.isSharedConnection && !(redisOrUrlOrOptions && typeof redisOrUrlOrOptions === 'object' && 'status' in redisOrUrlOrOptions)) {
+			this.connection.on('error', (err: Error) => {
+				console.error(
+					`[AuditService] Redis Connection Error (direct connection for queue "${this.queueName}"): ${err.message}`,
+					err
+				)
+			})
+			this.connection.on('connect', () => {
+				console.log(
+					`[AuditService] Successfully connected to Redis (direct connection for queue "${this.queueName}").`
+				)
+			})
+			this.connection.on('ready', () => {
+				console.log(
+					`[AuditService] Redis connection ready (direct connection for queue "${this.queueName}").`
+				)
+			})
+			this.connection.on('close', () => {
+				console.log(
+					`[AuditService] Redis connection closed (direct connection for queue "${this.queueName}").`
+				)
+			})
+			this.connection.on('reconnecting', () => {
+				console.log(
+					`[AuditService] Reconnecting to Redis (direct connection for queue "${this.queueName}")...`
+				)
+			})
+		}
 	}
 
 	/**
@@ -160,98 +198,105 @@ export class Audit {
 	 */
 	async log(eventDetails: Omit<AuditLogEvent, 'timestamp'>): Promise<void> {
 		if (!eventDetails.action || !eventDetails.status) {
-			// It's crucial that action and status are present for meaningful audit logs.
 			throw new Error(
 				"[AuditService] Log Error: Missing required event properties. 'action' and 'status' must be provided."
 			)
 		}
 		if (!this.bullmq_queue) {
-			throw new Error('[AuditService] Cannot send event: BullMQ queue is not initialized.')
+			throw new Error('[AuditService] Cannot log event: BullMQ queue is not initialized.')
 		}
+		// Check connection status before logging.
+		// Note: this.connection.status might not be perfectly up-to-date if using a shared connection
+		// whose state changes rapidly. The shared client has its own logging for connection events.
 		if (
 			!this.connection ||
 			(this.connection.status !== 'ready' &&
 				this.connection.status !== 'connecting' &&
 				this.connection.status !== 'reconnecting')
 		) {
-			// While ioredis handles reconnections, sending a command when not 'ready' (or in a state that will soon be ready)
-			// might lead to errors if maxRetriesPerRequest is not null or if the connection is truly down.
-			// BullMQ itself also has robustness, so this is an additional safeguard/log.
 			console.warn(
-				`[AuditService] Attempting to send mail while Redis connection status is '${this.connection.status}' for queue ${this.queueName}. This might fail if Redis is unavailable.`
+				`[AuditService] Attempting to log event for queue "${this.queueName}" while Redis connection status is '${this.connection?.status || 'unknown'}'. This might fail if Redis is unavailable.`
 			)
 		}
 
 		const timestamp = new Date().toISOString()
 		const event: AuditLogEvent = {
 			timestamp,
-			action: eventDetails.action, // Ensuring these are explicitly assigned
-			status: eventDetails.status, // from the validated input
+			action: eventDetails.action,
+			status: eventDetails.status,
 			...eventDetails,
 		}
 
 		try {
-			// The first argument to `add` is the job name (can be different from queue name, but often the same for simplicity).
-			// Here, using this.queueName as the job name as well.
 			await this.bullmq_queue.add(this.queueName, event, {
-				removeOnComplete: true, // Remove job from queue once processed successfully.
-				removeOnFail: false, // Remove job from queue if it fails (consider dead-letter queue for production).
-				// Other BullMQ job options could be exposed or configured if needed.
+				removeOnComplete: true,
+				removeOnFail: false, // Consider a dead-letter queue for production.
 			})
 		} catch (error) {
-			// Handle potential errors during adding to the queue (e.g., if Redis is suddenly unavailable despite initial connect)
 			console.error(
 				`[AuditService] Failed to add event to BullMQ queue "${this.queueName}":`,
 				error
 			)
+			// Rethrow to allow the caller to handle the failure (e.g., retry, log differently).
 			throw new Error(
-				`[AuditService] Failed to send mail event to queue '${this.queueName}'. Error: ${error instanceof Error ? error.message : String(error)}`
+				`[AuditService] Failed to log audit event to queue '${this.queueName}'. Error: ${error instanceof Error ? error.message : String(error)}`
 			)
 		}
 	}
 
 	/**
-	 * Closes the Redis connection associated with this Audit instance.
-	 * This method should be called when the application using the Audit service
-	 * is shutting down to ensure graceful disconnection from Redis.
+	 * Closes the BullMQ queue associated with this Audit instance.
+	 * If a direct Redis connection was created by this instance, it will also be closed.
+	 * If a shared Redis connection is being used, this method WILL NOT close the shared connection.
+	 * The shared connection's lifecycle should be managed globally (e.g., via `closeSharedRedisConnection` at app shutdown).
 	 *
-	 * It checks if the connection exists and is in a 'ready' or 'connecting' state before attempting to quit.
-	 *
-	 * @returns A Promise that resolves once the connection has been closed, or immediately if no action was needed.
+	 * @returns A Promise that resolves once cleanup is complete.
 	 */
 	async closeConnection(): Promise<void> {
 		if (this.bullmq_queue) {
 			try {
-				await this.bullmq_queue.close() // Close the queue first
+				await this.bullmq_queue.close()
 				console.info(`[AuditService] BullMQ queue '${this.queueName}' closed successfully.`)
 			} catch (err) {
-				console.error(`[AuditService] Error closing BullMQ queue '${this.queueName}':`, err)
-				// Decide if to rethrow or just log. For shutdown, logging might be sufficient.
+				console.error(
+					`[AuditService] Error closing BullMQ queue '${this.queueName}':`,
+					err
+				)
 			}
 		}
-		if (this.connection) {
-			// Check if status is 'ready' or any other state that allows 'quit'
-			// 'quit' waits for pending commands to be processed, 'disconnect' is immediate.
+
+		if (this.connection && !this.isSharedConnection) {
+			console.info(
+				`[AuditService] Closing direct Redis connection for queue '${this.queueName}'.`
+			)
 			if ((this.connection.status as string) !== 'end') {
 				try {
 					await this.connection.quit()
 					console.info(
-						`[AuditService] Redis connection for queue '${this.queueName}' quit gracefully.`
+						`[AuditService] Direct Redis connection for queue '${this.queueName}' quit gracefully.`
 					)
 				} catch (err) {
 					console.error(
-						`[AuditService] Error quitting Redis connection for queue '${this.queueName}':`,
+						`[AuditService] Error quitting direct Redis connection for queue '${this.queueName}':`,
 						err
 					)
-					// Fallback to disconnect if quit fails or times out (ioredis default timeout is 2s for quit)
 					if (this.connection.status !== 'end') {
 						await this.connection.disconnect()
 						console.info(
-							`[AuditService] Redis connection for queue '${this.queueName}' disconnected forcefully after quit error.`
+							`[AuditService] Direct Redis connection for queue '${this.queueName}' disconnected forcefully.`
 						)
 					}
 				}
 			}
+		} else if (this.isSharedConnection) {
+			console.info(
+				`[AuditService] Using a shared Redis connection for queue '${this.queueName}'. Connection will not be closed by this instance.`
+			)
+		}
+		// Nullify the connection if it was managed by this instance and is now closed.
+		if (!this.isSharedConnection) {
+			// @ts-expect-error Making connection undefined after close
+			this.connection = undefined;
 		}
 	}
 }

@@ -8,7 +8,7 @@ A simple audit logging package designed to capture and queue audit events using 
 - **Redis Backend**: Leverages Redis for robust and scalable message queuing via BullMQ.
 - **Configurable**: Allows configuration of the BullMQ queue name and Redis connection parameters.
 - **Typed Events**: Uses TypeScript for defined `AuditLogEvent` structures, ensuring consistency.
-- **Environment Variable Support**: Can automatically pick up Redis connection URL from `AUDIT_REDIS_URL` environment variable.
+- **Environment Variable Support**: Defaults to using a shared Redis connection configured via `REDIS_URL` (from `@repo/redis-client`). Can also use `AUDIT_REDIS_URL` for a dedicated connection if explicitly configured.
 
 ## Installation
 
@@ -30,9 +30,10 @@ Ensure that `ioredis` and `bullmq` are also listed as direct dependencies in you
 
 ### Environment Variables
 
-- `AUDIT_REDIS_URL`: (Optional if providing URL directly in constructor) The connection URL for your Redis instance.
-  - Example: `redis://localhost:6379`
-  - Example with password: `redis://:yourpassword@yourhost:6379`
+- **`REDIS_URL`**: **Recommended for most use cases.** This is used by the default shared Redis connection managed by `@repo/redis-client`.
+  - Example: `REDIS_URL=redis://username:password@shared-redis-host:6379`
+- `AUDIT_REDIS_URL`: (Optional, for dedicated connection) The connection URL for a specific Redis instance if you choose *not* to use the shared connection. This is only used if the `Audit` service is instantiated without explicit connection parameters, forcing it to create its own connection.
+  - Example: `AUDIT_REDIS_URL=redis://localhost:6379`
 
 ## Usage
 
@@ -40,20 +41,31 @@ Ensure that `ioredis` and `bullmq` are also listed as direct dependencies in you
 
 ```typescript
 import { Audit } from '@repo/audit'
-
 import type { AuditLogEvent } from '@repo/audit' // For typing event details
 
-// Option 1: Provide Redis URL directly
-const auditServiceWithUrl = new Audit('my-application-audit-queue', 'redis://localhost:6379')
+// Recommended: Use the shared Redis connection (configured via REDIS_URL)
+// Ensure REDIS_URL is set in your environment.
+const auditServiceShared = new Audit('my-application-audit-queue');
 
-// Option 2: Rely on AUDIT_REDIS_URL environment variable
-// Ensure AUDIT_REDIS_URL is set in your environment
-const auditServiceWithEnv = new Audit('my-application-audit-queue')
+// Advanced Option 1: Provide Redis URL directly for a dedicated connection
+const auditServiceWithUrl = new Audit('my-application-audit-queue', 'redis://dedicated-audit-redis:6379');
 
-// Option 3: Provide additional IORedis connection options
+// Advanced Option 2: Rely on AUDIT_REDIS_URL for a dedicated connection
+// Ensure AUDIT_REDIS_URL is set and REDIS_URL might be ignored or used by other services.
+// This is invoked if you instantiate Audit with only the queue name and the internal logic
+// attempts to create a direct connection (less common with the new shared client default).
+// const auditServiceWithEnvVar = new Audit('my-application-audit-queue'); // Behavior depends on internal fallback logic if shared client fails or direct is forced by other params.
+
+// Advanced Option 3: Provide an existing ioredis instance
+// import { getSharedRedisConnection } from '@repo/redis-client'; // or your own instance
+// const existingRedisConnection = getSharedRedisConnection(); // Example
+// const auditServiceWithInstance = new Audit('my-application-audit-queue', existingRedisConnection);
+
+
+// Advanced Option 4: Provide additional IORedis connection options for a dedicated connection
 const auditServiceWithCustomOptions = new Audit(
 	'my-application-audit-queue',
-	'redis://localhost:6379',
+	{ url: 'redis://localhost:6379' }, // Can pass options object
 	{
 		// Example: enable TLS
 		// tls: {
@@ -62,10 +74,9 @@ const auditServiceWithCustomOptions = new Audit(
 		//   cert: fs.readFileSync('/path/to/client.crt'),
 		//   servername: 'your.redis.host.com' // if SNI is required
 		// },
-		// See IORedis documentation for all available options
-		maxRetriesPerRequest: 3, // Override default null
+		maxRetriesPerRequest: 3, // Override default null for the dedicated connection
 	}
-)
+);
 ```
 
 ### Logging an Audit Event
@@ -75,7 +86,8 @@ The `log` method is asynchronous and requires `action` and `status` fields in th
 ```typescript
 async function recordUserLogin(userId: string, success: boolean, ipAddress?: string) {
 	try {
-		await auditServiceWithEnv.log({
+		// Using the shared connection instance from the example above
+		await auditServiceShared.log({
 			principalId: userId,
 			action: 'userLoginAttempt', // Be specific with action names
 			status: success ? 'success' : 'failure',
@@ -87,17 +99,17 @@ async function recordUserLogin(userId: string, success: boolean, ipAddress?: str
 				ipAddress: ipAddress || 'unknown',
 				userAgent: 'some-user-agent/1.0', // Example
 			},
-		})
-		console.log('Audit event logged.')
+		});
+		console.log('Audit event logged.');
 	} catch (error) {
-		console.error('Failed to log audit event:', error)
+		console.error('Failed to log audit event:', error);
 		// Implement retry logic or fallback if critical
 	}
 }
 
 // Example usage:
-recordUserLogin('user-001', true, '192.168.1.100')
-recordUserLogin('user-002', false, '203.0.113.45')
+// recordUserLogin('user-001', true, '192.168.1.100');
+// recordUserLogin('user-002', false, '203.0.113.45');
 ```
 
 ### AuditLogEvent Structure
@@ -121,19 +133,26 @@ export interface AuditLogEvent {
 
 ### Closing the Connection
 
-It's important to close the Redis connection gracefully when your application shuts down.
+The `closeConnection()` method on an `Audit` instance will close the associated BullMQ queue.
+- If the `Audit` instance is using a **dedicated Redis connection** (one it created itself), it will also close that Redis connection.
+- If the `Audit` instance is using the **shared Redis connection** (from `@repo/redis-client`), it **will not** close the shared connection. The shared connection should be closed globally at application shutdown using `closeSharedRedisConnection` from `@repo/redis-client`.
 
 ```typescript
-async function shutdown() {
-	// ... other shutdown logic ...
-	await auditServiceWithEnv.closeConnection()
-	console.log('Audit service connection closed.')
-	process.exit(0)
-}
+// For an audit service using a dedicated connection:
+// await auditServiceWithUrl.closeConnection();
+// console.log('Audit service with dedicated connection closed.');
 
-process.on('SIGINT', shutdown) // Example: handle CTRL+C
-process.on('SIGTERM', shutdown) // Example: handle kill signals
+// For an audit service using the shared connection:
+// await auditServiceShared.closeConnection(); // This only closes the BullMQ queue for this instance.
+// console.log('Audit service (shared connection) queue resources released.');
+//
+// // At application shutdown, close the shared Redis connection:
+// import { closeSharedRedisConnection } from '@repo/redis-client';
+// await closeSharedRedisConnection();
+// console.log('Shared Redis connection closed.');
 ```
+
+It's important to manage connection lifecycles appropriately based on how the `Audit` service is initialized.
 
 ## Project Structure
 
@@ -152,6 +171,7 @@ packages/audit/
 
 ## Dependencies
 
+- **@repo/redis-client**: Provides shared Redis connection management.
 - **ioredis**: A robust, high-performance Redis client for Node.js.
 - **bullmq**: A fast and reliable message queue system for Node.js built on top of Redis.
 
@@ -159,9 +179,15 @@ Version numbers are managed in the root `package.json` and individual package `p
 
 ## Error Handling
 
-- **Initialization**: The `Audit` constructor will throw an error if the Redis URL is not provided (either directly or via `AUDIT_REDIS_URL`).
-- **Logging**: The `log` method will throw an error if `action` or `status` are missing from the event details. It will also rethrow errors encountered when trying to add the event to the BullMQ queue (e.g., if Redis becomes unavailable).
-- **Redis Connection**: The service logs Redis connection errors, connection status changes (connect, ready, close, reconnecting) to the console. It does not crash the application on Redis connection errors post-initialization but logs them. Robust applications should monitor these logs.
+- **Initialization**:
+  - If using the shared connection, errors from `@repo/redis-client` (e.g., invalid `REDIS_URL`) will propagate.
+  - If creating a dedicated connection, the `Audit` constructor will throw an error if a Redis URL is required but cannot be resolved (e.g., from `AUDIT_REDIS_URL` if used as fallback) or if `ioredis` fails to instantiate.
+- **Logging**: The `log` method will throw an error if `action` or `status` are missing. It also rethrows errors from BullMQ if adding to the queue fails.
+- **Redis Connection**:
+  - The shared client (`@repo/redis-client`) manages its own connection logging and error handling.
+  - For dedicated connections, the `Audit` service logs Redis connection events (errors, connect, close, etc.) to the console.
+
+Robust applications should monitor these logs and handle errors from `log` calls appropriately.
 
 ## How to Contribute
 

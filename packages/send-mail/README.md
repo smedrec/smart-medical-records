@@ -8,11 +8,10 @@ This package provides a robust and straightforward way to enqueue email sending 
 
 ## Features
 
-- **Asynchronous Email Queuing**: Leverages BullMQ to send email tasks to a Redis-backed queue, preventing email sending from blocking main application threads.
-- **Redis Integration**: Uses `ioredis` for efficient communication with a Redis server.
-- **Environment Variable Configuration**: Supports Redis URL configuration via environment variables (`MAIL_REDIS_URL`) for flexibility across different environments.
-- **Connection Management**: Includes methods for gracefully closing Redis connections during application shutdown.
-- **Error Handling**: Provides basic error handling and logging for Redis connection issues and queue operations.
+- **Asynchronous Email Queuing**: Leverages BullMQ to send email tasks to a Redis-backed queue.
+- **Redis Integration**: Uses `ioredis`. Defaults to a shared connection via `@repo/redis-client` (configured by `REDIS_URL`), but can use `MAIL_REDIS_URL` for a dedicated connection if specified.
+- **Connection Management**: Includes methods for gracefully closing BullMQ queues. Dedicated Redis connections are also closed; shared connections are managed globally.
+- **Error Handling**: Provides logging for Redis connection issues and queue operations.
 - **Telemetry Ready**: Integrates `bullmq-otel` for OpenTelemetry (though specific OTLP exporter setup like `producer.inst.otlp.ts` is for demonstration and may need separate operational management).
 - **Typed**: Written in TypeScript with JSDoc comments for better developer experience and type safety.
 
@@ -39,13 +38,12 @@ This package provides a robust and straightforward way to enqueue email sending 
     This package (`@repo/send-mail`) will be installed as part of the workspace.
 
 3.  **Set up Environment Variables (Recommended):**
-    For ease of configuration, it's recommended to set the `MAIL_REDIS_URL` environment variable. You can do this by creating a `.env` file in the root of your application that uses this package (not within `@repo/send-mail` itself), and load it using a library like `dotenv`.
+    - **`REDIS_URL`**: **Primary variable for most uses.** Configures the shared Redis connection used by default.
+      Example: `REDIS_URL=redis://shared-redis-host:6379`
+    - `MAIL_REDIS_URL`: (Optional, for dedicated connection) Used if `SendMail` is configured to create its own dedicated Redis connection, overriding the shared one.
+      Example: `MAIL_REDIS_URL=redis://dedicated-mail-redis:6379`
 
-    Example `.env` file content:
-
-    ```env
-    MAIL_REDIS_URL=redis://your-redis-host:your-redis-port
-    ```
+    Set these in a `.env` file in your application's root and use a library like `dotenv` to load them.
 
 ## Usage
 
@@ -53,28 +51,31 @@ Here's a basic example of how to use the `SendMail` class:
 
 ```typescript
 import { SendMail } from '@repo/send-mail'
-
 import type { SendMailEvent } from '@repo/send-mail' // For typing event details
 
-// Define your queue name
-const MY_MAIL_QUEUE = 'emailProcessingQueue'
+const MY_MAIL_QUEUE = 'emailProcessingQueue';
 
-// Option 1: Using environment variable MAIL_REDIS_URL
-// Ensure MAIL_REDIS_URL is set in your environment.
-const mailService = new SendMail(MY_MAIL_QUEUE)
+// Recommended: Use the shared Redis connection (configured via REDIS_URL)
+// Ensure REDIS_URL is set in your environment.
+const mailServiceShared = new SendMail(MY_MAIL_QUEUE);
 
-// Option 2: Providing Redis URL directly
-// const mailService = new SendMail(MY_MAIL_QUEUE, 'redis://localhost:6379');
+// Advanced Option 1: Provide Redis URL directly for a dedicated connection
+// const mailServiceWithUrl = new SendMail(MY_MAIL_QUEUE, 'redis://dedicated-mail-redis:6379');
 
-// Option 3: Providing Redis URL and custom ioredis options
-// const mailService = new SendMail(MY_MAIL_QUEUE, 'redis://localhost:6379', {
-//   password: 'your-redis-password',
-//   // other ioredis options
-// });
+// Advanced Option 2: Provide an existing ioredis instance
+// import { getSharedRedisConnection } from '@repo/redis-client'; // or your own
+// const existingRedis = getSharedRedisConnection();
+// const mailServiceWithInstance = new SendMail(MY_MAIL_QUEUE, existingRedis);
+
+// Advanced Option 3: Provide Redis URL and custom ioredis options for a dedicated connection
+// const mailServiceWithCustomOpts = new SendMail(
+//   MY_MAIL_QUEUE,
+//   { url: 'redis://localhost:6379', options: { password: 'your-password' } }
+// );
 
 async function sendWelcomeEmail(userId: string, userEmail: string) {
 	const event: SendMailEvent = {
-		principalId: userId,
+		principalId: userId, // Using the shared instance from above
 		organizationId: 'defaultOrg', // Or your relevant organization ID
 		action: 'user_welcome',
 		emailDetails: {
@@ -83,27 +84,38 @@ async function sendWelcomeEmail(userId: string, userEmail: string) {
 			body: '<h1>Hello!</h1><p>Thank you for signing up.</p>',
 			// You can use html, text, cc, bcc, from, etc. from MailerSendOptions
 		},
-	}
+	};
 
 	try {
-		await mailService.send(event)
-		console.log(`Email event for action '${event.action}' enqueued for user ${userId}.`)
+		await mailServiceShared.send(event); // Using the shared instance
+		console.log(`Email event for action '${event.action}' enqueued for user ${userId}.`);
 	} catch (error) {
-		console.error('Failed to enqueue email event:', error)
-		// Handle the error appropriately (e.g., retry logic, logging to a monitoring service)
+		console.error('Failed to enqueue email event:', error);
+		// Handle the error appropriately
 	}
 }
 
 // Example usage:
 // sendWelcomeEmail('user-12345', 'test@example.com');
 
-// Remember to close the connection when your application shuts down:
-async function shutdown() {
-	console.log('Shutting down email service...')
-	await mailService.closeConnection()
-	console.log('Email service shutdown complete.')
-	process.exit(0)
-}
+// Closing connections:
+// The `closeConnection()` method on a `SendMail` instance closes its BullMQ queue.
+// If it's using a dedicated Redis connection, that's closed too.
+// Shared Redis connections are managed globally via `@repo/redis-client`.
+
+// async function shutdown() {
+//   console.log('Shutting down email service resources...');
+//   await mailServiceShared.closeConnection(); // Closes queue, not shared Redis.
+//
+//   // If you had a dedicated mailServiceWithUrl:
+//   // await mailServiceWithUrl.closeConnection(); // Closes queue AND its dedicated Redis.
+//
+//   // Globally shutdown shared Redis (if used by any service)
+//   // import { closeSharedRedisConnection } from '@repo/redis-client';
+//   // await closeSharedRedisConnection();
+//   console.log('Email service resources/queues closed.');
+//   process.exit(0);
+// }
 
 // process.on('SIGTERM', shutdown);
 // process.on('SIGINT', shutdown);
