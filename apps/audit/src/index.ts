@@ -1,7 +1,5 @@
 import 'dotenv/config'
 
-import 'dotenv/config'
-
 import { serve } from '@hono/node-server'
 import { Worker } from 'bullmq'
 import { Hono } from 'hono'
@@ -10,10 +8,12 @@ import { pino } from 'pino'
 
 import { AuditDb, auditLog as auditLogTableSchema } from '@repo/audit-db'
 import {
-	getSharedRedisConnection,
 	closeSharedRedisConnection,
 	getRedisConnectionStatus,
-} from '@repo/redis-client' // Added import for shared connection
+	getSharedRedisConnection,
+} from '@repo/redis-client'
+
+// Added import for shared connection
 
 import type { Job } from 'bullmq'
 // import type { RedisOptions } from 'ioredis' // Removed ioredis import
@@ -180,5 +180,5 @@ main().catch(async (error) => {
 	logger.error('💥 Unhandled error in main application scope:', error)
 	await auditDbService?.end()
 	// Ensure shared Redis connection is closed on fatal error
-	closeSharedRedisConnection().finally(() => process.exit(1))
+	void closeSharedRedisConnection().finally(() => process.exit(1))
 })

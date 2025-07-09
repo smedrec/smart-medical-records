@@ -4,7 +4,7 @@ let emailInstance: SendMail | undefined = undefined
 
 export function initializeEmail() {
 	if (!emailInstance) {
-		emailInstance = new SendMail('mail', process.env.MAIL_REDIS_URL!)
+		emailInstance = new SendMail('mail')
 	}
 	return emailInstance
 }

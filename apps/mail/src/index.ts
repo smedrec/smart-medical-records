@@ -13,10 +13,12 @@ import { AuthDb, emailProvider } from '@repo/auth-db'
 import { InfisicalKmsClient } from '@repo/infisical-kms'
 import { NodeMailer, ResendMailer, SendGridMailer } from '@repo/mailer'
 import {
-	getSharedRedisConnection,
 	closeSharedRedisConnection,
 	getRedisConnectionStatus,
-} from '@repo/redis-client' // Added import for shared connection
+	getSharedRedisConnection,
+} from '@repo/redis-client'
+
+// Added import for shared connection
 
 import type { Job } from 'bullmq'
 // import type { RedisOptions } from 'ioredis' // Removed ioredis import
@@ -167,7 +169,7 @@ async function main() {
 	logger.info('🏁 Mail worker starting...')
 
 	if (!audit) {
-		audit = new Audit('audit', process.env.AUDIT_REDIS_URL!)
+		audit = new Audit('audit')
 	}
 
 	if (!authDbService) {

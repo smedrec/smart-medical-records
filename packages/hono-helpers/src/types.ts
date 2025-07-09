@@ -52,9 +52,9 @@ export type SharedHonoEnv = {
 	DATABASE_URL: string
 	AUTH_DB_URL: string
 	/**
-	 * REDIS instance to audit queues
+	 * Shared REDIS instance to queues
 	 */
-	AUDIT_REDIS_URL: string
+	REDIS_URL: string
 	/**
 	 * REDIS instance to active sessions
 	 */

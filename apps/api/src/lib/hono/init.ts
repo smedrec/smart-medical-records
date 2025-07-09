@@ -71,7 +71,7 @@ export function init(): MiddlewareHandler<HonoEnv> {
 		// Get the Drizzle ORM instance
 		const db = authDbInstance.getDrizzleInstance()
 
-		if (!audit) audit = new Audit('audit', c.env.AUDIT_REDIS_URL)
+		if (!audit) audit = new Audit('audit')
 
 		const kms = new InfisicalKmsClient({
 			baseUrl: c.env.INFISICAL_URL!,

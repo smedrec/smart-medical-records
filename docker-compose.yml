@@ -8,7 +8,6 @@ services:
     ports:
       - ${AUDIT_WORKER_PORT}:5600
     environment:
-      - AUDIT_REDIS_URL=${AUDIT_REDIS_URL}
       - AUDIT_QUEUE_NAME=${AUDIT_QUEUE_NAME}
       - AUDIT_DB_URL=${AUDIT_DB_URL}
       - LOG_LEVEL=${LOG_LEVEL}
@@ -27,9 +26,7 @@ services:
     ports:
       - ${MAIL_WORKER_PORT}:5601
     environment:
-      - MAIL_REDIS_URL=${MAIL_REDIS_URL}
       - MAIL_QUEUE_NAME=${MAIL_QUEUE_NAME}
-      - AUDIT_REDIS_URL=${AUDIT_REDIS_URL}
       - AUTH_DB_URL=${AUTH_DB_URL}
       - LOG_LEVEL=${LOG_LEVEL}
     healthcheck:

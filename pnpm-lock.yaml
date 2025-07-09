@@ -358,6 +358,9 @@ importers:
       '@repo/audit-db':
         specifier: workspace:*
         version: link:../../packages/audit-db
+      '@repo/redis-client':
+        specifier: workspace:*
+        version: link:../../packages/redis-client
       bullmq:
         specifier: 5.56.2
         version: 5.56.2
@@ -452,6 +455,9 @@ importers:
       '@repo/mailer':
         specifier: workspace:*
         version: link:../../packages/mailer
+      '@repo/redis-client':
+        specifier: workspace:*
+        version: link:../../packages/redis-client
       '@repo/send-mail':
         specifier: workspace:*
         version: link:../../packages/send-mail
