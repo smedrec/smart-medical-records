@@ -145,5 +145,8 @@
 			"foreground": "white",
 			"background": "red"
 		}
+	},
+	"[json]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	}
 }
