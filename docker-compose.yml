@@ -30,6 +30,9 @@ services:
       - REDIS_URL=${REDIS_URL}
       - MAIL_QUEUE_NAME=${MAIL_QUEUE_NAME}
       - AUTH_DB_URL=${AUTH_DB_URL}
+      - INFISICAL_URL=${INFISICAL_URL}
+      - INFISICAL_ACCESS_TOKEN=${INFISICAL_ACCESS_TOKEN}
+      - KMS_KEY_ID=${KMS_KEY_ID}
       - LOG_LEVEL=${LOG_LEVEL}
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:5601/healthz']
