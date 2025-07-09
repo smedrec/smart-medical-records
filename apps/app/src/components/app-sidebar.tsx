@@ -42,6 +42,7 @@ export function AppSidebar({
 				isMobile ? 'p-3 pt-12 w-full h-full' : 'p-4 w-72 left-0 top-0 z-40 h-screen',
 				!isMobile && 'hidden md:flex md:flex-col'
 			)}
+			collapsible="none"
 			{...props}
 		>
 			<SidebarHeader>
