@@ -26,6 +26,8 @@ COPY packages/audit/package.json ./packages/audit/
 COPY packages/auth-db/package.json ./packages/auth-db/
 COPY packages/send-mail/package.json ./packages/send-mail/
 COPY packages/mailer/package.json ./packages/mailer/
+COPY packages/redis-client/package.json ./packages/redis-client/
+COPY packages/infisical-kms/package.json ./packages/infisical-kms/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY packages/tools/package.json ./packages/tools/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
@@ -46,6 +48,8 @@ COPY packages/audit ./packages/audit
 COPY packages/auth-db ./packages/auth-db
 COPY packages/send-mail ./packages/send-mail
 COPY packages/mailer ./packages/mailer
+COPY packages/redis-client ./packages/redis-client
+COPY packages/infisical-kms ./packages/infisical-kms
 COPY packages/typescript-config ./packages/typescript-config
 COPY packages/tools ./packages/tools
 COPY packages/eslint-config ./packages/eslint-config

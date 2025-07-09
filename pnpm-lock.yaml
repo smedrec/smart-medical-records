@@ -370,9 +370,6 @@ importers:
       hono:
         specifier: 4.8.4
         version: 4.8.4
-      ioredis:
-        specifier: 5.6.1
-        version: 5.6.1
       pino:
         specifier: 9.7.0
         version: 9.7.0
@@ -476,9 +473,6 @@ importers:
       hono:
         specifier: 4.8.4
         version: 4.8.4
-      ioredis:
-        specifier: 5.6.1
-        version: 5.6.1
       pino:
         specifier: 9.7.0
         version: 9.7.0

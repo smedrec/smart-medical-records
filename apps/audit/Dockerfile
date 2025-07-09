@@ -23,7 +23,8 @@ COPY patches/fhirclient@2.6.0.patch ./patches/fhirclient@2.6.0.patch
 COPY apps/audit/package.json ./apps/audit/
 
 COPY packages/audit/package.json ./packages/audit/
-COPY packages/auditdb/package.json ./packages/auditdb/
+COPY packages/audit-db/package.json ./packages/audit-db/
+COPY packages/redis-client/package.json ./packages/redis-client/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY packages/tools/package.json ./packages/tools/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
@@ -39,7 +40,8 @@ COPY --from=deps /app /app
 # This assumes that @repo/audit is a local workspace package
 COPY apps/audit ./apps/audit
 COPY packages/audit ./packages/audit
-COPY packages/auditdb ./packages/auditdb
+COPY packages/audit-db ./packages/audit-db
+COPY packages/redis-client ./packages/redis-client
 COPY packages/typescript-config ./packages/typescript-config
 COPY packages/tools ./packages/tools
 COPY packages/eslint-config ./packages/eslint-config
