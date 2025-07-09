@@ -26,6 +26,9 @@ let isolateCreatedAt: number | undefined = undefined
 let authDbInstance: AuthDb | undefined = undefined
 
 export { authDbInstance }
+
+let audit: Audit | undefined = undefined
+export { audit }
 /**
  * Initialize all services.
  *
@@ -55,8 +58,6 @@ export function init(): MiddlewareHandler<HonoEnv> {
 			defaultFields: { environment: c.env.ENVIRONMENT },
 		})
 
-		const audit = new Audit('audit', c.env.AUDIT_REDIS_URL)
-
 		if (!authDbInstance) {
 			authDbInstance = new AuthDb(c.env.AUTH_DB_URL)
 			// Check the database connection
@@ -69,6 +70,8 @@ export function init(): MiddlewareHandler<HonoEnv> {
 
 		// Get the Drizzle ORM instance
 		const db = authDbInstance.getDrizzleInstance()
+
+		if (!audit) audit = new Audit('audit', c.env.AUDIT_REDIS_URL)
 
 		const kms = new InfisicalKmsClient({
 			baseUrl: c.env.INFISICAL_URL!,

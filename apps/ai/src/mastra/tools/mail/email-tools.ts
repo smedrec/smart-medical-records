@@ -3,14 +3,11 @@ import { createTextResponse } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
-import { SendMail } from '@repo/send-mail'
-
 import type { RuntimeContextSession } from '@/hono/types'
 import type { ToolCallResult } from '@/mastra/tools/types'
 import type { Audit } from '@repo/audit'
 import type { MailerSendOptions } from '@repo/mailer'
-
-const email = new SendMail('mail', process.env.MAIL_REDIS_URL!)
+import type { SendMail } from '@repo/send-mail'
 
 // --- Email Tools (Apply similar detailed audit logging) ---
 const emailSendTool = createTool({
@@ -25,6 +22,7 @@ const emailSendTool = createTool({
 	outputSchema: IToolCallResult,
 	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
 		const audit = runtimeContext.get('audit') as Audit
+		const email = runtimeContext.get('email') as SendMail
 		const session = runtimeContext.get('session') as RuntimeContextSession
 		const toolName = 'emailSend'
 		const principalId = session.userId

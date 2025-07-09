@@ -6,6 +6,7 @@ import { getCerbosInstance, initializeCerbos } from '@/cerbos'
 import { getDbInstance, initializeDb } from '@/db'
 import { createFhirApiClient } from '@/fhir/client'
 import { initializeInfisical } from '@/infisical'
+import { getEmailInstance, initializeEmail } from '@/mail'
 import { notes } from '@/mastra/mcp/notes'
 import { allAuthWorkflows } from '@/mastra/workflows/auth'
 import { registerCopilotKit } from '@mastra/agui'
@@ -46,6 +47,7 @@ await initializeInfisical()
 initializeAuth()
 initializeCerbos()
 initializeAudit()
+initializeEmail()
 initializeDb()
 
 const mastra: Mastra = new Mastra({
@@ -84,6 +86,7 @@ const mastra: Mastra = new Mastra({
 					//console.log(`SESSION: ${JSON.stringify(session, null, 2)}`)
 					const cerbos = getCerbosInstance()
 					const audit = getAuditInstance()
+					const email = getEmailInstance()
 					const db = getDbInstance()
 
 					const sessionData: RuntimeContextSession = {
@@ -100,6 +103,7 @@ const mastra: Mastra = new Mastra({
 					const runtimeContext = c.get('runtimeContext')
 					runtimeContext.set('cerbos', cerbos)
 					runtimeContext.set('audit', audit)
+					runtimeContext.set('email', email)
 					runtimeContext.set('db', db)
 					runtimeContext.set('session', sessionData)
 					runtimeContext.set('fhirClient', fhirApiClient)

@@ -41,7 +41,7 @@ function getEnv(variableName: string): string | undefined {
 }
 
 // Environment detection functions
-const isCloudflareWorkers = (): boolean => typeof WebSocketPair !== 'undefined'
+//const isCloudflareWorkers = (): boolean => typeof WebSocketPair !== 'undefined'
 const isNodeJS = (): boolean =>
 	typeof process !== 'undefined' && process.versions != null && process.versions.node != null
 
@@ -67,7 +67,8 @@ export class Cerbos {
 			)
 		}
 
-		if (isCloudflareWorkers() || this.forceHttp) {
+		this.client = new HTTP(effectiveCerbosUrl)
+		/**if (isCloudflareWorkers() || this.forceHttp) {
 			this.client = new HTTP(effectiveCerbosUrl)
 		} else if (isNodeJS()) {
 			this.client = new GRPC(effectiveCerbosUrl, { tls: false }) // Assuming local development often uses non-TLS gRPC. Adjust as needed.
@@ -75,7 +76,7 @@ export class Cerbos {
 			throw new Error(
 				'Cerbos Service: Unrecognized environment. Cannot determine whether to use HTTP or gRPC client.'
 			)
-		}
+		}*/
 	}
 
 	public isAllowed(request: IsAllowedRequest, options?: RequestOptions): Promise<boolean> {
