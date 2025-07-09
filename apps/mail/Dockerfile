@@ -1,8 +1,9 @@
 # Stage 1: Base with Node.js
-FROM node:20-slim AS base
+FROM node:22-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
+RUN apt-get update -yq && apt-get install -yqq curl
 
 WORKDIR /app
 
