@@ -69,7 +69,8 @@ connection.on('error', (err) => {
 let authDbService: AuthDb | undefined = undefined
 export { authDbService }
 
-const audit = new Audit('audit', process.env.AUDIT_REDIS_URL!)
+let audit: Audit | undefined = undefined
+export { audit }
 
 const kms = new InfisicalKmsClient({
 	baseUrl: process.env.INFISICAL_URL!,
@@ -163,6 +164,10 @@ async function getEmailProvider(organizationId: string, action: string): Promise
 async function main() {
 	logger.info('🏁 Mail worker starting...')
 
+	if (!audit) {
+		audit = new Audit('audit', process.env.AUDIT_REDIS_URL!)
+	}
+
 	if (!authDbService) {
 		authDbService = new AuthDb(process.env.AUTH_DB_URL)
 	}
@@ -189,7 +194,7 @@ async function main() {
 		try {
 			email = await getEmailProvider(organizationId, action)
 		} catch (error) {
-			await audit.log({
+			await audit?.log({
 				principalId,
 				organizationId,
 				action: `${action}GetProvider`,
@@ -210,7 +215,7 @@ async function main() {
 				...emailDetails,
 				from: email.from!,
 			})
-			await audit.log({
+			await audit?.log({
 				principalId,
 				organizationId: action !== 'sendVerificationEmail' ? organizationId : null,
 				action: `${action}Send`,
@@ -221,7 +226,7 @@ async function main() {
 				`✅ Job ${job.id} processed successfully. Mail worker log for action '${action}' stored.`
 			)
 		} catch (error) {
-			await audit.log({
+			await audit?.log({
 				principalId,
 				organizationId: action !== 'sendVerificationEmail' ? organizationId : null,
 				action: `${action}Send`,
