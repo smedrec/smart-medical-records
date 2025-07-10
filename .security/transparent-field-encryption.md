@@ -1,4 +1,4 @@
-## PostgreSQL Transparent Field Encryption/Decryption with Views and INSTEAD OF Triggers
+# PostgreSQL Transparent Field Encryption/Decryption with Views and INSTEAD OF Triggers
 
 To achieve transparent encryption and decryption at the database level, allowing a third-party application to interact with plain text data while the database handles the cryptographic operations, we will use a combination of:
 

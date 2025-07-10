@@ -6,7 +6,7 @@
 
 **Goals:**
 
-    Centralized & Standardized Data: Create a unified client health data repository fully compatible with FHIR R4/R5 standards to ensure interoperability and data integrity.
+    Centralized & Standardized Data: Use the cloud providers (azure. aws, gcp) to create a unified client health data repository fully compatible with FHIR R4/R5 standards to ensure interoperability and data integrity.
 
     Enhanced Collaboration: Streamline and optimize collaboration workflows between Licensed Practitioners and Medical Assistants for efficient patient management.
 

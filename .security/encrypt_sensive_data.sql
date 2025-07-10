@@ -1,5 +1,3 @@
--- PGOPTIONS="-c 'custom.secret_ke=${SECRET_KEY}'"
-
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 DROP TABLE IF EXISTS mastra_messages_encrypted CASCADE;
