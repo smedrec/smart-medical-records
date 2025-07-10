@@ -46,14 +46,17 @@ const emailSendTool = createTool({
 			text: context.text,
 		}
 
-		await email.send({
-			principalId,
-			organizationId,
-			action: toolName,
-			emailDetails,
-		})
-
-		return createTextResponse('Email enqueued', { isError: false })
+		try {
+			await email.send({
+				principalId,
+				organizationId,
+				action: toolName,
+				emailDetails,
+			})
+			return createTextResponse('Email enqueued', { isError: false })
+		} catch (e: any) {
+			return createTextResponse(`Error sending email: ${e}`, { isError: true })
+		}
 	},
 })
 
