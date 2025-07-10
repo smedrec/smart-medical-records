@@ -87,13 +87,13 @@ const mastra: Mastra = new Mastra({
 					}
 
 					//console.log(`SESSION: ${JSON.stringify(session, null, 2)}`)
-					const cerbos = getCerbosInstance()
-					const audit = getAuditInstance()
-					const email = getEmailInstance()
-					const db = getDbInstance()
-					const kms = getKmsInstance()
-
-					const services: RuntimeServices = { db, audit, email, cerbos, kms }
+					const services: RuntimeServices = {
+						db: getDbInstance(),
+						audit: getAuditInstance(),
+						email: getEmailInstance(),
+						cerbos: getCerbosInstance(),
+						kms: getKmsInstance(),
+					}
 
 					const sessionData: RuntimeContextSession = {
 						tokenResponse: {},
@@ -107,10 +107,6 @@ const mastra: Mastra = new Mastra({
 					const fhirApiClient: FhirApiClient = createFhirApiClient(sessionData.serverUrl)
 
 					const runtimeContext = c.get('runtimeContext')
-					runtimeContext.set('cerbos', cerbos)
-					runtimeContext.set('audit', audit)
-					runtimeContext.set('email', email)
-					runtimeContext.set('db', db)
 					runtimeContext.set('services', services)
 					runtimeContext.set('session', sessionData)
 					runtimeContext.set('fhirClient', fhirApiClient)
