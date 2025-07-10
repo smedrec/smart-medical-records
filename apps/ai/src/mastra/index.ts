@@ -9,6 +9,7 @@ import { createFhirApiClient } from '@/fhir/client'
 import { getKmsInstance, initializeKms } from '@/kms'
 import { getEmailInstance, initializeEmail } from '@/mail'
 import { notes } from '@/mastra/mcp/notes'
+import { network } from '@/mastra/network'
 import { allAuthWorkflows } from '@/mastra/workflows/auth'
 import { registerCopilotKit } from '@mastra/agui'
 import { Mastra } from '@mastra/core/mastra'
@@ -175,6 +176,7 @@ const mastra: Mastra = new Mastra({
 			}),
 		],
 	},
+	vnext_networks: { 'smedrec-network': network },
 	workflows: { ...Object.fromEntries(allAuthWorkflows.map((workflow) => [workflow.id, workflow])) },
 	agents: { assistantAgent, patientReportAgent },
 	vectors: { pgVector },

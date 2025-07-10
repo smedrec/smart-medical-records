@@ -10,7 +10,7 @@ export type FhirApiClient = OpenApiFetchClient<paths>
 
 function createFhirApiClient(baseUrl: string, accessToken?: string): FhirApiClient {
 	// Create a lightweight openapi-fetch client instance
-	const fhirApiClient = createClient({ baseUrl: baseUrl })
+	const fhirApiClient = createClient<paths>({ baseUrl: baseUrl })
 
 	const authHeaderMiddleware: OpenApiFetchMiddleware = {
 		onRequest(req) {

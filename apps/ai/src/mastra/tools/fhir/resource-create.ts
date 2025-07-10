@@ -80,7 +80,7 @@ export const fhirResourceCreateTool = createTool({
 		})
 
 		try {
-			const { data, error, response } = await fhirClient.POST(`/${resourceType}`, {
+			const { data, error, response } = await (fhirClient.POST as any)(`/${resourceType}`, {
 				body: context.resource,
 			})
 			if (error) {
