@@ -123,7 +123,7 @@ export const fhirResourceSearchTool = createTool({
 				status: 'failure',
 				outcomeDescription: e.message,
 			})
-			return createTextResponse(`FHIR ${resourceType} search failed: ${e.message}`, {
+			return createTextResponse(`FHIR ${resourceType} search failed. Error: ${e.message}`, {
 				isError: true,
 			})
 		}

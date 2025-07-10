@@ -89,7 +89,7 @@ export const fhirResourceCreateTool = createTool({
 				const operationOutcomeError = handleOperationOutcomeError(
 					JSON.parse(rText) as OperationOutcome
 				)
-				const desc = `FHIR ${resourceType} create failed: Status ${response.status}`
+				const desc = `FHIR ${resourceType} create failed. Error: ${response.status}`
 				await audit.log({
 					principalId,
 					organizationId,
@@ -123,8 +123,9 @@ export const fhirResourceCreateTool = createTool({
 				status: 'failure',
 				outcomeDescription: e.message,
 			})
-			// TODO - better description to error message
-			return createTextResponse('ERROR', { isError: true })
+			return createTextResponse(`FHIR ${resourceType} create failed. Error: ${e.message}`, {
+				isError: true,
+			})
 		}
 	},
 })

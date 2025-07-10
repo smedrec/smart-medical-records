@@ -129,7 +129,9 @@ export const fhirResourceReadTool = createTool({
 				status: 'failure',
 				outcomeDescription: e.message,
 			})
-			return createTextResponse(`FHIR ${resourceType} read failed: ${e.message}`, { isError: true })
+			return createTextResponse(`FHIR ${resourceType} read failed. Error: ${e.message}`, {
+				isError: true,
+			})
 		}
 	},
 })

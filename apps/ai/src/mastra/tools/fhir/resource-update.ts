@@ -127,7 +127,7 @@ export const fhirResourceUpdateTool = createTool({
 				status: 'failure',
 				outcomeDescription: e.message,
 			})
-			return createTextResponse(`FHIR ${resourceType} update failed: Status ${e.message}`, {
+			return createTextResponse(`FHIR ${resourceType} update failed. Error: ${e.message}`, {
 				isError: true,
 			})
 		}

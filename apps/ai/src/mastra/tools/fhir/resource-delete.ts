@@ -129,8 +129,9 @@ export const fhirResourceDeleteTool = createTool({
 				status: 'failure',
 				outcomeDescription: e.message,
 			})
-			// TODO - better description to error message
-			return createTextResponse('ERROR', { isError: true })
+			return createTextResponse(`FHIR ${resourceType} delete failed. Error: ${e.message}`, {
+				isError: true,
+			})
 		}
 	},
 })
