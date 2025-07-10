@@ -6,8 +6,10 @@ import { getCerbosInstance, initializeCerbos } from '@/cerbos'
 import { getDbInstance, initializeDb } from '@/db'
 import { createFhirApiClient } from '@/fhir/client'
 import { initializeInfisical } from '@/infisical'
+import { getKmsInstance, initializeKms } from '@/kms'
 import { getEmailInstance, initializeEmail } from '@/mail'
 import { notes } from '@/mastra/mcp/notes'
+import { RuntimeServices } from '@/mastra/tools/types'
 import { allAuthWorkflows } from '@/mastra/workflows/auth'
 import { registerCopilotKit } from '@mastra/agui'
 import { Mastra } from '@mastra/core/mastra'
@@ -21,7 +23,7 @@ import { pgStorage, pgVector } from './stores/pgvector'
 
 import type { FhirApiClient } from '@/fhir/client'
 import type { RuntimeContextSession } from '@/hono/types'
-import type { OtelConfig } from '@mastra/core'
+import type { OtelConfig, Run } from '@mastra/core'
 import type { Session, User } from '@repo/auth'
 
 // FIXME The traces does not working
@@ -49,6 +51,7 @@ initializeCerbos()
 initializeAudit()
 initializeEmail()
 initializeDb()
+initializeKms()
 
 const mastra: Mastra = new Mastra({
 	server: {
@@ -88,6 +91,9 @@ const mastra: Mastra = new Mastra({
 					const audit = getAuditInstance()
 					const email = getEmailInstance()
 					const db = getDbInstance()
+					const kms = getKmsInstance()
+
+					const services: RuntimeServices = { db, audit, email, cerbos, kms }
 
 					const sessionData: RuntimeContextSession = {
 						tokenResponse: {},
@@ -105,6 +111,7 @@ const mastra: Mastra = new Mastra({
 					runtimeContext.set('audit', audit)
 					runtimeContext.set('email', email)
 					runtimeContext.set('db', db)
+					runtimeContext.set('services', services)
 					runtimeContext.set('session', sessionData)
 					runtimeContext.set('fhirClient', fhirApiClient)
 					await next()

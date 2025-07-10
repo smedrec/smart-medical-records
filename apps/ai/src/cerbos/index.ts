@@ -13,5 +13,12 @@ export function getCerbosInstance() {
 	if (!cerbosInstance) {
 		throw new Error('Cerbos not initialized. Call initializeCerbos first.')
 	}
+	return cerbosInstance
+}
+
+export function getCerbosClient() {
+	if (!cerbosInstance) {
+		throw new Error('Cerbos not initialized. Call initializeCerbos first.')
+	}
 	return cerbosInstance.getClient()
 }

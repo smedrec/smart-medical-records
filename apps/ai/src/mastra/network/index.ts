@@ -16,8 +16,8 @@ const memory = new Memory({
 })
 
 const network = new NewAgentNetwork({
-	id: 'test-network',
-	name: 'Test Network',
+	id: 'smedrec-network',
+	name: 'Smedrec Network',
 	instructions:
 		'You can research cities. You can also synthesize research material. You can also write a full report based on the researched material.',
 	model: groq('llama-3.3-70b-versatile'),

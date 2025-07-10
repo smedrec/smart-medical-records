@@ -1,18 +1,12 @@
 import { IToolCallResult } from '@/mastra/tools/types'
-import { createTextResponse } from '@/mastra/tools/utils'
+import { createTextResponse, DefaultAuthContext } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
 import type { FhirApiClient } from '@/fhir/client'
 import type { OperationOutcome } from '@/fhir/v4.0.1'
 import type { RuntimeContextSession } from '@/hono/types'
-import type { ToolCallResult } from '@/mastra/tools/types'
-import type { Audit } from '@repo/audit'
-import type { Cerbos } from '@repo/cerbos'
-
-const defaultPrincipalId = 'anonymous'
-const defaultRoles = ['anonymous']
-const defaultOrganizationId = 'anonymous'
+import type { RuntimeServices, ToolCallResult } from '@/mastra/tools/types'
 
 export const fhirResourceValidateTool = createTool({
 	id: 'fhirResourceValidate',
@@ -30,16 +24,15 @@ export const fhirResourceValidateTool = createTool({
 	}),
 	outputSchema: IToolCallResult,
 	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
-		const cerbos = runtimeContext.get('cerbos') as Cerbos
-		const audit = runtimeContext.get('audit') as Audit
+		const { cerbos, audit } = runtimeContext.get('services') as RuntimeServices
 		const session = runtimeContext.get('session') as RuntimeContextSession
 		const fhirClient = runtimeContext.get('fhirClient') as FhirApiClient
 		const toolName = 'fhirResourceValidateTool'
 		const resourceType = context.resourceType
 		const resourceId = context.id || 'validate'
-		const principalId = session.userId || defaultPrincipalId
-		const organizationId = session.activeOrganizationId || defaultOrganizationId
-		const roles = session.roles || defaultRoles
+		const principalId = session.userId || DefaultAuthContext.principalId
+		const organizationId = session.activeOrganizationId || DefaultAuthContext.organizationId
+		const roles = session.roles || DefaultAuthContext.roles
 
 		await audit.log({
 			principalId,

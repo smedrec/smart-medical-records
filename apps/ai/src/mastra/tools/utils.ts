@@ -3,6 +3,11 @@
 export const FhirServerUrlHeaderName = 'x-fhir-server-url'
 export const FhirAccessTokenHeaderName = 'x-fhir-access-token'
 export const PatientIdHeaderName = 'x-patient-id'
+export const DefaultAuthContext = {
+	principalId: 'anonymous',
+	roles: ['anonymous'],
+	organizationId: 'anonymous',
+}
 
 function createTextResponse(
 	text: string,

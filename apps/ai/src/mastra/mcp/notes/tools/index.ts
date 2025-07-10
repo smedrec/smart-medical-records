@@ -1,17 +1,13 @@
 import { IToolCallResult } from '@/mastra/tools/types'
-import { createTextResponse } from '@/mastra/tools/utils'
+import { createTextResponse, DefaultAuthContext } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core/tools'
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 import { note } from '@repo/app-db'
 
-import type { Databases } from '@/db'
 import type { RuntimeContextSession } from '@/hono/types'
-import type { ToolCallResult } from '@/mastra/tools/types'
-
-const defaultPrincipalId = 'anonymous'
-const defaultOrganizationId = 'anonymous'
+import type { RuntimeServices, ToolCallResult } from '@/mastra/tools/types'
 
 export const writeNoteTool = createTool({
 	id: 'write_note',
@@ -22,10 +18,10 @@ export const writeNoteTool = createTool({
 	}),
 	outputSchema: IToolCallResult,
 	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
-		const db = runtimeContext.get('db') as Databases
+		const { db } = runtimeContext.get('services') as RuntimeServices
 		const session = runtimeContext.get('session') as RuntimeContextSession
-		const principalId = session.userId || defaultPrincipalId
-		const organizationId = session.activeOrganizationId || defaultOrganizationId
+		const principalId = session.userId || DefaultAuthContext.principalId
+		const organizationId = session.activeOrganizationId || DefaultAuthContext.organizationId
 
 		try {
 			await db.app.insert(note).values({
@@ -45,7 +41,7 @@ export const writeNoteTool = createTool({
 
 export const updateNoteTool = createTool({
 	id: 'write_note',
-	description: 'Update the title and/or the content of an existing one to update.',
+	description: 'Update the title and/or the content of an existing none to update.',
 	inputSchema: z.object({
 		title: z.string().describe('The title of the note.'),
 		newTitle: z.string().optional().describe('The new title of the note, if applicable.'),
@@ -59,10 +55,10 @@ export const updateNoteTool = createTool({
 		if (!context.newTitle && !context.newContent) {
 			createTextResponse(`Nothing to update, the note remain the same`, { isError: true })
 		}
-		const db = runtimeContext.get('db') as Databases
+		const { db } = runtimeContext.get('services') as RuntimeServices
 		const session = runtimeContext.get('session') as RuntimeContextSession
-		const principalId = session.userId || defaultPrincipalId
-		const organizationId = session.activeOrganizationId || defaultOrganizationId
+		const principalId = session.userId || DefaultAuthContext.principalId
+		const organizationId = session.activeOrganizationId || DefaultAuthContext.organizationId
 
 		try {
 			const update = await db.app
@@ -97,10 +93,10 @@ export const listNotesTool = createTool({
 	description: 'List the notes for the current user. This tool does not need any input.',
 	outputSchema: IToolCallResult,
 	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
-		const db = runtimeContext.get('db') as Databases
+		const { db } = runtimeContext.get('services') as RuntimeServices
 		const session = runtimeContext.get('session') as RuntimeContextSession
-		const principalId = session.userId || defaultPrincipalId
-		const organizationId = session.activeOrganizationId || defaultOrganizationId
+		const principalId = session.userId || DefaultAuthContext.principalId
+		const organizationId = session.activeOrganizationId || DefaultAuthContext.organizationId
 
 		try {
 			const notes = await db.app.query.note.findMany({
