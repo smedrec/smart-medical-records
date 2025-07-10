@@ -24,13 +24,19 @@ This is the actual table where the data will be stored. The sensitive_data colum
 
 ```sql
 -- Drop existing table if it exists for a clean start
-DROP TABLE IF EXISTS users_encrypted CASCADE;
+DROP TABLE IF EXISTS public.mastra_messages_encrypted CASCADE;
 
-CREATE TABLE users_encrypted (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(100) NOT NULL UNIQUE,
-    sensitive_data BYTEA -- This field will store the encrypted data
+CREATE TABLE public.mastra_messages_encrypted (
+	id text NOT NULL,
+	thread_id text NOT NULL,
+	sensitive_data BYTEA,
+	"role" text NOT NULL,
+	"type" text NOT NULL,
+	"createdAt" timestamp NOT NULL,
+	"resourceId" text NULL,
+	CONSTRAINT mastra_messages_encrypted_pkey PRIMARY KEY (id)
 );
+
 ```
 
 ## 3. Encryption and Decryption Functions
@@ -98,7 +104,19 @@ This view will be the interface for your third-party application. It will automa
 
 ```sql
 -- Drop existing view if it exists for a clean start
-DROP VIEW IF EXISTS users CASCADE;
+DROP VIEW IF EXISTS public.mastra_messages CASCADE;
+
+CREATE VIEW public.mastra_messages AS
+SELECT
+    id,
+	thread_id,
+    decrypt_sensitive_data_func(sensitive_data) AS content,
+	"role",
+	"type",
+	"createdAt",
+	"resourceId"
+FROM
+    public.mastra_messages_encrypted;
 
 CREATE VIEW users AS
 SELECT
@@ -115,65 +133,69 @@ These triggers will intercept INSERT, UPDATE, and DELETE operations on the users
 
 ```sql
 -- INSTEAD OF INSERT Trigger
-CREATE OR REPLACE FUNCTION users_insert_trigger_func()
+CREATE OR REPLACE FUNCTION mastra_messages_insert_trigger_func()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO users_encrypted (username, sensitive_data)
-    VALUES (NEW.username, encrypt_sensitive_data_func(NEW.sensitive_data));
+    INSERT INTO mastra_messages_encrypted (id, thread_id, sensitive_data, "role", "type", "createdAt", "resourceId")
+    VALUES (NEW.id, NEW.thread_id, encrypt_sensitive_data_func(NEW.sensitive_data), NEW."role", NEW."type", NEW."createdAt", NEW."resourceId");
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER users_instead_of_insert
-INSTEAD OF INSERT ON users
+CREATE TRIGGER mastra_messages_instead_of_insert
+INSTEAD OF INSERT ON mastra_messages
 FOR EACH ROW
-EXECUTE FUNCTION users_insert_trigger_func();
+EXECUTE FUNCTION mastra_messages_insert_trigger_func();
 
 -- INSTEAD OF UPDATE Trigger
-CREATE OR REPLACE FUNCTION users_update_trigger_func()
+CREATE OR REPLACE FUNCTION mastra_messages_update_trigger_func()
 RETURNS TRIGGER AS $$
 BEGIN
-    UPDATE users_encrypted
+    UPDATE mastra_messages_encrypted
     SET
-        username = NEW.username,
-        sensitive_data = encrypt_sensitive_data_func(NEW.sensitive_data)
+        thread_id = NEW.thread_id,
+        sensitive_data = encrypt_sensitive_data_func(NEW.sensitive_data),
+		"role" = NEW."role",
+		"type" = NEW."type",
+		"createdAt" = NEW."createdAt",
+		"resourceId" = NEW."resourceId"
     WHERE
         id = OLD.id; -- Use OLD.id to identify the row to update
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER users_instead_of_update
-INSTEAD OF UPDATE ON users
+CREATE TRIGGER mastra_messages_instead_of_update
+INSTEAD OF UPDATE ON mastra_messages
 FOR EACH ROW
-EXECUTE FUNCTION users_update_trigger_func();
+EXECUTE FUNCTION mastra_messages_update_trigger_func();
 
 -- INSTEAD OF DELETE Trigger (optional, but good for completeness)
-CREATE OR REPLACE FUNCTION users_delete_trigger_func()
+CREATE OR REPLACE FUNCTION mastra_messages_delete_trigger_func()
 RETURNS TRIGGER AS $$
 BEGIN
-    DELETE FROM users_encrypted
+    DELETE FROM mastra_messages_encrypted
     WHERE id = OLD.id;
     RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER users_instead_of_delete
-INSTEAD OF DELETE ON users
+CREATE TRIGGER mastra_messages_instead_of_delete
+INSTEAD OF DELETE ON mastra_messages
 FOR EACH ROW
-EXECUTE FUNCTION users_delete_trigger_func();
+EXECUTE FUNCTION mastra_messages_delete_trigger_func();
 ```
 
 ## 6. Granting Permissions
 
-Crucially, you must grant the application's database user permissions only on the users view, and NOT on the users_encrypted table. This ensures the application can only interact with the decrypted view.
+Crucially, you must grant the application's database user permissions only on the users view, and NOT on the mastra_messages_encrypted table. This ensures the application can only interact with the decrypted view.
 
 ```sql
 -- Example: Create a dedicated application user (replace 'app_user' and 'your_password')
 CREATE USER app_user WITH PASSWORD 'your_secure_password';
 
 -- Grant permissions on the view to the application user
-GRANT SELECT, INSERT, UPDATE, DELETE ON users TO app_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON mastra_messages TO app_user;
 
 -- IMPORTANT: Revoke or ensure no permissions on the base table for app_user
 -- (By default, new users have no permissions, but it's good to be explicit if needed)
