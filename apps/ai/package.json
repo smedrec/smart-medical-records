@@ -51,6 +51,7 @@
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
+		"@types/fhir": "^0.0.41",
 		"@types/node": "24.0.12",
 		"@types/nodemailer": "6.4.17",
 		"@types/unist": "3.0.3",

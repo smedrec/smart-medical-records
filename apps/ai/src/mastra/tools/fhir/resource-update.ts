@@ -1,12 +1,13 @@
+import { handleOperationOutcomeError } from '@/fhir/ErrorHandler'
 import { IToolCallResult } from '@/mastra/tools/types'
 import { createTextResponse, DefaultAuthContext } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
 import type { FhirApiClient } from '@/fhir/client'
-import type { OperationOutcome } from '@/fhir/v4.0.1'
 import type { RuntimeContextSession } from '@/hono/types'
 import type { RuntimeServices, ToolCallResult } from '@/mastra/tools/types'
+import type { OperationOutcome } from 'fhir/r4'
 
 export const fhirResourceUpdateTool = createTool({
 	id: 'fhirResourceUpdate',
@@ -87,6 +88,9 @@ export const fhirResourceUpdateTool = createTool({
 			})
 			if (error) {
 				const rText = await response.text()
+				const operationOutcomeError = handleOperationOutcomeError(
+					JSON.parse(rText) as OperationOutcome
+				)
 				const desc = `FHIR ${resourceType} update failed: Status ${response.status}`
 				await audit.log({
 					principalId,
@@ -99,13 +103,10 @@ export const fhirResourceUpdateTool = createTool({
 					details: {
 						responseStatus: response.status,
 						responseBody: rText,
+						operationOutcomeError: operationOutcomeError.message,
 					},
 				})
-				try {
-					const o = JSON.parse(rText) as OperationOutcome
-					if (o?.issue?.length > 0) throw new Error(o.issue[0].diagnostics)
-				} catch (e) {}
-				return createTextResponse(desc, { isError: true })
+				return createTextResponse(operationOutcomeError.message, { isError: true })
 			}
 			await audit.log({
 				principalId,
@@ -126,8 +127,9 @@ export const fhirResourceUpdateTool = createTool({
 				status: 'failure',
 				outcomeDescription: e.message,
 			})
-			// TODO - better description to error message
-			return createTextResponse('ERROR', { isError: true })
+			return createTextResponse(`FHIR ${resourceType} update failed: Status ${e.message}`, {
+				isError: true,
+			})
 		}
 	},
 })

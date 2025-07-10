@@ -55,7 +55,7 @@ const emailSendTool = createTool({
 			})
 			return createTextResponse('Email enqueued', { isError: false })
 		} catch (e: any) {
-			return createTextResponse(`Error sending email: ${e}`, { isError: true })
+			return createTextResponse(`Error sending email: ${e.message}`, { isError: true })
 		}
 	},
 })

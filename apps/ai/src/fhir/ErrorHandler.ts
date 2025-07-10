@@ -1,4 +1,4 @@
-import type { OperationOutcome } from '@/fhir/v4.0.1'
+import type { OperationOutcome } from 'fhir/r4'
 import type { Validation } from './validation/validation'
 
 function handleError(message: string, err: unknown): string {

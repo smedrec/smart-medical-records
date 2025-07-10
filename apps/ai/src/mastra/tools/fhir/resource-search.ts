@@ -1,3 +1,4 @@
+import { handleOperationOutcomeError } from '@/fhir/ErrorHandler'
 import { IToolCallResult } from '@/mastra/tools/types'
 import { createTextResponse, DefaultAuthContext } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
@@ -7,6 +8,7 @@ import type { FhirApiClient } from '@/fhir/client'
 import type { Bundle } from '@/fhir/v4.0.1'
 import type { RuntimeContextSession } from '@/hono/types'
 import type { RuntimeServices, ToolCallResult } from '@/mastra/tools/types'
+import type { OperationOutcome } from 'fhir/r4'
 
 export const fhirResourceSearchTool = createTool({
 	id: 'fhirResourceSearch',
@@ -82,6 +84,10 @@ export const fhirResourceSearchTool = createTool({
 				params: { query: context.params },
 			})
 			if (error) {
+				const rText = await response.text()
+				const operationOutcomeError = handleOperationOutcomeError(
+					JSON.parse(rText) as OperationOutcome
+				)
 				const desc = `FHIR ${resourceType} search failed: Status ${response.status}`
 				await audit.log({
 					principalId,
@@ -92,9 +98,11 @@ export const fhirResourceSearchTool = createTool({
 					outcomeDescription: desc,
 					details: {
 						responseStatus: response.status,
+						operationOutcomeError: operationOutcomeError.message,
+						responseBody: rText,
 					},
 				})
-				return createTextResponse(desc, { isError: true })
+				return createTextResponse(operationOutcomeError.message, { isError: true })
 			}
 			await audit.log({
 				principalId,
@@ -115,8 +123,9 @@ export const fhirResourceSearchTool = createTool({
 				status: 'failure',
 				outcomeDescription: e.message,
 			})
-			// TODO - better description to error message
-			return createTextResponse('ERROR.', { isError: true })
+			return createTextResponse(`FHIR ${resourceType} search failed: ${e.message}`, {
+				isError: true,
+			})
 		}
 	},
 })

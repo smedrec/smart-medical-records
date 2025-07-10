@@ -1,6 +1,8 @@
+import { handleOperationOutcomeError } from '@/fhir/ErrorHandler'
 import { IToolCallResult } from '@/mastra/tools/types'
 import { createTextResponse, DefaultAuthContext } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
+import { OperationOutcome } from 'fhir/r4'
 import z from 'zod'
 
 import type { FhirApiClient } from '@/fhir/client'
@@ -87,6 +89,9 @@ export const fhirResourceReadTool = createTool({
 			})
 			if (error) {
 				const rText = await response.text()
+				const operationOutcomeError = handleOperationOutcomeError(
+					JSON.parse(rText) as OperationOutcome
+				)
 				const outcomeDescription = `FHIR ${resourceType} read failed: Status ${response.status}`
 				await audit.log({
 					principalId,
@@ -99,13 +104,10 @@ export const fhirResourceReadTool = createTool({
 					details: {
 						responseStatus: response.status,
 						responseBody: rText,
+						operationOutcomeError: operationOutcomeError.message,
 					},
 				})
-				console.error(
-					`FHIR ${resourceType} read error (ID: ${context.id}): Status ${response.status}`,
-					await response.text()
-				)
-				return createTextResponse(outcomeDescription, { isError: true })
+				return createTextResponse(operationOutcomeError.message, { isError: true })
 			}
 			await audit.log({
 				principalId,
@@ -127,7 +129,7 @@ export const fhirResourceReadTool = createTool({
 				status: 'failure',
 				outcomeDescription: e.message,
 			})
-			return createTextResponse(`FHIR ${resourceType} read failed`, { isError: true })
+			return createTextResponse(`FHIR ${resourceType} read failed: ${e.message}`, { isError: true })
 		}
 	},
 })

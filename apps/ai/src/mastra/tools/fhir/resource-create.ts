@@ -1,12 +1,13 @@
+import { handleOperationOutcomeError } from '@/fhir/ErrorHandler'
 import { IToolCallResult } from '@/mastra/tools/types'
 import { createTextResponse, DefaultAuthContext } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
 import z from 'zod'
 
 import type { FhirApiClient } from '@/fhir/client'
-import type { OperationOutcome } from '@/fhir/v4.0.1'
 import type { RuntimeContextSession } from '@/hono/types'
 import type { RuntimeServices, ToolCallResult } from '@/mastra/tools/types'
+import type { OperationOutcome } from 'fhir/r4'
 
 export const fhirResourceCreateTool = createTool({
 	id: 'fhirResourceCreate',
@@ -85,6 +86,9 @@ export const fhirResourceCreateTool = createTool({
 			})
 			if (error) {
 				const rText = await response.text()
+				const operationOutcomeError = handleOperationOutcomeError(
+					JSON.parse(rText) as OperationOutcome
+				)
 				const desc = `FHIR ${resourceType} create failed: Status ${response.status}`
 				await audit.log({
 					principalId,
@@ -96,15 +100,10 @@ export const fhirResourceCreateTool = createTool({
 					details: {
 						responseStatus: response.status,
 						responseBody: rText,
+						operationOutcomeError: operationOutcomeError.message,
 					},
 				})
-				try {
-					const error = handleOperationOutcomeError(JSON.parse(rText) as OperationOutcome)
-					//const o = JSON.parse(rText) as OperationOutcome
-					//if (o?.issue?.length > 0) throw new Error(o.issue[0].diagnostics)
-					return createTextResponse(error.message, { isError: true })
-				} catch (e) {}
-				return createTextResponse(desc, { isError: true })
+				return createTextResponse(operationOutcomeError.message, { isError: true })
 			}
 			await audit.log({
 				principalId,
@@ -129,18 +128,3 @@ export const fhirResourceCreateTool = createTool({
 		}
 	},
 })
-
-export function handleOperationOutcomeError(operationOutcome: OperationOutcome): Validation {
-	const errorMessage = operationOutcome.issue
-		? operationOutcome.issue
-				.map((issue) => {
-					return issue.details?.text ?? 'Unknown error'
-				})
-				.join('\n')
-		: 'Unknown error'
-
-	return {
-		message: 'OperationOutcome: ' + errorMessage,
-		severity: 'ERROR',
-	}
-}

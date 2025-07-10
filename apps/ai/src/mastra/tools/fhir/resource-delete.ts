@@ -1,3 +1,4 @@
+import { handleOperationOutcomeError } from '@/fhir/ErrorHandler'
 import { IToolCallResult } from '@/mastra/tools/types'
 import { createTextResponse, DefaultAuthContext } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
@@ -6,6 +7,7 @@ import z from 'zod'
 import type { FhirApiClient } from '@/fhir/client'
 import type { RuntimeContextSession } from '@/hono/types'
 import type { RuntimeServices, ToolCallResult } from '@/mastra/tools/types'
+import type { OperationOutcome } from 'fhir/r4'
 
 export const fhirResourceDeleteTool = createTool({
 	id: 'fhirResourceDelete',
@@ -87,6 +89,9 @@ export const fhirResourceDeleteTool = createTool({
 			})
 			if (error) {
 				const rText = await response.text()
+				const operationOutcomeError = handleOperationOutcomeError(
+					JSON.parse(rText) as OperationOutcome
+				)
 				const outcomeDescription = `FHIR ${resourceType} delete failed: Status ${response.status}`
 				await audit.log({
 					principalId,
@@ -99,12 +104,9 @@ export const fhirResourceDeleteTool = createTool({
 					details: {
 						responseStatus: response.status,
 						responseBody: rText,
+						operationOutcomeError: operationOutcomeError.message,
 					},
 				})
-				console.error(
-					`FHIR ${resourceType} delete error (ID: ${context.id}): Status ${response.status}`,
-					await response.text()
-				)
 				return createTextResponse(outcomeDescription, { isError: true })
 			}
 			await audit.log({
