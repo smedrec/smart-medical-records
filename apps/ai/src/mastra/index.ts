@@ -5,11 +5,10 @@ import { getAuthInstance, initializeAuth } from '@/auth'
 import { getCerbosInstance, initializeCerbos } from '@/cerbos'
 import { getDbInstance, initializeDb } from '@/db'
 import { createFhirApiClient } from '@/fhir/client'
-import { initializeInfisical } from '@/infisical'
+//import { initializeInfisical } from '@/infisical'
 import { getKmsInstance, initializeKms } from '@/kms'
 import { getEmailInstance, initializeEmail } from '@/mail'
 import { notes } from '@/mastra/mcp/notes'
-import { RuntimeServices } from '@/mastra/tools/types'
 import { allAuthWorkflows } from '@/mastra/workflows/auth'
 import { registerCopilotKit } from '@mastra/agui'
 import { Mastra } from '@mastra/core/mastra'
@@ -23,6 +22,7 @@ import { pgStorage, pgVector } from './stores/pgvector'
 
 import type { FhirApiClient } from '@/fhir/client'
 import type { RuntimeContextSession } from '@/hono/types'
+import type { RuntimeServices } from '@/mastra/tools/types'
 import type { OtelConfig, Run } from '@mastra/core'
 import type { Session, User } from '@repo/auth'
 
@@ -45,7 +45,7 @@ const otelConfig: OtelConfig = {
 	},
 }
 
-await initializeInfisical()
+//await initializeInfisical()
 initializeAuth()
 initializeCerbos()
 initializeAudit()
