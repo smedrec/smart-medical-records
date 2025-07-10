@@ -19,7 +19,7 @@ CREATE TABLE mastra_messages_encrypted (
 CREATE OR REPLACE FUNCTION encrypt_sensitive_data_func(plain_data TEXT)
 RETURNS BYTEA AS $$
 DECLARE
-    encryption_key TEXT := SELECT current_setting('custom.secret_key');
+    encryption_key TEXT := current_setting('custom.secret_key');
     iv BYTEA;
     encrypted_bytes BYTEA;
 BEGIN
@@ -41,7 +41,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION decrypt_sensitive_data_func(encrypted_value BYTEA)
 RETURNS TEXT AS $$
 DECLARE
-    encryption_key TEXT := SELECT current_setting('custom.secret_key');
+    encryption_key TEXT := current_setting('custom.secret_key');
     iv BYTEA;
     ciphertext BYTEA;
     decrypted_bytes BYTEA;

@@ -1,0 +1,165 @@
+# Development Workflow
+
+This guide covers the common development workflows and commands for working with the Node.js monorepo.
+
+## Prerequisites
+
+- Node.js v22 or later
+- pnpm v10 or later
+
+## Getting Started
+
+### Initial Setup
+
+```bash
+# Install all dependencies
+just install
+# or
+pnpm install
+```
+
+### Development Commands
+
+All commands can be run using either the [Justfile](mdc:Justfile) shortcuts or direct pnpm/turbo commands:
+
+#### Start Development
+
+```bash
+# Start dev servers for all applications/services
+just dev
+# or
+pnpm run dev
+# This typically runs the `dev` script defined in the package.json of each application.
+# Ensure your applications' `dev` scripts are configured for Node.js development (e.g., using nodemon, or `node --watch`).
+```
+
+#### Create New Application/Service
+
+```bash
+# Interactive generator for a new application/service
+just new-app # Or a more descriptive command like `just new-node-service`
+# This should use templates from turbo/generators/templates/ for Node.js applications (e.g., Express, NestJS, or a basic Node.js server).
+# Update the generator path if it changes: turbo/generators/templates/node-app/
+```
+
+#### Create New Package
+
+```bash
+# Generate shared package
+just new-package
+```
+
+#### Build & Test
+
+```bash
+# Build all projects
+just build
+# or
+pnpm turbo build
+
+# Run tests
+just test
+# or
+pnpm test
+
+# Run CI checks (linting, types, formatting)
+just check
+# or
+pnpm run check
+```
+
+#### Code Quality
+
+```bash
+# Auto-fix issues
+just fix
+# or
+pnpm run fix
+
+# Check code formatting
+pnpm run check:format
+
+# Fix formatting
+pnpm run fix:format
+```
+
+#### Deployment
+
+```bash
+# Deploy all applications/services (ensure this script is updated for Node.js deployments)
+just deploy
+# or
+pnpm turbo deploy # If your deployment scripts are orchestrated via turbo
+```
+
+## Workspace Commands
+
+### Working with Specific Packages
+
+**Use Turborepo filters for build/test/deploy tasks, pnpm filters for dependency management:**
+
+```bash
+# Run command in specific workspace using turbo
+pnpm turbo -F @repo/package-name build
+
+# Run command in all application/service packages
+pnpm turbo -F "./apps/*" dev
+
+# Add dependency to specific package (use pnpm for dependency management)
+pnpm -F @repo/package-name add dependency-name
+```
+
+### Turborepo Commands
+
+```bash
+# Build with dependency graph
+pnpm turbo build
+
+# Run checks across all packages
+pnpm turbo check
+
+# Clear turbo cache
+pnpm turbo clean
+```
+
+## Key Files to Know
+
+- [package.json](mdc:package.json) - Root scripts and workspace configuration
+- [turbo.json](mdc:turbo.json) - Build pipeline and task dependencies
+- [Justfile](mdc:Justfile) - Convenient command shortcuts
+- [.syncpackrc.cjs](mdc:.syncpackrc.cjs) - Dependency management rules
+
+## Dependency Management
+
+This project uses:
+
+- **pnpm workspaces** for package linking
+- **syncpack** for version consistency
+- **Turborepo** for build orchestration
+
+Always use `pnpm` instead of `npm` or `yarn` to maintain workspace consistency.
+
+## Command Guidelines
+
+- **Use `pnpm turbo -F <package>`** for build, test, and deploy tasks
+- **Use `pnpm -F <package>`** for dependency management (add/remove packages)
+- **Use `just <command>`** for common development tasks (shortcuts to turbo commands)
+
+## Code Style Guidelines
+
+- **Tabs**: Use tabs for indentation, spaces for alignment
+- **Imports**: Type imports use `import type`, workspace imports via `@repo/` (or your chosen alias).
+- **Import order**: Built-ins → Third-party → Monorepo internal (`@repo/`, etc.) → Relative paths (often enforced by Prettier/ESLint).
+- **Variables**: Prefix unused variables with `_`. Prefer `const` over `let` where possible.
+- **Types**: Use `Array<Type>` or `Type[]` consistently. Explicit function return types are generally recommended for clarity, especially for public APIs.
+- **Frameworks/Libraries**: Standardize on chosen Node.js frameworks (e.g., Express.js, NestJS, Fastify) and testing libraries (e.g., Vitest, Jest, Mocha with Supertest for HTTP integration tests).
+- **Configuration**: Use environment variables (e.g., via `.env` files with `dotenv`) and/or configuration files (e.g., `config/default.json`, `config/production.json`) as per your project's needs.
+- **Testing Location**: Place integration tests typically in `src/test/integration/` or `tests/integration/`. Unit tests can be co-located with source files (`*.test.ts`) or in a separate `test`/`__tests__` directory.
+
+## Important Notes
+
+- **TypeScript Configs**: When extending `tsconfig.json` files, always use fully qualified paths (e.g., `@repo/typescript-config/base.json`) instead of relative paths to ensure correct resolution across the monorepo.
+- **Node.js Types**: Ensure `@types/node` is a development dependency in your Node.js applications and packages for proper Node.js API typings.
+- **Lint Checking**: To lint a specific package, you can typically `cd` into its directory and run your linting script (e.g., `pnpm lint` or `pnpm check:lint`). For monorepo-wide checks, `pnpm turbo check:lint` (or similar) is common.
+- **Type Checking**: Similar to linting, run `pnpm check:types` or `pnpm tsc --noEmit` within a package or via `pnpm turbo check:types` for the whole monorepo.
+- **Dependencies**: Use the `workspace:*` protocol for internal monorepo dependencies in `package.json` files to ensure pnpm links them correctly.

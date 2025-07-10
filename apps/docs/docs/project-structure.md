@@ -1,0 +1,49 @@
+# Node.js Monorepo Template - Project Structure
+
+This is a Node.js monorepo template built with Turborepo, pnpm workspaces, and modern tooling, designed for building scalable server-side applications and shared libraries.
+
+## Repository Layout
+
+### Core Directories
+
+- **`apps/`** - Individual Node.js applications or services (deployable units).
+  - Each subdirectory is typically a separate application (e.g., an API server, a background job processor).
+  - Example: `apps/api-service/` - could be an Express.js or NestJS application.
+  - Example: `apps/data-processor/` - could be a standalone Node.js script or service.
+
+- **`packages/`** - Shared libraries, utilities, and configurations used by applications in the `apps/` directory or other packages.
+  - [packages/eslint-config/](mdc:packages/eslint-config/) - Shared ESLint configuration
+  - [packages/typescript-config/](mdc:packages/typescript-config/) - Shared TypeScript configuration
+  - [packages/hono-helpers/](mdc:packages/hono-helpers/) - Hono framework utilities and middleware
+  - [packages/tools/](mdc:packages/tools/) - CLI tools and development scripts
+  - [packages/workspace-dependencies/](mdc:packages/workspace-dependencies/) - Shared dependencies management
+
+### Configuration Files
+
+- [package.json](mdc:package.json) - Root package with workspace scripts and dev dependencies
+- [pnpm-workspace.yaml](mdc:pnpm-workspace.yaml) - Defines pnpm workspace structure
+- [turbo.json](mdc:turbo.json) - Turborepo configuration for builds, tasks, and caching
+- [Justfile](mdc:Justfile) - Convenient command aliases for development
+- [tsconfig.json](mdc:tsconfig.json) - Root TypeScript configuration
+- [.syncpackrc.cjs](mdc:.syncpackrc.cjs) - Dependency version synchronization
+
+### Code Generation
+
+- **`turbo/generators/`** - Turbo `gen` templates for scaffolding new applications and packages.
+  - `templates/node-service/` - Example: Template for a basic Node.js service (e.g., using Express or Fastify).
+  - `templates/library-package/` - Template for a shared library package.
+  - `templates/package/` - Generic shared package template (as before, likely still useful).
+    _(Update these paths and descriptions to match your actual Node.js application/service templates.)_
+
+### Build & Development
+
+- **`.turbo/`** - Turborepo cache and daemon files
+- **`node_modules/`** - Workspace dependencies (managed by pnpm)
+- **`.github/workflows/`** - CI/CD pipelines for testing and deployment
+
+## Key Concepts
+
+- **Monorepo Benefits**: Shared dependencies, atomic commits, consistent tooling, easier refactoring across multiple Node.js applications and libraries.
+- **pnpm Workspaces**: Efficient dependency management and linking for local development across packages.
+- **Turborepo**: Build orchestration, intelligent caching, and parallelization of tasks like building, testing, and linting.
+- **Code Generation**: Use `just new-app` (or your project's specific command) to scaffold new Node.js applications or services from predefined templates.

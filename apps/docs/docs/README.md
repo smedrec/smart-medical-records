@@ -16,7 +16,7 @@ features:
   - title: Comprehensive Patient Management
     details: Store and organize medical records, track treatments, forms, and conclusions effectively.
   - title: Cloud-Native Architecture
-    details: Built with Cloudflare Workers for a scalable, secure, and edge-native solution.
+    details: Built with microservices and serverless architecture, ensuring scalability and flexibility.
   - title: Developer Friendly
     details: Monorepo structure using Turborepo & pnpm for efficient development, and type-safe code with TypeScript.
   - title: Customizable Data Collection

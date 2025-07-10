@@ -15,7 +15,7 @@ Before you begin, ensure you have the following installed:
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git # Replace with actual repo URL
+    git clone https://github.com/smedrec/smart-medical-records.git # Replace with actual repo URL
     cd YOUR_REPOSITORY_NAME
     ```
 
@@ -36,7 +36,7 @@ To start the development servers for all applications (e.g., API, web frontend),
 just dev
 ```
 
-This will typically start the API server and the web application, allowing you to interact with SMEDREC in your local environment. Check your terminal output for the specific ports they are running on (e.g., `http://localhost:3000` for the web app, `http://localhost:8787` for the API).
+This will typically start the API server and the web application, allowing you to interact with SMEDREC in your local environment. Check your terminal output for the specific ports they are running on (e.g., `http://localhost:3000` for the web app, `http://localhost:8801` for the API).
 
 ## Building for Production
 
@@ -57,7 +57,7 @@ just test
 You can also run tests for a specific application or package. For example, to test the API:
 
 ```bash
-pnpm turbo -F api test
+pnpm turbo -F @smedrec/api test
 ```
 
 ## Deployment
@@ -67,8 +67,6 @@ To deploy the applications (typically to Cloudflare Workers), use:
 ```bash
 just deploy
 ```
-
-Ensure you have your Cloudflare account and Wrangler configured correctly. Refer to the Cloudflare Wrangler documentation for more details if needed.
 
 ## Next Steps
 

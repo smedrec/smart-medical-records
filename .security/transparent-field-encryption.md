@@ -48,7 +48,7 @@ These functions remain largely the same, handling the actual cryptographic opera
 CREATE OR REPLACE FUNCTION encrypt_sensitive_data_func(plain_data TEXT)
 RETURNS BYTEA AS $$
 DECLARE
-    encryption_key TEXT := 'your_super_secret_key_123456789012345678901234567890'; -- !!! REPLACE WITH A SECURE KEY !!!
+    encryption_key TEXT := current_setting('custom.secret_key'); -- !!! REPLACE WITH A SECURE KEY !!!
     iv BYTEA;
     encrypted_bytes BYTEA;
 BEGIN
@@ -70,7 +70,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION decrypt_sensitive_data_func(encrypted_value BYTEA)
 RETURNS TEXT AS $$
 DECLARE
-    encryption_key TEXT := 'your_super_secret_key_123456789012345678901234567890'; -- !!! MUST BE THE SAME KEY USED FOR ENCRYPTION !!!
+    encryption_key TEXT := current_setting('custom.secret_key'); -- !!! MUST BE THE SAME KEY USED FOR ENCRYPTION !!!
     iv BYTEA;
     ciphertext BYTEA;
     decrypted_bytes BYTEA;
@@ -199,7 +199,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON mastra_messages TO app_user;
 
 -- IMPORTANT: Revoke or ensure no permissions on the base table for app_user
 -- (By default, new users have no permissions, but it's good to be explicit if needed)
--- REVOKE ALL ON users_encrypted FROM app_user;
+-- REVOKE ALL ON mastra_messages_encrypted FROM app_user;
 -- REVOKE ALL ON ALL TABLES IN SCHEMA public FROM app_user; -- More aggressive
 ```
 
@@ -210,33 +210,34 @@ Now, when your application performs INSERT, UPDATE, or SELECT operations on the 
 ```sql
 -- 1. Insert data via the view (application's perspective)
 -- The 'sensitive_data' here is plain text
-INSERT INTO users (username, sensitive_data) VALUES
-('charlie', 'Charlie''s Private Info'),
-('diana', 'Diana''s Secret Document');
+INSERT INTO mastra_messages (id, thread_id, content, "role", "type", "createdAt", "resourceId") VALUES
+VALUES
+('charlie', 'charlie-thread', 'Charlie''s Private Info', 'user', 'message', '2023-01-01T00:00:00.000Z', '1234567890'),
+('diana', 'diana-thread', 'Diana''s Secret Document', 'user', 'message', '2023-01-01T00:00:00.000Z', '1234567890');
 
 -- 2. Verify data in the base table (database administrator's perspective)
 -- You will see encrypted binary data
-SELECT id, username, sensitive_data FROM users_encrypted;
+SELECT id, thread_id, sensitive_data, "role", "type", "createdAt", "resourceId" FROM mastra_messages_encrypted;
 
 -- 3. Select data via the view (application's perspective)
 -- You will see plain text data
-SELECT id, username, sensitive_data FROM users WHERE username = 'charlie';
+SELECT id, thread_id, content, "role", "type", "createdAt", "resourceId" FROM mastra_messages WHERE id = 'charlie';
 
 -- 4. Update data via the view (application's perspective)
 -- The 'sensitive_data' here is plain text
-UPDATE users SET sensitive_data = 'Charlie''s Updated Private Info' WHERE username = 'charlie';
+UPDATE mastra_messages SET content = 'Charlie''s Updated Private Info' WHERE id = 'charlie';
 
 -- 5. Verify the update in the base table (encrypted)
-SELECT id, username, sensitive_data FROM users_encrypted WHERE username = 'charlie';
+SELECT id, username, sensitive_data FROM mastra_messages_encrypted WHERE id = 'charlie';
 
 -- 6. Verify the update via the view (decrypted)
-SELECT id, username, sensitive_data FROM users WHERE username = 'charlie';
+SELECT id, thread_id, content, "role", "type", "createdAt", "resourceId" FROM mastra_messages WHERE id = 'charlie';
 
 -- 7. Delete data via the view (application's perspective)
-DELETE FROM users WHERE username = 'diana';
+DELETE FROM mastra_messages WHERE id = 'diana';
 
 -- 8. Verify deletion in the base table
-SELECT * FROM users_encrypted WHERE username = 'diana';
+SELECT * FROM mastra_messages_encrypted WHERE id = 'diana';
 ```
 
 8. Key Management and Security Considerations (Reiterated)
