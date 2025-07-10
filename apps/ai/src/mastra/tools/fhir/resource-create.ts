@@ -99,8 +99,10 @@ export const fhirResourceCreateTool = createTool({
 					},
 				})
 				try {
-					const o = JSON.parse(rText) as OperationOutcome
-					if (o?.issue?.length > 0) throw new Error(o.issue[0].diagnostics)
+					const error = handleOperationOutcomeError(JSON.parse(rText) as OperationOutcome)
+					//const o = JSON.parse(rText) as OperationOutcome
+					//if (o?.issue?.length > 0) throw new Error(o.issue[0].diagnostics)
+					return createTextResponse(error.message, { isError: true })
 				} catch (e) {}
 				return createTextResponse(desc, { isError: true })
 			}
@@ -127,3 +129,18 @@ export const fhirResourceCreateTool = createTool({
 		}
 	},
 })
+
+export function handleOperationOutcomeError(operationOutcome: OperationOutcome): Validation {
+	const errorMessage = operationOutcome.issue
+		? operationOutcome.issue
+				.map((issue) => {
+					return issue.details?.text ?? 'Unknown error'
+				})
+				.join('\n')
+		: 'Unknown error'
+
+	return {
+		message: 'OperationOutcome: ' + errorMessage,
+		severity: 'ERROR',
+	}
+}
