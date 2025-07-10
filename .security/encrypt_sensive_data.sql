@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS mastra_messages_encrypted CASCADE;
 CREATE TABLE mastra_messages_encrypted (
 	id text NOT NULL,
 	thread_id text NOT NULL,
-	sensitive_data BYTEA,
+	sensitive_data BYTEA NOT NULL,
 	"role" text NOT NULL,
 	"type" text NOT NULL,
 	"createdAt" timestamp NOT NULL,
@@ -66,9 +66,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP VIEW IF EXISTS public.mastra_messages CASCADE;
+DROP VIEW IF EXISTS mastra_messages CASCADE;
 
-CREATE VIEW public.mastra_messages AS
+CREATE VIEW mastra_messages AS
 SELECT
     id,
     thread_id,
