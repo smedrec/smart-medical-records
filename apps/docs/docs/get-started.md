@@ -15,8 +15,8 @@ Before you begin, ensure you have the following installed:
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/smedrec/smart-medical-records.git # Replace with actual repo URL
-    cd YOUR_REPOSITORY_NAME
+    git clone https://github.com/smedrec/smart-medical-records.git
+    cd smart-medical-records
     ```
 
     _Note: If you are a contributor, fork the repository first and clone your fork._
@@ -62,13 +62,14 @@ pnpm turbo -F @smedrec/api test
 
 ## Deployment
 
-To deploy the applications (typically to Cloudflare Workers), use:
+To deploy the applications (see the docker compose file for more details), use:
 
 ```bash
-just deploy
+docker compose build
+docker compose up -d
 ```
 
 ## Next Steps
 
-- Explore the [Project Structure](./project-structure.md)
+- Explore the [Project Structure](./development/ProjectStructure.md)
 - Learn about our [Development Workflow](./development/workflow.md)

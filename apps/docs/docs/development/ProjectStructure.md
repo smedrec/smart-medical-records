@@ -1,6 +1,6 @@
 # Node.js Monorepo Template - Project Structure
 
-This is a Node.js monorepo template built with Turborepo, pnpm workspaces, and modern tooling, designed for building scalable server-side applications and shared libraries.
+This is a Node.js monorepo built with Turborepo, pnpm workspaces, and modern tooling, designed for building scalable server-side applications and shared libraries.
 
 ## Repository Layout
 
