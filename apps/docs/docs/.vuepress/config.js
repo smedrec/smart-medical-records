@@ -56,6 +56,10 @@ export default defineUserConfig({
 					'/packages/cerbos.md',
 				],
 			},
+			{
+				text: 'Databases',
+				children: ['/databases/transparent-encryption.md'],
+			},
 		],
 	}),
 
