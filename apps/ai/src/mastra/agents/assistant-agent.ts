@@ -1,5 +1,5 @@
 import { listNotesTool, writeNoteTool } from '@/mastra/mcp/notes/tools'
-import { pgStorage, pgVector } from '@/mastra/stores/pgvector'
+import { pg } from '@/mastra/stores/postgres'
 import { allFhirTools } from '@/mastra/tools/fhir'
 import { emailSendTool } from '@/mastra/tools/mail/email-tools'
 import { groq } from '@ai-sdk/groq'
@@ -10,8 +10,8 @@ import { ollama } from 'ollama-ai-provider'
 // Initialize memory with PostgreSQL storage and vector search
 const memory = new Memory({
 	embedder: ollama.embedding('nomic-embed-text:latest'),
-	storage: pgStorage,
-	vector: pgVector,
+	storage: pg.storage,
+	vector: pg.vector,
 	options: { lastMessages: 10, semanticRecall: { topK: 3, messageRange: 2 } },
 })
 

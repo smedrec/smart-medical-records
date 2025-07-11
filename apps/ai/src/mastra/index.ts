@@ -20,7 +20,7 @@ import { PinoLogger } from '@mastra/loggers'
 import { assistantAgent } from './agents/assistant-agent'
 import { patientReportAgent } from './agents/patient-report-agent'
 import { fhirMCPServer } from './mcp'
-import { pgStorage, pgVector } from './stores/pgvector'
+import { pg } from './stores/postgres'
 
 import type { FhirApiClient } from '@/fhir/client'
 import type { RuntimeContextSession } from '@/hono/types'
@@ -173,12 +173,12 @@ const mastra: Mastra = new Mastra({
 	vnext_networks: { 'smedrec-network': network },
 	workflows: { ...Object.fromEntries(allAuthWorkflows.map((workflow) => [workflow.id, workflow])) },
 	agents: { assistantAgent, patientReportAgent, notesAgent },
-	vectors: { pgVector },
+	vectors: { pgVector: pg.vector },
 	//storage: new D1Store({
 	//  binding: DB, // D1Database binding provided by the Workers runtime
 	//  tablePrefix: "dev_", // Optional: isolate tables per environment
 	//}),
-	storage: pgStorage,
+	storage: pg.storage,
 	mcpServers: {
 		fhirMCPServer,
 		notes,

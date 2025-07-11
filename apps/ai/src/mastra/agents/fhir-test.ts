@@ -1,4 +1,4 @@
-import { pgStorage, pgVector } from '@/mastra/stores/pgvector'
+import { pg } from '@/mastra/stores/postgres'
 import { groq } from '@ai-sdk/groq'
 import { Agent } from '@mastra/core'
 import { MCPClient } from '@mastra/mcp'
@@ -7,8 +7,8 @@ import { ollama } from 'ollama-ai-provider'
 
 const memory = new Memory({
 	embedder: ollama.embedding('nomic-embed-text:latest'),
-	storage: pgStorage,
-	vector: pgVector,
+	storage: pg.storage,
+	vector: pg.vector,
 	options: { lastMessages: 10, semanticRecall: { topK: 3, messageRange: 2 } },
 })
 // Configure MCPClient to connect to your server(s)

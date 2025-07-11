@@ -1,4 +1,4 @@
-import { pgStorage, pgVector } from '@/mastra/stores/pgvector'
+import { pg } from '@/mastra/stores/postgres'
 import { allFhirTools } from '@/mastra/tools/fhir'
 import { emailSendTool } from '@/mastra/tools/mail/email-tools'
 import { groq } from '@ai-sdk/groq'
@@ -11,8 +11,8 @@ const llm = groq('llama-3.3-70b-versatile')
 // Initialize memory with PostgreSQL storage and vector search
 const memory = new Memory({
 	embedder: ollama.embedding('nomic-embed-text:latest'),
-	storage: pgStorage,
-	vector: pgVector,
+	storage: pg.storage,
+	vector: pg.vector,
 	options: { lastMessages: 10, semanticRecall: { topK: 3, messageRange: 2 } },
 })
 
