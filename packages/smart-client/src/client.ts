@@ -2,18 +2,7 @@ import crypto from 'crypto'
 import axios from 'axios'
 import jwt from 'jsonwebtoken'
 
-import type {
-	AuthResponse,
-	GetAuthUrlParams,
-	RefreshTokenResponse,
-	SmartClientConfig,
-	SmartConfiguration,
-	TokenResponse,
-} from './types.js'
-
-/**const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const KEYS_DIR = path.resolve(__dirname, '../keys')*/
+import type { SmartClientConfig, SmartConfiguration, TokenResponse } from './types.js'
 
 type SmartClientOption = (s: SmartClient) => void
 
@@ -78,104 +67,6 @@ export class SmartClient {
 		}
 	}
 
-	public getAuthorizationUrl(params: GetAuthUrlParams): string {
-		const searchParams = new URLSearchParams({
-			response_type: 'code',
-			client_id: this.config.clientId,
-			redirect_uri: this.config.redirectUri,
-			scope: params.scope,
-		})
-
-		if (params.state) {
-			searchParams.append('state', params.state)
-		}
-
-		if (params.aud) {
-			searchParams.append('aud', params.aud)
-		}
-
-		return `${this.smartConfig.authorizationEndpoint}?${searchParams.toString()}`
-	}
-
-	public handleAuthorizationResponse(query: {
-		[key: string]: string | string[] | undefined
-	}): AuthResponse {
-		const { code, state } = query
-
-		if (typeof code !== 'string') {
-			throw new Error('Invalid authorization response: missing or invalid code')
-		}
-
-		const response: AuthResponse = { code }
-
-		if (state && typeof state === 'string') {
-			response.state = state
-		}
-
-		return response
-	}
-
-	public async exchangeCodeForToken(code: string): Promise<TokenResponse> {
-		const params = new URLSearchParams({
-			grant_type: 'authorization_code',
-			code,
-			redirect_uri: this.config.redirectUri,
-			client_id: this.config.clientId,
-		})
-
-		if (this.config.clientSecret) {
-			params.append('client_secret', this.config.clientSecret)
-		}
-
-		try {
-			const response = await axios.post<TokenResponse>(this.smartConfig.tokenEndpoint, params, {
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-			})
-			return response.data
-		} catch (error) {
-			if (axios.isAxiosError(error) && error.response) {
-				throw new Error(
-					`Failed to exchange code for token: ${error.response.status} ${error.response.data}`
-				)
-			}
-			throw new Error('Failed to exchange code for token')
-		}
-	}
-
-	public async refreshAccessToken(refreshToken: string): Promise<RefreshTokenResponse> {
-		const params = new URLSearchParams({
-			grant_type: 'refresh_token',
-			refresh_token: refreshToken,
-			client_id: this.config.clientId,
-		})
-
-		if (this.config.clientSecret) {
-			params.append('client_secret', this.config.clientSecret)
-		}
-
-		try {
-			const response = await axios.post<RefreshTokenResponse>(
-				this.smartConfig.tokenEndpoint,
-				params,
-				{
-					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded',
-					},
-				}
-			)
-			return response.data
-		} catch (error) {
-			if (axios.isAxiosError(error) && error.response) {
-				throw new Error(
-					`Failed to refresh access token: ${error.response.status} ${error.response.data}`
-				)
-			}
-			throw new Error('Failed to refresh access token')
-		}
-	}
-
 	public async getBackendToken(): Promise<TokenResponse> {
 		const now = Math.floor(Date.now() / 1000)
 		const token = jwt.sign(
@@ -188,7 +79,7 @@ export class SmartClient {
 				iat: now,
 			},
 			this.config.privateKey,
-			{ algorithm: 'RS256' }
+			{ algorithm: 'RS384' }
 		)
 
 		const params = new URLSearchParams({

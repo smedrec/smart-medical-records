@@ -75,4 +75,3 @@ yarn-error.log*
 .claude/settings.local.json
 
 # tmp
-.fhir

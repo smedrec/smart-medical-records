@@ -20,17 +20,6 @@ export interface SmartConfiguration {
 	capabilities: string[]
 }
 
-export interface GetAuthUrlParams {
-	scope: string
-	state?: string
-	aud?: string
-}
-
-export interface AuthResponse {
-	code: string
-	state?: string
-}
-
 export interface TokenResponse {
 	access_token: string
 	refresh_token?: string
