@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { type AxiosError, type AxiosInstance, isAxiosError } from 'axios'
 import { importJWK, importPKCS8, SignJWT } from 'jose'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -8,7 +8,7 @@ import {
 	SmartClientRequestError,
 } from './types'
 
-import type { AxiosError, AxiosInstance } from 'axios'
+// Removed AxiosError and AxiosInstance from here as they are now in the main axios import
 import type {
 	SmartClientConfig,
 	SmartClientError,
@@ -373,31 +373,58 @@ export class SmartClient {
 						)
 						try {
 							// Force refresh the token
-							await this.getAccessToken(true)
-							// Retry the original request, adding a flag to prevent infinite retry loops
-							const retryParams = { ...params, _retryAttempted: true }
-							return this.request<T>(resourcePath, method, data, retryParams)
+							const newAccessToken = await this.getAccessToken(true)
+							// Retry the original request directly with the new token
+							const retryResponse = await this.httpClient.request<T>({
+								url: resourcePath,
+								method,
+								headers: {
+									Authorization: `Bearer ${newAccessToken}`,
+									Accept: 'application/fhir+json',
+									...((method === 'POST' || method === 'PUT' || method === 'PATCH') &&
+										data && { 'Content-Type': 'application/fhir+json;charset=utf-8' }),
+								},
+								data,
+								params: { ...params, _retryAttempted: true },
+							})
+							return retryResponse.data
 						} catch (retryError: any) {
-							// If token refresh or retry fails, throw a specific authentication error or the original error
-							let retryErrorMessage = `FHIR API request to '${resourcePath}' failed after retry: ${retryError.message}`
+							let finalErrorMessage = `FHIR API request to '${resourcePath}' failed after retry: ${retryError.message}`
+							let finalErrorCause = retryError
+							let finalErrorDetails = (retryError as SmartClientError).details || errorDetails
+
 							if (retryError instanceof SmartClientAuthenticationError) {
-								retryErrorMessage = `Authentication failed during retry for '${resourcePath}': ${retryError.message}`
-								throw new SmartClientAuthenticationError(retryErrorMessage, {
-									cause: retryError,
-									details: retryError.details,
+								finalErrorMessage = `Authentication failed during retry for '${resourcePath}': ${retryError.message}`
+								throw new SmartClientAuthenticationError(finalErrorMessage, {
+									cause: finalErrorCause,
+									details: finalErrorDetails,
 								})
+							} else if (isAxiosError(retryError) && retryError.response) {
+								// If retry itself was an Axios error (e.g. server still returns error after new token)
+								finalErrorMessage = `FHIR API request to '${resourcePath}' failed on retry with status ${retryError.response.status}: ${retryError.message}`
+								finalErrorDetails = {
+									requestPath: resourcePath,
+									requestMethod: method,
+									status: retryError.response.status,
+									responseData: retryError.response.data,
+								}
+								if (retryError.response.data?.resourceType === 'OperationOutcome') {
+									finalErrorMessage = `FHIR API error on retry for '${resourcePath}' (Status ${retryError.response.status}): ${this.formatOperationOutcome(retryError.response.data)}`
+								}
 							}
-							throw new SmartClientRequestError(retryErrorMessage, {
-								cause: retryError,
-								details: (retryError as SmartClientError).details || errorDetails,
+							// Default to throwing SmartClientRequestError for other retry failures
+							throw new SmartClientRequestError(finalErrorMessage, {
+								cause: finalErrorCause,
+								details: finalErrorDetails,
 							})
 						}
 					}
 				}
 			} else if (error instanceof SmartClientAuthenticationError) {
-				// Propagate authentication errors from getAccessToken
+				// Propagate authentication errors from getAccessToken if it was the source of the initial error
 				throw error
 			}
+			// Fallback for non-Axios errors or Axios errors without a response property
 			throw new SmartClientRequestError(errorMessage, { cause: error, details: errorDetails })
 		}
 	}
