@@ -8,6 +8,7 @@ import { createFhirApiClient } from '@/fhir/client'
 //import { initializeInfisical } from '@/infisical'
 import { getKmsInstance, initializeKms } from '@/kms'
 import { getEmailInstance, initializeEmail } from '@/mail'
+import { notesAgent } from '@/mastra/agents/notes'
 import { notes } from '@/mastra/mcp/notes'
 import { network } from '@/mastra/network'
 import { allAuthWorkflows } from '@/mastra/workflows/auth'
@@ -53,6 +54,11 @@ initializeAudit()
 initializeEmail()
 initializeDb()
 initializeKms()
+
+const logger = new PinoLogger({
+	name: 'Mastra',
+	level: 'info',
+})
 
 const mastra: Mastra = new Mastra({
 	server: {
@@ -115,25 +121,13 @@ const mastra: Mastra = new Mastra({
 				},
 				path: '/api/*',
 			},
-			{
-				handler: async (c, next) => {
-					const body = await c.req.json()
-					if ('state' in body && body.state == null) {
-						delete body.state
-						delete body.tools
-						c.req.json = async () => body
-						return next()
-					}
-				},
-				path: '/api/agents/*/stream',
-			},
 
 			async (c, next) => {
 				const start = Date.now()
 
 				await next()
 				const duration = Date.now() - start
-				console.log(
+				logger.info(
 					`${c.req.method} ${c.req.url} - ${duration}ms - Request: ${JSON.stringify(c.req.raw)}}`
 				)
 			},
@@ -178,7 +172,7 @@ const mastra: Mastra = new Mastra({
 	},
 	vnext_networks: { 'smedrec-network': network },
 	workflows: { ...Object.fromEntries(allAuthWorkflows.map((workflow) => [workflow.id, workflow])) },
-	agents: { assistantAgent, patientReportAgent },
+	agents: { assistantAgent, patientReportAgent, notesAgent },
 	vectors: { pgVector },
 	//storage: new D1Store({
 	//  binding: DB, // D1Database binding provided by the Workers runtime
@@ -189,10 +183,7 @@ const mastra: Mastra = new Mastra({
 		fhirMCPServer,
 		notes,
 	},
-	logger: new PinoLogger({
-		name: 'Mastra',
-		level: 'info',
-	}),
+	logger: logger,
 	telemetry: otelConfig,
 })
 

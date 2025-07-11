@@ -40,7 +40,7 @@ export const writeNoteTool = createTool({
 })
 
 export const updateNoteTool = createTool({
-	id: 'write_note',
+	id: 'update_note',
 	description: 'Update the title and/or the content of an existing none to update.',
 	inputSchema: z.object({
 		title: z.string().describe('The title of the note.'),
@@ -53,7 +53,7 @@ export const updateNoteTool = createTool({
 	outputSchema: IToolCallResult,
 	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
 		if (!context.newTitle && !context.newContent) {
-			createTextResponse(`Nothing to update, the note remain the same`, { isError: true })
+			return createTextResponse(`Nothing to update, the note remain the same`, { isError: true })
 		}
 		const { db } = runtimeContext.get('services') as RuntimeServices
 		const session = runtimeContext.get('session') as RuntimeContextSession
@@ -91,6 +91,10 @@ export const updateNoteTool = createTool({
 export const listNotesTool = createTool({
 	id: 'list_notes',
 	description: 'List the notes for the current user. This tool does not need any input.',
+	inputSchema: z.object({
+		limit: z.number().optional().describe('The maximum number of notes to return.'),
+		offset: z.number().optional().describe('The offset of the first note to return.'),
+	}),
 	outputSchema: IToolCallResult,
 	execute: async ({ context, runtimeContext }): Promise<ToolCallResult> => {
 		const { db } = runtimeContext.get('services') as RuntimeServices
@@ -100,6 +104,8 @@ export const listNotesTool = createTool({
 
 		try {
 			const notes = await db.app.query.note.findMany({
+				limit: context.limit || 10,
+				offset: context.offset || 0,
 				columns: {
 					title: true,
 					markdown: true,

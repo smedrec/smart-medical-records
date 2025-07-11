@@ -1,4 +1,5 @@
 import { assistantAgent } from '@/mastra/agents/assistant-agent'
+import { notesAgent } from '@/mastra/agents/notes'
 import { patientReportAgent } from '@/mastra/agents/patient-report-agent'
 import { pgStorage, pgVector } from '@/mastra/stores/pgvector'
 import { allAuthWorkflows } from '@/mastra/workflows/auth'
@@ -19,9 +20,9 @@ const network = new NewAgentNetwork({
 	id: 'smedrec-network',
 	name: 'Smedrec Network',
 	instructions:
-		'You can research cities. You can also synthesize research material. You can also write a full report based on the researched material.',
+		'You can deal with FHIR resources, FHIR MCP servers, and FHIR MCP tools. You can also write, update and list notes.',
 	model: groq('llama-3.3-70b-versatile'),
-	agents: { assistantAgent, patientReportAgent },
+	agents: { assistantAgent, patientReportAgent, notesAgent },
 	workflows: { ...Object.fromEntries(allAuthWorkflows.map((workflow) => [workflow.id, workflow])) },
 	memory: memory,
 })
