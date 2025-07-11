@@ -24,7 +24,7 @@ const network = new NewAgentNetwork({
 	model: groq('llama-3.3-70b-versatile'),
 	agents: { assistantAgent, patientReportAgent, notesAgent },
 	workflows: { ...Object.fromEntries(allAuthWorkflows.map((workflow) => [workflow.id, workflow])) },
-	memory: memory,
+	memory,
 })
 
 export { network }
