@@ -1,6 +1,4 @@
 //import { zEnv } from '@/lib/env.js'
-import { registerFhirAuthorize } from './routes/fhir/authorize.js'
-import { registerFhirCallback } from './routes/fhir/callback.js'
 import { registerSmartFhirClientCreate } from './routes/fhir/smart-client/create.js'
 import { registerSmartFhirClientDelete } from './routes/fhir/smart-client/delete.js'
 import { registerSmartFhirClientFind } from './routes/fhir/smart-client/find.js'
@@ -30,6 +28,8 @@ import { registerConfigMailCreate } from './routes/config/mail/create.js'
 import { registerConfigMailDelete } from './routes/config/mail/delete.js'
 import { registerConfigMailFind } from './routes/config/mail/find.js'
 import { registerConfigMailUpdate } from './routes/config/mail/update.js'
+import { registerSmartFhirClientAccessToken } from './routes/fhir/smart-client/access-token.js'
+import { registerSmartFhirClientPrivateKeyJWT } from './routes/fhir/smart-client/private-key.js'
 import { registerLiveness } from './routes/liveness.js'
 import { registerSecretGet } from './routes/secrets/get.js'
 import { registerVersion } from './routes/version.js'
@@ -71,12 +71,13 @@ registerLiveness(app)
 
 //registerUploadAvatar(app)
 // FHIR routes
-registerFhirAuthorize(app)
-registerFhirCallback(app)
 registerSmartFhirClientFind(app)
 registerSmartFhirClientCreate(app)
 registerSmartFhirClientUpdate(app)
 registerSmartFhirClientDelete(app)
+registerSmartFhirClientPrivateKeyJWT(app)
+registerSmartFhirClientAccessToken(app)
+
 registerConfigMailCreate(app)
 registerConfigMailFind(app)
 registerConfigMailUpdate(app)

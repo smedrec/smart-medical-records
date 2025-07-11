@@ -1,0 +1,1 @@
+ALTER TABLE "smart_fhir_client" ALTER COLUMN "private_key" DROP NOT NULL;

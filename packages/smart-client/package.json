@@ -3,13 +3,15 @@
 	"version": "1.0.0",
 	"private": true,
 	"description": "A reusable TypeScript package for client authorization within a backend application.",
+	"license": "MIT",
+	"type": "module",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"files": [
 		"dist"
 	],
 	"scripts": {
-		"build": "tsup src/index.ts --format cjs,esm",
+		"build": "tsc --build",
 		"check:lint": "eslint . --ext .ts,.tsx",
 		"check:types": "tsc --noEmit",
 		"test": "run-vitest"
@@ -22,6 +24,7 @@
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
+		"@types/fhir": "^0.0.41",
 		"@types/uuid": "^10.0.0",
 		"eslint": "9.27.0",
 		"tsup": "8.5.0",

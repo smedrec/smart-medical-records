@@ -1,12 +1,8 @@
-export { SmartClient } from './client';
-export type {
-	SmartClientConfig,
-	SmartConfiguration,
-	TokenResponse,
-} from './types';
+export { SmartClient } from './client.js'
+export type { SmartClientConfig, SmartConfiguration, TokenResponse } from './types.js'
 export {
 	SmartClientError,
 	SmartClientInitializationError,
 	SmartClientAuthenticationError,
 	SmartClientRequestError,
-} from './types';
+} from './types.js'

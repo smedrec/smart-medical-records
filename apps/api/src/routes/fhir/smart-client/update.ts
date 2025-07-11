@@ -101,7 +101,6 @@ export const registerSmartFhirClientUpdate = (app: App) =>
 			clientId: result[0].clientId,
 			scope: result[0].scope,
 			iss: result[0].iss,
-			redirectUri: result[0].redirectUri ?? '',
 			fhirBaseUrl: result[0].fhirBaseUrl ?? '',
 			provider: result[0].provider as 'demo' | 'azure' | 'aws' | 'gcp',
 			environment: result[0].environment as 'development' | 'production',

@@ -84,10 +84,10 @@ const TEST_PRIVATE_KEY_JWK = {
 
 const BASE_CONFIG: SmartClientConfig = {
 	clientId: 'test-client-id',
-	iss: 'test-client-id', // Must be same as clientId for this flow
+	iss: 'https://fhir.example.com/r4',
 	scope: 'system/Observation.read system/Patient.read',
 	privateKey: TEST_PRIVATE_KEY_PEM,
-	fhirBaseUrl: 'https://fhir.example.com/r4',
+	fhirBaseUrl: 'https://fhir.example.com/r4', // Must be same as iss for this flow
 	kid: 'test-kid-pem',
 }
 
@@ -153,13 +153,14 @@ describe('SmartClient', () => {
 			})
 		})
 
-		it('should throw SmartClientInitializationError if iss and clientId are not identical', () => {
+		// this does not make sense, as the iss is not the clientId
+		/**it('should throw SmartClientInitializationError if iss and clientId are not identical', () => {
 			const configWithMismatch = { ...BASE_CONFIG, iss: 'mismatched-iss' }
 			expect(() => new SmartClient(configWithMismatch)).toThrow(SmartClientInitializationError)
 			expect(() => new SmartClient(configWithMismatch)).toThrow(
 				'Invalid SmartClientConfig: iss and clientId must be identical for this authentication flow.'
 			)
-		})
+		})*/
 
 		it('should set default signingAlgorithm and jwtLifetime if not provided', () => {
 			const client = new SmartClient(BASE_CONFIG)
@@ -184,7 +185,7 @@ describe('SmartClient', () => {
 			const client = await SmartClient.init(BASE_CONFIG)
 			expect(client).toBeInstanceOf(SmartClient)
 			expect(mockAxiosInstance.get).toHaveBeenCalledWith(
-				'https://fhir.example.com/.well-known/smart-configuration', // Note: origin based
+				'https://fhir.example.com/r4/.well-known/smart-configuration', // Note: origin based
 				{ headers: { Accept: 'application/json' } }
 			)
 			expect(client.getSmartConfiguration()).toEqual(SMART_CONFIGURATION_MOCK)
@@ -205,7 +206,7 @@ describe('SmartClient', () => {
 			const configWithPath = { ...BASE_CONFIG, fhirBaseUrl: 'https://fhir.example.com/test/r4/' }
 			await SmartClient.init(configWithPath)
 			expect(mockAxiosInstance.get).toHaveBeenCalledWith(
-				'https://fhir.example.com/.well-known/smart-configuration', // Should be at the origin
+				'https://fhir.example.com/test/r4/.well-known/smart-configuration',
 				expect.anything()
 			)
 		})
@@ -362,7 +363,8 @@ describe('SmartClient', () => {
 
 		it('should throw SmartClientAuthenticationError if token endpoint post fails', async () => {
 			mockAxiosInstance.post.mockReset().mockRejectedValueOnce(new Error('Token endpoint error'))
-			await expect(client.getAccessToken(true)).rejects.toThrow( // forceRefresh = true
+			await expect(client.getAccessToken(true)).rejects.toThrow(
+				// forceRefresh = true
 				'Failed to obtain access token: Token endpoint error'
 			)
 		})
@@ -377,7 +379,8 @@ describe('SmartClient', () => {
 				isAxiosError: true, // Important for Axios error specific handling in client code
 			}
 			mockAxiosInstance.post.mockReset().mockRejectedValueOnce(errorResponse)
-			await expect(client.getAccessToken(true)).rejects.toThrow( // forceRefresh = true
+			await expect(client.getAccessToken(true)).rejects.toThrow(
+				// forceRefresh = true
 				'Failed to obtain access token: Client authentication failed (Code: invalid_client)'
 			)
 		})
@@ -386,7 +389,8 @@ describe('SmartClient', () => {
 			mockAxiosInstance.post.mockReset().mockResolvedValueOnce({
 				data: { ...TOKEN_RESPONSE_MOCK, access_token: undefined },
 			})
-			await expect(client.getAccessToken(true)).rejects.toThrow( // forceRefresh = true
+			await expect(client.getAccessToken(true)).rejects.toThrow(
+				// forceRefresh = true
 				'Received invalid token response from server: access_token or expires_in missing/invalid.'
 			)
 		})
@@ -395,7 +399,8 @@ describe('SmartClient', () => {
 			mockAxiosInstance.post.mockReset().mockResolvedValueOnce({
 				data: { ...TOKEN_RESPONSE_MOCK, expires_in: undefined },
 			})
-			await expect(client.getAccessToken(true)).rejects.toThrow( // forceRefresh = true
+			await expect(client.getAccessToken(true)).rejects.toThrow(
+				// forceRefresh = true
 				'Received invalid token response from server: access_token or expires_in missing/invalid.'
 			)
 		})
@@ -532,9 +537,9 @@ describe('SmartClient', () => {
 		})
 
 		it('should throw SmartClientAuthenticationError if retry on 401 also fails due to token issue', async () => {
-			const error401 = new Error('Request failed with status 401');
-			(error401 as any).isAxiosError = true;
-			(error401 as any).response = { status: 401, data: { message: 'Token expired' } };
+			const error401 = new Error('Request failed with status 401')
+			;(error401 as any).isAxiosError = true
+			;(error401 as any).response = { status: 401, data: { message: 'Token expired' } }
 			mockAxiosInstance.request.mockRejectedValueOnce(error401)
 
 			// Mock getAccessToken (forceRefresh=true) to also fail
@@ -551,9 +556,9 @@ describe('SmartClient', () => {
 		})
 
 		it('should throw SmartClientRequestError if API request fails with non-401/403 error', async () => {
-			const error500 = new Error('Request failed with status 500');
-			(error500 as any).isAxiosError = true;
-			(error500 as any).response = { status: 500, data: { message: 'Server Error' } };
+			const error500 = new Error('Request failed with status 500')
+			;(error500 as any).isAxiosError = true
+			;(error500 as any).response = { status: 500, data: { message: 'Server Error' } }
 			mockAxiosInstance.request.mockRejectedValueOnce(error500)
 
 			await expect(client.get(resourcePath)).rejects.toThrow(
@@ -572,9 +577,9 @@ describe('SmartClient', () => {
 					},
 				],
 			}
-			const error400_opOutcome = new Error('Request failed with status 400');
-			(error400_opOutcome as any).isAxiosError = true;
-			(error400_opOutcome as any).response = { status: 400, data: operationOutcomeError };
+			const error400_opOutcome = new Error('Request failed with status 400')
+			;(error400_opOutcome as any).isAxiosError = true
+			;(error400_opOutcome as any).response = { status: 400, data: operationOutcomeError }
 			mockAxiosInstance.request.mockRejectedValueOnce(error400_opOutcome)
 
 			await expect(client.get(resourcePath)).rejects.toThrow(

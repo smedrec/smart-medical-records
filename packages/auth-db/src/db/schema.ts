@@ -213,12 +213,10 @@ export const smartFhirClient = pgTable(
 	{
 		organizationId: varchar('organization_id', { length: 32 }).notNull().primaryKey(),
 		clientId: text('client_id').notNull(),
-		clientSecret: text('client_secret'),
 		scope: varchar('scope', { length: 256 }).notNull(),
 		iss: varchar('iss', { length: 256 }).notNull(),
-		redirectUri: varchar('redirect_uri', { length: 256 }).notNull(),
 		fhirBaseUrl: varchar('fhir_base_url', { length: 256 }),
-		privateKey: text('private_key').notNull(),
+		privateKey: text('private_key'),
 		provider: varchar('provider', { length: 50 })
 			.$type<Providers>() // Enforces the type against Providers
 			.default('demo')

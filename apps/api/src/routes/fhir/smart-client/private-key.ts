@@ -1,32 +1,33 @@
-import { createRoute } from '@hono/zod-openapi'
+import { createRoute, z } from '@hono/zod-openapi'
+import { eq } from 'drizzle-orm'
 
 import { smartFhirClient } from '@repo/auth-db'
 
 import { ApiError, openApiErrorResponses } from '../../../lib/errors/index.js'
-import { AssistantSelectSchema, SmartFhirClientInsertSchema } from './types.js'
+import { AssistantSelectSchema, PrivateKeySchema } from './types.js'
 
 import type { App } from '@/lib/hono/index.js'
-import type { z } from '@hono/zod-openapi'
+import type { EncryptResponse } from '@repo/infisical-kms'
 
 const route = createRoute({
 	tags: ['FHIR'],
-	operationId: 'smart-client-create',
+	operationId: 'smart-client-private-key-jwt',
 	method: 'post',
-	path: '/fhir/smart-client',
+	path: '/fhir/smart-client/private-key-jwt',
 	security: [{ cookieAuth: [] }],
 	request: {
 		body: {
 			required: true,
-			description: 'The smart fhir client to create',
+			description: 'The smart fhir client private key JWT json',
 			content: {
 				'application/json': {
-					schema: SmartFhirClientInsertSchema,
+					schema: PrivateKeySchema,
 				},
 			},
 		},
 	},
 	responses: {
-		201: {
+		200: {
 			description: 'The smart fhir client',
 			content: {
 				'application/json': {
@@ -39,16 +40,16 @@ const route = createRoute({
 })
 
 export type Route = typeof route
-export type SmartFhirClientCreateRequest = z.infer<
+export type SmartFhirClientPrivateKeyJWTRequest = z.infer<
 	(typeof route.request.body.content)['application/json']['schema']
 >
-export type SmartFhirClientCreateResponse = z.infer<
-	(typeof route.responses)[201]['content']['application/json']['schema']
+export type SmartFhirClientPrivateKeyJWTResponse = z.infer<
+	(typeof route.responses)[200]['content']['application/json']['schema']
 >
 
-export const registerSmartFhirClientCreate = (app: App) =>
+export const registerSmartFhirClientPrivateKeyJWT = (app: App) =>
 	app.openapi(route, async (c) => {
-		const { cerbos, db } = c.get('services')
+		const { cerbos, db, kms } = c.get('services')
 		const session = c.get('session')
 
 		if (!session)
@@ -77,13 +78,20 @@ export const registerSmartFhirClientCreate = (app: App) =>
 
 		const rawData = c.req.valid('json')
 
+		const plaintext = JSON.stringify(rawData.privateKey, null, 2)
+		const encrypt: EncryptResponse = await kms.encrypt(plaintext)
+
 		const data = {
-			...rawData,
-			organizationId: session.activeOrganizationId as string,
-			createdBy: session.userId,
+			privateKey: encrypt.ciphertext,
+			updatedBy: session.userId,
+			updatedAt: new Date(),
 		}
 
-		const result = await db.insert(smartFhirClient).values(data).returning()
+		const result = await db
+			.update(smartFhirClient)
+			.set(data)
+			.where(eq(smartFhirClient.organizationId, session.activeOrganizationId as string))
+			.returning()
 
 		if (result.length < 1)
 			throw new ApiError({ code: 'INTERNAL_SERVER_ERROR', message: 'A machine readable error.' })
@@ -99,7 +107,9 @@ export const registerSmartFhirClientCreate = (app: App) =>
 			environment: result[0].environment as 'development' | 'production',
 			createdBy: result[0].createdBy ?? undefined,
 			createdAt: result[0].createdAt ?? undefined,
+			updatedBy: result[0].updatedBy ?? undefined,
+			updatedAt: result[0].updatedAt ?? undefined,
 		}
 
-		return c.json(response, 201)
+		return c.json(response, 200)
 	})

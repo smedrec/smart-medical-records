@@ -1,4 +1,4 @@
-import axios, { type AxiosError, type AxiosInstance, isAxiosError } from 'axios'
+import axios, { isAxiosError } from 'axios'
 import { importJWK, importPKCS8, SignJWT } from 'jose'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -6,15 +6,17 @@ import {
 	SmartClientAuthenticationError,
 	SmartClientInitializationError,
 	SmartClientRequestError,
-} from './types'
+} from './types.js'
 
+import type { AxiosError, AxiosInstance } from 'axios'
+import type { OperationOutcome } from 'fhir/r4'
 // Removed AxiosError and AxiosInstance from here as they are now in the main axios import
 import type {
 	SmartClientConfig,
 	SmartClientError,
 	SmartConfiguration,
 	TokenResponse,
-} from './types'
+} from './types.js'
 
 /**
  * Default lifetime for the JWT assertion in seconds (5 minutes).
@@ -52,11 +54,11 @@ export class SmartClient {
 			)
 		}
 		// Validate that iss and clientId are the same, as per the spec for client credentials
-		if (config.iss !== config.clientId) {
+		/**if (config.iss !== config.clientId) {
 			throw new SmartClientInitializationError(
 				'Invalid SmartClientConfig: iss and clientId must be identical for this authentication flow.'
 			)
-		}
+		}*/
 
 		this.config = {
 			...config,
@@ -102,12 +104,16 @@ export class SmartClient {
 			// not necessarily the FHIR base URL's path (e.g. /r4).
 			// We construct it from the origin of fhirBaseUrl.
 			try {
-				const fhirBaseUrlObj = new URL(this.config.fhirBaseUrl)
+				const baseIss = this.config.fhirBaseUrl.endsWith('/')
+					? this.config.fhirBaseUrl
+					: `${this.config.fhirBaseUrl}/`
+				/**const fhirBaseUrlObj = new URL(this.config.fhirBaseUrl)
 				// Ensure the base for .well-known is the origin, without any sub-paths like /r4
-				const authorityRoot = fhirBaseUrlObj.origin.endsWith('/')
+				const authorityRoot = fhirBaseUrlObj.endsWith('/')
 					? fhirBaseUrlObj.origin
-					: `${fhirBaseUrlObj.origin}/`
-				wellKnownUrl = new URL('.well-known/smart-configuration', authorityRoot).toString()
+					: `${fhirBaseUrlObj.origin}/` 
+				wellKnownUrl = new URL('.well-known/smart-configuration', baseIss).toString()*/
+				wellKnownUrl = `${baseIss}.well-known/smart-configuration`
 			} catch (e: any) {
 				throw new SmartClientInitializationError(
 					`Invalid fhirBaseUrl: ${this.config.fhirBaseUrl}. Could not construct .well-known/smart-configuration URL.`,
@@ -249,7 +255,8 @@ export class SmartClient {
 			)
 		}
 
-		const { clientId, iss, privateKey, kid, jwksUrl, signingAlgorithm, jwtLifetime } = this.config
+		const { clientId, iss, privateKey, fhirBaseUrl, kid, jwksUrl, signingAlgorithm, jwtLifetime } =
+			this.config
 		const now = Math.floor(Date.now() / 1000)
 		const expirationTime = now + (jwtLifetime as number)
 
@@ -269,8 +276,11 @@ export class SmartClient {
 				const jwk = JSON.parse(privateKey)
 				// Basic check to differentiate from a PEM string that might be JSON-escaped
 				if (jwk && typeof jwk === 'object' && jwk.kty) {
-					// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-					keyObject = (await importJWK(jwk, signingAlgorithm as string)) as import('jose').KeyLike
+					keyObject = (await importJWK(
+						jwk,
+						signingAlgorithm as string
+						// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+					)) as import('jose').KeyLike
 				} else {
 					// If not a valid JWK object, assume PKCS8 PEM
 					keyObject = (await importPKCS8(
@@ -322,7 +332,7 @@ export class SmartClient {
 		resourcePath: string,
 		method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' = 'GET',
 		data?: object,
-		params?: object
+		params?: { [key: string]: any; _retryAttempted?: boolean }
 	): Promise<T> {
 		if (!this.config.fhirBaseUrl) {
 			throw new SmartClientRequestError('fhirBaseUrl is not configured. Cannot make FHIR requests.')
@@ -431,10 +441,10 @@ export class SmartClient {
 
 	/**
 	 * Formats an OperationOutcome resource into a human-readable string.
-	 * @param {any} operationOutcome - The FHIR OperationOutcome resource.
+	 * @param {OperationOutcome} operationOutcome - The FHIR OperationOutcome resource.
 	 * @returns {string} A formatted error message string.
 	 */
-	private formatOperationOutcome(operationOutcome: any): string {
+	private formatOperationOutcome(operationOutcome: OperationOutcome): string {
 		if (operationOutcome?.issue && Array.isArray(operationOutcome.issue)) {
 			return operationOutcome.issue
 				.map(
