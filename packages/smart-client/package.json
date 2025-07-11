@@ -9,10 +9,9 @@
 		"dist"
 	],
 	"scripts": {
-		"build": "tsup src/index.ts --format cjs,esm --dts",
+		"build": "tsup src/index.ts --format cjs,esm",
 		"check:lint": "eslint . --ext .ts,.tsx",
 		"check:types": "tsc --noEmit",
-		"dev": "tsup src/index.ts --format cjs,esm --dts --watch",
 		"test": "run-vitest"
 	},
 	"dependencies": {

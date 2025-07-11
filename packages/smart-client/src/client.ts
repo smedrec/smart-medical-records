@@ -262,20 +262,30 @@ export class SmartClient {
 		}
 
 		try {
-			let keyObject: CryptoKey | Uint8Array
+			// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+			let keyObject: import('jose').KeyLike
 			// Attempt to parse privateKey as JWK first
 			try {
 				const jwk = JSON.parse(privateKey)
 				// Basic check to differentiate from a PEM string that might be JSON-escaped
 				if (jwk && typeof jwk === 'object' && jwk.kty) {
-					keyObject = await importJWK(jwk, signingAlgorithm as string)
+					// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+					keyObject = (await importJWK(jwk, signingAlgorithm as string)) as import('jose').KeyLike
 				} else {
 					// If not a valid JWK object, assume PKCS8 PEM
-					keyObject = await importPKCS8(privateKey, signingAlgorithm as string)
+					keyObject = (await importPKCS8(
+						privateKey,
+						signingAlgorithm as string
+						// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+					)) as import('jose').KeyLike
 				}
 			} catch (e) {
 				// If JSON.parse fails or it's not a JWK, assume PKCS8 PEM format
-				keyObject = await importPKCS8(privateKey, signingAlgorithm as string)
+				keyObject = (await importPKCS8(
+					privateKey,
+					signingAlgorithm as string
+					// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+				)) as import('jose').KeyLike
 			}
 
 			const jwtBuilder = new SignJWT(payload)
