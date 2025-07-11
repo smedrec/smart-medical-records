@@ -16,12 +16,13 @@
 	},
 	"dependencies": {
 		"axios": "1.10.0",
-		"jsonwebtoken": "9.0.2"
+		"jose": "^5.6.3",
+		"uuid": "^10.0.0"
 	},
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/jsonwebtoken": "9.0.10",
+		"@types/uuid": "^10.0.0",
 		"eslint": "9.27.0",
 		"tsup": "8.5.0",
 		"typescript": "5.5.4"
