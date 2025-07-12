@@ -29,8 +29,10 @@ function App() {
 			<Hero />
 			<main className="flex grow flex-col items-center justify-center text-[calc(10px+2vmin)]">
 				<Features />
+				<Services />
 				<Pricing />
 				<FAQ />
+				<About />
 				<Newsletter />
 				<Footer />
 				<ScrollToTop />

@@ -31,6 +31,10 @@ const routeList: RouteProps[] = [
 		label: 'Features',
 	},
 	{
+		href: '#services',
+		label: 'Services',
+	},
+	{
 		href: '#pricing',
 		label: 'Pricing',
 	},
@@ -113,7 +117,7 @@ export function Header() {
 
 				<div className="flex items-center gap-2">
 					<a
-						href="https://github.com/daveyplate/better-auth-tanstack-starter"
+						href="https://github.com/smedrec/smart-medical-record"
 						target="_blank"
 						rel="noreferrer"
 					>

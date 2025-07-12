@@ -1,6 +1,7 @@
+import cubeLeg from '/assets/cube-leg.png'
+
 import { Card, CardDescription, CardHeader, CardTitle } from '@repo/ui/components/ui/card'
 
-import cubeLeg from './assets/cube-leg.png'
 import { ChartIcon, MagnifierIcon, WalletIcon } from './Icons'
 
 import type { JSX } from 'react'
@@ -13,39 +14,52 @@ interface ServiceProps {
 
 const serviceList: ServiceProps[] = [
 	{
-		title: 'Code Collaboration',
+		title: 'Centralized & Standardized Data',
 		description:
-			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi nesciunt est nostrum omnis ab sapiente.',
+			'Use the cloud providers (azure. aws, gcp) to create a unified client health data repository fully compatible with FHIR R4/R5 standards to ensure interoperability and data integrity.',
 		icon: <ChartIcon />,
 	},
 	{
-		title: 'Project Management',
+		title: 'Enhanced Collaboration',
 		description:
-			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi nesciunt est nostrum omnis ab sapiente.',
+			'Streamline and optimize collaboration workflows between Licensed Practitioners and Medical Assistants for efficient patient management.',
 		icon: <WalletIcon />,
 	},
 	{
-		title: 'Task Automation',
+		title: 'Global Accessibility',
 		description:
-			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi nesciunt est nostrum omnis ab sapiente.',
+			'Support 50+ languages, including right-to-left (RTL) scripts,to cater to diverse global healthcare organizations.',
+		icon: <MagnifierIcon />,
+	},
+	{
+		title: 'Regulatory Compliance',
+		description:
+			'Achieve and maintain full HIPAA and GDPR compliance from launch, ensuring robust data privacy and security.',
+		icon: <MagnifierIcon />,
+	},
+	{
+		title: 'Intelligent Interface',
+		description: 'AI-powered interface to assist users with tasks, insights, and data processing.',
 		icon: <MagnifierIcon />,
 	},
 ]
 
 export const Services = () => {
 	return (
-		<section className="container py-24 sm:py-32">
+		<section id="services" className="container py-24 sm:py-32">
 			<div className="grid lg:grid-cols-[1fr,1fr] gap-8 place-items-center">
 				<div>
 					<h2 className="text-3xl md:text-4xl font-bold">
 						<span className="bg-gradient-to-b from-primary/60 to-primary text-transparent bg-clip-text">
-							Client-Centric{' '}
+							Patient-Centric{' '}
 						</span>
 						Services
 					</h2>
 
 					<p className="text-muted-foreground text-xl mt-4 mb-8 ">
-						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Veritatis dolor.
+						To establish an integrated, intelligent healthcare registry that facilitates
+						comprehensive, multilingual, and cross-disciplinary patient care, ultimately empowering
+						healthcare providers to deliver better outcomes.
 					</p>
 
 					<div className="flex flex-col gap-8">

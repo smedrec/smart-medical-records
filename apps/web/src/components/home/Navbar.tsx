@@ -16,8 +16,8 @@ import {
 	SheetTrigger,
 } from '@repo/ui/components/ui/sheet'
 
+import { ModeToggle } from '../mode-toggle'
 import { LogoIcon } from './Icons'
-import { ModeToggle } from './mode-toggle'
 
 interface RouteProps {
 	href: string
@@ -28,6 +28,10 @@ const routeList: RouteProps[] = [
 	{
 		href: '#features',
 		label: 'Features',
+	},
+	{
+		href: '#services',
+		label: 'Services',
 	},
 	{
 		href: '#testimonials',
@@ -85,7 +89,7 @@ export const Navbar = () => {
 									))}
 									<a
 										rel="noreferrer noopener"
-										href="https://github.com/leoMirandaa/shadcn-landing-page.git"
+										href="https://github.com/smedrec/smart-medical-record"
 										target="_blank"
 										className={`w-[110px] border ${buttonVariants({
 											variant: 'secondary',

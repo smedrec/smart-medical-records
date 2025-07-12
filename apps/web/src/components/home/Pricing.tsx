@@ -15,8 +15,8 @@ export const Pricing = () => {
 				<div className="grid grid-cols-1 gap-6 md:grid-cols-3">
 					<PricingCard
 						tier="Free"
-						price="$0/mo"
-						bestFor="Best for 1-5 users"
+						price="$0"
+						bestFor="Best for 1-2 users"
 						CTA="Get started free"
 						benefits={[
 							{ text: 'One workspace', checked: true },
@@ -29,8 +29,8 @@ export const Pricing = () => {
 					/>
 					<PricingCard
 						tier="Pro"
-						price="$79/mo"
-						bestFor="Best for 5-50 users"
+						price="$29/user"
+						bestFor="Best for 3-30 users"
 						CTA="14-day free trial"
 						benefits={[
 							{ text: 'Five workspaces', checked: true },
@@ -44,7 +44,7 @@ export const Pricing = () => {
 					<PricingCard
 						tier="Enterprise"
 						price="Contact us"
-						bestFor="Best for 50+ users"
+						bestFor="Best for 30+ users"
 						CTA="Contact us"
 						benefits={[
 							{ text: 'Unlimited workspaces', checked: true },

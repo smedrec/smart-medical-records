@@ -3,12 +3,12 @@ import { HeroSection } from '@/components/home/hero-section'
 export const Hero = () => {
 	return (
 		<HeroSection
-			title="Welcome to Our Platform"
+			title="Smart Medical Record"
 			subtitle={{
-				regular: 'Transform your ideas into ',
-				gradient: 'beautiful digital experiences',
+				regular: 'Intelligent healthcare ',
+				gradient: 'cross-disciplinary patient care',
 			}}
-			description="Transform your ideas into reality with our comprehensive suite of development tools and resources."
+			description="empowering healthcare providers to deliver better outcomes."
 			ctaText="Get Started"
 			ctaHref="/signup"
 			bottomImage={{
