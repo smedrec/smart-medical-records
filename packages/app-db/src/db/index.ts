@@ -30,9 +30,10 @@ export class AppDb {
 	 * and initializing Drizzle ORM.
 	 * @param postgresUrl Optional. The PostgreSQL connection URL. If not provided, it attempts to use
 	 *                    the `APP_DB_URL` environment variable.
+	 * @param params Optional. PostgreSQL connection parameters.
 	 * @throws Error if the PostgreSQL URL is not provided and cannot be found in environment variables.
 	 */
-	constructor(postgresUrl?: string) {
+	constructor(postgresUrl?: string, params?: { maxConnections?: number }) {
 		const effectivePostgresUrl = postgresUrl || getEnv('APP_DB_URL')
 
 		if (!effectivePostgresUrl) {
@@ -40,7 +41,10 @@ export class AppDb {
 				'AppDb: PostgreSQL connection URL not provided (postgresUrl parameter) and could not be found in environment variables (APP_DB_URL).'
 			)
 		}
-		this.client = postgres(effectivePostgresUrl)
+		const maxConnections = params?.maxConnections || 10
+		this.client = postgres(effectivePostgresUrl, {
+			max: maxConnections,
+		})
 		this.appDb = drizzle(this.client, { schema })
 	}
 

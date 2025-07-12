@@ -29,10 +29,11 @@ class AuthDb {
 	 * Constructs an AuthDb instance, establishing a connection to the PostgreSQL database
 	 * and initializing Drizzle ORM.
 	 * @param postgresUrl Optional. The PostgreSQL connection URL. If not provided, it attempts to use
-	 *                    the `AUDIT_DB_URL` environment variable.
+	 *                    the `AUTH_DB_URL` environment variable.
+	 * @param params Optional. PostgreSQL connection parameters.
 	 * @throws Error if the PostgreSQL URL is not provided and cannot be found in environment variables.
 	 */
-	constructor(postgresUrl?: string) {
+	constructor(postgresUrl?: string, params?: { maxConnections?: number }) {
 		const effectivePostgresUrl = postgresUrl || getEnv('AUTH_DB_URL')
 
 		if (!effectivePostgresUrl) {
@@ -41,7 +42,11 @@ class AuthDb {
 			)
 		}
 
-		this.client = postgres(effectivePostgresUrl)
+		const maxConnections = params?.maxConnections || 10
+
+		this.client = postgres(effectivePostgresUrl, {
+			max: maxConnections,
+		})
 		this.authDb = drizzle(this.client, { schema })
 	}
 
