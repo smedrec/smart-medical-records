@@ -66,7 +66,7 @@ export const registerSmartFhirClientDelete = (app: App) =>
 			})
 		}
 
-		const result = await db
+		const result = await db.auth
 			.delete(smartFhirClient)
 			.where(eq(smartFhirClient.organizationId, session.activeOrganizationId as string))
 			.returning()

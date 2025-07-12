@@ -51,6 +51,7 @@ export type SharedHonoEnv = {
 	 */
 	DATABASE_URL: string
 	AUTH_DB_URL: string
+	APP_DB_URL: string
 	/**
 	 * Shared REDIS instance to queues
 	 */

@@ -11,7 +11,7 @@
 		"src"
 	],
 	"scripts": {
-		"build": "tsc",
+		"build": "tsc --build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"test": "run-vitest"

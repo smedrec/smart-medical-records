@@ -1,8 +1,9 @@
 import type { betterAuth } from 'better-auth'
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
+import type * as appSchema from '@repo/app-db/dist/db/schema.js'
 import type { Audit } from '@repo/audit'
 import type { Session, User } from '@repo/auth'
-import type * as schema from '@repo/auth-db/dist/db/schema.js'
+import type * as authSchema from '@repo/auth-db/dist/db/schema.js'
 //import type { fhir } from '@repo/fhir'
 import type { HonoApp } from '@repo/hono-helpers'
 import type { SharedHonoEnv, SharedHonoVariables } from '@repo/hono-helpers/src/types.js'
@@ -23,7 +24,10 @@ export type ServiceContext = {
 	//fhir: typeof fhir
 	//cache: Cache;
 	//db: { primary: Database; readonly: Database };
-	db: PostgresJsDatabase<typeof schema>
+	db: {
+		auth: PostgresJsDatabase<typeof authSchema>
+		app: PostgresJsDatabase<typeof appSchema>
+	}
 	kms: InfisicalKmsClient
 	//redis:  Redis,
 	audit: Audit

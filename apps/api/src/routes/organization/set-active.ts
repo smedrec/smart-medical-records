@@ -52,7 +52,7 @@ export const registerOrganizationSetActive = (app: App) =>
 			})
 
 		try {
-			const result = await db.query.member.findFirst({
+			const result = await db.auth.query.member.findFirst({
 				where: and(eq(member.userId, session.userId), eq(member.organizationId, id)),
 			})
 			if (result) {
@@ -68,7 +68,7 @@ export const registerOrganizationSetActive = (app: App) =>
 		}
 
 		try {
-			const result = await db
+			const result = await db.auth
 				.insert(activeOrganization)
 				.values({
 					userId: session.userId,

@@ -1,6 +1,7 @@
 //import { redis } from "../db/redis";
 import { createId } from '@paralleldrive/cuid2'
 
+import { AppDb } from '@repo/app-db'
 import { Audit } from '@repo/audit'
 import { AuthDb } from '@repo/auth-db'
 import { InfisicalKmsClient } from '@repo/infisical-kms'
@@ -24,8 +25,9 @@ let isolateId: string | undefined = undefined
 let isolateCreatedAt: number | undefined = undefined
 
 let authDbInstance: AuthDb | undefined = undefined
+let appDbInstance: AppDb | undefined = undefined
 
-export { authDbInstance }
+export { authDbInstance, appDbInstance }
 
 let audit: Audit | undefined = undefined
 export { audit }
@@ -68,8 +70,21 @@ export function init(): MiddlewareHandler<HonoEnv> {
 			}
 		}
 
+		if (!appDbInstance) {
+			appDbInstance = new AppDb(c.env.APP_DB_URL)
+			// Check the database connection
+			const isConnected = await appDbInstance.checkAppDbConnection()
+			if (!isConnected) {
+				console.error('Failed to connect to the app database. Exiting.')
+				process.exit(1)
+			}
+		}
+
 		// Get the Drizzle ORM instance
-		const db = authDbInstance.getDrizzleInstance()
+		const db = {
+			auth: authDbInstance.getDrizzleInstance(),
+			app: appDbInstance.getDrizzleInstance(),
+		}
 
 		if (!audit) audit = new Audit('audit')
 

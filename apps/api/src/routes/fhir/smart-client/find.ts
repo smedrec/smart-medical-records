@@ -64,7 +64,7 @@ export const registerSmartFhirClientFind = (app: App) =>
 			})
 		}
 
-		const result = await db
+		const result = await db.auth
 			.select()
 			.from(smartFhirClient)
 			.where(eq(smartFhirClient.organizationId, session.activeOrganizationId as string))

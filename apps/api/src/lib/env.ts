@@ -5,6 +5,7 @@ export const zEnv = z.object({
 
 	DATABASE_URL: z.string(),
 	AUTH_DB_URL: z.string(),
+	APP_DB_URL: z.string(),
 
 	BETTER_AUTH_URL: z.string().url(),
 	BETTER_AUTH_SECRET: z.string(),

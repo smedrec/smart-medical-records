@@ -91,7 +91,7 @@ export const registerConfigMailCreate = (app: App) =>
 			organizationId: session.activeOrganizationId as string,
 		}
 
-		const result = await db.insert(emailProvider).values(data).returning()
+		const result = await db.auth.insert(emailProvider).values(data).returning()
 
 		if (result.length < 1)
 			throw new ApiError({ code: 'INTERNAL_SERVER_ERROR', message: 'A machine readable error.' })

@@ -31,6 +31,7 @@ import { registerConfigMailUpdate } from './routes/config/mail/update.js'
 import { registerSmartFhirClientAccessToken } from './routes/fhir/smart-client/access-token.js'
 import { registerSmartFhirClientPrivateKeyJWT } from './routes/fhir/smart-client/private-key.js'
 import { registerLiveness } from './routes/liveness.js'
+import { registerNewsletterSubscribe } from './routes/newsletter/subscribe.js'
 import { registerSecretGet } from './routes/secrets/get.js'
 import { registerVersion } from './routes/version.js'
 
@@ -93,6 +94,8 @@ registerAiIndexes(app)
 registerKmsEncrypt(app)
 registerKmsDecrypt(app)
 registerSecretGet(app)
+// Newsletter
+registerNewsletterSubscribe(app)
 
 const server = serve({
 	fetch: app.fetch,

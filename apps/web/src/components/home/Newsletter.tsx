@@ -1,15 +1,17 @@
-import { NewsletterSignup } from '@/components/home/newsletter-signuo'
-
-import { Button } from '@repo/ui/components/ui/button'
-import { Input } from '@repo/ui/components/ui/input'
+import { NewsletterSignup } from '@/components/home/newsletter-signup'
+import { subscribe } from '@/lib/newsletter/subscribe'
+import { useServerFn } from '@tanstack/react-start'
 
 export const Newsletter = () => {
-	const handleSubmit = async (email: string) => {
+	const mutate = useServerFn(subscribe)
+	const handleSubmit = async (email: string): Promise<boolean> => {
 		// Handle form submission
-
-		// await submitToAPI(email);
-
-		console.log('hello')
+		try {
+			await mutate({ email: email, list: 'main', metadata: [{ pathname: 'home' }] })
+			return true
+		} catch (error) {
+			return false
+		}
 	}
 
 	return (

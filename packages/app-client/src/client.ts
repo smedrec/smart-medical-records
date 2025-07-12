@@ -53,4 +53,22 @@ export class AppClient extends BaseResource {
 	public decrypt(ciphertext: string): Promise<DecryptResponse> {
 		return this.request(`/decrypt`, { method: 'POST', body: { ciphertext: ciphertext } })
 	}
+
+	/**
+	 * Subscribe to a newsletter
+	 * @param email Email to subscribe
+	 * @param list List to subscribe
+	 * @param metadata Optional metadata to be stored
+	 * @returns Promise contains success
+	 */
+	public newsletterSubscribe(
+		email: string,
+		list: string,
+		metadata?: Array<Record<string, any>>
+	): Promise<{ success: boolean }> {
+		return this.request(`/newsletter/subscribe`, {
+			method: 'POST',
+			body: { email: email, list: list, metadata: metadata },
+		})
+	}
 }

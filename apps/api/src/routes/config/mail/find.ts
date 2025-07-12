@@ -64,7 +64,7 @@ export const registerConfigMailFind = (app: App) =>
 			})
 		}
 
-		const result = await db
+		const result = await db.auth
 			.select()
 			.from(emailProvider)
 			.where(eq(emailProvider.organizationId, session.activeOrganizationId as string))

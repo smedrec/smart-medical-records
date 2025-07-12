@@ -1,20 +1,34 @@
 {
-	"version": "7",
-	"dialect": "postgresql",
-	"entries": [
-		{
-			"idx": 0,
-			"version": "7",
-			"when": 1751351176102,
-			"tag": "0000_parallel_hardball",
-			"breakpoints": true
-		},
-		{
-			"idx": 1,
-			"version": "7",
-			"when": 1751352546978,
-			"tag": "0001_early_wolfsbane",
-			"breakpoints": true
-		}
-	]
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1751351176102,
+      "tag": "0000_parallel_hardball",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1751352546978,
+      "tag": "0001_early_wolfsbane",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1752322453314,
+      "tag": "0002_aberrant_johnny_blaze",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1752328764704,
+      "tag": "0003_overjoyed_james_howlett",
+      "breakpoints": true
+    }
+  ]
 }

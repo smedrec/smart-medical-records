@@ -88,7 +88,7 @@ export const registerSmartFhirClientPrivateKeyJWT = (app: App) =>
 			updatedAt: new Date(),
 		}
 
-		const result = await db
+		const result = await db.auth
 			.update(smartFhirClient)
 			.set(data)
 			.where(eq(smartFhirClient.organizationId, session.activeOrganizationId as string))

@@ -66,7 +66,7 @@ export const registerConfigMailDelete = (app: App) =>
 			})
 		}
 
-		const result = await db
+		const result = await db.auth
 			.delete(emailProvider)
 			.where(eq(emailProvider.organizationId, session.activeOrganizationId as string))
 			.returning()

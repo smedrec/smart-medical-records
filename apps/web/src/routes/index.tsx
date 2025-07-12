@@ -32,8 +32,8 @@ function App() {
 				<Services />
 				<Pricing />
 				<FAQ />
-				<About />
 				<Newsletter />
+				<Cta />
 				<Footer />
 				<ScrollToTop />
 				<ChatSupport />

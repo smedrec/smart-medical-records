@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import React, { useState } from 'react'
 
 export interface NewsletterSignupProps {
-	onSubmit: (email: string) => Promise<void>
+	onSubmit: (email: string) => Promise<boolean>
 	className?: string
 }
 
@@ -34,9 +34,10 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({ onSubmit, cl
 		setIsSubmitting(true)
 
 		try {
-			await onSubmit(email)
 			setIsSubmitted(true)
-			confetti({
+			await onSubmit(email)
+
+			void confetti({
 				particleCount: 100,
 				spread: 70,
 				origin: { y: 0.6 },

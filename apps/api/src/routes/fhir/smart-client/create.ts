@@ -83,7 +83,7 @@ export const registerSmartFhirClientCreate = (app: App) =>
 			createdBy: session.userId,
 		}
 
-		const result = await db.insert(smartFhirClient).values(data).returning()
+		const result = await db.auth.insert(smartFhirClient).values(data).returning()
 
 		if (result.length < 1)
 			throw new ApiError({ code: 'INTERNAL_SERVER_ERROR', message: 'A machine readable error.' })

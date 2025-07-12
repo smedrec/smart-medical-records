@@ -11,9 +11,9 @@
 		"src"
 	],
 	"scripts": {
-		"appdb:generate": "drizzle-kit generate --config=drizzle-dev.config.ts",
-		"appdb:migrate": "drizzle-kit migrate --config=drizzle-dev.config.ts",
-		"appdb:studio": "drizzle-kit studio --config=drizzle-dev.config.ts",
+		"app-db:generate": "drizzle-kit generate --config=drizzle-dev.config.ts",
+		"app-db:migrate": "drizzle-kit migrate --config=drizzle-dev.config.ts",
+		"app-db:studio": "drizzle-kit studio --config=drizzle-dev.config.ts",
 		"build": "tsc --build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",

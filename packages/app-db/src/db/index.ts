@@ -56,13 +56,13 @@ export class AppDb {
 	 * Checks the database connection by executing a simple query.
 	 * @returns true or false.
 	 */
-	public async checkAuditDbConnection() {
+	public async checkAppDbConnection() {
 		try {
 			await this.client`SELECT 1` // Simple query to check connection
-			console.log('🟢 Database connection successful.')
+			console.log('🟢 APP Database connection successful.')
 			return true
 		} catch (error) {
-			console.error('🔴 Database connection failed:', error)
+			console.error('🔴 APP Database connection failed:', error)
 			// In a real app, you might want to throw the error or handle it more gracefully
 			// For the worker, if the DB isn't available, it might retry or exit.
 			// process.exit(1); // Consider if failure to connect on startup is fatal

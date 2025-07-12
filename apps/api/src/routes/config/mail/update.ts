@@ -87,7 +87,7 @@ export const registerConfigMailUpdate = (app: App) =>
 			data.apiKey = encryptedApiKey.ciphertext
 		}
 
-		const result = await db
+		const result = await db.auth
 			.update(emailProvider)
 			.set(data)
 			.where(eq(emailProvider.organizationId, session.activeOrganizationId as string))
