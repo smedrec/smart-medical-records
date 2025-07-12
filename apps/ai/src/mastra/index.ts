@@ -11,6 +11,7 @@ import { getEmailInstance, initializeEmail } from '@/mail'
 import { notesAgent } from '@/mastra/agents/notes'
 import { notes } from '@/mastra/mcp/notes'
 import { network } from '@/mastra/network'
+import { qdrant } from '@/mastra/stores/qdrant'
 import { allAuthWorkflows } from '@/mastra/workflows/auth'
 import { registerCopilotKit } from '@mastra/agui'
 import { Mastra } from '@mastra/core/mastra'
@@ -105,6 +106,7 @@ const mastra: Mastra = new Mastra({
 					const sessionData: RuntimeContextSession = {
 						tokenResponse: {},
 						serverUrl: 'https://launcher.teachhowtofish.org/v/r4/fhir/',
+						//serverUrl: 'http://hapi.teachhowtofish.org:8080/fhir/',
 						userId: session.session.userId, // Added for Cerbos Principal ID
 						user: session.user,
 						// TODO uniformize the types with the session
@@ -176,7 +178,7 @@ const mastra: Mastra = new Mastra({
 	vnext_networks: { 'smedrec-network': network },
 	workflows: { ...Object.fromEntries(allAuthWorkflows.map((workflow) => [workflow.id, workflow])) },
 	agents: { assistantAgent, patientReportAgent, notesAgent },
-	vectors: { pgVector: pg.vector },
+	vectors: { pgVector: pg.vector, qdrantVector: qdrant },
 	//storage: new D1Store({
 	//  binding: DB, // D1Database binding provided by the Workers runtime
 	//  tablePrefix: "dev_", // Optional: isolate tables per environment

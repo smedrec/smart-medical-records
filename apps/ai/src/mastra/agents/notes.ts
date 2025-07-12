@@ -1,6 +1,7 @@
 import { notes } from '@/mastra/mcp/notes'
 import { listNotesTool, updateNoteTool, writeNoteTool } from '@/mastra/mcp/notes/tools'
 import { pg } from '@/mastra/stores/postgres'
+import { qdrant } from '@/mastra/stores/qdrant'
 import { groq } from '@ai-sdk/groq'
 import { Agent } from '@mastra/core'
 import { MCPClient } from '@mastra/mcp'
@@ -10,7 +11,7 @@ import { ollama } from 'ollama-ai-provider'
 const memory = new Memory({
 	embedder: ollama.embedding('nomic-embed-text:latest'),
 	storage: pg.storage,
-	vector: pg.vector,
+	vector: qdrant,
 	options: { lastMessages: 10, semanticRecall: { topK: 3, messageRange: 2 } },
 })
 

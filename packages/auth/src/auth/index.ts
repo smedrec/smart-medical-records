@@ -200,9 +200,14 @@ class Auth {
 					create: {
 						before: async (session) => {
 							const activeOrganization = await getActiveOrganization(session.userId)
-							const smartClientAccessToken = await getSmartClientAccessToken(
-								activeOrganization?.organizationId as string
-							)
+							let smartClientAccessToken = null
+							try {
+								smartClientAccessToken = await getSmartClientAccessToken(
+									activeOrganization?.organizationId as string
+								)
+							} catch (error) {
+								console.error('Error getting smart client access token:', error)
+							}
 							if (!activeOrganization) {
 								return {
 									data: {
@@ -219,7 +224,7 @@ class Auth {
 									...session,
 									activeOrganizationId: activeOrganization.organizationId,
 									activeOrganizationRole: activeOrganization.role,
-									smartClientAccessToken: smartClientAccessToken || null,
+									smartClientAccessToken: smartClientAccessToken,
 								},
 							}
 						},

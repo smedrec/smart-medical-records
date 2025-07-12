@@ -1,5 +1,6 @@
 import { writeNoteTool } from '@/mastra/mcp/notes/tools'
 import { pg } from '@/mastra/stores/postgres'
+import { qdrant } from '@/mastra/stores/qdrant'
 import { fhirPatientReportSearchTool } from '@/mastra/tools/fhir/patient-report-search'
 import { emailSendTool } from '@/mastra/tools/mail/email-tools'
 import { groq } from '@ai-sdk/groq'
@@ -13,7 +14,7 @@ const llm = groq('llama-3.3-70b-versatile')
 const memory = new Memory({
 	embedder: ollama.embedding('nomic-embed-text:latest'),
 	storage: pg.storage,
-	vector: pg.vector,
+	vector: qdrant,
 	options: { lastMessages: 10, semanticRecall: { topK: 3, messageRange: 2 } },
 })
 

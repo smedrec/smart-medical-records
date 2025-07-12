@@ -2,6 +2,7 @@ import { assistantAgent } from '@/mastra/agents/assistant-agent'
 import { notesAgent } from '@/mastra/agents/notes'
 import { patientReportAgent } from '@/mastra/agents/patient-report-agent'
 import { pg } from '@/mastra/stores/postgres'
+import { qdrant } from '@/mastra/stores/qdrant'
 import { allAuthWorkflows } from '@/mastra/workflows/auth'
 import { groq } from '@ai-sdk/groq'
 import { NewAgentNetwork } from '@mastra/core/network/vNext'
@@ -12,7 +13,7 @@ import { ollama } from 'ollama-ai-provider'
 const memory = new Memory({
 	embedder: ollama.embedding('nomic-embed-text:latest'),
 	storage: pg.storage,
-	vector: pg.vector,
+	vector: qdrant,
 	options: { lastMessages: 10, semanticRecall: { topK: 3, messageRange: 2 } },
 })
 

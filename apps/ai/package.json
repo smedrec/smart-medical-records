@@ -23,6 +23,7 @@
 		"@mastra/mongodb": "0.12.0",
 		"@mastra/opensearch": "0.11.0",
 		"@mastra/pg": "0.12.2",
+		"@mastra/qdrant": "^0.11.0",
 		"@mastra/rag": "1.0.2",
 		"@repo/app-db": "workspace:*",
 		"@repo/audit": "workspace:*",
