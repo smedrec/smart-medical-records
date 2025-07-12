@@ -34,9 +34,8 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({ onSubmit, cl
 		setIsSubmitting(true)
 
 		try {
-			setIsSubmitted(true)
 			await onSubmit(email)
-
+			setIsSubmitted(true)
 			void confetti({
 				particleCount: 100,
 				spread: 70,

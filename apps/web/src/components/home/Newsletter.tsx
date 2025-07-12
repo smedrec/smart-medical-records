@@ -9,7 +9,7 @@ export const Newsletter = () => {
 		try {
 			return await mutate({ email: email, list: 'main', metadata: [{ pathname: 'home' }] })
 		} catch (error) {
-			return false
+			throw new Error(error as string)
 		}
 	}
 
