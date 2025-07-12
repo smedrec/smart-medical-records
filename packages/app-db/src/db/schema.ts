@@ -25,7 +25,7 @@ export const note = pgTable(
 		markdown: text('markdown'),
 		userId: varchar('user_id', { length: 32 }).notNull(),
 		organizationId: varchar('organization_id', { length: 32 }).notNull(),
-		metadata: text('metadata').$type<Metadata>(),
+		metadata: text('metadata'),
 	},
 	(table) => {
 		return [
@@ -47,7 +47,11 @@ export const newsletter = pgTable(
 			.$type<SubscriptionStatus>()
 			.notNull()
 			.default('pending'),
-		metadata: text('metadata').$type<Metadata>(),
+		metadata: text('metadata'),
+		createdAt: timestamp('created_at')
+			.notNull()
+			.$defaultFn(() => /* @__PURE__ */ new Date()),
+		updatedAt: timestamp('updated_at'), // last updated time
 	},
 	(table) => {
 		return [

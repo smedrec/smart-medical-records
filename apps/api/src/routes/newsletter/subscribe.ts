@@ -51,7 +51,12 @@ export const registerNewsletterSubscribe = (app: App) =>
 	app.openapi(route, async (c) => {
 		const { db } = c.get('services')
 
-		const data = c.req.valid('json')
+		const rawData = c.req.valid('json')
+
+		const data = {
+			...rawData,
+			metadata: JSON.stringify(rawData.metadata, null, 2),
+		}
 
 		const result = await db.app
 			.insert(newsletter)

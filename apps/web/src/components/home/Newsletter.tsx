@@ -7,8 +7,7 @@ export const Newsletter = () => {
 	const handleSubmit = async (email: string): Promise<boolean> => {
 		// Handle form submission
 		try {
-			await mutate({ email: email, list: 'main', metadata: [{ pathname: 'home' }] })
-			return true
+			return await mutate({ email: email, list: 'main', metadata: [{ pathname: 'home' }] })
 		} catch (error) {
 			return false
 		}
