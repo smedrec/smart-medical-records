@@ -1,4 +1,4 @@
-import { createRoute, z } from '@hono/zod-openapi'
+import { createRoute } from '@hono/zod-openapi'
 import { eq } from 'drizzle-orm'
 
 import { smartFhirClient } from '@repo/auth-db'
@@ -7,6 +7,7 @@ import { ApiError, openApiErrorResponses } from '../../../lib/errors/index.js'
 import { AssistantSelectSchema, PrivateKeySchema } from './types.js'
 
 import type { App } from '@/lib/hono/index.js'
+import type { z } from '@hono/zod-openapi'
 import type { EncryptResponse } from '@repo/infisical-kms'
 
 const route = createRoute({
@@ -96,7 +97,6 @@ export const registerSmartFhirClientPrivateKeyJWT = (app: App) =>
 		if (result.length < 1)
 			throw new ApiError({ code: 'INTERNAL_SERVER_ERROR', message: 'A machine readable error.' })
 
-		// Ensure redirectUri and launchToken are always strings (never null)
 		const response = {
 			organizationId: result[0].organizationId,
 			clientId: result[0].clientId,

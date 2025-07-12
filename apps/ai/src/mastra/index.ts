@@ -104,14 +104,17 @@ const mastra: Mastra = new Mastra({
 
 					const sessionData: RuntimeContextSession = {
 						tokenResponse: {},
-						serverUrl: 'https://hapi.teachhowtofish.org/fhir/',
+						serverUrl: 'https://launcher.teachhowtofish.org/v/r4/fhir/',
 						userId: session.session.userId, // Added for Cerbos Principal ID
 						user: session.user,
 						// TODO uniformize the types with the session
 						roles: [session.session.activeOrganizationRole as string],
 						activeOrganizationId: session.session.activeOrganizationId as string,
 					}
-					const fhirApiClient: FhirApiClient = createFhirApiClient(sessionData.serverUrl)
+					const fhirApiClient: FhirApiClient = createFhirApiClient(
+						sessionData.serverUrl,
+						session.session.smartClientAccessToken as string
+					)
 
 					const runtimeContext = c.get('runtimeContext')
 					runtimeContext.set('services', services)

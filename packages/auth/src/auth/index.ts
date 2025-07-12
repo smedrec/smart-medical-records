@@ -9,7 +9,7 @@ import { SendMail } from '@repo/send-mail'
 
 import { mastra } from '../utils/mastra.js'
 import { getEnvConfig } from './environment.js'
-import { getActiveOrganization } from './functions.js'
+import { getActiveOrganization, getSmartClientAccessToken } from './functions.js'
 import { betterAuthOptions } from './options.js'
 import {
 	member,
@@ -200,7 +200,9 @@ class Auth {
 					create: {
 						before: async (session) => {
 							const activeOrganization = await getActiveOrganization(session.userId)
-							//const smartClientAccessToken = await authorizeSmartClient(session.userId)
+							const smartClientAccessToken = await getSmartClientAccessToken(
+								activeOrganization?.organizationId as string
+							)
 							if (!activeOrganization) {
 								return {
 									data: {
@@ -217,7 +219,7 @@ class Auth {
 									...session,
 									activeOrganizationId: activeOrganization.organizationId,
 									activeOrganizationRole: activeOrganization.role,
-									//smartClientAccessToken: smartClientAccessToken || null,
+									smartClientAccessToken: smartClientAccessToken || null,
 								},
 							}
 						},

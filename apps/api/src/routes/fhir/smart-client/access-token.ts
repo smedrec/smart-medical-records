@@ -82,7 +82,7 @@ export const registerSmartFhirClientAccessToken = (app: App) =>
 
 		const config: SmartClientConfig = {
 			clientId: result[0].clientId,
-			iss: result[0].iss, // Must match clientId
+			iss: result[0].iss,
 			scope: result[0].scope,
 			privateKey: privateKey.plaintext, // Load your private key securely
 			fhirBaseUrl: result[0].fhirBaseUrl!, // e.g., "https://sandbox.fhir.org/r4"
@@ -91,7 +91,7 @@ export const registerSmartFhirClientAccessToken = (app: App) =>
 		}
 
 		try {
-			// Option 1: Discover .well-known/smart-configuration using fhirBaseUrl's origin
+			// Option 1: Discover .well-known/smart-configuration using fhirBaseUrl
 			const client = await SmartClient.init(config)
 
 			// Option 2: Provide an explicit issuer URL for .well-known/smart-configuration discovery
