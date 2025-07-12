@@ -66,6 +66,10 @@ export class SmartClient {
 			jwtLifetime: config.jwtLifetime || DEFAULT_JWT_LIFETIME,
 		}
 
+		if (!this.config.fhirBaseUrl) {
+			this.config.fhirBaseUrl = this.config.iss
+		}
+
 		this.httpClient = axios.create({
 			baseURL: this.config.fhirBaseUrl,
 		})
@@ -98,15 +102,14 @@ export class SmartClient {
 		if (issUrl) {
 			// Ensure issUrl ends with a slash for proper URL joining
 			const baseIss = issUrl.endsWith('/') ? issUrl : `${issUrl}/`
-			wellKnownUrl = new URL('.well-known/smart-configuration', baseIss).toString()
-		} else if (this.config.fhirBaseUrl) {
+			//wellKnownUrl = new URL('.well-known/smart-configuration', baseIss).toString()
+			wellKnownUrl = `${baseIss}.well-known/smart-configuration`
+		} else if (this.config.iss) {
 			// The .well-known/smart-configuration path should be relative to the authority's root,
 			// not necessarily the FHIR base URL's path (e.g. /r4).
 			// We construct it from the origin of fhirBaseUrl.
 			try {
-				const baseIss = this.config.fhirBaseUrl.endsWith('/')
-					? this.config.fhirBaseUrl
-					: `${this.config.fhirBaseUrl}/`
+				const baseIss = this.config.iss.endsWith('/') ? this.config.iss : `${this.config.iss}/`
 				/**const fhirBaseUrlObj = new URL(this.config.fhirBaseUrl)
 				// Ensure the base for .well-known is the origin, without any sub-paths like /r4
 				const authorityRoot = fhirBaseUrlObj.endsWith('/')

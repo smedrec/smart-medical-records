@@ -202,16 +202,17 @@ describe('SmartClient', () => {
 			expect(client.getSmartConfiguration()).toEqual(SMART_CONFIGURATION_MOCK)
 		})
 
-		it('should correctly construct wellKnownUrl from fhirBaseUrl with path', async () => {
+		it('should correctly construct wellKnownUrl from iss with path', async () => {
 			const configWithPath = { ...BASE_CONFIG, fhirBaseUrl: 'https://fhir.example.com/test/r4/' }
 			await SmartClient.init(configWithPath)
 			expect(mockAxiosInstance.get).toHaveBeenCalledWith(
-				'https://fhir.example.com/test/r4/.well-known/smart-configuration',
+				'https://fhir.example.com/r4/.well-known/smart-configuration',
 				expect.anything()
 			)
 		})
 
-		it('should throw SmartClientInitializationError if fhirBaseUrl and issUrl are missing for discovery', async () => {
+		// this does not make sense, as the iss is used to construct the .well-known/smart-configuration URL
+		/**it('should throw SmartClientInitializationError if fhirBaseUrl and issUrl are missing for discovery', async () => {
 			const configNoUrls = { ...BASE_CONFIG, fhirBaseUrl: undefined }
 			await expect(SmartClient.init(configNoUrls, undefined)).rejects.toThrow(
 				SmartClientInitializationError
@@ -219,7 +220,7 @@ describe('SmartClient', () => {
 			await expect(SmartClient.init(configNoUrls, undefined)).rejects.toThrow(
 				'Cannot determine .well-known/smart-configuration URL: issUrl or fhirBaseUrl must be provided for discovery.'
 			)
-		})
+		})*/
 
 		it('should throw SmartClientInitializationError if SMART config fetch fails', async () => {
 			mockAxiosInstance.get.mockReset().mockRejectedValueOnce(new Error('Network Error'))
@@ -497,14 +498,13 @@ describe('SmartClient', () => {
 
 		// Similar tests for put(), delete(), patch()
 
-		it('should throw SmartClientRequestError if fhirBaseUrl is not configured', async () => {
+		it('should config fhirBaseUrl to iss if not provided', async () => {
 			const configNoFhirBase = { ...BASE_CONFIG, fhirBaseUrl: undefined }
 			const clientNoBase = new SmartClient(configNoFhirBase)
 			// Need to manually set smartConfiguration as init won't fully run without fhirBaseUrl for discovery (or issUrl)
 			;(clientNoBase as any).smartConfiguration = SMART_CONFIGURATION_MOCK
 
-			await expect(clientNoBase.get(resourcePath)).rejects.toThrow(SmartClientRequestError)
-			await expect(clientNoBase.get(resourcePath)).rejects.toThrow('fhirBaseUrl is not configured.')
+			expect((clientNoBase as any).config.fhirBaseUrl).toBe(BASE_CONFIG.iss)
 		})
 
 		it('should throw SmartClientRequestError if client not initialized (no smartConfiguration)', async () => {
