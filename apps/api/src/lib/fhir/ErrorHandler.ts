@@ -1,4 +1,4 @@
-import type { OperationOutcome } from 'fhir/r4'
+//import type { OperationOutcome } from 'fhir/r4'
 import type { Validation } from './validation/validation.js'
 
 function handleError(message: string, err: unknown): string {
@@ -11,10 +11,10 @@ function handleError(message: string, err: unknown): string {
 	}
 }
 
-function handleOperationOutcomeError(operationOutcome: OperationOutcome): Validation {
+function handleOperationOutcomeError(operationOutcome: any): Validation {
 	const errorMessage = operationOutcome.issue
 		? operationOutcome.issue
-				.map((issue) => {
+				.map((issue: { details: { text: any } }) => {
 					return issue.details?.text ?? 'Unknown error'
 				})
 				.join('\n')

@@ -26,7 +26,7 @@ const route = createRoute({
 	},
 	responses: {
 		200: {
-			description: 'The smart fhir client',
+			description: 'The ciphertext',
 			content: {
 				'application/json': {
 					schema: z.object({

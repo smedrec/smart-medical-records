@@ -5,7 +5,7 @@ import { createFhirApiClient } from '../../../lib/fhir/client.js'
 import { handleOperationOutcomeError } from '../../../lib/fhir/ErrorHandler.js'
 import { ResourceParamsSchema } from '../../../shared/types.js'
 
-import type { OperationOutcome } from 'fhir/r4'
+//import type { OperationOutcome } from '@repo/fhir/r4'
 import type { App } from '../../../lib/hono/index.js'
 
 const route = createRoute({
@@ -19,7 +19,7 @@ const route = createRoute({
 	},
 	responses: {
 		200: {
-			description: 'The smart fhir client',
+			description: 'The resource data',
 			content: {
 				'application/json': {
 					schema: z.object({
@@ -49,33 +49,51 @@ export const registerResourceGet = (app: App) =>
 			throw new ApiError({ code: 'UNAUTHORIZED', message: 'You Need to login first to continue.' })
 
 		const params = c.req.valid('param')
-
-		const canReadResource = await cerbos.isAllowed({
-			principal: {
-				id: session.userId,
-				roles: [session.activeOrganizationRole as string],
-				attributes: {},
-			},
-			resource: {
-				kind: params.resourceType,
-				id: 'read',
-				attributes: {},
-			},
-			action: 'read',
-		})
-
-		if (!canReadResource) {
-			throw new ApiError({
-				code: 'FORBIDDEN',
-				message: `You do not have permissions to read a fhir resource of type ${params.resourceType}.`,
-			})
-		}
-
 		const toolName = 'fhirResourceRead'
 		const resourceType = params.resourceType
 		const resourceId = params.id
 		const principalId = session.userId
+		const roles = [session.activeOrganizationRole as string]
 		const organizationId = session.activeOrganizationId
+		const cerbosResource = { kind: resourceType, id: resourceId, attributes: {} }
+		const cerbosAction = 'read'
+
+		const canReadResource = await cerbos.isAllowed({
+			principal: {
+				id: principalId,
+				roles: roles,
+				attributes: {},
+			},
+			resource: cerbosResource,
+			action: cerbosAction,
+		})
+
+		if (!canReadResource) {
+			const outcomeDescription = `Forbidden: User ${principalId} with roles [${roles.join(', ')}] not authorized to perform '${cerbosAction}' on ${cerbosResource.kind}/${cerbosResource.id}.`
+			await audit.log({
+				principalId,
+				organizationId,
+				action: `cerbos:${cerbosAction}`,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'failure',
+				outcomeDescription,
+			})
+			throw new ApiError({
+				code: 'FORBIDDEN',
+				message: `You do not have permissions to read a fhir resource of type ${params.resourceType}.`,
+			})
+		} else {
+			await audit.log({
+				principalId,
+				organizationId,
+				action: `cerbos:${cerbosAction}`,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'success',
+				outcomeDescription: 'Authorization granted by Cerbos.',
+			})
+		}
 
 		const fhirClient = createFhirApiClient(
 			'https://launcher.teachhowtofish.org/v/r4/fhir/',
@@ -88,9 +106,7 @@ export const registerResourceGet = (app: App) =>
 			})
 			if (error) {
 				const rText = await response.text()
-				const operationOutcomeError = handleOperationOutcomeError(
-					JSON.parse(rText) as OperationOutcome
-				)
+				const operationOutcomeError = handleOperationOutcomeError(JSON.parse(rText) as any)
 				const outcomeDescription = `FHIR ${resourceType} read failed: Status ${response.status}`
 				await audit.log({
 					principalId,

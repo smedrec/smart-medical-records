@@ -6,9 +6,9 @@ import { smartFhirClient } from '@repo/auth-db'
 import { ApiError, openApiErrorResponses } from '../../../lib/errors/index.js'
 import { AssistantSelectSchema, PrivateKeySchema } from './types.js'
 
-import type { App } from '@/lib/hono/index.js'
 import type { z } from '@hono/zod-openapi'
 import type { EncryptResponse } from '@repo/infisical-kms'
+import type { App } from '../../../lib/hono/index.js'
 
 const route = createRoute({
 	tags: ['FHIR'],

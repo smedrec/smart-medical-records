@@ -1,12 +1,13 @@
-import { ApiError, openApiErrorResponses } from '@/lib/errors/index.js'
-import { idParamsSchema } from '@/shared/types.js'
 import { createRoute, z } from '@hono/zod-openapi'
 import { and, eq } from 'drizzle-orm'
 
 import { authClient } from '@repo/auth'
 import { activeOrganization, member } from '@repo/auth-db'
 
-import type { App } from '@/lib/hono/index.js'
+import { ApiError, openApiErrorResponses } from '../../lib/errors/index.js'
+import { idParamsSchema } from '../../shared/types.js'
+
+import type { App } from '../../lib/hono/index.js'
 
 const route = createRoute({
 	tags: ['Organization'],
