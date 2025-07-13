@@ -28,6 +28,7 @@ import { registerConfigMailCreate } from './routes/config/mail/create.js'
 import { registerConfigMailDelete } from './routes/config/mail/delete.js'
 import { registerConfigMailFind } from './routes/config/mail/find.js'
 import { registerConfigMailUpdate } from './routes/config/mail/update.js'
+import { registerResourceGet } from './routes/fhir/resources/get.js'
 import { registerSmartFhirClientAccessToken } from './routes/fhir/smart-client/access-token.js'
 import { registerSmartFhirClientPrivateKeyJWT } from './routes/fhir/smart-client/private-key.js'
 import { registerLiveness } from './routes/liveness.js'
@@ -78,6 +79,7 @@ registerSmartFhirClientUpdate(app)
 registerSmartFhirClientDelete(app)
 registerSmartFhirClientPrivateKeyJWT(app)
 registerSmartFhirClientAccessToken(app)
+registerResourceGet(app)
 
 registerConfigMailCreate(app)
 registerConfigMailFind(app)

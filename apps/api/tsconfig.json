@@ -10,7 +10,7 @@
 		"paths": {
 			"@/*": ["./src/*"]
 		},
-		"types": ["node"], // Remove worker-specific types if any were implicitly included by workers.json
+		"types": ["node", "fhir"], // Remove worker-specific types if any were implicitly included by workers.json
 		"lib": ["ES2022"] // Ensure appropriate ES version
 	},
 	"include": ["src/**/*.ts"]

@@ -26,7 +26,7 @@ const route = createRoute({
 	},
 	responses: {
 		201: {
-			description: 'The smart fhir client',
+			description: 'The successfully created subscriber',
 			content: {
 				'application/json': {
 					schema: z.object({
@@ -63,7 +63,7 @@ export const registerNewsletterSubscribe = (app: App) =>
 			.values(data)
 			.onConflictDoUpdate({
 				target: [newsletter.email, newsletter.list],
-				set: { status: 'pending', metadata: data.metadata },
+				set: { status: 'pending', metadata: data.metadata, updatedAt: new Date() },
 			})
 			.returning()
 
