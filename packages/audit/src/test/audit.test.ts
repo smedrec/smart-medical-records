@@ -304,7 +304,7 @@ describe('Audit Service', () => {
 			lastRedisInstance.status = 'ready'
 			const closeError = new Error('Failed to close')
 			lastRedisInstance.quit.mockRejectedValueOnce(closeError)
-			const consoleInfoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
+			const consoleInfoSpy = vi.spyOn(console, 'info').mockImplementation(() => {})
 
 			await audit.closeConnection()
 			expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -316,7 +316,7 @@ describe('Audit Service', () => {
 				`[AuditService] Direct Redis connection for queue '${mockQueueName}' disconnected forcefully.`
 			)
 			consoleErrorSpy.mockRestore()
-			consoleInfoSpy.mockRestore();
+			consoleInfoSpy.mockRestore()
 		})
 	})
 })

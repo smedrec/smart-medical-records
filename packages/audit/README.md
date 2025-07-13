@@ -32,7 +32,7 @@ Ensure that `ioredis` and `bullmq` are also listed as direct dependencies in you
 
 - **`REDIS_URL`**: **Recommended for most use cases.** This is used by the default shared Redis connection managed by `@repo/redis-client`.
   - Example: `REDIS_URL=redis://username:password@shared-redis-host:6379`
-- `AUDIT_REDIS_URL`: (Optional, for dedicated connection) The connection URL for a specific Redis instance if you choose *not* to use the shared connection. This is only used if the `Audit` service is instantiated without explicit connection parameters, forcing it to create its own connection.
+- `AUDIT_REDIS_URL`: (Optional, for dedicated connection) The connection URL for a specific Redis instance if you choose _not_ to use the shared connection. This is only used if the `Audit` service is instantiated without explicit connection parameters, forcing it to create its own connection.
   - Example: `AUDIT_REDIS_URL=redis://localhost:6379`
 
 ## Usage
@@ -41,14 +41,18 @@ Ensure that `ioredis` and `bullmq` are also listed as direct dependencies in you
 
 ```typescript
 import { Audit } from '@repo/audit'
+
 import type { AuditLogEvent } from '@repo/audit' // For typing event details
 
 // Recommended: Use the shared Redis connection (configured via REDIS_URL)
 // Ensure REDIS_URL is set in your environment.
-const auditServiceShared = new Audit('my-application-audit-queue');
+const auditServiceShared = new Audit('my-application-audit-queue')
 
 // Advanced Option 1: Provide Redis URL directly for a dedicated connection
-const auditServiceWithUrl = new Audit('my-application-audit-queue', 'redis://dedicated-audit-redis:6379');
+const auditServiceWithUrl = new Audit(
+	'my-application-audit-queue',
+	'redis://dedicated-audit-redis:6379'
+)
 
 // Advanced Option 2: Rely on AUDIT_REDIS_URL for a dedicated connection
 // Ensure AUDIT_REDIS_URL is set and REDIS_URL might be ignored or used by other services.
@@ -60,7 +64,6 @@ const auditServiceWithUrl = new Audit('my-application-audit-queue', 'redis://ded
 // import { getSharedRedisConnection } from '@repo/redis-client'; // or your own instance
 // const existingRedisConnection = getSharedRedisConnection(); // Example
 // const auditServiceWithInstance = new Audit('my-application-audit-queue', existingRedisConnection);
-
 
 // Advanced Option 4: Provide additional IORedis connection options for a dedicated connection
 const auditServiceWithCustomOptions = new Audit(
@@ -76,7 +79,7 @@ const auditServiceWithCustomOptions = new Audit(
 		// },
 		maxRetriesPerRequest: 3, // Override default null for the dedicated connection
 	}
-);
+)
 ```
 
 ### Logging an Audit Event
@@ -99,10 +102,10 @@ async function recordUserLogin(userId: string, success: boolean, ipAddress?: str
 				ipAddress: ipAddress || 'unknown',
 				userAgent: 'some-user-agent/1.0', // Example
 			},
-		});
-		console.log('Audit event logged.');
+		})
+		console.log('Audit event logged.')
 	} catch (error) {
-		console.error('Failed to log audit event:', error);
+		console.error('Failed to log audit event:', error)
 		// Implement retry logic or fallback if critical
 	}
 }
@@ -134,6 +137,7 @@ export interface AuditLogEvent {
 ### Closing the Connection
 
 The `closeConnection()` method on an `Audit` instance will close the associated BullMQ queue.
+
 - If the `Audit` instance is using a **dedicated Redis connection** (one it created itself), it will also close that Redis connection.
 - If the `Audit` instance is using the **shared Redis connection** (from `@repo/redis-client`), it **will not** close the shared connection. The shared connection should be closed globally at application shutdown using `closeSharedRedisConnection` from `@repo/redis-client`.
 

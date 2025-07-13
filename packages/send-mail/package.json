@@ -19,14 +19,14 @@
 		"test": "run-vitest"
 	},
 	"dependencies": {
-		"@opentelemetry/exporter-metrics-otlp-proto": "0.202.0",
-		"@opentelemetry/exporter-trace-otlp-proto": "0.202.0",
+		"@opentelemetry/exporter-metrics-otlp-proto": "0.203.0",
+		"@opentelemetry/exporter-trace-otlp-proto": "0.203.0",
 		"@opentelemetry/sdk-metrics": "2.0.1",
-		"@opentelemetry/sdk-node": "0.202.0",
+		"@opentelemetry/sdk-node": "0.203.0",
 		"@repo/hono-helpers": "workspace:*",
 		"@repo/mailer": "workspace:*",
 		"@repo/redis-client": "workspace:*",
-		"bullmq": "5.56.2",
+		"bullmq": "5.56.4",
 		"bullmq-otel": "1.0.1",
 		"ioredis": "5.6.1"
 	},
@@ -34,7 +34,7 @@
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@types/node": "24.0.12",
+		"@types/node": "24.0.13",
 		"tsup": "8.5.0",
 		"typescript": "5.5.4",
 		"vitest": "3.2.4"

@@ -43,10 +43,10 @@
 	"dependencies": {
 		"esbuild": "0.25.6",
 		"slugify": "1.6.6",
-		"wrangler": "4.24.0",
+		"wrangler": "4.24.3",
 		"yaml": "2.8.0",
-		"zod": "3.25.76",
-		"zx": "8.6.1"
+		"zod": "4.0.5",
+		"zx": "8.7.0"
 	},
 	"devDependencies": {
 		"@repo/tools": "workspace:*",

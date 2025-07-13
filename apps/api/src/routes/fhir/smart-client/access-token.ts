@@ -1,13 +1,13 @@
 import { createRoute, z } from '@hono/zod-openapi'
+import { SmartClient } from '@joseantcordeiro/smart-client'
 import { eq } from 'drizzle-orm'
 
 import { smartFhirClient } from '@repo/auth-db'
-import { SmartClient } from '@repo/smart-client'
 
 import { ApiError, openApiErrorResponses } from '../../../lib/errors/index.js'
 
+import type { SmartClientConfig } from '@joseantcordeiro/smart-client'
 import type { DecryptResponse } from '@repo/infisical-kms'
-import type { SmartClientConfig } from '@repo/smart-client'
 import type { App } from '../../../lib/hono/index.js'
 
 const route = createRoute({

@@ -2,12 +2,12 @@ import { handleOperationOutcomeError } from '@/fhir/ErrorHandler'
 import { IToolCallResult } from '@/mastra/tools/types'
 import { createTextResponse, DefaultAuthContext } from '@/mastra/tools/utils'
 import { createTool } from '@mastra/core'
-import { OperationOutcome } from 'fhir/r4'
 import z from 'zod'
 
 import type { FhirApiClient } from '@/fhir/client'
 import type { RuntimeContextSession } from '@/hono/types'
 import type { RuntimeServices, ToolCallResult } from '@/mastra/tools/types'
+import type { OperationOutcome } from 'fhir/r4'
 
 export const fhirResourceReadTool = createTool({
 	id: 'fhirResourceRead',

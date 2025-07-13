@@ -1,7 +1,10 @@
 import { Queue } from 'bullmq'
 import { Redis as RedisInstance } from 'ioredis' // Renamed to avoid conflict
-import type { RedisOptions, Redis as RedisType } from 'ioredis' // RedisType for type usage
+
 import { getSharedRedisConnection } from '@repo/redis-client'
+
+import type { RedisOptions, Redis as RedisType } from 'ioredis' // RedisType for type usage
+
 import type { AuditLogEvent } from './types.js'
 
 // The getEnv function is removed as REDIS_URL is now primarily handled by @repo/redis-client
@@ -80,14 +83,19 @@ export class Audit {
 			enableAutoPipelining: true,
 		}
 
-		if (redisOrUrlOrOptions && typeof redisOrUrlOrOptions === 'object' && 'status' in redisOrUrlOrOptions) {
+		if (
+			redisOrUrlOrOptions &&
+			typeof redisOrUrlOrOptions === 'object' &&
+			'status' in redisOrUrlOrOptions
+		) {
 			// Scenario 1: An existing ioredis instance is provided
 			this.connection = redisOrUrlOrOptions
 			this.isSharedConnection = false // Assume externally managed, could be shared or not
 			console.log(`[AuditService] Using provided Redis instance for queue "${this.queueName}".`)
 		} else if (
 			typeof redisOrUrlOrOptions === 'string' ||
-			(typeof redisOrUrlOrOptions === 'object' && (redisOrUrlOrOptions.url || redisOrUrlOrOptions.options)) ||
+			(typeof redisOrUrlOrOptions === 'object' &&
+				(redisOrUrlOrOptions.url || redisOrUrlOrOptions.options)) ||
 			directConnectionOptions
 		) {
 			// Scenario 2: URL string, options object, or directConnectionOptions are provided for a direct connection
@@ -97,7 +105,10 @@ export class Audit {
 
 			if (typeof redisOrUrlOrOptions === 'string') {
 				url = redisOrUrlOrOptions
-			} else if (typeof redisOrUrlOrOptions === 'object' && (redisOrUrlOrOptions.url || redisOrUrlOrOptions.options)) {
+			} else if (
+				typeof redisOrUrlOrOptions === 'object' &&
+				(redisOrUrlOrOptions.url || redisOrUrlOrOptions.options)
+			) {
 				// Check this condition specifically for object with url/options
 				url = redisOrUrlOrOptions.url
 				options = { ...options, ...redisOrUrlOrOptions.options }
@@ -133,9 +144,7 @@ export class Audit {
 				this.isSharedConnection = true
 			} else {
 				// Scenario 3: No explicit direct connection info at all, and no env var, use the shared connection
-				console.log(
-					`[AuditService] Using shared Redis connection for queue "${this.queueName}".`
-				)
+				console.log(`[AuditService] Using shared Redis connection for queue "${this.queueName}".`)
 				this.connection = getSharedRedisConnection()
 				this.isSharedConnection = true
 			}
@@ -160,9 +169,7 @@ export class Audit {
 			}
 		} else {
 			// Scenario 3: No specific connection info at all, use the shared connection
-			console.log(
-				`[AuditService] Using shared Redis connection for queue "${this.queueName}".`
-			)
+			console.log(`[AuditService] Using shared Redis connection for queue "${this.queueName}".`)
 			this.connection = getSharedRedisConnection()
 			this.isSharedConnection = true
 		}
@@ -172,7 +179,14 @@ export class Audit {
 		// Attach listeners only if this instance created the connection (not shared and not provided externally)
 		// The shared connection manages its own listeners.
 		// If an external instance is provided, it's assumed its listeners are managed elsewhere.
-		if (!this.isSharedConnection && !(redisOrUrlOrOptions && typeof redisOrUrlOrOptions === 'object' && 'status' in redisOrUrlOrOptions)) {
+		if (
+			!this.isSharedConnection &&
+			!(
+				redisOrUrlOrOptions &&
+				typeof redisOrUrlOrOptions === 'object' &&
+				'status' in redisOrUrlOrOptions
+			)
+		) {
 			this.connection.on('error', (err: Error) => {
 				console.error(
 					`[AuditService] Redis Connection Error (direct connection for queue "${this.queueName}"): ${err.message}`,
@@ -287,17 +301,12 @@ export class Audit {
 				await this.bullmq_queue.close()
 				console.info(`[AuditService] BullMQ queue '${this.queueName}' closed successfully.`)
 			} catch (err) {
-				console.error(
-					`[AuditService] Error closing BullMQ queue '${this.queueName}':`,
-					err
-				)
+				console.error(`[AuditService] Error closing BullMQ queue '${this.queueName}':`, err)
 			}
 		}
 
 		if (this.connection && !this.isSharedConnection) {
-			console.info(
-				`[AuditService] Closing direct Redis connection for queue '${this.queueName}'.`
-			)
+			console.info(`[AuditService] Closing direct Redis connection for queue '${this.queueName}'.`)
 			if ((this.connection.status as string) !== 'end') {
 				try {
 					await this.connection.quit()
@@ -325,7 +334,7 @@ export class Audit {
 		// Nullify the connection if it was managed by this instance and is now closed.
 		if (!this.isSharedConnection) {
 			// @ts-expect-error Making connection undefined after close
-			this.connection = undefined;
+			this.connection = undefined
 		}
 	}
 }

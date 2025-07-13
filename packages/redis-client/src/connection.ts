@@ -1,5 +1,6 @@
 import Redis from 'ioredis'
-import type { RedisOptions, Redis as RedisInstanceType } from 'ioredis'
+
+import type { Redis as RedisInstanceType, RedisOptions } from 'ioredis'
 
 let redisConnection: RedisInstanceType | null = null
 

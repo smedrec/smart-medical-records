@@ -1,8 +1,11 @@
 import { Queue } from 'bullmq'
 // import { BullMQOtel } from 'bullmq-otel' // BullMQOtel can be added if telemetry is configured
 import { Redis as RedisInstance } from 'ioredis' // Renamed to avoid conflict
-import type { RedisOptions, Redis as RedisType } from 'ioredis' // RedisType for type usage
+
 import { getSharedRedisConnection } from '@repo/redis-client'
+
+import type { RedisOptions, Redis as RedisType } from 'ioredis' // RedisType for type usage
+
 import type { SendMailEvent } from './types.js'
 
 // The getEnv function is removed as REDIS_URL is now primarily handled by @repo/redis-client
@@ -49,14 +52,19 @@ export class SendMail {
 			enableAutoPipelining: true,
 		}
 
-		if (redisOrUrlOrOptions && typeof redisOrUrlOrOptions === 'object' && 'status' in redisOrUrlOrOptions) {
+		if (
+			redisOrUrlOrOptions &&
+			typeof redisOrUrlOrOptions === 'object' &&
+			'status' in redisOrUrlOrOptions
+		) {
 			// Scenario 1: An existing ioredis instance is provided
 			this.connection = redisOrUrlOrOptions
 			this.isSharedConnection = false // Assume externally managed
 			console.log(`[SendMailService] Using provided Redis instance for queue "${this.queueName}".`)
 		} else if (
 			typeof redisOrUrlOrOptions === 'string' ||
-			(typeof redisOrUrlOrOptions === 'object' && (redisOrUrlOrOptions.url || redisOrUrlOrOptions.options)) ||
+			(typeof redisOrUrlOrOptions === 'object' &&
+				(redisOrUrlOrOptions.url || redisOrUrlOrOptions.options)) ||
 			directConnectionOptions
 		) {
 			// Scenario 2: URL string, options object, or directConnectionOptions provided for a direct connection
@@ -97,9 +105,7 @@ export class SendMail {
 			}
 		} else {
 			// Scenario 3: No specific connection info, use the shared connection
-			console.log(
-				`[SendMailService] Using shared Redis connection for queue "${this.queueName}".`
-			)
+			console.log(`[SendMailService] Using shared Redis connection for queue "${this.queueName}".`)
 			this.connection = getSharedRedisConnection()
 			this.isSharedConnection = true
 		}
@@ -111,7 +117,14 @@ export class SendMail {
 		})
 
 		// Attach listeners only if this instance created the connection
-		if (!this.isSharedConnection && !(redisOrUrlOrOptions && typeof redisOrUrlOrOptions === 'object' && 'status' in redisOrUrlOrOptions)) {
+		if (
+			!this.isSharedConnection &&
+			!(
+				redisOrUrlOrOptions &&
+				typeof redisOrUrlOrOptions === 'object' &&
+				'status' in redisOrUrlOrOptions
+			)
+		) {
 			this.connection.on('connect', () => {
 				console.info(
 					`[SendMailService] Successfully connected to Redis (direct connection for queue "${this.queueName}").`

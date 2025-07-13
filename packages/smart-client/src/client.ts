@@ -258,8 +258,7 @@ export class SmartClient {
 			)
 		}
 
-		const { clientId, iss, privateKey, fhirBaseUrl, kid, jwksUrl, signingAlgorithm, jwtLifetime } =
-			this.config
+		const { clientId, iss, privateKey, kid, jwksUrl, signingAlgorithm, jwtLifetime } = this.config
 		const now = Math.floor(Date.now() / 1000)
 		const expirationTime = now + (jwtLifetime as number)
 

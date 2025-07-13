@@ -157,7 +157,7 @@ describe('SendMail', () => {
 			)[1]
 			closeCallback()
 			expect(console.info).toHaveBeenCalledWith(
-		`[SendMailService] Redis connection closed (direct for queue ${mockQueueName}).`
+				`[SendMailService] Redis connection closed (direct for queue ${mockQueueName}).`
 			)
 
 			const reconnectingCallback = mockRedisInstance.on.mock.calls.find(
@@ -165,7 +165,7 @@ describe('SendMail', () => {
 			)[1]
 			reconnectingCallback()
 			expect(console.info).toHaveBeenCalledWith(
-		`[SendMailService] Reconnecting to Redis (direct for queue ${mockQueueName})...`
+				`[SendMailService] Reconnecting to Redis (direct for queue ${mockQueueName})...`
 			)
 		})
 	})

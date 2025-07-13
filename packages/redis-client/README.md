@@ -16,15 +16,15 @@ This package provides a shared Redis connection manager for use across different
 To use the shared Redis connection, import `getSharedRedisConnection` from this package:
 
 ```typescript
-import { getSharedRedisConnection } from '@repo/redis-client';
+import { getSharedRedisConnection } from '@repo/redis-client'
 
 // Get the shared Redis instance
-const redis = getSharedRedisConnection();
+const redis = getSharedRedisConnection()
 
 // Use the redis instance as needed
-await redis.set('mykey', 'myvalue');
-const value = await redis.get('mykey');
-console.log(value);
+await redis.set('mykey', 'myvalue')
+const value = await redis.get('mykey')
+console.log(value)
 ```
 
 The connection is established when `getSharedRedisConnection` is called for the first time. Subsequent calls will return the same connection instance.
@@ -41,10 +41,10 @@ Example `REDIS_URL`:
 It's important to close the shared connection gracefully when your application is shutting down:
 
 ```typescript
-import { closeSharedRedisConnection } from '@repo/redis-client';
+import { closeSharedRedisConnection } from '@repo/redis-client'
 
 // ... during application shutdown
-await closeSharedRedisConnection();
+await closeSharedRedisConnection()
 ```
 
 ### Checking Connection Status
@@ -52,10 +52,10 @@ await closeSharedRedisConnection();
 You can get the current status of the connection:
 
 ```typescript
-import { getRedisConnectionStatus } from '@repo/redis-client';
+import { getRedisConnectionStatus } from '@repo/redis-client'
 
-const status = getRedisConnectionStatus(); // e.g., 'ready', 'connecting', 'uninitialized'
-console.log('Redis connection status:', status);
+const status = getRedisConnectionStatus() // e.g., 'ready', 'connecting', 'uninitialized'
+console.log('Redis connection status:', status)
 ```
 
 ## For BullMQ
@@ -63,15 +63,16 @@ console.log('Redis connection status:', status);
 When using this shared connection with BullMQ, you can pass the connection instance to BullMQ's `Queue` or `Worker` options:
 
 ```typescript
-import { Queue } from 'bullmq';
-import { getSharedRedisConnection } from '@repo/redis-client';
+import { Queue } from 'bullmq'
 
-const redisConnection = getSharedRedisConnection();
+import { getSharedRedisConnection } from '@repo/redis-client'
+
+const redisConnection = getSharedRedisConnection()
 
 const myQueue = new Queue('my-queue-name', {
-  connection: redisConnection,
-  // other BullMQ options...
-});
+	connection: redisConnection,
+	// other BullMQ options...
+})
 
 // ...
 ```

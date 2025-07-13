@@ -51,13 +51,14 @@ Here's a basic example of how to use the `SendMail` class:
 
 ```typescript
 import { SendMail } from '@repo/send-mail'
+
 import type { SendMailEvent } from '@repo/send-mail' // For typing event details
 
-const MY_MAIL_QUEUE = 'emailProcessingQueue';
+const MY_MAIL_QUEUE = 'emailProcessingQueue'
 
 // Recommended: Use the shared Redis connection (configured via REDIS_URL)
 // Ensure REDIS_URL is set in your environment.
-const mailServiceShared = new SendMail(MY_MAIL_QUEUE);
+const mailServiceShared = new SendMail(MY_MAIL_QUEUE)
 
 // Advanced Option 1: Provide Redis URL directly for a dedicated connection
 // const mailServiceWithUrl = new SendMail(MY_MAIL_QUEUE, 'redis://dedicated-mail-redis:6379');
@@ -84,13 +85,13 @@ async function sendWelcomeEmail(userId: string, userEmail: string) {
 			body: '<h1>Hello!</h1><p>Thank you for signing up.</p>',
 			// You can use html, text, cc, bcc, from, etc. from MailerSendOptions
 		},
-	};
+	}
 
 	try {
-		await mailServiceShared.send(event); // Using the shared instance
-		console.log(`Email event for action '${event.action}' enqueued for user ${userId}.`);
+		await mailServiceShared.send(event) // Using the shared instance
+		console.log(`Email event for action '${event.action}' enqueued for user ${userId}.`)
 	} catch (error) {
-		console.error('Failed to enqueue email event:', error);
+		console.error('Failed to enqueue email event:', error)
 		// Handle the error appropriately
 	}
 }
