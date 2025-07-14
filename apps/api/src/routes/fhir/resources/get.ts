@@ -57,6 +57,25 @@ export const registerResourceGet = (app: App) =>
 		const organizationId = session.activeOrganizationId
 		const cerbosResource = { kind: resourceType, id: resourceId, attributes: {} }
 		const cerbosAction = 'read'
+		const token = session.smartClientAccessToken
+		const fhirBaseUrl = session.fhirBaseUrl
+
+		if (!token || !fhirBaseUrl) {
+			const outcomeDescription = `Forbidden: User ${principalId} with roles [${roles.join(', ')}] not authorized to initialize the fhir client.`
+			await audit.log({
+				principalId,
+				organizationId,
+				action: toolName,
+				targetResourceType: resourceType,
+				targetResourceId: resourceId,
+				status: 'failure',
+				outcomeDescription,
+			})
+			throw new ApiError({
+				code: 'FORBIDDEN',
+				message: 'You Need to initialize the fhir client first to continue.',
+			})
+		}
 
 		const canReadResource = await cerbos.isAllowed({
 			principal: {
@@ -95,10 +114,7 @@ export const registerResourceGet = (app: App) =>
 			})
 		}
 
-		const fhirClient = createFhirApiClient(
-			'https://launcher.teachhowtofish.org/v/r4/fhir/',
-			session.smartClientAccessToken!
-		)
+		const fhirClient = createFhirApiClient(fhirBaseUrl, token)
 
 		try {
 			const { data, error, response } = await (fhirClient.GET as any)(`/${resourceType}/{id}`, {

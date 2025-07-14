@@ -59,6 +59,7 @@ export function newApp() {
 			smartClientAccessToken: (session.session as any).smartClientAccessToken ?? null,
 			activeOrganizationId: (session.session as any).activeOrganizationId ?? null,
 			activeOrganizationRole: (session.session as any).activeOrganizationRole ?? null,
+			fhirBaseUrl: (session.session as any).fhirBaseUrl ?? null,
 		})
 
 		return next()
