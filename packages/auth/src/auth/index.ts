@@ -200,14 +200,6 @@ class Auth {
 					create: {
 						before: async (session) => {
 							const activeOrganization = await getActiveOrganization(session.userId)
-							let smartClientAccessToken = null
-							try {
-								smartClientAccessToken = await getSmartClientAccessToken(
-									activeOrganization?.organizationId as string
-								)
-							} catch (error) {
-								console.error('Error getting smart client access token:', error)
-							}
 							if (!activeOrganization) {
 								return {
 									data: {
@@ -215,8 +207,19 @@ class Auth {
 										activeOrganizationId: null,
 										activeOrganizationRole: null,
 										smartClientAccessToken: null,
+										fhirBaseUrl: null,
 									},
 								}
+							}
+
+							let fhir: { token: string | null; fhirBaseUrl: string | null } = {
+								token: null,
+								fhirBaseUrl: null,
+							}
+							try {
+								fhir = await getSmartClientAccessToken(activeOrganization.organizationId as string)
+							} catch (error) {
+								console.error('Error getting smart client access token:', error)
 							}
 
 							return {
@@ -224,7 +227,8 @@ class Auth {
 									...session,
 									activeOrganizationId: activeOrganization.organizationId,
 									activeOrganizationRole: activeOrganization.role,
-									smartClientAccessToken: smartClientAccessToken,
+									smartClientAccessToken: fhir.token,
+									fhirBaseUrl: fhir.fhirBaseUrl,
 								},
 							}
 						},
@@ -454,6 +458,7 @@ export type Session = {
 	activeOrganizationId?: string | null | undefined
 	activeOrganizationRole?: string | null | undefined
 	smartClientAccessToken?: string | null | undefined
+	fhirBaseUrl?: string | null | undefined
 }
 
 export type User = {

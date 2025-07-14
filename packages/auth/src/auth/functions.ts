@@ -25,7 +25,9 @@ const kms = new InfisicalKmsClient({
 	accessToken: process.env.INFISICAL_ACCESS_TOKEN!,
 })
 
-async function getSmartClientAccessToken(organizationId: string): Promise<string> {
+async function getSmartClientAccessToken(
+	organizationId: string
+): Promise<{ token: string; fhirBaseUrl: string }> {
 	const result = await db
 		.select()
 		.from(smartFhirClient)
@@ -46,6 +48,8 @@ async function getSmartClientAccessToken(organizationId: string): Promise<string
 		// signingAlgorithm: 'ES384', // Optional
 	}
 
+	const fhirBaseUrl = result[0].fhirBaseUrl || result[0].iss
+
 	try {
 		// Option 1: Discover .well-known/smart-configuration using fhirBaseUrl's origin
 		const client = await SmartClient.init(config)
@@ -57,7 +61,7 @@ async function getSmartClientAccessToken(organizationId: string): Promise<string
 		console.log('SmartClient initialized successfully.')
 
 		const token = await client.getAccessToken()
-		return token
+		return { token, fhirBaseUrl }
 	} catch (error) {
 		console.error('Failed to initialize SmartClient:', error)
 		// Handle initialization error (e.g., server unreachable, invalid config)
