@@ -222,6 +222,45 @@ class Auth {
 								console.error('Error getting smart client access token:', error)
 							}
 
+							// Get practitioner verification status if user is a practitioner
+							let practitionerData: {
+								verificationStatus: string | null
+								isVerified: boolean | null
+								assignedAssistantId: string | null
+							} = {
+								verificationStatus: null,
+								isVerified: null,
+								assignedAssistantId: null,
+							}
+
+							if (activeOrganization.role === 'practitioner') {
+								try {
+									// Import practitioner schema
+									const { practitioner } = await import('@repo/auth-db')
+									const { eq } = await import('drizzle-orm')
+
+									// Query practitioner table for verification status
+									const practitionerResult = await db
+										.select({
+											verificationStatus: practitioner.verificationStatus,
+										})
+										.from(practitioner)
+										.where(eq(practitioner.id, session.userId))
+										.limit(1)
+
+									if (practitionerResult.length > 0) {
+										const practitionerRecord = practitionerResult[0]
+										practitionerData = {
+											verificationStatus: practitionerRecord.verificationStatus,
+											isVerified: practitionerRecord.verificationStatus === 'verified',
+											assignedAssistantId: null, // TODO: Add this field to schema if needed
+										}
+									}
+								} catch (error) {
+									console.error('Error fetching practitioner verification status:', error)
+								}
+							}
+
 							return {
 								data: {
 									...session,
@@ -229,6 +268,9 @@ class Auth {
 									activeOrganizationRole: activeOrganization.role,
 									smartClientAccessToken: fhir.token,
 									fhirBaseUrl: fhir.fhirBaseUrl,
+									verificationStatus: practitionerData.verificationStatus,
+									isVerified: practitionerData.isVerified,
+									assignedAssistantId: practitionerData.assignedAssistantId,
 								},
 							}
 						},
@@ -461,6 +503,10 @@ export type Session = {
 	activeOrganizationRole?: string | null | undefined
 	smartClientAccessToken?: string | null | undefined
 	fhirBaseUrl?: string | null | undefined
+	// Practitioner-specific session data
+	verificationStatus?: 'pending' | 'verified' | 'failed' | 'manual_review' | 'expired' | null
+	isVerified?: boolean | null
+	assignedAssistantId?: string | null
 }
 
 export type User = {
@@ -477,4 +523,13 @@ export type User = {
 	banExpires?: Date | null
 	lang: string
 	personId?: string | null | undefined
+	// Practitioner-specific user data
+	verificationStatus?: 'pending' | 'verified' | 'failed' | 'manual_review' | 'expired' | null
+	licenseNumber?: string | null
+	jurisdiction?: string | null
+	licenseType?: string | null
+	licenseExpiryDate?: Date | null
+	specialties?: string[] | null
+	credentials?: string[] | null
+	assignedAssistantId?: string | null
 }

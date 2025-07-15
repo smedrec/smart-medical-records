@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/Policy.schema.json
+# docs: https://docs.cerbos.dev/cerbos/latest/policies/resource_policies
+
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  resource: LicenseCertificate
+  version: default
+  rules:
+    # Owner and admin have full access to all license certificates
+    - actions:
+        - create
+        - read
+        - update
+        - delete
+        - search
+        - download
+        - process_ocr
+        - verify
+        - approve
+        - reject
+      effect: EFFECT_ALLOW
+      roles:
+        - admin
+        - owner
+
+    # Practitioners can manage their own license certificates
+    - actions:
+        - create
+        - read
+        - update
+        - upload
+        - view_status
+        - resubmit
+      effect: EFFECT_ALLOW
+      roles:
+        - practitioner
+      condition:
+        match:
+          expr: request.resource.attributes.practitioner_id == request.principal.id
+
+    # Assistant can view certificates for assigned practitioners
+    - actions:
+        - read
+        - view_status
+      effect: EFFECT_ALLOW
+      roles:
+        - assistant
+      condition:
+        match:
+          expr: request.resource.attributes.assigned_to_assistant == request.principal.id
+
+    # System processes can perform automated operations
+    - actions:
+        - process_ocr
+        - auto_verify
+        - update_status
+        - queue_manual_review
+      effect: EFFECT_ALLOW
+      roles:
+        - system
+        - admin
+        - owner
+
+    # Verification reviewers can process manual reviews
+    - actions:
+        - read
+        - verify
+        - approve
+        - reject
+        - add_notes
+      effect: EFFECT_ALLOW
+      roles:
+        - verification_reviewer
+        - admin
+        - owner

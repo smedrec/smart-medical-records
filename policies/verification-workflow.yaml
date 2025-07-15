@@ -1,0 +1,92 @@
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/Policy.schema.json
+# docs: https://docs.cerbos.dev/cerbos/latest/policies/resource_policies
+
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  resource: VerificationWorkflow
+  version: default
+  rules:
+    # Owner and admin have full access to verification workflows
+    - actions:
+        - create
+        - read
+        - update
+        - delete
+        - search
+        - initiate
+        - approve
+        - reject
+        - restart
+        - view_history
+        - export_reports
+      effect: EFFECT_ALLOW
+      roles:
+        - admin
+        - owner
+
+    # Practitioners can view and interact with their own verification workflows
+    - actions:
+        - read
+        - initiate
+        - submit_documents
+        - view_status
+        - view_history
+        - respond_to_requests
+      effect: EFFECT_ALLOW
+      roles:
+        - practitioner
+      condition:
+        match:
+          expr: request.resource.attributes.practitioner_id == request.principal.id
+
+    # Assistant can view workflows for assigned practitioners
+    - actions:
+        - read
+        - view_status
+        - view_history
+      effect: EFFECT_ALLOW
+      roles:
+        - assistant
+      condition:
+        match:
+          expr: request.resource.attributes.assigned_to_assistant == request.principal.id
+
+    # Verification reviewers can process manual verification steps
+    - actions:
+        - read
+        - review
+        - approve
+        - reject
+        - request_additional_info
+        - add_notes
+        - escalate
+      effect: EFFECT_ALLOW
+      roles:
+        - verification_reviewer
+        - admin
+        - owner
+
+    # System processes can perform automated workflow operations
+    - actions:
+        - auto_progress
+        - update_status
+        - trigger_notifications
+        - queue_manual_review
+        - timeout_handling
+      effect: EFFECT_ALLOW
+      roles:
+        - system
+        - admin
+        - owner
+
+    # Audit access for compliance reporting
+    - actions:
+        - read
+        - view_history
+        - export_audit_trail
+      effect: EFFECT_ALLOW
+      roles:
+        - auditor
+        - compliance_officer
+        - admin
+        - owner

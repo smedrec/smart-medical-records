@@ -7,7 +7,7 @@
   - Create TypeScript interfaces that integrate with existing Better Auth types
   - _Requirements: 1.1, 2.1, 5.1, 6.1, 7.1_
 
-- [ ] 2. Extend Cerbos policies for practitioner management permissions
+- [x] 2. Extend Cerbos policies for practitioner management permissions
   - Create new Cerbos policies for practitioner license verification and management resources
   - Extend existing practitioner.yaml policy to include license verification actions
   - Add new policies for license certificate resources and verification workflow

@@ -6,21 +6,30 @@ resourcePolicy:
   resource: Practitioner
   version: default
   rules:
+    # Owner and admin have full access to all practitioner resources
     - actions:
         - create
         - update
         - read
         - search
         - delete
+        - invite
+        - approve
+        - reject
+        - verify_license
+        - manage_roles
       effect: EFFECT_ALLOW
       roles:
         - admin
         - owner
+
+    # Practitioners can read their own profile and update limited fields
     - actions:
         - read
       effect: EFFECT_ALLOW
       roles:
         - practitioner
+
     - actions:
         - update
       effect: EFFECT_ALLOW
@@ -29,3 +38,36 @@ resourcePolicy:
       condition:
         match:
           expr: request.resource.id == request.principal.id
+
+    # License verification specific actions
+    - actions:
+        - submit_license_info
+        - upload_certificate
+        - view_verification_status
+      effect: EFFECT_ALLOW
+      roles:
+        - practitioner
+      condition:
+        match:
+          expr: request.resource.id == request.principal.id || request.resource.attributes.practitioner_id == request.principal.id
+
+    # Assistant role has limited read access to assigned practitioners only
+    - actions:
+        - read
+      effect: EFFECT_ALLOW
+      roles:
+        - assistant
+      condition:
+        match:
+          expr: request.resource.attributes.assigned_to_assistant == request.principal.id
+
+    # System-level verification actions (for automated processes)
+    - actions:
+        - auto_verify_license
+        - queue_manual_verification
+        - update_verification_status
+      effect: EFFECT_ALLOW
+      roles:
+        - system
+        - admin
+        - owner
