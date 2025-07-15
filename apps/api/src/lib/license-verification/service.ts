@@ -1,12 +1,8 @@
 import { APIProviderManager } from './providers.js'
 import { VerificationQueue } from './queue.js'
-import {
-	LicenseInfo,
-	LicenseStatus,
-	LicenseVerificationError,
-	RetryConfig,
-	VerificationResult,
-} from './types.js'
+import { LicenseVerificationError } from './types.js'
+
+import type { LicenseInfo, LicenseStatus, RetryConfig, VerificationResult } from './types.js'
 
 export class LicenseVerificationService {
 	private providerManager: APIProviderManager

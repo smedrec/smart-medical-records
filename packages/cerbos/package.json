@@ -18,8 +18,7 @@
 	},
 	"dependencies": {
 		"@cerbos/grpc": "0.22.1",
-		"@cerbos/http": "0.22.1",
-		"@repo/hono-helpers": "workspace:*"
+		"@cerbos/http": "0.22.1"
 	},
 	"devDependencies": {
 		"@cerbos/core": "0.23.0",

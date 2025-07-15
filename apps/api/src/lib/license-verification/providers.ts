@@ -1,10 +1,6 @@
-import {
-	APIProvider,
-	LicenseInfo,
-	LicenseStatus,
-	LicenseVerificationError,
-	VerificationResult,
-} from './types.js'
+import { LicenseVerificationError } from './types.js'
+
+import type { APIProvider, LicenseInfo, LicenseStatus, VerificationResult } from './types.js'
 
 export class APIProviderManager {
 	private providers: Map<string, APIProvider> = new Map()
@@ -270,6 +266,7 @@ export class APIProviderManager {
 		if (apiResponse.status === 'active') {
 			score += 0.2
 		}
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		factors++
 
 		return score

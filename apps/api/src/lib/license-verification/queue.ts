@@ -1,6 +1,8 @@
 import { createId } from '@paralleldrive/cuid2'
 
-import { LicenseInfo, ManualVerificationRequest, VerificationHistory } from './types.js'
+import { LicenseInfo } from './types.js'
+
+import type { ManualVerificationRequest, VerificationHistory } from './types.js'
 
 export class VerificationQueue {
 	private manualQueue: Map<string, ManualVerificationRequest> = new Map()

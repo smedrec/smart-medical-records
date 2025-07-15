@@ -1,8 +1,8 @@
 import { HTTPException } from 'hono/http-exception'
 
 import type { MiddlewareHandler } from 'hono'
-import type { Session } from '@repo/auth'
 import type { Cerbos } from '@repo/cerbos'
+import type { Session } from '../types.js'
 
 export interface PractitionerAuthOptions {
 	/**
