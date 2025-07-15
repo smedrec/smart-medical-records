@@ -31,6 +31,7 @@ import { registerConfigMailUpdate } from './routes/config/mail/update.js'
 import { registerResourceGet } from './routes/fhir/resources/get.js'
 import { registerSmartFhirClientAccessToken } from './routes/fhir/smart-client/access-token.js'
 import { registerSmartFhirClientPrivateKeyJWT } from './routes/fhir/smart-client/private-key.js'
+import licenseVerificationRoutes from './routes/license-verification.js'
 import { registerLiveness } from './routes/liveness.js'
 import { registerNewsletterSubscribe } from './routes/newsletter/subscribe.js'
 import { registerSecretGet } from './routes/secrets/get.js'
@@ -98,6 +99,9 @@ registerKmsDecrypt(app)
 registerSecretGet(app)
 // Newsletter
 registerNewsletterSubscribe(app)
+
+// License Verification
+app.route('/license-verification', licenseVerificationRoutes)
 
 const server = serve({
 	fetch: app.fetch,
