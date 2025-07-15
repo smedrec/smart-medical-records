@@ -1,14 +1,13 @@
-import { STALE_TIMES } from '@/lib/constants'
-import { AuthQueryProvider } from '@daveyplate/better-auth-tanstack'
-import { AuthUIProviderTanstack } from '@daveyplate/better-auth-ui/tanstack'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Link, useRouter } from '@tanstack/react-router'
-import { ThemeProvider } from 'next-themes'
-import { Toaster } from 'sonner'
-
-import { authClient } from './lib/auth'
-
-import type { ReactNode } from 'react'
+import { AuthQueryProvider } from "@daveyplate/better-auth-tanstack";
+import { AuthUIProviderTanstack } from "@daveyplate/better-auth-ui/tanstack";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Link, useRouter } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { ThemeProvider } from "next-themes";
+import type { ReactNode } from "react";
+import { Toaster } from "sonner";
+import { authClient } from "./lib/auth";
+import { STALE_TIMES } from "./lib/constants";
 
 // Create a query client with optimized settings
 const queryClient = new QueryClient({
@@ -32,10 +31,10 @@ const queryClient = new QueryClient({
 			retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
 		},
 	},
-})
+});
 
 export function Providers({ children }: { children: ReactNode }) {
-	const router = useRouter()
+	const router = useRouter();
 
 	return (
 		<QueryClientProvider client={queryClient}>
@@ -46,8 +45,8 @@ export function Providers({ children }: { children: ReactNode }) {
 					enableSystem
 					disableTransitionOnChange
 					themeColor={{
-						light: 'oklch(1 0 0)',
-						dark: 'oklch(0.145 0 0)',
+						light: "oklch(1 0 0)",
+						dark: "oklch(0.145 0 0)",
 					}}
 				>
 					<AuthUIProviderTanstack
@@ -56,28 +55,29 @@ export function Providers({ children }: { children: ReactNode }) {
 						organization={{
 							logo: true,
 							customRoles: [
-								{ role: 'practitioner', label: 'Practitioner' },
-								{ role: 'patient', label: 'Patient' },
+								{ role: "practitioner", label: "Practitioner" },
+								{ role: "patient", label: "Patient" },
 							],
 						}}
 						apiKey={{
 							metadata: {
-								environment: process.env.ENVIRONMENT!,
-								version: 'v1',
+								environment: process.env.ENVIRONMENT || "development",
+								version: "v1",
 							},
 						}}
 						settings={{
-							url: '/dashboard/settings/account',
+							url: "/app/settings/account",
 						}}
 						navigate={(href) => router.navigate({ href })}
 						replace={(href) => router.navigate({ href, replace: true })}
 						Link={({ href, ...props }) => <Link to={href} {...props} />}
 					>
 						{children}
-						<Toaster />
+						<Toaster richColors />
+						<TanStackRouterDevtools position="bottom-left" />
 					</AuthUIProviderTanstack>
 				</ThemeProvider>
 			</AuthQueryProvider>
 		</QueryClientProvider>
-	)
+	);
 }

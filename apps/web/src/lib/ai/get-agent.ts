@@ -1,21 +1,21 @@
-import { ai } from '@/lib/ai/client'
-import { createServerFn } from '@tanstack/react-start'
+import { createServerFn } from "@tanstack/react-start";
+import { ai } from "./client";
 
 interface GetAgentParams {
-	agentId: string
+	agentId: string;
 }
 
-const getAgent = createServerFn({ method: 'GET', response: 'data' })
+const getAgent = createServerFn({ method: "GET", response: "data" })
 	.validator((params: GetAgentParams) => params)
 	.handler(async ({ data }: { data: GetAgentParams }) => {
 		try {
-			const agent = ai.getAgent(data.agentId)
-			const details = await agent.details()
-			return details
+			const agent = ai.getAgent(data.agentId);
+			const details = await agent.details();
+			return details;
 		} catch (error) {
-			console.error('Error getting the agent details:', error)
-			throw new Error(error as string)
+			console.error("Error getting the agent details:", error);
+			throw new Error(error as string);
 		}
-	})
+	});
 
-export { getAgent }
+export { getAgent };

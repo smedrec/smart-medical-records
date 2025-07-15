@@ -1,60 +1,61 @@
-import { seo } from '@/lib/seo'
-import { Providers } from '@/providers'
-import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
+import {
+	createRootRouteWithContext,
+	HeadContent,
+	Outlet,
+	Scripts,
+	useRouterState,
+} from "@tanstack/react-router";
+import Loader from "@/components/loader";
+import { seo } from "@/lib/seo";
+import { Providers } from "@/providers";
+import appCss from "../index.css?url";
 
-import type { ReactNode } from 'react'
+export type RouterAppContext = {};
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<RouterAppContext>()({
 	head: () => ({
 		meta: [
 			{
-				charSet: 'utf-8',
+				charSet: "utf-8",
 			},
 			{
-				name: 'viewport',
-				content: 'width=device-width, initial-scale=1',
+				name: "viewport",
+				content: "width=device-width, initial-scale=1",
 			},
 			...seo({
-				title: 'Smart Medical Record | Opensource Medical institutions management FHIR compatible',
-				description: `Smart Medical Record is a type-safe, client-first, full-stack AI FHIR framework. `,
+				title:
+					"Smart Medical Record | Opensource Medical institutions management FHIR compatible",
+				description:
+					"Smart Medical Record is a type-safe, client-first, full-stack AI FHIR framework. ",
 			}),
 		],
 		links: [
-			{ rel: 'stylesheet', href: '/public/styles/globals.css' }, // Direct link to public directory
-			{ rel: 'icon', href: '/favicon.ico' },
-			{ rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
-			{ rel: 'manifest', href: '/manifest.webmanifest' },
+			{
+				rel: "stylesheet",
+				href: appCss,
+			},
 		],
 	}),
-	component: RootComponent,
-})
 
-function RootComponent() {
-	return (
-		<RootDocument>
-			<Outlet />
-		</RootDocument>
-	)
-}
+	component: RootDocument,
+});
 
-function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
+function RootDocument() {
+	const isFetching = useRouterState({ select: (s) => s.isLoading });
+
 	return (
-		<html lang="en" suppressHydrationWarning>
+		<html lang="en" className="dark">
 			<head>
-				<meta name="viewport" content="initial-scale=1, viewport-fit=cover, width=device-width" />
-				<meta name="theme-color" media="(prefers-color-scheme: light)" content="oklch(1 0 0)" />
-				<meta name="theme-color" media="(prefers-color-scheme: dark)" content="oklch(0.145 0 0)" />
-
 				<HeadContent />
 			</head>
-
 			<body>
 				<Providers>
-					<div className="flex min-h-svh flex-col">{children}</div>
+					<div className="grid h-svh grid-rows-[auto_1fr]">
+						{isFetching ? <Loader /> : <Outlet />}
+					</div>
 				</Providers>
-
 				<Scripts />
 			</body>
 		</html>
-	)
+	);
 }
