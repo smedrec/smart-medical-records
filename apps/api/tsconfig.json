@@ -8,5 +8,5 @@
 		"types": ["node"],
 		"lib": ["ES2022"] // Ensure appropriate ES version
 	},
-	"include": ["src/**/*.ts", "*.config.ts", "vitest.config.ts"]
+	"include": ["src/**/*.ts", "*.config.ts", "vitest.config.ts", "src/**/*.test.ts"]
 }

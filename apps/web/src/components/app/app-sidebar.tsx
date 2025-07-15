@@ -30,7 +30,7 @@ import { SectionHeader, SidebarSection } from "./tiny-components";
 //import clientLogger from '../../lib/logger'
 
 import type { GetAgentResponse } from "@mastra/client-js";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Organization } from "better-auth/plugins/organization";
 import {
 	useActiveOrganization,

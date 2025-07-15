@@ -1,7 +1,6 @@
 import { AuthQueryProvider } from "@daveyplate/better-auth-tanstack";
 import { AuthUIProviderTanstack } from "@daveyplate/better-auth-ui/tanstack";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Link, useRouter } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { ThemeProvider } from "next-themes";
 import type { ReactNode } from "react";
@@ -34,7 +33,6 @@ const queryClient = new QueryClient({
 });
 
 export function Providers({ children }: { children: ReactNode }) {
-	const router = useRouter();
 
 	return (
 		<QueryClientProvider client={queryClient}>
@@ -68,9 +66,6 @@ export function Providers({ children }: { children: ReactNode }) {
 						settings={{
 							url: "/app/settings/account",
 						}}
-						navigate={(href) => router.navigate({ href })}
-						replace={(href) => router.navigate({ href, replace: true })}
-						Link={({ href, ...props }) => <Link to={href} {...props} />}
 					>
 						{children}
 						<Toaster richColors />
