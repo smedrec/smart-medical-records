@@ -1,37 +1,31 @@
 # Implementation Plan
 
-- [ ] 1. Set up core project structure and database foundation
-  - Create database schema for users, practitioners, license certificates, audit entries, and verification attempts tables
-  - Set up PostgreSQL migrations using Drizzle ORM
-  - Configure Redis connection for caching and session management
-  - Create base TypeScript interfaces and types for all data models
+- [ ] 1. Extend existing auth-db schema for practitioner management
+  - Add practitioner-specific tables to existing auth-db schema (license certificates, verification attempts)
+  - Create database migrations using existing Drizzle setup in packages/auth-db
+  - Extend existing user schema to support practitioner-specific fields (license info, verification status)
+  - Create TypeScript interfaces that integrate with existing Better Auth types
   - _Requirements: 1.1, 2.1, 5.1, 6.1, 7.1_
 
-- [ ] 2. Implement authentication service foundation
-  - Create OAuth2 authentication service using simple-oauth2 library
-  - Implement JWT token generation, validation, and refresh functionality
-  - Create session management with Redis storage
-  - Build authentication middleware for API route protection
-  - Write unit tests for authentication service methods
-  - _Requirements: 8.1, 8.2, 8.3, 8.4_
+- [ ] 2. Extend Cerbos policies for practitioner management permissions
+  - Create new Cerbos policies for practitioner license verification and management resources
+  - Extend existing practitioner.yaml policy to include license verification actions
+  - Add new policies for license certificate resources and verification workflow
+  - Update organization.yaml policy to support practitioner management roles
+  - Create practitioner-specific middleware using existing Cerbos client integration
+  - Add practitioner verification status to existing session management
+  - Write unit tests for Cerbos policy validation and middleware
+  - _Requirements: 8.1, 8.2, 8.3, 8.4, 6.1, 6.2, 6.3, 6.4, 6.5_
 
-- [ ] 3. Build SAML authentication integration
-  - Integrate passport-saml for enterprise SSO support
-  - Create SAML configuration management for multiple identity providers
-  - Implement SAML callback handling and user profile mapping
-  - Add SAML metadata generation endpoints
-  - Write integration tests for SAML authentication flow
+- [ ] 3. Leverage existing OIDC provider for enterprise SSO
+  - Configure existing Better Auth OIDC provider plugin for healthcare organizations
+  - Add SAML support as additional identity provider option
+  - Extend existing organization invitation system for practitioner onboarding
+  - Create healthcare-specific SSO configuration management
+  - Write integration tests for enterprise authentication flows
   - _Requirements: 8.2, 8.5_
 
-- [ ] 4. Create role-based access control (RBAC) system
-  - Implement RBAC service with Owner, Practitioner, and Assistant roles
-  - Create permission checking middleware for API endpoints
-  - Build role assignment and modification functionality
-  - Implement resource-based access control for client data
-  - Write unit tests for permission validation logic
-  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
-
-- [ ] 5. Develop license verification service
+- [ ] 4. Develop license verification service
   - Create license verification service with multiple API provider support
   - Implement API clients for major licensing databases (NPI, GMC, etc.)
   - Build retry logic with exponential backoff for API failures
@@ -40,7 +34,7 @@
   - Write integration tests with mocked API responses
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-- [ ] 6. Build OCR document processing service
+- [ ] 5. Build OCR document processing service
   - Implement OCR service using Tesseract.js for PDF certificate processing
   - Create text extraction and license data parsing functionality
   - Build validation logic to cross-reference OCR results with entered data
@@ -49,41 +43,50 @@
   - Write unit tests for text extraction and validation logic
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
 
-- [ ] 7. Create comprehensive audit logging system
-  - Implement audit service with immutable log entry creation
-  - Build cryptographic hashing for audit log integrity
-  - Create audit log querying and filtering functionality
-  - Implement compliance reporting features
-  - Add audit log export capabilities (JSON/CSV)
-  - Write unit tests for audit logging and querying
+- [ ] 6. Extend existing audit service for practitioner management
+  - Leverage existing @repo/audit package and apps/audit application
+  - Add practitioner-specific audit event types to existing audit system
+  - Create compliance reporting features using existing audit infrastructure
+  - Extend existing audit log querying for practitioner verification events
+  - Add HIPAA-compliant audit log export capabilities
+  - Write unit tests for practitioner audit logging
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 8. Develop practitioner onboarding API endpoints
-  - Create API endpoints for practitioner invitation and registration
-  - Implement license information submission and validation
-  - Build certificate upload and processing endpoints
-  - Create practitioner approval/rejection workflow APIs
+- [ ] 7. Develop practitioner onboarding API endpoints
+  - Extend existing Better Auth organization invitation system for practitioner onboarding
+  - Create API endpoints for license information submission and validation
+  - Build certificate upload and processing endpoints using existing file handling patterns
+  - Create practitioner approval/rejection workflow APIs integrated with Better Auth roles
   - Add practitioner status and profile management endpoints
   - Write integration tests for complete onboarding workflow
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 2.1, 2.2, 2.3, 2.4, 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 9. Build admin dashboard API endpoints
-  - Create API endpoints for pending practitioner approvals
-  - Implement practitioner management and role modification APIs
-  - Build audit log viewing and filtering endpoints
-  - Create compliance reporting and export APIs
+- [ ] 8. Build admin dashboard API endpoints
+  - Create API endpoints for pending practitioner approvals using existing organization management
+  - Implement practitioner management and role modification APIs with Better Auth integration
+  - Build audit log viewing and filtering endpoints leveraging existing audit service
+  - Create compliance reporting and export APIs using existing audit infrastructure
   - Add system health and monitoring endpoints
   - Write integration tests for admin functionality
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 6.5, 7.4, 7.5_
 
-- [ ] 10. Implement notification and email service
-  - Create email notification service for practitioner invitations
-  - Build notification templates for various workflow stages
-  - Implement email sending for approval/rejection notifications
+- [ ] 9. Extend existing email service for practitioner notifications
+  - Leverage existing @repo/send-mail package for practitioner invitations
+  - Build notification templates for various workflow stages using existing email infrastructure
+  - Implement email sending for approval/rejection notifications with existing Better Auth email system
   - Add notification preferences and delivery tracking
   - Create admin alerts for failed verifications and system issues
   - Write unit tests for notification service
   - _Requirements: 1.4, 5.4, 5.5_
+
+- [ ] 10. Create FHIR-compatible practitioner resources
+  - Extend existing FHIR integration to support Practitioner resources
+  - Create FHIR Practitioner resource creation and management
+  - Implement license information mapping to FHIR Practitioner qualifications
+  - Add FHIR-compliant practitioner search and retrieval endpoints
+  - Integrate with existing Smart Client authentication for FHIR operations
+  - Write unit tests for FHIR practitioner resource management
+  - _Requirements: 2.1, 2.2, 2.3, 2.4, 3.1, 3.2_
 
 - [ ] 11. Add comprehensive error handling and monitoring
   - Implement structured error handling with custom error classes

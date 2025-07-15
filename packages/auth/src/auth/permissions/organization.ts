@@ -28,6 +28,10 @@ export const practitioner = ac.newRole({
 	...memberAc.statements,
 })
 
+export const assistant = ac.newRole({
+	...memberAc.statements,
+})
+
 export const patient = ac.newRole({
 	...memberAc.statements,
 })

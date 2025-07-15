@@ -1,4 +1,4 @@
-# @repo/auditdb
+# @repo/auth-db
 
 The `@repo/auth-db` package provides a reusable class, `AuthDb`, for initializing a Drizzle ORM client connected to a PostgreSQL database. It's designed for use in various applications within the monorepo that require access to the audit log database.
 
@@ -11,7 +11,7 @@ The `@repo/auth-db` package provides a reusable class, `AuthDb`, for initializin
 
 ## Installation
 
-To add `@repo/auditdb` as a dependency in another package (e.g., an application or another shared package):
+To add `@repo/auth-db` as a dependency in another package (e.g., an application or another shared package):
 
 ```sh
 # Navigate to the target package directory
@@ -28,7 +28,7 @@ pnpm add '@repo/auth-db@workspace:*'
 Ensure the `AUTH_DB_URL` environment variable is set with your PostgreSQL connection string. For example:
 
 ```env
-AUDIT_DB_URL="postgresql://user:password@host:port/database"
+AUTH_DB_URL="postgresql://user:password@host:port/database"
 ```
 
 ### Initializing and Using AuditDb
