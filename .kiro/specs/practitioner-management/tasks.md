@@ -1,6 +1,6 @@
 # Implementation Plan
 
-- [ ] 1. Extend existing auth-db schema for practitioner management
+- [x] 1. Extend existing auth-db schema for practitioner management
   - Add practitioner-specific tables to existing auth-db schema (license certificates, verification attempts)
   - Create database migrations using existing Drizzle setup in packages/auth-db
   - Extend existing user schema to support practitioner-specific fields (license info, verification status)
