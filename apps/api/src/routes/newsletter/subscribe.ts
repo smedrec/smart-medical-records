@@ -5,7 +5,7 @@ import { newsletter } from '@repo/app-db'
 import { ApiError, openApiErrorResponses } from '../../lib/errors/index.js'
 import { NewsletterInsertSchema } from './types.js'
 
-import type { App } from '../../../lib/hono/index.js'
+import type { App } from '../../lib/hono/index.js'
 
 const route = createRoute({
 	tags: ['Newsletter'],
