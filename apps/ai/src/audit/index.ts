@@ -1,10 +1,26 @@
-import { Audit } from '@repo/audit'
+import { AuditSDK } from '@repo/audit-sdk'
 
-let auditInstance: Audit | undefined = undefined
+let auditInstance: AuditSDK | undefined = undefined
 
 export function initializeAudit() {
 	if (!auditInstance) {
-		auditInstance = new Audit('audit')
+		auditInstance = new AuditSDK({
+			queueName: 'audit',
+			redis: {
+				url: process.env.REDIS_URL,
+			},
+			databaseUrl: process.env.AUDIT_DB_URL,
+			defaults: {
+				dataClassification: 'INTERNAL',
+				generateHash: true,
+			},
+			compliance: {
+				hipaa: {
+					enabled: true,
+					retentionYears: 6,
+				},
+			},
+		})
 	}
 	return auditInstance
 }

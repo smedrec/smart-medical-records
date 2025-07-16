@@ -34,23 +34,17 @@ export const fhirResourceReadTool = createTool({
 		const cerbosResource = { kind: resourceType, id: resourceId, attributes: {} }
 		const cerbosAction = 'read'
 
-		await audit.log({
-			principalId,
-			organizationId,
-			action: `${toolName}Attempt`,
-			targetResourceType: resourceType,
-			targetResourceId: resourceId,
-			status: 'attempt',
-		})
-
 		if (!fhirClient) {
-			await audit.log({
-				principalId,
+			await audit.logSystem({
 				action: toolName,
-				targetResourceType: resourceType,
-				targetResourceId: resourceId,
 				status: 'failure',
+				component: 'fhir-api-client',
 				outcomeDescription: 'FHIR client not available.',
+				systemContext: {
+					version: '0.1.0',
+					environment: 'development',
+					nodeVersion: process.version,
+				},
 			})
 			return createTextResponse('FHIR client not available.', { isError: true })
 		}
@@ -62,25 +56,43 @@ export const fhirResourceReadTool = createTool({
 		})
 		if (!allowed) {
 			const outcomeDescription = `Forbidden: User ${principalId} with roles [${roles.join(', ')}] not authorized to perform '${cerbosAction}' on ${cerbosResource.kind}/${cerbosResource.id}.`
-			await audit.log({
+			await audit.logFHIR({
 				principalId,
 				organizationId,
-				action: `cerbos:${cerbosAction}`,
-				targetResourceType: resourceType,
-				targetResourceId: resourceId,
+				action: toolName,
+				resourceType,
+				resourceId,
 				status: 'failure',
-				outcomeDescription,
+				outcomeDescription: `Forbidden: User ${principalId} with roles [${roles.join(', ')}] not authorized to perform '${cerbosAction}' on ${cerbosResource.kind}/${cerbosResource.id}.`,
+				sessionContext: {
+					sessionId: 'sess-medical-456',
+					ipAddress: '10.0.1.75',
+					userAgent: 'EMR-System/2.1.0',
+				},
+				fhirContext: {
+					version: 'R4',
+					interaction: cerbosAction,
+				},
 			})
 			return createTextResponse(outcomeDescription, { isError: true })
 		}
-		await audit.log({
+		await audit.logFHIR({
 			principalId,
 			organizationId,
-			action: `cerbos:${cerbosAction}`,
-			targetResourceType: resourceType,
-			targetResourceId: resourceId,
+			action: toolName,
+			resourceType,
+			resourceId,
 			status: 'success',
 			outcomeDescription: 'Authorization granted by Cerbos.',
+			sessionContext: {
+				sessionId: 'sess-medical-456',
+				ipAddress: '10.0.1.75',
+				userAgent: 'EMR-System/2.1.0',
+			},
+			fhirContext: {
+				version: 'R4',
+				interaction: cerbosAction,
+			},
 		})
 
 		try {
@@ -93,41 +105,63 @@ export const fhirResourceReadTool = createTool({
 					JSON.parse(rText) as OperationOutcome
 				)
 				const outcomeDescription = `FHIR ${resourceType} read failed: Status ${response.status}`
-				await audit.log({
+				await audit.logFHIR({
 					principalId,
 					organizationId,
 					action: toolName,
-					targetResourceType: resourceType,
-					targetResourceId: resourceId,
+					resourceType,
+					resourceId,
 					status: 'failure',
 					outcomeDescription,
-					details: {
-						responseStatus: response.status,
-						responseBody: rText,
-						operationOutcomeError: operationOutcomeError.message,
+					sessionContext: {
+						sessionId: 'sess-medical-456',
+						ipAddress: '10.0.1.75',
+						userAgent: 'EMR-System/2.1.0',
+					},
+					fhirContext: {
+						version: 'R4',
+						interaction: cerbosAction,
 					},
 				})
 				return createTextResponse(operationOutcomeError.message, { isError: true })
 			}
-			await audit.log({
+			await audit.logFHIR({
 				principalId,
 				organizationId,
 				action: toolName,
-				targetResourceType: resourceType,
-				targetResourceId: resourceId,
+				resourceType,
+				resourceId,
 				status: 'success',
 				outcomeDescription: `Successfully read ${resourceType} resource.`,
+				sessionContext: {
+					sessionId: 'sess-medical-123',
+					ipAddress: '10.0.1.50',
+					userAgent: 'EMR-System/2.1.0',
+				},
+				fhirContext: {
+					version: 'R4',
+					interaction: cerbosAction,
+				},
 			})
 			return createTextResponse(JSON.stringify(data, null, 2), { isError: false })
 		} catch (e: any) {
-			await audit.log({
+			await audit.logFHIR({
 				principalId,
 				organizationId,
 				action: toolName,
-				targetResourceType: resourceType,
-				targetResourceId: resourceId,
+				resourceType,
+				resourceId,
 				status: 'failure',
 				outcomeDescription: e.message,
+				sessionContext: {
+					sessionId: 'sess-medical-456',
+					ipAddress: '10.0.1.75',
+					userAgent: 'EMR-System/2.1.0',
+				},
+				fhirContext: {
+					version: 'R4',
+					interaction: cerbosAction,
+				},
 			})
 			return createTextResponse(`FHIR ${resourceType} read failed. Error: ${e.message}`, {
 				isError: true,

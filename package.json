@@ -16,6 +16,7 @@
 		"check:format": "prettier . --check --cache",
 		"check:lint:all": "run-eslint",
 		"check:turbo": "turbo check",
+		"clean": "rm -rf node_modules .turbo",
 		"fix": "runx fix",
 		"fix:deps": "run-fix-deps",
 		"fix:format": "prettier . --write --cache",
