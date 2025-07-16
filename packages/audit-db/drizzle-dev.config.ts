@@ -2,8 +2,10 @@ import type { Config } from 'drizzle-kit'
 
 import 'dotenv/config' // To load .env variables for drizzle-kit
 
-if (!process.env.DATABASE_URL) {
-	throw new Error('DATABASE_URL environment variable is required for Drizzle Kit')
+const databaseUrl = process.env.AUDIT_DB_URL || process.env.DATABASE_URL
+
+if (!databaseUrl) {
+	throw new Error('AUDIT_DB_URL or DATABASE_URL environment variable is required for Drizzle Kit')
 }
 
 export default {
@@ -11,7 +13,7 @@ export default {
 	out: './drizzle/migrations', // Output directory for migrations
 	dialect: 'postgresql', // Specify PostgreSQL dialect
 	dbCredentials: {
-		url: process.env.DATABASE_URL,
+		url: databaseUrl,
 	},
 	// Optionally, you can specify the migrations table name
 	migrations: {

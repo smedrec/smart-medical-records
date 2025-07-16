@@ -1,34 +1,55 @@
 {
-	"version": "7",
-	"dialect": "postgresql",
-	"entries": [
-		{
-			"idx": 0,
-			"version": "7",
-			"when": 1750836729725,
-			"tag": "0000_sturdy_gateway",
-			"breakpoints": true
-		},
-		{
-			"idx": 1,
-			"version": "7",
-			"when": 1750871202911,
-			"tag": "0001_glamorous_silver_fox",
-			"breakpoints": true
-		},
-		{
-			"idx": 2,
-			"version": "7",
-			"when": 1750878022215,
-			"tag": "0002_even_morlun",
-			"breakpoints": true
-		},
-		{
-			"idx": 3,
-			"version": "7",
-			"when": 1750878058991,
-			"tag": "0003_sad_retro_girl",
-			"breakpoints": true
-		}
-	]
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1750836729725,
+      "tag": "0000_sturdy_gateway",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1750871202911,
+      "tag": "0001_glamorous_silver_fox",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1750878022215,
+      "tag": "0002_even_morlun",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1750878058991,
+      "tag": "0003_sad_retro_girl",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1752624668880,
+      "tag": "0004_wandering_machine_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1752632561254,
+      "tag": "0005_magenta_peter_quill",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1752633419631,
+      "tag": "0006_unknown_siren",
+      "breakpoints": true
+    }
+  ]
 }

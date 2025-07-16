@@ -94,3 +94,22 @@ export type SharedAppContext = {
 	env: SharedHonoEnv
 	//executionCtx: Pick<ExecutionContext, 'waitUntil'>
 }
+
+export type Session = {
+	id: string
+	token: string
+	userId: string
+	expiresAt: Date
+	createdAt: Date
+	updatedAt: Date
+	ipAddress?: string | null | undefined
+	userAgent?: string | null | undefined
+	activeOrganizationId?: string | null | undefined
+	activeOrganizationRole?: string | null | undefined
+	smartClientAccessToken?: string | null | undefined
+	fhirBaseUrl?: string | null | undefined
+	// Practitioner-specific session data
+	verificationStatus?: 'pending' | 'verified' | 'failed' | 'manual_review' | 'expired' | null
+	isVerified?: boolean | null
+	assignedAssistantId?: string | null
+}

@@ -6,16 +6,25 @@ resourcePolicy:
   resource: Organization
   version: default
   rules:
+    # Owner and admin have full access to organization resources
     - actions:
         - create
         - update
         - read
         - search
         - delete
+        - manage_practitioners
+        - invite_practitioners
+        - configure_sso
+        - manage_roles
+        - view_audit_logs
+        - export_compliance_reports
       effect: EFFECT_ALLOW
       roles:
         - admin
         - owner
+
+    # Basic read access for all organization members
     - actions:
         - read
       effect: EFFECT_ALLOW
@@ -23,3 +32,28 @@ resourcePolicy:
         - member
         - practitioner
         - patient
+        - assistant
+
+    # Assistant role can manage assigned practitioners within the organization
+    - actions:
+        - read
+        - manage_assigned_practitioners
+        - view_practitioner_status
+      effect: EFFECT_ALLOW
+      roles:
+        - assistant
+      condition:
+        match:
+          expr: request.resource.id == request.principal.attributes.organization_id
+
+    # Practitioners can view organization info and their own status
+    - actions:
+        - read
+        - view_own_status
+        - update_own_profile
+      effect: EFFECT_ALLOW
+      roles:
+        - practitioner
+      condition:
+        match:
+          expr: request.resource.id == request.principal.attributes.organization_id

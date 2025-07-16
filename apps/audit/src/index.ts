@@ -1,11 +1,15 @@
 import 'dotenv/config'
 
 import { serve } from '@hono/node-server'
-import { Worker } from 'bullmq'
 import { Hono } from 'hono'
-// import { Redis } from 'ioredis' // Removed ioredis import
 import { pino } from 'pino'
 
+import {
+	CircuitBreaker,
+	DeadLetterHandler,
+	DEFAULT_RELIABLE_PROCESSOR_CONFIG,
+	ReliableEventProcessor,
+} from '@repo/audit'
 import { AuditDb, auditLog as auditLogTableSchema } from '@repo/audit-db'
 import {
 	closeSharedRedisConnection,
@@ -13,12 +17,8 @@ import {
 	getSharedRedisConnection,
 } from '@repo/redis-client'
 
-// Added import for shared connection
-
-import type { Job } from 'bullmq'
-// import type { RedisOptions } from 'ioredis' // Removed ioredis import
 import type { LogLevel } from 'workers-tagged-logger'
-import type { AuditLogEvent } from '@repo/audit'
+import type { AuditLogEvent, ReliableProcessorConfig } from '@repo/audit'
 
 const LOG_LEVEL = (process.env.LOG_LEVEL || 'info') as LogLevel
 const AUDIT_QUEUE_NAME = process.env.AUDIT_QUEUE_NAME || 'audit'
@@ -59,37 +59,72 @@ connection.on('error', (err) => {
 let auditDbService: AuditDb | undefined = undefined
 export { auditDbService }
 
+// Reliable event processor instance
+let reliableProcessor: ReliableEventProcessor<AuditLogEvent> | undefined = undefined
+
 // Simple healthcheck server for audit worker
 const port = parseInt(process.env.AUDIT_WORKER_PORT!, 10) || 5600
 const app = new Hono()
 
 app.get('/healthz', async (c) => {
-	if (!auditDbService) {
-		// This case should ideally not happen if main() has initialized it
-		logger.warn('Health check called before auditDbService is initialized.')
+	if (!auditDbService || !reliableProcessor) {
+		logger.warn('Health check called before services are initialized.')
 		c.status(503)
-		return c.text('Service Unavailable: DB service not initialized')
+		return c.text('Service Unavailable: Services not initialized')
 	}
 
 	const redisStatus = getRedisConnectionStatus()
 	const dbConnected = await auditDbService.checkAuditDbConnection()
+	const processorHealth = await reliableProcessor.getHealthStatus()
 
-	if (redisStatus === 'ready' && dbConnected) {
-		return c.text('OK')
+	if (
+		redisStatus === 'ready' &&
+		dbConnected &&
+		processorHealth.isRunning &&
+		processorHealth.healthScore > 70
+	) {
+		return c.json({
+			status: 'OK',
+			redis: redisStatus,
+			database: dbConnected,
+			processor: {
+				running: processorHealth.isRunning,
+				healthScore: processorHealth.healthScore,
+				circuitBreakerState: processorHealth.circuitBreakerState,
+				queueDepth: processorHealth.queueDepth,
+			},
+		})
 	} else {
 		logger.warn(
-			`Health check failed: Redis status is "${redisStatus}", DB connected: ${dbConnected}`
+			`Health check failed: Redis: ${redisStatus}, DB: ${dbConnected}, Processor: ${processorHealth.isRunning}, Health Score: ${processorHealth.healthScore}`
 		)
 		c.status(503)
-		let errorMessages = []
-		if (redisStatus !== 'ready') {
-			errorMessages.push(`Redis not ready (status: ${redisStatus})`)
-		}
-		if (!dbConnected) {
-			errorMessages.push('Database not connected')
-		}
-		return c.text(`Service Unavailable: ${errorMessages.join(', ')}`)
+		return c.json({
+			status: 'Service Unavailable',
+			redis: redisStatus,
+			database: dbConnected,
+			processor: processorHealth,
+		})
 	}
+})
+
+app.get('/metrics', async (c) => {
+	if (!reliableProcessor) {
+		c.status(503)
+		return c.json({ error: 'Processor not initialized' })
+	}
+
+	const [processorMetrics, cbMetrics, dlMetrics] = await Promise.all([
+		reliableProcessor.getMetrics(),
+		reliableProcessor.getCircuitBreakerMetrics(),
+		reliableProcessor.getDeadLetterMetrics(),
+	])
+
+	return c.json({
+		processor: processorMetrics,
+		circuitBreaker: cbMetrics,
+		deadLetter: dlMetrics,
+	})
 })
 
 const server = serve(app)
@@ -114,10 +149,9 @@ async function main() {
 
 	const db = auditDbService.getDrizzleInstance()
 
-	// 2. Define the job processor
-	const processJob = async (job: Job<AuditLogEvent, any, string>): Promise<void> => {
-		logger.info(`Processing job ${job.id} for action: ${job.data.action}`)
-		const eventData = job.data
+	// 2. Define the reliable event processor
+	const processAuditEvent = async (eventData: AuditLogEvent): Promise<void> => {
+		logger.info(`Processing audit event for action: ${eventData.action}`)
 
 		// Extract known fields and prepare 'details' for the rest
 		const {
@@ -130,57 +164,75 @@ async function main() {
 			targetResourceId,
 			status,
 			outcomeDescription,
-			...additionalDetails // Captures all other properties
+			hash,
+			hashAlgorithm,
+			eventVersion,
+			correlationId,
+			dataClassification,
+			retentionPolicy,
+			processingLatency,
+			archivedAt,
+			...additionalDetails // Captures all other properties including practitioner-specific fields
 		} = eventData
 
-		try {
-			await db.insert(auditLogTableSchema).values({
-				timestamp, // This comes from the event, should be an ISO string
-				ttl,
-				principalId,
-				organizationId,
-				action,
-				targetResourceType,
-				targetResourceId,
-				status,
-				outcomeDescription,
-				details: Object.keys(additionalDetails).length > 0 ? additionalDetails : null,
-			})
-			logger.info(
-				`✅ Job ${job.id} processed successfully. Audit log for action '${action}' stored.`
-			)
-		} catch (error) {
-			logger.error(`❌ Error processing job ${job.id} for action '${action}':`, error)
-			// Depending on the error, you might want to:
-			// - Let BullMQ handle retries (default behavior for unhandled promise rejections)
-			// - Implement custom retry logic
-			// - Move the job to a dead-letter queue if it's consistently failing
-			// For now, re-throwing the error to let BullMQ handle it based on its configuration.
-			throw error
-		}
+		// This will throw an error if database operation fails, which will be caught by the retry mechanism
+		await db.insert(auditLogTableSchema).values({
+			timestamp, // This comes from the event, should be an ISO string
+			ttl,
+			principalId,
+			organizationId,
+			action,
+			targetResourceType,
+			targetResourceId,
+			status,
+			outcomeDescription,
+			hash,
+			hashAlgorithm,
+			eventVersion,
+			correlationId,
+			dataClassification,
+			retentionPolicy,
+			processingLatency,
+			archivedAt,
+			details: Object.keys(additionalDetails).length > 0 ? additionalDetails : null,
+		})
+
+		logger.info(`✅ Audit event processed successfully. Action '${action}' stored.`)
 	}
 
-	// 3. Create and start the BullMQ worker
-	const worker = new Worker<AuditLogEvent>(AUDIT_QUEUE_NAME, processJob, {
-		connection,
+	// 3. Configure reliable processor
+	const processorConfig: ReliableProcessorConfig = {
+		...DEFAULT_RELIABLE_PROCESSOR_CONFIG,
+		queueName: AUDIT_QUEUE_NAME,
 		concurrency: process.env.WORKER_CONCURRENCY ? parseInt(process.env.WORKER_CONCURRENCY, 10) : 5,
-		removeOnComplete: { count: 1000 }, // Keep last 1000 completed jobs
-		removeOnFail: { count: 5000 }, // Keep last 5000 failed jobs
-	})
+		retryConfig: {
+			...DEFAULT_RELIABLE_PROCESSOR_CONFIG.retryConfig,
+			maxRetries: parseInt(process.env.MAX_RETRIES || '5', 10),
+			baseDelay: parseInt(process.env.RETRY_BASE_DELAY || '1000', 10),
+			maxDelay: parseInt(process.env.RETRY_MAX_DELAY || '30000', 10),
+		},
+		circuitBreakerConfig: {
+			...DEFAULT_RELIABLE_PROCESSOR_CONFIG.circuitBreakerConfig,
+			failureThreshold: parseInt(process.env.CIRCUIT_BREAKER_THRESHOLD || '5', 10),
+			recoveryTimeout: parseInt(process.env.CIRCUIT_BREAKER_RECOVERY_TIMEOUT || '30000', 10),
+		},
+		deadLetterConfig: {
+			...DEFAULT_RELIABLE_PROCESSOR_CONFIG.deadLetterConfig,
+			queueName: `${AUDIT_QUEUE_NAME}-dead-letter`,
+			alertThreshold: parseInt(process.env.DEAD_LETTER_ALERT_THRESHOLD || '10', 10),
+		},
+	}
 
-	worker.on('completed', (job) => {
-		logger.debug(`Job ${job.id} has completed.`)
-	})
+	// 4. Create and start the reliable event processor
+	reliableProcessor = new ReliableEventProcessor<AuditLogEvent>(
+		connection,
+		processAuditEvent,
+		processorConfig
+	)
 
-	worker.on('failed', (job, err) => {
-		logger.error(`Job ${job?.id} has failed with error: ${err.message}`, err)
-	})
+	await reliableProcessor.start()
 
-	worker.on('error', (err) => {
-		logger.error('🚨 BullMQ worker encountered an error:', err)
-	})
-
-	logger.info(`👂 Worker listening for jobs on queue: "${AUDIT_QUEUE_NAME}"`)
+	logger.info(`👂 Reliable processor listening for jobs on queue: "${AUDIT_QUEUE_NAME}"`)
 
 	serve({
 		fetch: app.fetch,
@@ -193,10 +245,12 @@ async function main() {
 	const gracefulShutdown = async (signal: string) => {
 		logger.info(`🚦 Received ${signal}. Shutting down gracefully...`)
 		server.close()
-		await worker.close()
+		if (reliableProcessor) {
+			await reliableProcessor.stop()
+		}
 		await closeSharedRedisConnection() // Use shared client's close function
 		await auditDbService?.end()
-		logger.info('🚪 Worker, Postgres and Redis connections closed. Exiting.')
+		logger.info('🚪 Reliable processor, Postgres and Redis connections closed. Exiting.')
 		process.exit(0)
 	}
 

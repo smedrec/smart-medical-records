@@ -1,13 +1,13 @@
 # Implementation Plan
 
-- [ ] 1. Extend existing auth-db schema for practitioner management
+- [x] 1. Extend existing auth-db schema for practitioner management
   - Add practitioner-specific tables to existing auth-db schema (license certificates, verification attempts)
   - Create database migrations using existing Drizzle setup in packages/auth-db
   - Extend existing user schema to support practitioner-specific fields (license info, verification status)
   - Create TypeScript interfaces that integrate with existing Better Auth types
   - _Requirements: 1.1, 2.1, 5.1, 6.1, 7.1_
 
-- [ ] 2. Extend Cerbos policies for practitioner management permissions
+- [x] 2. Extend Cerbos policies for practitioner management permissions
   - Create new Cerbos policies for practitioner license verification and management resources
   - Extend existing practitioner.yaml policy to include license verification actions
   - Add new policies for license certificate resources and verification workflow
@@ -25,7 +25,7 @@
   - Write integration tests for enterprise authentication flows
   - _Requirements: 8.2, 8.5_
 
-- [ ] 4. Develop license verification service
+- [x] 4. Develop license verification service
   - Create license verification service with multiple API provider support
   - Implement API clients for major licensing databases (NPI, GMC, etc.)
   - Build retry logic with exponential backoff for API failures
@@ -43,9 +43,10 @@
   - Write unit tests for text extraction and validation logic
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
 
-- [ ] 6. Extend existing audit service for practitioner management
-  - Leverage existing @repo/audit package and apps/audit application
+- [x] 6. Extend existing audit service for practitioner management
+  - Leverage existing @repo/audit and @repo/audit-db packages and apps/audit application
   - Add practitioner-specific audit event types to existing audit system
+  - Add immutable audit logs with cryptographic hashing feature
   - Create compliance reporting features using existing audit infrastructure
   - Extend existing audit log querying for practitioner verification events
   - Add HIPAA-compliant audit log export capabilities

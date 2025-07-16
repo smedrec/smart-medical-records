@@ -1,6 +1,10 @@
 import {
 	boolean,
+	date,
+	decimal,
 	integer,
+	jsonb,
+	pgEnum,
 	pgTable,
 	primaryKey,
 	text,
@@ -262,3 +266,108 @@ export const emailProvider = pgTable(
 		return [primaryKey({ columns: [table.organizationId] })]
 	}
 )
+
+// Practitioner Management Enums
+export const verificationStatusEnum = pgEnum('verification_status', [
+	'pending',
+	'verified',
+	'failed',
+	'manual_review',
+	'expired',
+])
+
+export const ocrStatusEnum = pgEnum('ocr_status', ['pending', 'processing', 'completed', 'failed'])
+
+export const documentVerificationStatusEnum = pgEnum('document_verification_status', [
+	'pending',
+	'verified',
+	'failed',
+	'manual_review',
+])
+
+export const verificationAttemptTypeEnum = pgEnum('verification_attempt_type', [
+	'api',
+	'ocr',
+	'manual',
+])
+
+export const userRoleEnum = pgEnum('user_role', ['owner', 'practitioner', 'assistant'])
+
+// Practitioner Management Tables
+export const practitioner = pgTable(
+	'practitioner',
+	{
+		id: text('id')
+			.primaryKey()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		licenseNumber: varchar('license_number', { length: 100 }).notNull(),
+		jurisdiction: varchar('jurisdiction', { length: 100 }).notNull(),
+		licenseType: varchar('license_type', { length: 100 }).notNull(),
+		licenseExpiryDate: date('license_expiry_date'),
+		verificationStatus: verificationStatusEnum('verification_status').default('pending').notNull(),
+		verifiedAt: timestamp('verified_at'),
+		verifiedBy: text('verified_by').references(() => user.id),
+		specialties: text('specialties').array(),
+		credentials: text('credentials').array(),
+		createdAt: timestamp('created_at')
+			.$defaultFn(() => new Date())
+			.notNull(),
+		updatedAt: timestamp('updated_at')
+			.$defaultFn(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return [
+			uniqueIndex('practitioner_license_jurisdiction_idx').on(
+				table.licenseNumber,
+				table.jurisdiction
+			),
+		]
+	}
+)
+
+export const licenseCertificate = pgTable('license_certificate', {
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	practitionerId: text('practitioner_id')
+		.notNull()
+		.references(() => practitioner.id, { onDelete: 'cascade' }),
+	fileName: varchar('file_name', { length: 255 }).notNull(),
+	fileSize: integer('file_size').notNull(),
+	mimeType: varchar('mime_type', { length: 100 }).notNull(),
+	filePath: varchar('file_path', { length: 500 }).notNull(),
+	uploadedAt: timestamp('uploaded_at')
+		.$defaultFn(() => new Date())
+		.notNull(),
+	ocrStatus: ocrStatusEnum('ocr_status').default('pending').notNull(),
+	ocrResult: jsonb('ocr_result'),
+	verificationStatus: documentVerificationStatusEnum('verification_status')
+		.default('pending')
+		.notNull(),
+	createdAt: timestamp('created_at')
+		.$defaultFn(() => new Date())
+		.notNull(),
+	updatedAt: timestamp('updated_at')
+		.$defaultFn(() => new Date())
+		.notNull(),
+})
+
+export const verificationAttempt = pgTable('verification_attempt', {
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	practitionerId: text('practitioner_id')
+		.notNull()
+		.references(() => practitioner.id, { onDelete: 'cascade' }),
+	attemptType: verificationAttemptTypeEnum('attempt_type').notNull(),
+	status: verificationStatusEnum('status').notNull(),
+	apiProvider: varchar('api_provider', { length: 100 }),
+	apiResponse: jsonb('api_response'),
+	ocrConfidence: decimal('ocr_confidence', { precision: 5, scale: 4 }),
+	reviewedBy: text('reviewed_by').references(() => user.id),
+	notes: text('notes'),
+	createdAt: timestamp('created_at')
+		.$defaultFn(() => new Date())
+		.notNull(),
+})

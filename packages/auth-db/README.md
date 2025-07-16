@@ -6,7 +6,10 @@ The `@repo/auth-db` package provides a reusable class, `AuthDb`, for initializin
 
 - Easy initialization of a Drizzle ORM instance for PostgreSQL.
 - Connection configuration via environment variables (`AUTH_DB_URL`) or direct constructor arguments.
-- Includes the audit log database schema (`auditLog`).
+- Includes comprehensive authentication and authorization schema.
+- Practitioner management with license verification and document processing.
+- Role-based access control with owner, practitioner, and assistant roles.
+- Audit logging and compliance tracking.
 - Provides a connection check utility.
 
 ## Installation
@@ -86,6 +89,51 @@ The database schema is defined in `src/schema.ts`. This package uses Drizzle Kit
 
 Make sure your database connection URL is correctly configured (e.g., via `AUTH_DB_URL` or in `drizzle-dev.config.ts`) when running these commands.
 
-```
+## Practitioner Management Schema
 
+The package includes comprehensive schema support for healthcare practitioner management:
+
+### Core Tables
+
+- **`practitioner`**: Extends user accounts with license information, verification status, and professional credentials
+- **`license_certificate`**: Stores uploaded license documents with OCR processing results
+- **`verification_attempt`**: Tracks all verification attempts (API, OCR, manual) with detailed results
+
+### Key Features
+
+- **License Verification**: Support for multiple verification methods (API, OCR, manual review)
+- **Document Processing**: OCR capabilities for license certificate validation
+- **Role-Based Access**: Three distinct roles (owner, practitioner, assistant) with appropriate permissions
+- **Audit Trail**: Complete tracking of all verification and approval activities
+- **Compliance**: HIPAA-compliant data handling and audit logging
+
+### Usage Example
+
+```typescript
+import { AuthDb, licenseCertificate, practitioner } from '@repo/auth-db'
+
+import type { NewPractitioner } from '@repo/auth-db'
+
+const authDb = new AuthDb()
+const db = authDb.getDrizzleInstance()
+
+// Create a new practitioner
+const newPractitioner: NewPractitioner = {
+	id: 'user-123',
+	licenseNumber: 'MD123456',
+	jurisdiction: 'US-CA',
+	licenseType: 'MD',
+	verificationStatus: 'pending',
+	specialties: ['Internal Medicine'],
+	credentials: ['MD', 'FACP'],
+}
+
+await db.insert(practitioner).values(newPractitioner)
+
+// Query practitioners with their certificates
+const practitionersWithCerts = await db
+	.select()
+	.from(practitioner)
+	.leftJoin(licenseCertificate, eq(practitioner.id, licenseCertificate.practitionerId))
+	.where(eq(practitioner.verificationStatus, 'verified'))
 ```
