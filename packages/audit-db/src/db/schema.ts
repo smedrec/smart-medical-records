@@ -1,17 +1,3 @@
-// Example of how you might import AuditLogEvent if needed for type checking,
-// though for schema definition, referencing AuditEventStatus is more direct.
-// import type { AuditLogEvent } from '@repo/audit';
-// const _typeCheck: AuditLogEvent = {} as typeof auditLog.$inferInsert;
-// However, AuditLogEvent has [key: string]: any which makes direct mapping tricky.
-// The 'details' jsonb column is intended to capture that.
-// The timestamp in AuditLogEvent is a string, while here it's managed by the DB or converted.
-// The schema uses defaultNow() for timestamp, but events will come with their own.
-// We will use the timestamp from the event when inserting.
-// The definition above is for the table structure.
-// When inserting, we'll map AuditLogEvent fields to these columns.
-// The `timestamp` column will store the string from `AuditLogEvent.timestamp`.
-// To ensure this, I will remove .defaultNow() and make sure it's set on insert.
-
 // Re-evaluating timestamp: The AuditLogEvent provides a string timestamp.
 // It's better to store this as pg `timestamp with time zone`.
 // Drizzle's `timestamp` with `mode: 'string'` should handle ISO string conversion.
