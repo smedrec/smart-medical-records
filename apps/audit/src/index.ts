@@ -6,8 +6,16 @@ import { pino } from 'pino'
 
 import {
 	CircuitBreaker,
+	CircuitBreakerHealthCheck,
+	ConsoleAlertHandler,
+	DatabaseHealthCheck,
 	DeadLetterHandler,
 	DEFAULT_RELIABLE_PROCESSOR_CONFIG,
+	HealthCheckService,
+	MonitoringService,
+	ProcessingHealthCheck,
+	QueueHealthCheck,
+	RedisHealthCheck,
 	ReliableEventProcessor,
 } from '@repo/audit'
 import { AuditDb, auditLog as auditLogTableSchema } from '@repo/audit-db'
@@ -62,69 +70,154 @@ export { auditDbService }
 // Reliable event processor instance
 let reliableProcessor: ReliableEventProcessor<AuditLogEvent> | undefined = undefined
 
+// Monitoring and health check services
+let monitoringService: MonitoringService | undefined = undefined
+let healthCheckService: HealthCheckService | undefined = undefined
+
 // Simple healthcheck server for audit worker
 const port = parseInt(process.env.AUDIT_WORKER_PORT!, 10) || 5600
 const app = new Hono()
 
 app.get('/healthz', async (c) => {
-	if (!auditDbService || !reliableProcessor) {
+	if (!healthCheckService) {
 		logger.warn('Health check called before services are initialized.')
 		c.status(503)
 		return c.text('Service Unavailable: Services not initialized')
 	}
 
-	const redisStatus = getRedisConnectionStatus()
-	const dbConnected = await auditDbService.checkAuditDbConnection()
-	const processorHealth = await reliableProcessor.getHealthStatus()
+	try {
+		const healthStatus = await healthCheckService.checkAllComponents()
 
-	if (
-		redisStatus === 'ready' &&
-		dbConnected &&
-		processorHealth.isRunning &&
-		processorHealth.healthScore > 70
-	) {
-		return c.json({
-			status: 'OK',
-			redis: redisStatus,
-			database: dbConnected,
-			processor: {
-				running: processorHealth.isRunning,
-				healthScore: processorHealth.healthScore,
-				circuitBreakerState: processorHealth.circuitBreakerState,
-				queueDepth: processorHealth.queueDepth,
-			},
-		})
-	} else {
-		logger.warn(
-			`Health check failed: Redis: ${redisStatus}, DB: ${dbConnected}, Processor: ${processorHealth.isRunning}, Health Score: ${processorHealth.healthScore}`
-		)
+		if (healthStatus.status === 'OK') {
+			return c.json(healthStatus)
+		} else {
+			logger.warn(`Health check failed with status: ${healthStatus.status}`)
+			c.status(healthStatus.status === 'CRITICAL' ? 503 : 200)
+			return c.json(healthStatus)
+		}
+	} catch (error) {
+		logger.error('Health check failed with error:', error)
 		c.status(503)
 		return c.json({
-			status: 'Service Unavailable',
-			redis: redisStatus,
-			database: dbConnected,
-			processor: processorHealth,
+			status: 'CRITICAL',
+			error: error instanceof Error ? error.message : 'Unknown error',
+			timestamp: new Date().toISOString(),
 		})
 	}
 })
 
 app.get('/metrics', async (c) => {
-	if (!reliableProcessor) {
+	if (!reliableProcessor || !monitoringService) {
 		c.status(503)
-		return c.json({ error: 'Processor not initialized' })
+		return c.json({ error: 'Services not initialized' })
 	}
 
-	const [processorMetrics, cbMetrics, dlMetrics] = await Promise.all([
-		reliableProcessor.getMetrics(),
-		reliableProcessor.getCircuitBreakerMetrics(),
-		reliableProcessor.getDeadLetterMetrics(),
-	])
+	try {
+		const [processorMetrics, cbMetrics, dlMetrics, auditMetrics] = await Promise.all([
+			reliableProcessor.getMetrics(),
+			reliableProcessor.getCircuitBreakerMetrics(),
+			reliableProcessor.getDeadLetterMetrics(),
+			Promise.resolve(monitoringService.getMetrics()),
+		])
 
-	return c.json({
-		processor: processorMetrics,
-		circuitBreaker: cbMetrics,
-		deadLetter: dlMetrics,
-	})
+		return c.json({
+			processor: processorMetrics,
+			circuitBreaker: cbMetrics,
+			deadLetter: dlMetrics,
+			monitoring: auditMetrics,
+		})
+	} catch (error) {
+		logger.error('Failed to collect metrics:', error)
+		c.status(500)
+		return c.json({
+			error: 'Failed to collect metrics',
+			message: error instanceof Error ? error.message : 'Unknown error',
+		})
+	}
+})
+
+app.get('/alerts', async (c) => {
+	if (!monitoringService) {
+		c.status(503)
+		return c.json({ error: 'Monitoring service not initialized' })
+	}
+
+	try {
+		const activeAlerts = monitoringService.getActiveAlerts()
+		return c.json({
+			alerts: activeAlerts,
+			count: activeAlerts.length,
+			timestamp: new Date().toISOString(),
+		})
+	} catch (error) {
+		logger.error('Failed to get alerts:', error)
+		c.status(500)
+		return c.json({
+			error: 'Failed to get alerts',
+			message: error instanceof Error ? error.message : 'Unknown error',
+		})
+	}
+})
+
+app.post('/alerts/:alertId/resolve', async (c) => {
+	if (!monitoringService) {
+		c.status(503)
+		return c.json({ error: 'Monitoring service not initialized' })
+	}
+
+	const alertId = c.req.param('alertId')
+	const body = await c.req.json().catch(() => ({}))
+	const resolvedBy = body.resolvedBy || 'system'
+
+	try {
+		await monitoringService.resolveAlert(alertId, resolvedBy)
+		return c.json({
+			success: true,
+			message: `Alert ${alertId} resolved by ${resolvedBy}`,
+			timestamp: new Date().toISOString(),
+		})
+	} catch (error) {
+		logger.error('Failed to resolve alert:', error)
+		c.status(500)
+		return c.json({
+			error: 'Failed to resolve alert',
+			message: error instanceof Error ? error.message : 'Unknown error',
+		})
+	}
+})
+
+app.get('/health/:component', async (c) => {
+	if (!healthCheckService) {
+		c.status(503)
+		return c.json({ error: 'Health check service not initialized' })
+	}
+
+	const componentName = c.req.param('component')
+
+	try {
+		const componentHealth = await healthCheckService.checkComponent(componentName)
+
+		if (!componentHealth) {
+			c.status(404)
+			return c.json({
+				error: 'Component not found',
+				component: componentName,
+			})
+		}
+
+		const statusCode =
+			componentHealth.status === 'CRITICAL' ? 503 : componentHealth.status === 'WARNING' ? 200 : 200
+
+		c.status(statusCode)
+		return c.json(componentHealth)
+	} catch (error) {
+		logger.error('Failed to check component health:', error)
+		c.status(500)
+		return c.json({
+			error: 'Failed to check component health',
+			message: error instanceof Error ? error.message : 'Unknown error',
+		})
+	}
 })
 
 const server = serve(app)
@@ -149,55 +242,76 @@ async function main() {
 
 	const db = auditDbService.getDrizzleInstance()
 
-	// 2. Define the reliable event processor
+	// 2. Initialize monitoring and health check services
+	monitoringService = new MonitoringService()
+	monitoringService.addAlertHandler(new ConsoleAlertHandler())
+
+	healthCheckService = new HealthCheckService()
+
+	// Register health checks
+	healthCheckService.registerHealthCheck(
+		new DatabaseHealthCheck(() => auditDbService!.checkAuditDbConnection())
+	)
+	healthCheckService.registerHealthCheck(new RedisHealthCheck(() => getRedisConnectionStatus()))
+
+	// 3. Define the reliable event processor with monitoring integration
 	const processAuditEvent = async (eventData: AuditLogEvent): Promise<void> => {
+		const startTime = Date.now()
 		logger.info(`Processing audit event for action: ${eventData.action}`)
 
-		// Extract known fields and prepare 'details' for the rest
-		const {
-			timestamp,
-			ttl,
-			principalId,
-			organizationId,
-			action,
-			targetResourceType,
-			targetResourceId,
-			status,
-			outcomeDescription,
-			hash,
-			hashAlgorithm,
-			eventVersion,
-			correlationId,
-			dataClassification,
-			retentionPolicy,
-			processingLatency,
-			archivedAt,
-			...additionalDetails // Captures all other properties including practitioner-specific fields
-		} = eventData
+		try {
+			// Process event through monitoring service for pattern detection
+			await monitoringService!.processEvent(eventData)
 
-		// This will throw an error if database operation fails, which will be caught by the retry mechanism
-		await db.insert(auditLogTableSchema).values({
-			timestamp, // This comes from the event, should be an ISO string
-			ttl,
-			principalId,
-			organizationId,
-			action,
-			targetResourceType,
-			targetResourceId,
-			status,
-			outcomeDescription,
-			hash,
-			hashAlgorithm,
-			eventVersion,
-			correlationId,
-			dataClassification,
-			retentionPolicy,
-			processingLatency,
-			archivedAt,
-			details: Object.keys(additionalDetails).length > 0 ? additionalDetails : null,
-		})
+			// Extract known fields and prepare 'details' for the rest
+			const {
+				timestamp,
+				ttl,
+				principalId,
+				organizationId,
+				action,
+				targetResourceType,
+				targetResourceId,
+				status,
+				outcomeDescription,
+				hash,
+				hashAlgorithm,
+				eventVersion,
+				correlationId,
+				dataClassification,
+				retentionPolicy,
+				processingLatency,
+				archivedAt,
+				...additionalDetails // Captures all other properties including practitioner-specific fields
+			} = eventData
 
-		logger.info(`✅ Audit event processed successfully. Action '${action}' stored.`)
+			// This will throw an error if database operation fails, which will be caught by the retry mechanism
+			await db.insert(auditLogTableSchema).values({
+				timestamp, // This comes from the event, should be an ISO string
+				ttl,
+				principalId,
+				organizationId,
+				action,
+				targetResourceType,
+				targetResourceId,
+				status,
+				outcomeDescription,
+				hash,
+				hashAlgorithm,
+				eventVersion,
+				correlationId,
+				dataClassification,
+				retentionPolicy,
+				processingLatency: processingLatency || Date.now() - startTime,
+				archivedAt,
+				details: Object.keys(additionalDetails).length > 0 ? additionalDetails : null,
+			})
+
+			logger.info(`✅ Audit event processed successfully. Action '${action}' stored.`)
+		} catch (error) {
+			logger.error(`❌ Failed to process audit event: ${error}`)
+			throw error // Re-throw to trigger retry mechanism
+		}
 	}
 
 	// 3. Configure reliable processor
@@ -231,6 +345,31 @@ async function main() {
 	)
 
 	await reliableProcessor.start()
+
+	// 5. Register additional health checks that depend on the processor
+	healthCheckService.registerHealthCheck(
+		new QueueHealthCheck(
+			async () => {
+				const metrics = await reliableProcessor!.getMetrics()
+				return metrics.queueDepth || 0
+			},
+			async () => {
+				const metrics = await reliableProcessor!.getMetrics()
+				return metrics.processedJobs || 0
+			}
+		)
+	)
+
+	healthCheckService.registerHealthCheck(
+		new ProcessingHealthCheck(async () => monitoringService!.getMetrics())
+	)
+
+	healthCheckService.registerHealthCheck(
+		new CircuitBreakerHealthCheck(async () => {
+			const metrics = await reliableProcessor!.getCircuitBreakerMetrics()
+			return metrics.state || 'UNKNOWN'
+		})
+	)
 
 	logger.info(`👂 Reliable processor listening for jobs on queue: "${AUDIT_QUEUE_NAME}"`)
 
