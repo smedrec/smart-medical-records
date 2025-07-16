@@ -1,0 +1,52 @@
+{
+	"name": "@repo/audit-sdk",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Comprehensive audit logging SDK for SMEDREC healthcare applications",
+	"keywords": [
+		"audit",
+		"logging",
+		"healthcare",
+		"hipaa",
+		"gdpr",
+		"compliance",
+		"fhir",
+		"security"
+	],
+	"sideEffects": false,
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist",
+		"src",
+		"README.md"
+	],
+	"scripts": {
+		"build": "tsc --build",
+		"check:lint": "run-eslint",
+		"check:types": "run-tsc",
+		"docs:generate": "typedoc src/index.ts --out docs --theme default",
+		"test": "run-vitest"
+	},
+	"dependencies": {
+		"@repo/audit": "workspace:*",
+		"@repo/audit-db": "workspace:*",
+		"@repo/hono-helpers": "workspace:*",
+		"@repo/redis-client": "workspace:*"
+	},
+	"devDependencies": {
+		"@repo/eslint-config": "workspace:*",
+		"@repo/tools": "workspace:*",
+		"@repo/typescript-config": "workspace:*",
+		"@types/express": "^5.0.3",
+		"@types/node": "24.0.13",
+		"typedoc": "^0.25.0",
+		"typescript": "5.5.4",
+		"vitest": "3.2.4"
+	},
+	"peerDependencies": {
+		"ioredis": "^5.6.1",
+		"postgres": "^3.4.7"
+	}
+}

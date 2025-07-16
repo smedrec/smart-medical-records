@@ -5,11 +5,9 @@ import { Hono } from 'hono'
 import { pino } from 'pino'
 
 import {
-	CircuitBreaker,
 	CircuitBreakerHealthCheck,
 	ConsoleAlertHandler,
 	DatabaseHealthCheck,
-	DeadLetterHandler,
 	DEFAULT_RELIABLE_PROCESSOR_CONFIG,
 	HealthCheckService,
 	MonitoringService,
@@ -355,7 +353,7 @@ async function main() {
 			},
 			async () => {
 				const metrics = await reliableProcessor!.getMetrics()
-				return metrics.processedJobs || 0
+				return metrics.totalProcessed || 0
 			}
 		)
 	)
@@ -366,8 +364,8 @@ async function main() {
 
 	healthCheckService.registerHealthCheck(
 		new CircuitBreakerHealthCheck(async () => {
-			const metrics = await reliableProcessor!.getCircuitBreakerMetrics()
-			return metrics.state || 'UNKNOWN'
+			const healthStatus = await reliableProcessor!.getHealthStatus()
+			return healthStatus.circuitBreakerState || 'UNKNOWN'
 		})
 	)
 

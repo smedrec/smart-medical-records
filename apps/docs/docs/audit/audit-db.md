@@ -1,10 +1,10 @@
 ---
-title: '@repo/auditdb'
+title: '@repo/audit-db'
 ---
 
-# `@repo/auditdb`
+# `@repo/audit-db`
 
-The `@repo/auditdb` package is a crucial component for maintaining a comprehensive audit trail across applications within the SMEDREC ecosystem. It provides a standardized way to connect to and interact with a PostgreSQL database designated for storing audit logs. The core of this package is the `AuditDb` class, which simplifies the initialization of a [Drizzle ORM](https://orm.drizzle.team/) client, pre-configured with the audit log schema.
+The `@repo/audit-db` package is a crucial component for maintaining a comprehensive audit trail across applications within the SMEDREC ecosystem. It provides a standardized way to connect to and interact with a PostgreSQL database designated for storing audit logs. The core of this package is the `AuditDb` class, which simplifies the initialization of a [Drizzle ORM](https://orm.drizzle.team/) client, pre-configured with the audit log schema.
 
 ## Purpose
 
@@ -14,14 +14,14 @@ The `@repo/auditdb` package is a crucial component for maintaining a comprehensi
 
 ## Installation
 
-To use `@repo/auditdb` in another package within your monorepo (e.g., an API service or a background worker), add it as a dependency:
+To use `@repo/audit-db` in another package within your monorepo (e.g., an API service or a background worker), add it as a dependency:
 
 ```bash
 # Navigate to your app's or package's directory
 cd apps/your-app # or packages/your-package
 
 # Add @repo/auditdb using pnpm, ensuring it links to the workspace version
-pnpm add '@repo/auditdb@workspace:*'
+pnpm add '@repo/audit-db@workspace:*'
 ```
 
 ## Setup
