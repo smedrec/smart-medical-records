@@ -1,16 +1,18 @@
 # Audit Package (`@repo/audit`)
 
-The `@repo/audit` package provides a standardized way for different applications and services within the platform to generate and send audit log events to a central auditing system.
+The `@repo/audit` package provides the core audit logging functionality for the SMEDREC platform. It handles the generation, validation, and queuing of audit events with built-in security and compliance features.
 
 ## Purpose
 
 The primary goals of this package are:
 
-- **Consistency**: To ensure that audit events are structured and sent in a uniform manner, regardless of their origin.
-- **Decoupling**: To abstract the details of the audit message queue and event submission process from the individual services. Services use this package's API without needing to know the underlying queueing mechanism (e.g., Redis, BullMQ).
-- **Ease of Use**: To offer a simple API for developers to integrate audit logging into their services with minimal effort.
+- **Security**: Cryptographic integrity verification with SHA-256 hashing and HMAC signatures
+- **Compliance**: Built-in HIPAA and GDPR compliance validation and data handling
+- **Reliability**: Guaranteed delivery with circuit breaker patterns and dead letter queues
+- **Performance**: Efficient queuing with BullMQ and Redis for high-throughput scenarios
+- **Healthcare Focus**: Specialized support for FHIR resources and PHI data handling
 
-By using `@repo/audit`, services can easily report significant actions, which are then consumed by the [Audit Worker (`apps/audit`)](./../apps/audit.md) for processing and storage.
+For a higher-level interface with additional features, consider using the [Audit SDK (`@repo/audit-sdk`)](./audit-sdk.md) which builds on this package.
 
 ## Installation
 
@@ -90,7 +92,3 @@ This configuration is often provided via environment variables or a configuratio
 - Avoid logging overly verbose or sensitive data directly in audit logs unless necessary and properly secured. Use the `details` field judiciously.
 - Ensure that the actor, action, and target are clearly identifiable.
 - Handle potential errors during event submission gracefully (e.g., network issues when sending to Redis).
-
-```
-
-```

@@ -13,5 +13,6 @@
 		"types": ["node"], // Remove worker-specific types if any were implicitly included by workers.json
 		"lib": ["ES2022"] // Ensure appropriate ES version
 	},
-	"include": ["src/**/*.ts"]
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules", "dist", "src/**/*.test.ts"]
 }

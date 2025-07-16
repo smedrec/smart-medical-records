@@ -18,6 +18,17 @@ export default defineUserConfig({
 				text: 'Introduction',
 				children: ['/get-started.md'],
 			},
+			{ text: 'Audit System', 
+				children: [
+					'/audit/get-started.md',
+					'/audit/audit-sdk.md',
+					'/audit/audit.md',
+					'/audit/audit-db.md',
+					'/audit/api-reference.md',
+					'/audit/examples.md',
+					'/audit/security.md',
+				]
+			},
 			{
 				text: 'AI Agents',
 				children: [
@@ -50,8 +61,9 @@ export default defineUserConfig({
 			{
 				text: 'Packages',
 				children: [
-					'/packages/audit.md',
-					'/packages/auditdb.md',
+					'/audit/audit-sdk.md',
+					'/audit/audit.md',
+					'/audit/audit-db.md',
 					'/packages/mailer.md',
 					'/packages/cerbos.md',
 				],
