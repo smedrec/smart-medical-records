@@ -13,7 +13,11 @@
 	"scripts": {
 		"audit-db:generate": "drizzle-kit generate --config=drizzle-dev.config.ts",
 		"audit-db:migrate": "drizzle-kit migrate --config=drizzle-dev.config.ts",
+		"audit-db:rollback": "tsx src/cli.ts rollback",
+		"audit-db:seed-policies": "tsx src/cli.ts seed-policies",
 		"audit-db:studio": "drizzle-kit studio --config=drizzle-dev.config.ts",
+		"audit-db:verify": "tsx src/cli.ts verify",
+		"audit-db:verify-compliance": "tsx src/cli.ts verify-compliance",
 		"build": "tsc --build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
@@ -33,6 +37,7 @@
 		"@repo/typescript-config": "workspace:*",
 		"@types/node": "24.0.13",
 		"drizzle-kit": "0.31.4",
+		"tsx": "^4.19.2",
 		"vitest": "3.2.4"
 	}
 }

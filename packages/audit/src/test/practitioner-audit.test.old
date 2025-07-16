@@ -1,0 +1,458 @@
+import { createHash } from 'crypto'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { PractitionerAuditService } from '../practitioner-audit.js'
+
+import type { Redis } from 'ioredis'
+
+// Mock Redis connection
+const mockRedis = {
+	status: 'ready',
+	on: vi.fn(),
+} as unknown as Redis
+
+// Mock BullMQ Queue
+vi.mock('bullmq', () => ({
+	Queue: vi.fn().mockImplementation(() => ({
+		add: vi.fn().mockResolvedValue({}),
+		close: vi.fn().mockResolvedValue({}),
+	})),
+}))
+
+// Mock shared Redis client
+vi.mock('@repo/redis-client', () => ({
+	getSharedRedisConnection: vi.fn(() => mockRedis),
+}))
+
+describe('PractitionerAuditService', () => {
+	let auditService: PractitionerAuditService
+	let mockQueue: any
+
+	beforeEach(() => {
+		vi.clearAllMocks()
+		auditService = new PractitionerAuditService('test-queue')
+		// Get the mocked queue instance
+		const { Queue } = require('bullmq')
+		mockQueue = new Queue('test-queue', { connection: mockRedis })
+	})
+
+	afterEach(() => {
+		vi.restoreAllMocks()
+	})
+
+	describe('logLicenseStatusChange', () => {
+		it('should log license status change with all required fields', async () => {
+			const params = {
+				practitionerId: 'prac-123',
+				licenseNumber: 'LIC-456',
+				jurisdiction: 'CA',
+				oldStatus: 'pending',
+				newStatus: 'active',
+				reason: 'Verification completed',
+				principalId: 'admin-789',
+				organizationId: 'org-001',
+				ipAddress: '192.168.1.1',
+				userAgent: 'Mozilla/5.0',
+				sessionId: 'sess-abc',
+			}
+
+			await auditService.logLicenseStatusChange(params)
+
+			expect(mockQueue.add).toHaveBeenCalledWith(
+				'test-queue',
+				expect.objectContaining({
+					action: 'practitionerLicenseStatusChange',
+					status: 'success',
+					targetResourceType: 'Practitioner',
+					targetResourceId: 'prac-123',
+					practitionerId: 'prac-123',
+					licenseNumber: 'LIC-456',
+					jurisdiction: 'CA',
+					oldStatus: 'pending',
+					newStatus: 'active',
+					reason: 'Verification completed',
+					principalId: 'admin-789',
+					organizationId: 'org-001',
+					ipAddress: '192.168.1.1',
+					userAgent: 'Mozilla/5.0',
+					sessionId: 'sess-abc',
+					outcomeDescription:
+						'License status changed from pending to active for practitioner prac-123',
+					timestamp: expect.any(String),
+					hash: expect.any(String),
+				}),
+				expect.any(Object)
+			)
+		})
+
+		it('should generate cryptographic hash for immutability', async () => {
+			const params = {
+				practitionerId: 'prac-123',
+				licenseNumber: 'LIC-456',
+				jurisdiction: 'CA',
+				oldStatus: 'pending',
+				newStatus: 'active',
+				reason: 'Verification completed',
+				principalId: 'admin-789',
+			}
+
+			await auditService.logLicenseStatusChange(params)
+
+			const callArgs = mockQueue.add.mock.calls[0][1]
+			expect(callArgs.hash).toBeDefined()
+			expect(callArgs.hash).toHaveLength(64) // SHA-256 hex string length
+
+			// Verify hash is correctly generated
+			const hashData = {
+				timestamp: callArgs.timestamp,
+				action: callArgs.action,
+				principalId: callArgs.principalId,
+				practitionerId: callArgs.practitionerId,
+				status: callArgs.status,
+				oldStatus: callArgs.oldStatus,
+				newStatus: callArgs.newStatus,
+				oldRole: callArgs.oldRole,
+				newRole: callArgs.newRole,
+			}
+			const expectedHash = createHash('sha256').update(JSON.stringify(hashData)).digest('hex')
+			expect(callArgs.hash).toBe(expectedHash)
+		})
+	})
+
+	describe('logRoleModification', () => {
+		it('should log role modification with administrator details', async () => {
+			const params = {
+				practitionerId: 'prac-123',
+				oldRole: 'Practitioner',
+				newRole: 'Owner',
+				reason: 'Promotion to admin',
+				administratorId: 'admin-789',
+				organizationId: 'org-001',
+			}
+
+			await auditService.logRoleModification(params)
+
+			expect(mockQueue.add).toHaveBeenCalledWith(
+				'test-queue',
+				expect.objectContaining({
+					action: 'practitionerRoleModification',
+					status: 'success',
+					targetResourceType: 'Practitioner',
+					targetResourceId: 'prac-123',
+					practitionerId: 'prac-123',
+					oldRole: 'Practitioner',
+					newRole: 'Owner',
+					reason: 'Promotion to admin',
+					principalId: 'admin-789',
+					organizationId: 'org-001',
+					outcomeDescription:
+						'Role changed from Practitioner to Owner for practitioner prac-123 by administrator admin-789',
+					timestamp: expect.any(String),
+					hash: expect.any(String),
+				}),
+				expect.any(Object)
+			)
+		})
+	})
+
+	describe('logLicenseVerificationAttempt', () => {
+		it('should log successful verification attempt', async () => {
+			const params = {
+				practitionerId: 'prac-123',
+				licenseNumber: 'LIC-456',
+				jurisdiction: 'CA',
+				verificationProvider: 'NPI Registry',
+				status: 'success' as const,
+				apiResponse: { verified: true, status: 'active' },
+				principalId: 'system',
+			}
+
+			await auditService.logLicenseVerificationAttempt(params)
+
+			expect(mockQueue.add).toHaveBeenCalledWith(
+				'test-queue',
+				expect.objectContaining({
+					action: 'practitionerLicenseVerificationSuccess',
+					status: 'success',
+					practitionerId: 'prac-123',
+					licenseNumber: 'LIC-456',
+					jurisdiction: 'CA',
+					verificationProvider: 'NPI Registry',
+					apiResponse: { verified: true, status: 'active' },
+					principalId: 'system',
+				}),
+				expect.any(Object)
+			)
+		})
+
+		it('should log failed verification attempt', async () => {
+			const params = {
+				practitionerId: 'prac-123',
+				licenseNumber: 'LIC-456',
+				jurisdiction: 'CA',
+				verificationProvider: 'NPI Registry',
+				status: 'failure' as const,
+				apiResponse: { error: 'License not found' },
+				outcomeDescription: 'License verification failed - license not found in registry',
+			}
+
+			await auditService.logLicenseVerificationAttempt(params)
+
+			expect(mockQueue.add).toHaveBeenCalledWith(
+				'test-queue',
+				expect.objectContaining({
+					action: 'practitionerLicenseVerificationFailure',
+					status: 'failure',
+					apiResponse: { error: 'License not found' },
+					outcomeDescription: 'License verification failed - license not found in registry',
+				}),
+				expect.any(Object)
+			)
+		})
+	})
+
+	describe('logOnboardingInitiated', () => {
+		it('should log practitioner onboarding initiation', async () => {
+			const params = {
+				practitionerId: 'prac-123',
+				invitedBy: 'admin-789',
+				organizationId: 'org-001',
+				ipAddress: '192.168.1.1',
+			}
+
+			await auditService.logOnboardingInitiated(params)
+
+			expect(mockQueue.add).toHaveBeenCalledWith(
+				'test-queue',
+				expect.objectContaining({
+					action: 'practitionerOnboardingInitiated',
+					status: 'success',
+					targetResourceType: 'Practitioner',
+					targetResourceId: 'prac-123',
+					practitionerId: 'prac-123',
+					principalId: 'admin-789',
+					organizationId: 'org-001',
+					ipAddress: '192.168.1.1',
+					outcomeDescription: 'Practitioner onboarding initiated for prac-123 by admin-789',
+				}),
+				expect.any(Object)
+			)
+		})
+	})
+
+	describe('logApprovalDecision', () => {
+		it('should log practitioner approval', async () => {
+			const params = {
+				practitionerId: 'prac-123',
+				approved: true,
+				reason: 'All verification checks passed',
+				reviewedBy: 'admin-789',
+				organizationId: 'org-001',
+			}
+
+			await auditService.logApprovalDecision(params)
+
+			expect(mockQueue.add).toHaveBeenCalledWith(
+				'test-queue',
+				expect.objectContaining({
+					action: 'practitionerApprovalGranted',
+					status: 'success',
+					practitionerId: 'prac-123',
+					reason: 'All verification checks passed',
+					reviewedBy: 'admin-789',
+					outcomeDescription:
+						'Practitioner prac-123 approved by admin-789: All verification checks passed',
+				}),
+				expect.any(Object)
+			)
+		})
+
+		it('should log practitioner rejection', async () => {
+			const params = {
+				practitionerId: 'prac-123',
+				approved: false,
+				reason: 'License verification failed',
+				reviewedBy: 'admin-789',
+				organizationId: 'org-001',
+			}
+
+			await auditService.logApprovalDecision(params)
+
+			expect(mockQueue.add).toHaveBeenCalledWith(
+				'test-queue',
+				expect.objectContaining({
+					action: 'practitionerApprovalRejected',
+					status: 'success',
+					practitionerId: 'prac-123',
+					reason: 'License verification failed',
+					reviewedBy: 'admin-789',
+					outcomeDescription:
+						'Practitioner prac-123 rejected by admin-789: License verification failed',
+				}),
+				expect.any(Object)
+			)
+		})
+	})
+
+	describe('logCertificateUpload', () => {
+		it('should log successful certificate upload', async () => {
+			const params = {
+				practitionerId: 'prac-123',
+				fileName: 'license-certificate.pdf',
+				fileSize: 1024000,
+				status: 'success' as const,
+				principalId: 'prac-123',
+			}
+
+			await auditService.logCertificateUpload(params)
+
+			expect(mockQueue.add).toHaveBeenCalledWith(
+				'test-queue',
+				expect.objectContaining({
+					action: 'practitionerCertificateUploaded',
+					status: 'success',
+					targetResourceType: 'LicenseCertificate',
+					targetResourceId: 'license-certificate.pdf',
+					practitionerId: 'prac-123',
+					principalId: 'prac-123',
+					outcomeDescription:
+						'Certificate license-certificate.pdf (1024000 bytes) upload success for practitioner prac-123',
+					fileSize: 1024000,
+					fileName: 'license-certificate.pdf',
+				}),
+				expect.any(Object)
+			)
+		})
+	})
+
+	describe('logOCRProcessing', () => {
+		it('should log OCR processing with confidence score', async () => {
+			const params = {
+				practitionerId: 'prac-123',
+				fileName: 'license-certificate.pdf',
+				ocrConfidence: 0.95,
+				status: 'success' as const,
+			}
+
+			await auditService.logOCRProcessing(params)
+
+			expect(mockQueue.add).toHaveBeenCalledWith(
+				'test-queue',
+				expect.objectContaining({
+					action: 'practitionerOCRProcessing',
+					status: 'success',
+					targetResourceType: 'LicenseCertificate',
+					targetResourceId: 'license-certificate.pdf',
+					practitionerId: 'prac-123',
+					ocrConfidence: 0.95,
+					principalId: 'system',
+					outcomeDescription:
+						'OCR processing success for license-certificate.pdf with confidence 0.95',
+					fileName: 'license-certificate.pdf',
+				}),
+				expect.any(Object)
+			)
+		})
+	})
+
+	describe('logManualReview', () => {
+		it('should log manual review event', async () => {
+			const params = {
+				practitionerId: 'prac-123',
+				reviewedBy: 'admin-789',
+				reason: 'OCR confidence too low, manual verification required',
+				status: 'success' as const,
+				organizationId: 'org-001',
+			}
+
+			await auditService.logManualReview(params)
+
+			expect(mockQueue.add).toHaveBeenCalledWith(
+				'test-queue',
+				expect.objectContaining({
+					action: 'practitionerManualReview',
+					status: 'success',
+					targetResourceType: 'Practitioner',
+					targetResourceId: 'prac-123',
+					practitionerId: 'prac-123',
+					reviewedBy: 'admin-789',
+					reason: 'OCR confidence too low, manual verification required',
+					principalId: 'admin-789',
+					organizationId: 'org-001',
+					outcomeDescription:
+						'Manual review success for practitioner prac-123 by admin-789: OCR confidence too low, manual verification required',
+				}),
+				expect.any(Object)
+			)
+		})
+	})
+
+	describe('logComplianceExport', () => {
+		it('should log compliance data export', async () => {
+			const params = {
+				exportedBy: 'admin-789',
+				dateRange: { start: '2024-01-01', end: '2024-01-31' },
+				recordCount: 150,
+				exportFormat: 'csv',
+				organizationId: 'org-001',
+			}
+
+			await auditService.logComplianceExport(params)
+
+			expect(mockQueue.add).toHaveBeenCalledWith(
+				'test-queue',
+				expect.objectContaining({
+					action: 'practitionerComplianceExport',
+					status: 'success',
+					targetResourceType: 'AuditLog',
+					principalId: 'admin-789',
+					organizationId: 'org-001',
+					outcomeDescription:
+						'Compliance export of 150 records from 2024-01-01 to 2024-01-31 in csv format by admin-789',
+					exportFormat: 'csv',
+					recordCount: 150,
+					dateRange: { start: '2024-01-01', end: '2024-01-31' },
+				}),
+				expect.any(Object)
+			)
+		})
+	})
+
+	describe('Hash Generation', () => {
+		it('should generate consistent hashes for identical data', async () => {
+			const params = {
+				practitionerId: 'prac-123',
+				licenseNumber: 'LIC-456',
+				jurisdiction: 'CA',
+				oldStatus: 'pending',
+				newStatus: 'active',
+				reason: 'Test',
+				principalId: 'admin-789',
+			}
+
+			// Log the same event twice
+			await auditService.logLicenseStatusChange(params)
+			const firstCall = mockQueue.add.mock.calls[0][1]
+
+			vi.clearAllMocks()
+			await auditService.logLicenseStatusChange(params)
+			const secondCall = mockQueue.add.mock.calls[0][1]
+
+			// Timestamps will be different, but if we use the same timestamp, hashes should match
+			const hashData = {
+				timestamp: firstCall.timestamp,
+				action: firstCall.action,
+				principalId: firstCall.principalId,
+				practitionerId: firstCall.practitionerId,
+				status: firstCall.status,
+				oldStatus: firstCall.oldStatus,
+				newStatus: firstCall.newStatus,
+				oldRole: firstCall.oldRole,
+				newRole: firstCall.newRole,
+			}
+
+			const expectedHash = createHash('sha256').update(JSON.stringify(hashData)).digest('hex')
+			expect(firstCall.hash).toBe(expectedHash)
+		})
+	})
+})

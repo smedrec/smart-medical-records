@@ -60,9 +60,23 @@
 // - [key: string]: any -> jsonb 'details' - OK (nullable)
 // This looks good.
 
-import { index, jsonb, pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core'
+import {
+	index,
+	integer,
+	jsonb,
+	pgTable,
+	serial,
+	text,
+	timestamp,
+	varchar,
+} from 'drizzle-orm/pg-core'
 
 import type { AuditEventStatus } from '@repo/audit'
+
+/**
+ * Data classification levels for audit events
+ */
+export type DataClassification = 'PUBLIC' | 'INTERNAL' | 'CONFIDENTIAL' | 'PHI'
 
 export const auditLog = pgTable(
 	'audit_log',
@@ -83,16 +97,119 @@ export const auditLog = pgTable(
 			.$type<AuditEventStatus>() // Enforces the type against AuditEventStatus
 			.notNull(),
 		outcomeDescription: text('outcome_description'),
+
+		// Cryptographic hash for immutability (Requirement 7.4)
+		hash: varchar('hash', { length: 64 }), // SHA-256 hash
+
+		// Enhanced compliance fields (Requirements 1.1, 4.3, 7.1, 7.2)
+		hashAlgorithm: varchar('hash_algorithm', { length: 50 }).default('SHA-256'),
+		eventVersion: varchar('event_version', { length: 20 }).default('1.0'),
+		correlationId: varchar('correlation_id', { length: 255 }),
+		dataClassification: varchar('data_classification', { length: 20 })
+			.$type<DataClassification>()
+			.default('INTERNAL'),
+		retentionPolicy: varchar('retention_policy', { length: 50 }).default('standard'),
+		processingLatency: integer('processing_latency'), // in milliseconds
+		archivedAt: timestamp('archived_at', { withTimezone: true, mode: 'string' }),
+
 		// The 'details' column will store any additional properties from the AuditLogEvent
 		// that are not explicitly mapped to other columns.
 		details: jsonb('details'),
 	},
 	(table) => {
 		return [
+			// Core audit indexes
 			index('audit_log_timestamp_idx').on(table.timestamp),
 			index('audit_log_principal_id_idx').on(table.principalId),
 			index('audit_log_organization_id_idx').on(table.organizationId),
 			index('audit_log_action_idx').on(table.action),
+			index('audit_log_status_idx').on(table.status),
+			index('audit_log_hash_idx').on(table.hash),
+			index('audit_log_target_resource_type_idx').on(table.targetResourceType),
+			index('audit_log_target_resource_id_idx').on(table.targetResourceId),
+
+			// New compliance indexes for optimized queries (Requirements 7.1, 7.2)
+			index('audit_log_correlation_id_idx').on(table.correlationId),
+			index('audit_log_data_classification_idx').on(table.dataClassification),
+			index('audit_log_retention_policy_idx').on(table.retentionPolicy),
+			index('audit_log_archived_at_idx').on(table.archivedAt),
+
+			// Composite indexes for common compliance queries
+			index('audit_log_timestamp_status_idx').on(table.timestamp, table.status),
+			index('audit_log_principal_action_idx').on(table.principalId, table.action),
+			index('audit_log_classification_retention_idx').on(
+				table.dataClassification,
+				table.retentionPolicy
+			),
+			index('audit_log_resource_type_id_idx').on(table.targetResourceType, table.targetResourceId),
+		]
+	}
+)
+
+/**
+ * Audit integrity log table for tracking verification attempts and results
+ * Requirement 1.1: Cryptographic integrity verification tracking
+ */
+export const auditIntegrityLog = pgTable(
+	'audit_integrity_log',
+	{
+		id: serial('id').primaryKey(),
+		auditLogId: integer('audit_log_id')
+			.references(() => auditLog.id)
+			.notNull(),
+		verificationTimestamp: timestamp('verification_timestamp', {
+			withTimezone: true,
+			mode: 'string',
+		})
+			.notNull()
+			.defaultNow(),
+		verificationStatus: varchar('verification_status', { length: 20 }).notNull(), // 'success', 'failure', 'tampered'
+		verificationDetails: jsonb('verification_details'), // Additional context about verification
+		verifiedBy: varchar('verified_by', { length: 255 }), // System or user that performed verification
+		hashVerified: varchar('hash_verified', { length: 64 }), // The hash that was verified
+		expectedHash: varchar('expected_hash', { length: 64 }), // The expected hash value
+	},
+	(table) => {
+		return [
+			index('audit_integrity_log_audit_log_id_idx').on(table.auditLogId),
+			index('audit_integrity_log_verification_timestamp_idx').on(table.verificationTimestamp),
+			index('audit_integrity_log_verification_status_idx').on(table.verificationStatus),
+			index('audit_integrity_log_verified_by_idx').on(table.verifiedBy),
+		]
+	}
+)
+
+/**
+ * Audit retention policy table for managing data lifecycle
+ * Requirements 4.3, 7.1: Data retention management and compliance
+ */
+export const auditRetentionPolicy = pgTable(
+	'audit_retention_policy',
+	{
+		id: serial('id').primaryKey(),
+		policyName: varchar('policy_name', { length: 100 }).unique().notNull(),
+		retentionDays: integer('retention_days').notNull(), // How long to keep active data
+		archiveAfterDays: integer('archive_after_days'), // When to archive (optional)
+		deleteAfterDays: integer('delete_after_days'), // When to permanently delete (optional)
+		dataClassification: varchar('data_classification', { length: 20 })
+			.$type<DataClassification>()
+			.notNull(), // Which data classification this policy applies to
+		description: text('description'), // Human-readable description of the policy
+		isActive: varchar('is_active', { length: 10 }).default('true'), // Whether policy is currently active
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+			.notNull()
+			.defaultNow(),
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+			.notNull()
+			.defaultNow(),
+		createdBy: varchar('created_by', { length: 255 }), // Who created this policy
+	},
+	(table) => {
+		return [
+			index('audit_retention_policy_policy_name_idx').on(table.policyName),
+			index('audit_retention_policy_data_classification_idx').on(table.dataClassification),
+			index('audit_retention_policy_is_active_idx').on(table.isActive),
+			index('audit_retention_policy_created_at_idx').on(table.createdAt),
 		]
 	}
 )
@@ -102,7 +219,6 @@ export const auditLog = pgTable(
 //   will be directly inserted into the `timestamp` column of this table.
 // - The `[key: string]: any` properties from `AuditLogEvent` (excluding the explicitly mapped ones)
 //   should be collected into an object and stored in the `details` jsonb column.
-// - Consider adding database indexes on frequently queried columns like `timestamp`,
-//   `principal_id`, `action`, or `status` for performance optimization,
-//   e.g., CREATE INDEX idx_audit_log_timestamp ON audit_log (timestamp DESC);
-//   e.g., CREATE INDEX idx_audit_log_principal_action ON audit_log (principal_id, action);
+// - The audit_integrity_log table tracks all verification attempts for audit events
+// - The audit_retention_policy table defines lifecycle management rules for different data classifications
+// - Consider adding database indexes on frequently queried columns for performance optimization

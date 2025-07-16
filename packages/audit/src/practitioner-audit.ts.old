@@ -1,0 +1,310 @@
+import { Audit } from './audit.js'
+
+import type { AuditEventStatus, PractitionerAuditAction, PractitionerAuditEvent } from './types.js'
+
+/**
+ * Specialized audit service for practitioner management with enhanced security features
+ * Provides HIPAA-compliant audit logging with cryptographic hashing for immutability
+ */
+export class PractitionerAuditService extends Audit {
+	/**
+	 * Logs a practitioner-specific audit event with enhanced security features
+	 * Automatically generates cryptographic hash for immutability verification
+	 */
+	async logPractitionerEvent(
+		eventDetails: Omit<PractitionerAuditEvent, 'timestamp' | 'hash'>
+	): Promise<void> {
+		// Use the base class log method with hash generation enabled
+		await this.log(eventDetails, { generateHash: true })
+	}
+
+	/**
+	 * Logs practitioner license status changes (Requirement 7.1)
+	 */
+	async logLicenseStatusChange(params: {
+		practitionerId: string
+		licenseNumber: string
+		jurisdiction: string
+		oldStatus: string
+		newStatus: string
+		reason: string
+		principalId: string
+		organizationId?: string
+		ipAddress?: string
+		userAgent?: string
+		sessionId?: string
+	}): Promise<void> {
+		await this.logPractitionerEvent({
+			action: 'practitionerLicenseStatusChange',
+			status: 'success',
+			targetResourceType: 'Practitioner',
+			targetResourceId: params.practitionerId,
+			practitionerId: params.practitionerId,
+			licenseNumber: params.licenseNumber,
+			jurisdiction: params.jurisdiction,
+			oldStatus: params.oldStatus,
+			newStatus: params.newStatus,
+			reason: params.reason,
+			principalId: params.principalId,
+			organizationId: params.organizationId,
+			ipAddress: params.ipAddress,
+			userAgent: params.userAgent,
+			sessionId: params.sessionId,
+			outcomeDescription: `License status changed from ${params.oldStatus} to ${params.newStatus} for practitioner ${params.practitionerId}`,
+		})
+	}
+
+	/**
+	 * Logs practitioner role modifications (Requirement 7.2)
+	 */
+	async logRoleModification(params: {
+		practitionerId: string
+		oldRole: string
+		newRole: string
+		reason: string
+		administratorId: string
+		organizationId?: string
+		ipAddress?: string
+		userAgent?: string
+		sessionId?: string
+	}): Promise<void> {
+		await this.logPractitionerEvent({
+			action: 'practitionerRoleModification',
+			status: 'success',
+			targetResourceType: 'Practitioner',
+			targetResourceId: params.practitionerId,
+			practitionerId: params.practitionerId,
+			oldRole: params.oldRole,
+			newRole: params.newRole,
+			reason: params.reason,
+			principalId: params.administratorId,
+			organizationId: params.organizationId,
+			ipAddress: params.ipAddress,
+			userAgent: params.userAgent,
+			sessionId: params.sessionId,
+			outcomeDescription: `Role changed from ${params.oldRole} to ${params.newRole} for practitioner ${params.practitionerId} by administrator ${params.administratorId}`,
+		})
+	}
+
+	/**
+	 * Logs license verification attempts (Requirement 7.3)
+	 */
+	async logLicenseVerificationAttempt(params: {
+		practitionerId: string
+		licenseNumber: string
+		jurisdiction: string
+		verificationProvider: string
+		status: AuditEventStatus
+		apiResponse?: Record<string, any>
+		principalId?: string
+		organizationId?: string
+		ipAddress?: string
+		userAgent?: string
+		sessionId?: string
+		outcomeDescription?: string
+	}): Promise<void> {
+		const action: PractitionerAuditAction =
+			params.status === 'success'
+				? 'practitionerLicenseVerificationSuccess'
+				: params.status === 'failure'
+					? 'practitionerLicenseVerificationFailure'
+					: 'practitionerLicenseVerificationAttempt'
+
+		await this.logPractitionerEvent({
+			action,
+			status: params.status,
+			targetResourceType: 'Practitioner',
+			targetResourceId: params.practitionerId,
+			practitionerId: params.practitionerId,
+			licenseNumber: params.licenseNumber,
+			jurisdiction: params.jurisdiction,
+			verificationProvider: params.verificationProvider,
+			apiResponse: params.apiResponse,
+			principalId: params.principalId || 'system',
+			organizationId: params.organizationId,
+			ipAddress: params.ipAddress,
+			userAgent: params.userAgent,
+			sessionId: params.sessionId,
+			outcomeDescription:
+				params.outcomeDescription ||
+				`License verification ${params.status} for practitioner ${params.practitionerId} via ${params.verificationProvider}`,
+		})
+	}
+
+	/**
+	 * Logs practitioner onboarding initiation
+	 */
+	async logOnboardingInitiated(params: {
+		practitionerId: string
+		invitedBy: string
+		organizationId: string
+		ipAddress?: string
+		userAgent?: string
+		sessionId?: string
+	}): Promise<void> {
+		await this.logPractitionerEvent({
+			action: 'practitionerOnboardingInitiated',
+			status: 'success',
+			targetResourceType: 'Practitioner',
+			targetResourceId: params.practitionerId,
+			practitionerId: params.practitionerId,
+			principalId: params.invitedBy,
+			organizationId: params.organizationId,
+			ipAddress: params.ipAddress,
+			userAgent: params.userAgent,
+			sessionId: params.sessionId,
+			outcomeDescription: `Practitioner onboarding initiated for ${params.practitionerId} by ${params.invitedBy}`,
+		})
+	}
+
+	/**
+	 * Logs practitioner approval/rejection decisions
+	 */
+	async logApprovalDecision(params: {
+		practitionerId: string
+		approved: boolean
+		reason: string
+		reviewedBy: string
+		organizationId?: string
+		ipAddress?: string
+		userAgent?: string
+		sessionId?: string
+	}): Promise<void> {
+		await this.logPractitionerEvent({
+			action: params.approved ? 'practitionerApprovalGranted' : 'practitionerApprovalRejected',
+			status: 'success',
+			targetResourceType: 'Practitioner',
+			targetResourceId: params.practitionerId,
+			practitionerId: params.practitionerId,
+			reason: params.reason,
+			reviewedBy: params.reviewedBy,
+			principalId: params.reviewedBy,
+			organizationId: params.organizationId,
+			ipAddress: params.ipAddress,
+			userAgent: params.userAgent,
+			sessionId: params.sessionId,
+			outcomeDescription: `Practitioner ${params.practitionerId} ${params.approved ? 'approved' : 'rejected'} by ${params.reviewedBy}: ${params.reason}`,
+		})
+	}
+
+	/**
+	 * Logs certificate upload events
+	 */
+	async logCertificateUpload(params: {
+		practitionerId: string
+		fileName: string
+		fileSize: number
+		status: AuditEventStatus
+		principalId?: string
+		organizationId?: string
+		ipAddress?: string
+		userAgent?: string
+		sessionId?: string
+		outcomeDescription?: string
+	}): Promise<void> {
+		await this.logPractitionerEvent({
+			action: 'practitionerCertificateUploaded',
+			status: params.status,
+			targetResourceType: 'LicenseCertificate',
+			targetResourceId: params.fileName,
+			practitionerId: params.practitionerId,
+			principalId: params.principalId || params.practitionerId,
+			organizationId: params.organizationId,
+			ipAddress: params.ipAddress,
+			userAgent: params.userAgent,
+			sessionId: params.sessionId,
+			outcomeDescription:
+				params.outcomeDescription ||
+				`Certificate ${params.fileName} (${params.fileSize} bytes) upload ${params.status} for practitioner ${params.practitionerId}`,
+			fileSize: params.fileSize,
+			fileName: params.fileName,
+		})
+	}
+
+	/**
+	 * Logs OCR processing events
+	 */
+	async logOCRProcessing(params: {
+		practitionerId: string
+		fileName: string
+		ocrConfidence: number
+		status: AuditEventStatus
+		principalId?: string
+		organizationId?: string
+		outcomeDescription?: string
+	}): Promise<void> {
+		await this.logPractitionerEvent({
+			action: 'practitionerOCRProcessing',
+			status: params.status,
+			targetResourceType: 'LicenseCertificate',
+			targetResourceId: params.fileName,
+			practitionerId: params.practitionerId,
+			ocrConfidence: params.ocrConfidence,
+			principalId: params.principalId || 'system',
+			organizationId: params.organizationId,
+			outcomeDescription:
+				params.outcomeDescription ||
+				`OCR processing ${params.status} for ${params.fileName} with confidence ${params.ocrConfidence}`,
+			fileName: params.fileName,
+		})
+	}
+
+	/**
+	 * Logs manual review events
+	 */
+	async logManualReview(params: {
+		practitionerId: string
+		reviewedBy: string
+		reason: string
+		status: AuditEventStatus
+		organizationId?: string
+		ipAddress?: string
+		userAgent?: string
+		sessionId?: string
+	}): Promise<void> {
+		await this.logPractitionerEvent({
+			action: 'practitionerManualReview',
+			status: params.status,
+			targetResourceType: 'Practitioner',
+			targetResourceId: params.practitionerId,
+			practitionerId: params.practitionerId,
+			reviewedBy: params.reviewedBy,
+			reason: params.reason,
+			principalId: params.reviewedBy,
+			organizationId: params.organizationId,
+			ipAddress: params.ipAddress,
+			userAgent: params.userAgent,
+			sessionId: params.sessionId,
+			outcomeDescription: `Manual review ${params.status} for practitioner ${params.practitionerId} by ${params.reviewedBy}: ${params.reason}`,
+		})
+	}
+
+	/**
+	 * Logs compliance data export events (Requirement 7.5)
+	 */
+	async logComplianceExport(params: {
+		exportedBy: string
+		dateRange: { start: string; end: string }
+		recordCount: number
+		exportFormat: string
+		organizationId?: string
+		ipAddress?: string
+		userAgent?: string
+		sessionId?: string
+	}): Promise<void> {
+		await this.logPractitionerEvent({
+			action: 'practitionerComplianceExport',
+			status: 'success',
+			targetResourceType: 'AuditLog',
+			principalId: params.exportedBy,
+			organizationId: params.organizationId,
+			ipAddress: params.ipAddress,
+			userAgent: params.userAgent,
+			sessionId: params.sessionId,
+			outcomeDescription: `Compliance export of ${params.recordCount} records from ${params.dateRange.start} to ${params.dateRange.end} in ${params.exportFormat} format by ${params.exportedBy}`,
+			exportFormat: params.exportFormat,
+			recordCount: params.recordCount,
+			dateRange: params.dateRange,
+		})
+	}
+}

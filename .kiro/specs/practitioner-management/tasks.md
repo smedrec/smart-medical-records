@@ -43,9 +43,10 @@
   - Write unit tests for text extraction and validation logic
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
 
-- [ ] 6. Extend existing audit service for practitioner management
-  - Leverage existing @repo/audit package and apps/audit application
+- [x] 6. Extend existing audit service for practitioner management
+  - Leverage existing @repo/audit and @repo/audit-db packages and apps/audit application
   - Add practitioner-specific audit event types to existing audit system
+  - Add immutable audit logs with cryptographic hashing feature
   - Create compliance reporting features using existing audit infrastructure
   - Extend existing audit log querying for practitioner verification events
   - Add HIPAA-compliant audit log export capabilities

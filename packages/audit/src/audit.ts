@@ -3,9 +3,15 @@ import { Redis as RedisInstance } from 'ioredis' // Renamed to avoid conflict
 
 import { getSharedRedisConnection } from '@repo/redis-client'
 
-import type { RedisOptions, Redis as RedisType } from 'ioredis' // RedisType for type usage
+import { CryptoService } from './crypto.js'
+import { DEFAULT_RELIABLE_PROCESSOR_CONFIG, ReliableEventProcessor } from './reliable-processor.js'
+import { DEFAULT_VALIDATION_CONFIG, validateAndSanitizeAuditEvent } from './validation.js'
 
+import type { RedisOptions, Redis as RedisType } from 'ioredis' // RedisType for type usage
+import type { CryptoConfig } from './crypto.js'
+import type { ReliableProcessorConfig } from './reliable-processor.js'
 import type { AuditLogEvent } from './types.js'
+import type { ValidationConfig } from './validation.js'
 
 // The getEnv function is removed as REDIS_URL is now primarily handled by @repo/redis-client
 // However, AUDIT_REDIS_URL can still be used for overrides if a direct connection is made.
@@ -44,6 +50,7 @@ export class Audit {
 	private queueName: string
 	private bullmq_queue: Queue<AuditLogEvent, any, string>
 	private isSharedConnection: boolean
+	private cryptoService: CryptoService
 
 	/**
 	 * Constructs an `Audit` instance.
@@ -67,16 +74,19 @@ export class Audit {
 	 * @param directConnectionOptions Optional. IORedis options, used if creating a new direct connection.
 	 *                                Merged with default options. Ignored if `redisOrUrl` is an IORedis instance
 	 *                                or if using the shared connection.
+	 * @param cryptoConfig Optional. Configuration for cryptographic operations.
 	 * @throws Error if a direct Redis URL is required (e.g., `AUDIT_REDIS_URL`) but cannot be resolved,
 	 *         or if there's an error during direct Redis client instantiation.
 	 */
 	constructor(
 		queueName: string,
 		redisOrUrlOrOptions?: string | RedisType | { url?: string; options?: RedisOptions },
-		directConnectionOptions?: RedisOptions
+		directConnectionOptions?: RedisOptions,
+		cryptoConfig?: Partial<CryptoConfig>
 	) {
 		this.queueName = queueName
 		this.isSharedConnection = false
+		this.cryptoService = new CryptoService(cryptoConfig)
 
 		const defaultDirectOptions: RedisOptions = {
 			maxRetriesPerRequest: null,
@@ -217,14 +227,48 @@ export class Audit {
 	}
 
 	/**
+	 * Generates cryptographic hash for audit event integrity verification
+	 * Uses the integrated CryptoService with SHA-256 algorithm
+	 */
+	public generateEventHash(event: AuditLogEvent): string {
+		return this.cryptoService.generateHash(event)
+	}
+
+	/**
+	 * Verifies the cryptographic hash of an audit event
+	 * Detects tampering by comparing computed hash with expected hash
+	 */
+	public verifyEventHash(event: AuditLogEvent, expectedHash: string): boolean {
+		return this.cryptoService.verifyHash(event, expectedHash)
+	}
+
+	/**
+	 * Generates cryptographic signature for audit event
+	 * Uses HMAC-SHA256 for additional security
+	 */
+	public generateEventSignature(event: AuditLogEvent): string {
+		return this.cryptoService.generateEventSignature(event)
+	}
+
+	/**
+	 * Verifies the cryptographic signature of an audit event
+	 * Provides additional security through secret key authentication
+	 */
+	public verifyEventSignature(event: AuditLogEvent, signature: string): boolean {
+		return this.cryptoService.verifyEventSignature(event, signature)
+	}
+
+	/**
 	 * Logs an audit event by adding it to the BullMQ queue.
 	 * The timestamp for the event is automatically generated at the time of logging.
+	 * Automatically validates, sanitizes, and generates cryptographic hash and signature for immutability verification.
 	 *
 	 * @param eventDetails An object containing the details of the audit event,
 	 *                     excluding the `timestamp` which will be added by this method.
 	 *                     Requires `action` and `status` properties.
+	 * @param options Optional configuration for the audit event
 	 * @returns A Promise that resolves when the event has been successfully added to the queue.
-	 * @throws Error if `eventDetails.action` or `eventDetails.status` are missing.
+	 * @throws Error if validation fails or if `eventDetails.action` or `eventDetails.status` are missing.
 	 *
 	 * @example
 	 * ```typescript
@@ -236,21 +280,30 @@ export class Audit {
 	 *   status: 'success',
 	 *   outcomeDescription: 'Item updated successfully.',
 	 *   changes: { oldValue: 'A', newValue: 'B' }
+	 * }, {
+	 *   generateHash: true,
+	 *   generateSignature: true,
+	 *   correlationId: 'corr-12345',
+	 *   skipValidation: false
 	 * });
 	 * ```
 	 */
-	async log(eventDetails: Omit<AuditLogEvent, 'timestamp'>): Promise<void> {
-		if (!eventDetails.action || !eventDetails.status) {
-			throw new Error(
-				"[AuditService] Log Error: Missing required event properties. 'action' and 'status' must be provided."
-			)
-		}
+	async log(
+		eventDetails: Omit<AuditLogEvent, 'timestamp'>,
+		options: {
+			generateHash?: boolean
+			generateSignature?: boolean
+			correlationId?: string
+			eventVersion?: string
+			skipValidation?: boolean
+			validationConfig?: ValidationConfig
+		} = {}
+	): Promise<void> {
 		if (!this.bullmq_queue) {
 			throw new Error('[AuditService] Cannot log event: BullMQ queue is not initialized.')
 		}
+
 		// Check connection status before logging.
-		// Note: this.connection.status might not be perfectly up-to-date if using a shared connection
-		// whose state changes rapidly. The shared client has its own logging for connection events.
 		if (
 			!this.connection ||
 			(this.connection.status !== 'ready' &&
@@ -263,11 +316,64 @@ export class Audit {
 		}
 
 		const timestamp = new Date().toISOString()
-		const event: AuditLogEvent = {
+		let event: AuditLogEvent = {
 			timestamp,
 			action: eventDetails.action,
 			status: eventDetails.status,
+			eventVersion: options.eventVersion || '1.0',
+			hashAlgorithm: 'SHA-256',
+			dataClassification: eventDetails.dataClassification || 'INTERNAL',
+			retentionPolicy: eventDetails.retentionPolicy || 'standard',
 			...eventDetails,
+		}
+
+		// Add correlation ID if provided
+		if (options.correlationId) {
+			event.correlationId = options.correlationId
+		}
+
+		// Validate and sanitize the event unless explicitly skipped
+		if (!options.skipValidation) {
+			const validationConfig = options.validationConfig || DEFAULT_VALIDATION_CONFIG
+			const validationResult = validateAndSanitizeAuditEvent(event, validationConfig)
+
+			if (!validationResult.isValid) {
+				const errorMessages = validationResult.validationErrors
+					.map((err) => `${err.field}: ${err.message} (${err.code})`)
+					.join('; ')
+				throw new Error(`[AuditService] Validation Error: ${errorMessages}`)
+			}
+
+			// Use the sanitized event
+			event = validationResult.sanitizedEvent!
+
+			// Log sanitization warnings if any
+			if (validationResult.sanitizationWarnings.length > 0) {
+				console.warn(
+					`[AuditService] Sanitization warnings for queue "${this.queueName}":`,
+					validationResult.sanitizationWarnings.map((w) => `${w.field}: ${w.message}`).join('; ')
+				)
+			}
+
+			// Log validation warnings if any
+			if (validationResult.validationWarnings.length > 0) {
+				console.warn(
+					`[AuditService] Validation warnings for queue "${this.queueName}":`,
+					validationResult.validationWarnings.join('; ')
+				)
+			}
+		}
+
+		// Generate hash by default (can be disabled by setting generateHash: false)
+		if (options.generateHash !== false) {
+			const hash = this.generateEventHash(event)
+			event = { ...event, hash }
+		}
+
+		// Generate signature if requested
+		if (options.generateSignature) {
+			const signature = this.generateEventSignature(event)
+			event = { ...event, signature }
 		}
 
 		try {
@@ -284,6 +390,125 @@ export class Audit {
 			throw new Error(
 				`[AuditService] Failed to log audit event to queue '${this.queueName}'. Error: ${error instanceof Error ? error.message : String(error)}`
 			)
+		}
+	}
+
+	/**
+	 * Logs an audit event with guaranteed delivery using the reliable event processor.
+	 * This method provides enhanced durability guarantees, retry mechanisms, circuit breaker protection,
+	 * and dead letter queue handling for events that cannot be processed.
+	 *
+	 * @param eventDetails An object containing the details of the audit event
+	 * @param options Optional configuration for reliable processing
+	 * @returns A Promise that resolves when the event has been successfully queued for reliable processing
+	 * @throws Error if validation fails or if the reliable processor is not available
+	 *
+	 * @example
+	 * ```typescript
+	 * await auditService.logWithGuaranteedDelivery({
+	 *   principalId: 'user-xyz',
+	 *   action: 'criticalDataUpdate',
+	 *   targetResourceType: 'Patient',
+	 *   targetResourceId: 'patient-123',
+	 *   status: 'success',
+	 *   outcomeDescription: 'Critical patient data updated successfully.',
+	 * }, {
+	 *   priority: 1, // High priority
+	 *   durabilityGuarantees: true,
+	 *   generateHash: true,
+	 *   generateSignature: true
+	 * });
+	 * ```
+	 */
+	async logWithGuaranteedDelivery(
+		eventDetails: Omit<AuditLogEvent, 'timestamp'>,
+		options: {
+			priority?: number
+			delay?: number
+			durabilityGuarantees?: boolean
+			generateHash?: boolean
+			generateSignature?: boolean
+			correlationId?: string
+			eventVersion?: string
+			skipValidation?: boolean
+			validationConfig?: ValidationConfig
+		} = {}
+	): Promise<void> {
+		const timestamp = new Date().toISOString()
+		let event: AuditLogEvent = {
+			timestamp,
+			action: eventDetails.action,
+			status: eventDetails.status,
+			eventVersion: options.eventVersion || '1.0',
+			hashAlgorithm: 'SHA-256',
+			dataClassification: eventDetails.dataClassification || 'INTERNAL',
+			retentionPolicy: eventDetails.retentionPolicy || 'standard',
+			...eventDetails,
+		}
+
+		// Add correlation ID if provided
+		if (options.correlationId) {
+			event.correlationId = options.correlationId
+		}
+
+		// Validate and sanitize the event unless explicitly skipped
+		if (!options.skipValidation) {
+			const validationConfig = options.validationConfig || DEFAULT_VALIDATION_CONFIG
+			const validationResult = validateAndSanitizeAuditEvent(event, validationConfig)
+
+			if (!validationResult.isValid) {
+				const errorMessages = validationResult.validationErrors
+					.map((err) => `${err.field}: ${err.message} (${err.code})`)
+					.join('; ')
+				throw new Error(`[AuditService] Validation Error: ${errorMessages}`)
+			}
+
+			event = validationResult.sanitizedEvent!
+		}
+
+		// Generate hash by default (can be disabled by setting generateHash: false)
+		if (options.generateHash !== false) {
+			const hash = this.generateEventHash(event)
+			event = { ...event, hash }
+		}
+
+		// Generate signature if requested
+		if (options.generateSignature) {
+			const signature = this.generateEventSignature(event)
+			event = { ...event, signature }
+		}
+
+		// Use reliable processor queue with durability guarantees
+		const reliableQueueName = `${this.queueName}-reliable`
+		const reliableQueue = new Queue<AuditLogEvent>(reliableQueueName, {
+			connection: this.connection,
+			defaultJobOptions: {
+				removeOnComplete: options.durabilityGuarantees ? false : 100,
+				removeOnFail: false, // Keep failed jobs for dead letter processing
+				attempts: 1, // Reliable processor handles retries
+			},
+		})
+
+		try {
+			await reliableQueue.add('reliable-audit-event', event, {
+				priority: options.priority || 0,
+				delay: options.delay || 0,
+			})
+
+			console.log(
+				`[AuditService] Event queued for reliable processing: ${event.action} (queue: ${reliableQueueName})`
+			)
+		} catch (error) {
+			console.error(
+				`[AuditService] Failed to add event to reliable processing queue "${reliableQueueName}":`,
+				error
+			)
+			throw new Error(
+				`[AuditService] Failed to log audit event with guaranteed delivery. Error: ${error instanceof Error ? error.message : String(error)}`
+			)
+		} finally {
+			// Clean up the temporary queue reference
+			await reliableQueue.close()
 		}
 	}
 
