@@ -68,6 +68,13 @@ export class AuditSDK {
 			}
 		}
 
+		// Add timestamp before compliance validation
+		const timestamp = new Date().toISOString()
+		enrichedEvent = {
+			timestamp,
+			...enrichedEvent,
+		}
+
 		// Validate compliance if specified
 		if (options.compliance && this.config.compliance) {
 			for (const complianceType of options.compliance) {
@@ -220,6 +227,13 @@ export class AuditSDK {
 					dataClassification: enrichedEvent.dataClassification || preset.dataClassification,
 				}
 			}
+		}
+
+		// Add timestamp before compliance validation
+		const timestamp = new Date().toISOString()
+		enrichedEvent = {
+			timestamp,
+			...enrichedEvent,
 		}
 
 		// Validate compliance if specified

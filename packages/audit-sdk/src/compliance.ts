@@ -16,8 +16,8 @@ export function validateCompliance(
 		case 'gdpr':
 			validateGDPR(event, config.gdpr)
 			break
-		default: // Check custom compliance rules
-		{
+		default: {
+			// Check custom compliance rules
 			const customRule = config.custom?.find((rule) => rule.name === complianceType)
 			if (customRule) {
 				validateCustom(event, customRule.rules)
@@ -77,6 +77,11 @@ function validateHIPAA(
 function validateGDPR(event: Partial<AuditLogEvent>, gdprConfig?: ComplianceConfig['gdpr']): void {
 	if (!gdprConfig?.enabled) return
 
+	// Set retention policy for all events
+	if (!event.retentionPolicy && gdprConfig.retentionDays) {
+		event.retentionPolicy = `gdpr-${gdprConfig.retentionDays}-days`
+	}
+
 	// Check for personal data processing
 	if (isPersonalDataProcessing(event)) {
 		// Require legal basis
@@ -89,11 +94,6 @@ function validateGDPR(event: Partial<AuditLogEvent>, gdprConfig?: ComplianceConf
 			} else {
 				throw new Error('GDPR Compliance Error: Legal basis required for personal data processing')
 			}
-		}
-
-		// Set retention policy
-		if (!event.retentionPolicy && gdprConfig.retentionDays) {
-			event.retentionPolicy = `gdpr-${gdprConfig.retentionDays}-days`
 		}
 
 		// Require data subject identification for certain actions
