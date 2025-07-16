@@ -4,6 +4,8 @@ import { drizzle } from 'drizzle-orm/postgres-js'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import postgres from 'postgres'
 
+import 'dotenv/config'
+
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 
 /**
@@ -241,7 +243,7 @@ export async function runMigrationCommand(command: string, migrationName?: strin
 				await migrationUtils.executeRollback(migrationName)
 				break
 
-			case 'verify':
+			case 'verify': {
 				const schema = await migrationUtils.verifySchema()
 				console.log('📊 Database Schema:')
 				console.log('Tables:', schema.tables)
@@ -249,8 +251,9 @@ export async function runMigrationCommand(command: string, migrationName?: strin
 				console.log('Indexes:', schema.indexes.length)
 				console.log('Constraints:', schema.constraints.length)
 				break
+			}
 
-			case 'verify-compliance':
+			case 'verify-compliance': {
 				const compliance = await migrationUtils.verifyComplianceFeatures()
 				console.log('🔍 Compliance Features:')
 				console.log('Compliance Columns:', compliance.hasComplianceColumns ? '✅' : '❌')
@@ -258,6 +261,7 @@ export async function runMigrationCommand(command: string, migrationName?: strin
 				console.log('Retention Table:', compliance.hasRetentionTable ? '✅' : '❌')
 				console.log('Compliance Indexes:', compliance.hasComplianceIndexes ? '✅' : '❌')
 				break
+			}
 
 			case 'seed-policies':
 				await migrationUtils.insertDefaultRetentionPolicies()
