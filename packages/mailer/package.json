@@ -15,6 +15,7 @@
 		"build": "tsup src/index.ts --format cjs,esm --dts",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
+		"clean": "rm -rf dist node_modules .turbo",
 		"test": "run-vitest"
 	},
 	"dependencies": {

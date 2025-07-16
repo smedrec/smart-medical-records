@@ -14,6 +14,7 @@
 		"build": "tsc",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
+		"clean": "rm -rf dist node_modules .turbo",
 		"test": "run-vitest"
 	},
 	"dependencies": {

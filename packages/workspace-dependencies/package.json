@@ -38,6 +38,7 @@
 		"build": "runx build lib zx.ts yaml.ts zod.ts slugify.ts -d src -f cjs --platform node",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
+		"clean": "rm -rf dist node_modules .turbo",
 		"test": "run-vitest"
 	},
 	"dependencies": {

@@ -11,6 +11,7 @@
 		"build": "mastra build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
+		"clean": "rm -rf node_modules .mastra",
 		"dev": "mastra dev"
 	},
 	"dependencies": {

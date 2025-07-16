@@ -26,6 +26,7 @@
 		"build": "tsc --build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
+		"clean": "rm -rf dist node_modules .turbo",
 		"docs:generate": "typedoc src/index.ts --out docs --theme default",
 		"test": "run-vitest"
 	},

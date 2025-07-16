@@ -8,6 +8,7 @@
 		"build": "vite build",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
+		"clean": "rm -rf node_modules .tanstack .turbo",
 		"dev": "vite dev --port=3000",
 		"preview": "vite preview",
 		"test": "run-vitest"
