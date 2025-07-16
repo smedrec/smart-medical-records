@@ -10,6 +10,7 @@
 		"build": "tsc",
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
+		"clean": "rm -rf dist node_modules .turbo",
 		"dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
 		"dev:vite": "vite --port 8801",
 		"test": "run-vitest"
