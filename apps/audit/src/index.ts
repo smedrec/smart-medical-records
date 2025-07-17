@@ -7,8 +7,10 @@ import { pino } from 'pino'
 import {
 	CircuitBreakerHealthCheck,
 	ConsoleAlertHandler,
+	DatabaseErrorLogger,
 	DatabaseHealthCheck,
 	DEFAULT_RELIABLE_PROCESSOR_CONFIG,
+	ErrorHandler,
 	HealthCheckService,
 	MonitoringService,
 	ProcessingHealthCheck,
@@ -73,6 +75,10 @@ let reliableProcessor: ReliableEventProcessor<AuditLogEvent> | undefined = undef
 // Monitoring and health check services
 let monitoringService: MonitoringService | undefined = undefined
 let healthCheckService: HealthCheckService | undefined = undefined
+
+// Error handling services
+let errorHandler: ErrorHandler | undefined = undefined
+let databaseErrorLogger: DatabaseErrorLogger | undefined = undefined
 
 // Simple healthcheck server for audit worker
 const port = parseInt(process.env.AUDIT_WORKER_PORT!, 10) || 5600
@@ -220,6 +226,155 @@ app.get('/health/:component', async (c) => {
 	}
 })
 
+// Error handling and logging endpoints
+app.get('/errors/statistics', async (c) => {
+	if (!errorHandler) {
+		c.status(503)
+		return c.json({ error: 'Error handler not initialized' })
+	}
+
+	try {
+		const statistics = errorHandler.getErrorStatistics()
+		return c.json({
+			...statistics,
+			timestamp: new Date().toISOString(),
+		})
+	} catch (error) {
+		logger.error('Failed to get error statistics:', error)
+		c.status(500)
+		return c.json({
+			error: 'Failed to get error statistics',
+			message: error instanceof Error ? error.message : 'Unknown error',
+		})
+	}
+})
+
+app.get('/errors/aggregations', async (c) => {
+	if (!errorHandler) {
+		c.status(503)
+		return c.json({ error: 'Error handler not initialized' })
+	}
+
+	try {
+		const aggregations = errorHandler.getAggregations()
+		return c.json({
+			aggregations,
+			count: aggregations.length,
+			timestamp: new Date().toISOString(),
+		})
+	} catch (error) {
+		logger.error('Failed to get error aggregations:', error)
+		c.status(500)
+		return c.json({
+			error: 'Failed to get error aggregations',
+			message: error instanceof Error ? error.message : 'Unknown error',
+		})
+	}
+})
+
+app.get('/errors/history', async (c) => {
+	if (!databaseErrorLogger) {
+		c.status(503)
+		return c.json({ error: 'Database error logger not initialized' })
+	}
+
+	try {
+		const query = c.req.query()
+		const filters: any = {
+			category: query.category as any,
+			severity: query.severity as any,
+			component: query.component,
+			correlationId: query.correlationId,
+			startTime: query.startTime,
+			endTime: query.endTime,
+			limit: query.limit ? parseInt(query.limit, 10) : 50,
+		}
+
+		// Remove undefined values
+		Object.keys(filters).forEach((key) => {
+			if (filters[key as keyof typeof filters] === undefined) {
+				delete filters[key as keyof typeof filters]
+			}
+		})
+
+		const history = await databaseErrorLogger.getErrorHistory(filters)
+		return c.json({
+			errors: history,
+			count: history.length,
+			filters,
+			timestamp: new Date().toISOString(),
+		})
+	} catch (error) {
+		logger.error('Failed to get error history:', error)
+		c.status(500)
+		return c.json({
+			error: 'Failed to get error history',
+			message: error instanceof Error ? error.message : 'Unknown error',
+		})
+	}
+})
+
+app.get('/errors/database-statistics', async (c) => {
+	if (!databaseErrorLogger) {
+		c.status(503)
+		return c.json({ error: 'Database error logger not initialized' })
+	}
+
+	try {
+		const query = c.req.query()
+		let timeWindow: { start: Date; end: Date } | undefined
+
+		if (query.startTime && query.endTime) {
+			timeWindow = {
+				start: new Date(query.startTime),
+				end: new Date(query.endTime),
+			}
+		}
+
+		const statistics = await databaseErrorLogger.getErrorStatistics(timeWindow)
+		return c.json({
+			...statistics,
+			timeWindow,
+			timestamp: new Date().toISOString(),
+		})
+	} catch (error) {
+		logger.error('Failed to get database error statistics:', error)
+		c.status(500)
+		return c.json({
+			error: 'Failed to get database error statistics',
+			message: error instanceof Error ? error.message : 'Unknown error',
+		})
+	}
+})
+
+app.post('/errors/cleanup', async (c) => {
+	if (!databaseErrorLogger) {
+		c.status(503)
+		return c.json({ error: 'Database error logger not initialized' })
+	}
+
+	try {
+		const body = await c.req.json().catch(() => ({}))
+		const retentionDays = body.retentionDays || 90
+
+		const deletedCount = await databaseErrorLogger.cleanupOldErrors(retentionDays)
+		return c.json({
+			success: true,
+			message: `Cleaned up ${deletedCount} old error log entries`,
+			deletedCount,
+			retentionDays,
+			timestamp: new Date().toISOString(),
+		})
+	} catch (error) {
+		logger.error('Failed to cleanup old errors:', error)
+		c.status(500)
+		return c.json({
+			error: 'Failed to cleanup old errors',
+			message: error instanceof Error ? error.message : 'Unknown error',
+		})
+	}
+})
+
 const server = serve(app)
 
 // Main function to start the worker
@@ -242,7 +397,12 @@ async function main() {
 
 	const db = auditDbService.getDrizzleInstance()
 
-	// 2. Initialize monitoring and health check services
+	// 2. Initialize error handling services
+	const { errorLog, errorAggregation } = await import('@repo/audit-db/src/db/schema.js')
+	databaseErrorLogger = new DatabaseErrorLogger(db, errorLog, errorAggregation)
+	errorHandler = new ErrorHandler(undefined, undefined, databaseErrorLogger)
+
+	// 3. Initialize monitoring and health check services
 	monitoringService = new MonitoringService()
 	monitoringService.addAlertHandler(new ConsoleAlertHandler())
 
@@ -309,8 +469,30 @@ async function main() {
 
 			logger.info(`✅ Audit event processed successfully. Action '${action}' stored.`)
 		} catch (error) {
-			logger.error(`❌ Failed to process audit event: ${error}`)
-			throw error // Re-throw to trigger retry mechanism
+			// Use comprehensive error handling for better error tracking and logging
+			const err = error instanceof Error ? error : new Error(String(error))
+
+			if (errorHandler) {
+				await errorHandler.handleError(
+					err,
+					{
+						correlationId: eventData.correlationId,
+						userId: eventData.principalId,
+						sessionId: eventData.sessionContext?.sessionId,
+						metadata: {
+							action: eventData.action,
+							targetResourceType: eventData.targetResourceType,
+							targetResourceId: eventData.targetResourceId,
+							eventData: eventData,
+						},
+					},
+					'audit-processor',
+					'processAuditEvent'
+				)
+			}
+
+			logger.error(`❌ Failed to process audit event: ${err.message}`)
+			throw err // Re-throw to trigger retry mechanism
 		}
 	}
 

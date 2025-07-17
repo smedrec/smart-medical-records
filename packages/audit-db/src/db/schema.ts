@@ -200,6 +200,91 @@ export const auditRetentionPolicy = pgTable(
 	}
 )
 
+/**
+ * Error log table for structured error logging and analysis
+ * Requirement 11: Comprehensive error handling and logging
+ */
+export const errorLog = pgTable(
+	'error_log',
+	{
+		id: varchar('id', { length: 36 }).primaryKey(), // UUID
+		category: varchar('category', { length: 50 }).notNull(),
+		severity: varchar('severity', { length: 20 }).notNull(),
+		code: varchar('code', { length: 20 }).notNull(),
+		message: text('message').notNull(),
+		component: varchar('component', { length: 100 }).notNull(),
+		operation: varchar('operation', { length: 100 }).notNull(),
+		correlationId: varchar('correlation_id', { length: 255 }).notNull(),
+		userId: varchar('user_id', { length: 255 }),
+		sessionId: varchar('session_id', { length: 255 }),
+		requestId: varchar('request_id', { length: 255 }),
+		retryable: varchar('retryable', { length: 10 }).notNull(), // 'true' or 'false'
+		aggregationKey: varchar('aggregation_key', { length: 255 }).notNull(),
+		context: jsonb('context'), // Environment, metadata, stack trace
+		troubleshooting: jsonb('troubleshooting'), // Possible causes and suggested actions
+		timestamp: timestamp('timestamp', { withTimezone: true, mode: 'string' }).notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+			.notNull()
+			.defaultNow(),
+	},
+	(table) => {
+		return [
+			index('error_log_timestamp_idx').on(table.timestamp),
+			index('error_log_category_idx').on(table.category),
+			index('error_log_severity_idx').on(table.severity),
+			index('error_log_component_idx').on(table.component),
+			index('error_log_correlation_id_idx').on(table.correlationId),
+			index('error_log_aggregation_key_idx').on(table.aggregationKey),
+			index('error_log_user_id_idx').on(table.userId),
+			index('error_log_created_at_idx').on(table.createdAt),
+			// Composite indexes for common queries
+			index('error_log_category_severity_idx').on(table.category, table.severity),
+			index('error_log_component_timestamp_idx').on(table.component, table.timestamp),
+		]
+	}
+)
+
+/**
+ * Error aggregation table for tracking error patterns and trends
+ * Requirement 11: Error aggregation and analysis for system health monitoring
+ */
+export const errorAggregation = pgTable(
+	'error_aggregation',
+	{
+		aggregationKey: varchar('aggregation_key', { length: 255 }).primaryKey(),
+		category: varchar('category', { length: 50 }).notNull(),
+		severity: varchar('severity', { length: 20 }).notNull(),
+		count: integer('count').notNull().default(0),
+		errorRate: varchar('error_rate', { length: 20 }).notNull().default('0'), // Stored as string for precision
+		trend: varchar('trend', { length: 20 }).notNull().default('STABLE'),
+		firstOccurrence: timestamp('first_occurrence', {
+			withTimezone: true,
+			mode: 'string',
+		}).notNull(),
+		lastOccurrence: timestamp('last_occurrence', { withTimezone: true, mode: 'string' }).notNull(),
+		affectedComponents: jsonb('affected_components').notNull().default('[]'), // Array of component names
+		affectedUsers: jsonb('affected_users').notNull().default('[]'), // Array of user IDs
+		samples: jsonb('samples').notNull().default('[]'), // Sample error instances
+		updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+			.notNull()
+			.defaultNow(),
+	},
+	(table) => {
+		return [
+			index('error_aggregation_category_idx').on(table.category),
+			index('error_aggregation_severity_idx').on(table.severity),
+			index('error_aggregation_count_idx').on(table.count),
+			index('error_aggregation_trend_idx').on(table.trend),
+			index('error_aggregation_first_occurrence_idx').on(table.firstOccurrence),
+			index('error_aggregation_last_occurrence_idx').on(table.lastOccurrence),
+			index('error_aggregation_updated_at_idx').on(table.updatedAt),
+			// Composite indexes for analysis queries
+			index('error_aggregation_category_count_idx').on(table.category, table.count),
+			index('error_aggregation_severity_count_idx').on(table.severity, table.count),
+		]
+	}
+)
+
 // Notes for implementation:
 // - When inserting data, the `timestamp` field of the `AuditLogEvent` (which is a string)
 //   will be directly inserted into the `timestamp` column of this table.
@@ -207,4 +292,6 @@ export const auditRetentionPolicy = pgTable(
 //   should be collected into an object and stored in the `details` jsonb column.
 // - The audit_integrity_log table tracks all verification attempts for audit events
 // - The audit_retention_policy table defines lifecycle management rules for different data classifications
+// - The error_log table stores structured error information for analysis and troubleshooting
+// - The error_aggregation table tracks error patterns and trends for system health monitoring
 // - Consider adding database indexes on frequently queried columns for performance optimization
