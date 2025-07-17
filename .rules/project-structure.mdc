@@ -14,7 +14,7 @@ This is a Node.js monorepo template built with Turborepo, pnpm workspaces, and m
 
 - **`apps/`** - Individual Node.js applications or services (deployable units).
   - Each subdirectory is typically a separate application (e.g., an API server, a background job processor).
-  - Example: `apps/api-service/` - could be an Express.js or NestJS application.
+  - Example: `apps/api-service/` - could be an Hono, Express.js or NestJS application.
   - Example: `apps/data-processor/` - could be a standalone Node.js script or service.
 
 - **`packages/`** - Shared libraries, utilities, and configurations used by applications in the `apps/` directory or other packages.
@@ -39,7 +39,7 @@ This is a Node.js monorepo template built with Turborepo, pnpm workspaces, and m
   - `templates/node-service/` - Example: Template for a basic Node.js service (e.g., using Express or Fastify).
   - `templates/library-package/` - Template for a shared library package.
   - `templates/package/` - Generic shared package template (as before, likely still useful).
-  *(Update these paths and descriptions to match your actual Node.js application/service templates.)*
+    _(Update these paths and descriptions to match your actual Node.js application/service templates.)_
 
 ### Build & Development
 
