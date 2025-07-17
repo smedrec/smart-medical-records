@@ -21,7 +21,6 @@ import {
 	DataExportService,
 	ScheduledReportingService,
 } from '@repo/audit'
-import { AuditDb } from '@repo/audit-db'
 
 import type {
 	DeliveryConfig,
@@ -29,6 +28,7 @@ import type {
 	ReportCriteria,
 	ScheduledReportConfig,
 } from '@repo/audit'
+import type { AuditDb } from '@repo/audit-db'
 
 const apiLogger = pino({ name: 'compliance-api' })
 

@@ -30,3 +30,7 @@ export {
 export * from './compliance-reporting.js'
 export * from './data-export.js'
 export * from './scheduled-reporting.js'
+
+// Export error handling and logging services
+export * from './error-handling.js'
+export { DatabaseErrorLogger } from './database-error-logger.js'
