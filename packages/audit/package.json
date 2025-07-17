@@ -18,6 +18,7 @@
 		"test": "run-vitest"
 	},
 	"dependencies": {
+		"@repo/audit-sdk": "workspace:*",
 		"@repo/hono-helpers": "workspace:*",
 		"@repo/redis-client": "workspace:*",
 		"bullmq": "5.56.4",

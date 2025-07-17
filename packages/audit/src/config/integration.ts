@@ -1,6 +1,7 @@
 /**
  * Configuration integration service for audit system
  * Provides seamless integration between configuration management and audit worker
+ * Uses existing audit system types to avoid duplication
  */
 
 import { existsSync } from 'fs'
@@ -264,7 +265,7 @@ export function validateEnvironmentConfig(config: AuditConfig): void {
 
 	// Test-specific validations
 	if (environment === 'test') {
-		if (config.compliance.enableGDPR) {
+		if (config.compliance.gdpr.enabled) {
 			console.warn('Warning: GDPR compliance is enabled in test environment')
 		}
 	}

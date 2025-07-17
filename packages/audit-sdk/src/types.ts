@@ -58,10 +58,10 @@ export interface ComplianceConfig {
 	}
 
 	/** Custom compliance rules */
-	custom?: {
+	custom?: Array<{
 		name: string
 		rules: ComplianceRule[]
-	}[]
+	}>
 }
 
 /**
@@ -73,6 +73,59 @@ export interface ComplianceRule {
 	validator?: (value: any) => boolean
 	message?: string
 }
+
+/**
+ * Comprehensive compliance configuration
+ */
+//export interface ComplianceConfig {
+/** HIPAA compliance configuration */
+//hipaa: HIPAAComplianceConfig
+
+/** GDPR compliance configuration */
+//gdpr: GDPRComplianceConfig
+
+/** Default data retention period in days */
+//defaultRetentionDays: number
+
+/** Enable automatic data archival */
+//enableAutoArchival: boolean
+
+/** Enable data pseudonymization */
+//enablePseudonymization: boolean
+
+/** Compliance reporting schedule */
+//reportingSchedule: {
+//enabled: boolean
+//frequency: 'daily' | 'weekly' | 'monthly'
+//recipients: string[]
+//includeHIPAA: boolean
+//includeGDPR: boolean
+//}
+
+/** Custom compliance rules */
+//customRules: ComplianceRule[]
+//}
+/**
+ * Custom compliance rule definition
+ */
+//export interface ComplianceRule {
+/** Rule identifier */
+//id: string
+/** Rule name */
+//name: string
+/** Rule description */
+//description: string
+/** Field path to validate */
+//field: string
+/** Whether field is required */
+//required: boolean
+/** Validation function */
+//validator?: (value: any) => boolean
+/** Error message when validation fails */
+//message: string
+/** Applicable compliance frameworks */
+//frameworks: Array<'HIPAA' | 'GDPR' | 'CUSTOM'>
+//}
 
 /**
  * Predefined audit event configurations

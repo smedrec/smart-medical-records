@@ -34,26 +34,3 @@ export * from './scheduled-reporting.js'
 // Export error handling and logging services
 export * from './error-handling.js'
 export { DatabaseErrorLogger } from './database-error-logger.js'
-
-// Export configuration management system
-export { ConfigValidationError } from './config/types.js'
-export {
-	ConfigurationManager,
-	getConfigurationManager,
-	initializeConfig,
-} from './config/manager.js'
-export * from './config/factory.js'
-export * from './config/validator.js'
-export type {
-	AuditConfig,
-	RedisConfig,
-	DatabaseConfig,
-	WorkerConfig,
-	ConfigChangeEvent,
-	HotReloadConfig,
-	SecureStorageConfig,
-	MonitoringConfig,
-	SecurityConfig,
-	ComplianceConfig,
-	LoggingConfig,
-} from './config/types.js'

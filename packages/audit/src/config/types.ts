@@ -1,6 +1,12 @@
 /**
  * Configuration management types for the audit system
+ * Uses existing types from the audit system to avoid duplication
  */
+
+import type { ComplianceConfig } from '@repo/audit-sdk'
+import type { CircuitBreakerConfig } from '../circuit-breaker.js'
+import type { DeadLetterConfig } from '../dead-letter-queue.js'
+import type { RetryConfig } from '../retry.js'
 
 export interface AuditConfig {
 	/** Environment identifier */
@@ -100,51 +106,6 @@ export interface WorkerConfig {
 	shutdownTimeout: number
 }
 
-export interface RetryConfig {
-	/** Maximum number of retries */
-	maxRetries: number
-
-	/** Base delay between retries in milliseconds */
-	baseDelay: number
-
-	/** Maximum delay between retries in milliseconds */
-	maxDelay: number
-
-	/** Backoff strategy */
-	backoffStrategy: 'exponential' | 'linear' | 'fixed'
-
-	/** List of retryable error codes */
-	retryableErrors: string[]
-}
-
-export interface CircuitBreakerConfig {
-	/** Number of failures before opening circuit */
-	failureThreshold: number
-
-	/** Recovery timeout in milliseconds */
-	recoveryTimeout: number
-
-	/** Monitoring window in milliseconds */
-	monitoringWindow: number
-
-	/** Minimum number of calls before evaluation */
-	minimumCalls: number
-}
-
-export interface DeadLetterConfig {
-	/** Dead letter queue name */
-	queueName: string
-
-	/** Alert threshold for dead letter queue depth */
-	alertThreshold: number
-
-	/** Maximum retention time for dead letter messages */
-	maxRetentionTime: number
-
-	/** Enable automatic cleanup */
-	autoCleanup: boolean
-}
-
 export interface MonitoringConfig {
 	/** Enable real-time monitoring */
 	enabled: boolean
@@ -179,27 +140,6 @@ export interface SecurityConfig {
 
 	/** Enable audit log encryption */
 	enableLogEncryption: boolean
-}
-
-export interface ComplianceConfig {
-	/** Enable GDPR compliance features */
-	enableGDPR: boolean
-
-	/** Default data retention period in days */
-	defaultRetentionDays: number
-
-	/** Enable automatic data archival */
-	enableAutoArchival: boolean
-
-	/** Enable data pseudonymization */
-	enablePseudonymization: boolean
-
-	/** Compliance reporting schedule */
-	reportingSchedule: {
-		enabled: boolean
-		frequency: 'daily' | 'weekly' | 'monthly'
-		recipients: string[]
-	}
 }
 
 export interface LoggingConfig {

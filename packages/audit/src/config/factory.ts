@@ -45,14 +45,15 @@ export function createDevelopmentConfig(): AuditConfig {
 		circuitBreaker: {
 			failureThreshold: 5,
 			recoveryTimeout: 30000,
-			monitoringWindow: 60000,
-			minimumCalls: 10,
+			monitoringPeriod: 60000,
+			minimumThroughput: 10,
 		},
 		deadLetter: {
 			queueName: 'audit-dead-letter-dev',
+			maxRetentionDays: 30,
 			alertThreshold: 10,
-			maxRetentionTime: 86400000, // 24 hours
-			autoCleanup: true,
+			processingInterval: 3000,
+			archiveAfterDays: 30, // 24 hours
 		},
 		monitoring: {
 			enabled: true,
@@ -72,7 +73,14 @@ export function createDevelopmentConfig(): AuditConfig {
 			enableLogEncryption: false,
 		},
 		compliance: {
-			enableGDPR: true,
+			hipaa: {
+				enabled: true,
+				retentionYears: 6,
+			},
+			gdpr: {
+				enabled: true,
+				defaultLegalBasis: 'legitimate_interest',
+			},
 			defaultRetentionDays: 2555, // 7 years
 			enableAutoArchival: true,
 			enablePseudonymization: true,
@@ -80,6 +88,8 @@ export function createDevelopmentConfig(): AuditConfig {
 				enabled: false,
 				frequency: 'weekly',
 				recipients: [],
+				includeGDPR: false,
+				includeHIPAA: false,
 			},
 		},
 		logging: {
@@ -155,6 +165,8 @@ export function createStagingConfig(): AuditConfig {
 				enabled: true,
 				frequency: 'weekly',
 				recipients: process.env.COMPLIANCE_RECIPIENTS?.split(',') || [],
+				includeGDPR: true,
+				includeHIPAA: true,
 			},
 		},
 		logging: {
@@ -205,16 +217,12 @@ export function createProductionConfig(): AuditConfig {
 		},
 		circuitBreaker: {
 			...baseConfig.circuitBreaker,
-			failureThreshold: 2,
-			recoveryTimeout: 120000,
-			monitoringWindow: 300000,
-			minimumCalls: 20,
 		},
 		deadLetter: {
 			...baseConfig.deadLetter,
 			queueName: 'audit-dead-letter-prod',
-			alertThreshold: 1,
-			maxRetentionTime: 604800000, // 7 days
+			alertThreshold: 20,
+			archiveAfterDays: 7, // 7 days
 		},
 		monitoring: {
 			...baseConfig.monitoring,
@@ -241,6 +249,8 @@ export function createProductionConfig(): AuditConfig {
 				enabled: true,
 				frequency: 'daily',
 				recipients: process.env.COMPLIANCE_RECIPIENTS?.split(',') || [],
+				includeGDPR: true,
+				includeHIPAA: true,
 			},
 		},
 		logging: {
@@ -308,7 +318,6 @@ export function createTestConfig(): AuditConfig {
 		},
 		compliance: {
 			...baseConfig.compliance,
-			enableGDPR: false,
 			defaultRetentionDays: 1,
 			enableAutoArchival: false,
 			enablePseudonymization: false,
@@ -316,6 +325,8 @@ export function createTestConfig(): AuditConfig {
 				enabled: false,
 				frequency: 'daily',
 				recipients: [],
+				includeGDPR: false,
+				includeHIPAA: false,
 			},
 		},
 		logging: {

@@ -422,7 +422,7 @@ async function main() {
 		port: port,
 	})
 
-	logger.info(`👂 Healthcheck server and Compliance API listening on port ${port}`)
+	logger.info(`👂 Healthcheck server, Compliance API and Errors API listening on port ${port}`)
 
 	// Graceful shutdown
 	const gracefulShutdown = async (signal: string) => {
