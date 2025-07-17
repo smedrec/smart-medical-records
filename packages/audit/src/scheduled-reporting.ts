@@ -423,16 +423,18 @@ export class ScheduledReportingService {
 				case 'daily':
 					nextRun.setDate(nextRun.getDate() + 1)
 					break
-				case 'weekly':
+				case 'weekly': {
 					const targetDay = schedule.dayOfWeek || 1 // Default to Monday
 					const currentDay = nextRun.getDay()
 					const daysUntilTarget = (targetDay - currentDay + 7) % 7 || 7
 					nextRun.setDate(nextRun.getDate() + daysUntilTarget)
 					break
-				case 'monthly':
+				}
+				case 'monthly': {
 					const targetDate = schedule.dayOfMonth || 1
 					nextRun.setMonth(nextRun.getMonth() + 1, targetDate)
 					break
+				}
 				case 'quarterly':
 					nextRun.setMonth(nextRun.getMonth() + 3, schedule.dayOfMonth || 1)
 					break

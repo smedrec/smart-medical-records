@@ -804,6 +804,9 @@ importers:
 
   packages/audit:
     dependencies:
+      '@repo/audit-sdk':
+        specifier: workspace:*
+        version: link:../audit-sdk
       '@repo/hono-helpers':
         specifier: workspace:*
         version: link:../hono-helpers
