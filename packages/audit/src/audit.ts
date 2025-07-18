@@ -4,12 +4,15 @@ import { Redis as RedisInstance } from 'ioredis' // Renamed to avoid conflict
 import { getSharedRedisConnection } from '@repo/redis-client'
 
 import { CryptoService } from './crypto.js'
-import { DEFAULT_RELIABLE_PROCESSOR_CONFIG, ReliableEventProcessor } from './reliable-processor.js'
+import {
+	DEFAULT_RELIABLE_PROCESSOR_CONFIG,
+	ReliableEventProcessor,
+} from './queue/reliable-processor.js'
 import { DEFAULT_VALIDATION_CONFIG, validateAndSanitizeAuditEvent } from './validation.js'
 
 import type { RedisOptions, Redis as RedisType } from 'ioredis' // RedisType for type usage
 import type { CryptoConfig } from './crypto.js'
-import type { ReliableProcessorConfig } from './reliable-processor.js'
+import type { ReliableProcessorConfig } from './queue/reliable-processor.js'
 import type { AuditLogEvent } from './types.js'
 import type { ValidationConfig } from './validation.js'
 

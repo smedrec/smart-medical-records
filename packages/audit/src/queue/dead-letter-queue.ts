@@ -6,7 +6,7 @@ import { Queue, Worker } from 'bullmq'
 
 import type { Job } from 'bullmq'
 import type { Redis as RedisType } from 'ioredis'
-import type { AuditLogEvent } from './types.js'
+import type { AuditLogEvent } from '../types.js'
 
 export interface DeadLetterConfig {
 	queueName: string

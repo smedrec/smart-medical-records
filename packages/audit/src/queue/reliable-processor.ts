@@ -4,16 +4,16 @@
 
 import { Queue, Worker } from 'bullmq'
 
+import { DEFAULT_RETRY_CONFIG, executeWithRetry } from '../retry.js'
 import { CircuitBreaker, DEFAULT_CIRCUIT_BREAKER_CONFIG } from './circuit-breaker.js'
 import { DeadLetterHandler, DEFAULT_DEAD_LETTER_CONFIG } from './dead-letter-queue.js'
-import { DEFAULT_RETRY_CONFIG, executeWithRetry } from './retry.js'
 
 import type { Job } from 'bullmq'
 import type { Redis as RedisType } from 'ioredis'
+import type { RetryConfig } from '../retry.js'
+import type { AuditLogEvent } from '../types.js'
 import type { CircuitBreakerConfig } from './circuit-breaker.js'
 import type { DeadLetterConfig } from './dead-letter-queue.js'
-import type { RetryConfig } from './retry.js'
-import type { AuditLogEvent } from './types.js'
 
 export interface ReliableProcessorConfig {
 	queueName: string

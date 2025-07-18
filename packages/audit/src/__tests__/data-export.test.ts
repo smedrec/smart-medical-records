@@ -12,10 +12,14 @@
 
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { DataExportService } from '../data-export.js'
+import { DataExportService } from '../report/data-export.js'
 
-import type { ComplianceReport, ComplianceReportEvent } from '../compliance-reporting.js'
-import type { ExportConfig, ExportResult } from '../data-export.js'
+import type {
+	ComplianceReport,
+	ComplianceReportEvent,
+	ExportConfig,
+} from '../report/compliance-reporting.js'
+import type { ExportResult } from '../report/data-export.js'
 
 describe('DataExportService', () => {
 	let service: DataExportService

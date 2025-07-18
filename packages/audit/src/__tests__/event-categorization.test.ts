@@ -15,20 +15,20 @@ import {
 	isSystemAction,
 	isValidAuditAction,
 	validateCategorizedEvent,
-} from '../event-categorization.js'
+} from '../event/event-categorization.js'
 import {
 	createAuthAuditEvent,
 	createDataAuditEvent,
 	createFHIRAuditEvent,
 	createSystemAuditEvent,
-} from '../event-types.js'
+} from '../event/event-types.js'
 
 import type {
 	AuthAuditEvent,
 	DataAuditEvent,
 	FHIRAuditEvent,
 	SystemAuditEvent,
-} from '../event-types.js'
+} from '../event/event-types.js'
 
 describe('Event Categorization', () => {
 	describe('Type Guards', () => {

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { GDPRUtils } from '../gdpr-utils.js'
+import { GDPRUtils } from '../gdpr/gdpr-utils.js'
 
 describe('GDPRUtils', () => {
 	beforeEach(() => {

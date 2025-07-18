@@ -2,7 +2,7 @@ import { createHash, randomBytes } from 'crypto'
 import { and, eq, gte, isNotNull, lte, sql } from 'drizzle-orm'
 
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
-import type { AuditLogEvent } from './types.js'
+import type { AuditLogEvent } from '../types.js'
 
 /**
  * GDPR data export format options

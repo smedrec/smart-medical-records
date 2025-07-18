@@ -5,9 +5,9 @@
 import { Redis } from 'ioredis'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { CircuitBreaker } from '../circuit-breaker.js'
-import { DeadLetterHandler } from '../dead-letter-queue.js'
-import { ReliableEventProcessor } from '../reliable-processor.js'
+import { CircuitBreaker } from '../queue/circuit-breaker.js'
+import { DeadLetterHandler } from '../queue/dead-letter-queue.js'
+import { ReliableEventProcessor } from '../queue/reliable-processor.js'
 import { executeWithRetry } from '../retry.js'
 
 import type { AuditLogEvent } from '../types.js'

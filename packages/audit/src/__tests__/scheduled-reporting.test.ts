@@ -11,15 +11,14 @@
 
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { ScheduledReportingService } from '../scheduled-reporting.js'
+import { ScheduledReportingService } from '../report/scheduled-reporting.js'
 
-import type { ReportCriteria } from '../compliance-reporting.js'
+import type { ReportCriteria, ScheduledReportConfig } from '../report/compliance-reporting.js'
 import type {
 	DeliveryConfig,
 	ReportExecution,
 	ReportTemplate,
-	ScheduledReportConfig,
-} from '../scheduled-reporting.js'
+} from '../report/scheduled-reporting.js'
 
 describe('ScheduledReportingService', () => {
 	let service: ScheduledReportingService

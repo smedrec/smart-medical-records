@@ -63,7 +63,7 @@ export interface SanitizationResult {
 export interface ValidationConfig {
 	maxStringLength: number
 	allowedDataClassifications: DataClassification[]
-	requiredFields: (keyof AuditLogEvent)[]
+	requiredFields: Array<keyof AuditLogEvent>
 	maxCustomFieldDepth: number
 	allowedEventVersions: string[]
 }

@@ -5,7 +5,10 @@
 import { Redis } from 'ioredis'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { DEFAULT_RELIABLE_PROCESSOR_CONFIG, ReliableEventProcessor } from '../reliable-processor.js'
+import {
+	DEFAULT_RELIABLE_PROCESSOR_CONFIG,
+	ReliableEventProcessor,
+} from '../queue/reliable-processor.js'
 
 import type { AuditLogEvent } from '../types.js'
 

@@ -10,7 +10,7 @@
  * Requirements: 4.1, 4.4, 8.1
  */
 
-import type { AuditLogEvent, DataClassification } from './types.js'
+import type { AuditLogEvent, DataClassification } from '../types.js'
 
 /**
  * Report criteria for filtering and configuring compliance reports
@@ -35,7 +35,7 @@ export interface ReportCriteria {
 	dataClassifications?: DataClassification[]
 
 	/** Filter by event status */
-	statuses?: ('attempt' | 'success' | 'failure')[]
+	statuses?: Array<'attempt' | 'success' | 'failure'>
 
 	/** Filter by resource types */
 	resourceTypes?: string[]

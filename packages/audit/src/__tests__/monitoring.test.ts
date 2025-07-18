@@ -9,10 +9,10 @@ import {
 	DEFAULT_PATTERN_CONFIG,
 	DefaultMetricsCollector,
 	MonitoringService,
-} from '../monitoring.js'
+} from '../monitor/monitoring.js'
 
-import type { Alert } from '../monitoring-types.js'
-import type { PatternDetectionConfig } from '../monitoring.js'
+import type { Alert } from '../monitor/monitoring-types.js'
+import type { PatternDetectionConfig } from '../monitor/monitoring.js'
 import type { AuditLogEvent } from '../types.js'
 
 describe('MonitoringService', () => {

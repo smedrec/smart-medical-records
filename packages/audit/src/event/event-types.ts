@@ -13,7 +13,7 @@ import type {
 	DataClassification,
 	FHIRAuditAction,
 	SystemAuditAction,
-} from './types.js'
+} from '../types.js'
 
 /**
  * Base interface for all categorized audit events

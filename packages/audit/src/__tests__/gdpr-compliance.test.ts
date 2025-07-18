@@ -1,7 +1,7 @@
 import { createHash } from 'crypto'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { GDPRComplianceService } from '../gdpr-compliance.js'
+import { GDPRComplianceService } from '../gdpr/gdpr-compliance.js'
 
 import type { AuditLogEvent } from '../types.js'
 

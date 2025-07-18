@@ -4,9 +4,9 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { DatabaseErrorLogger } from '../database-error-logger.js'
+import { DatabaseErrorLogger } from '../error/database-error-logger.js'
 
-import type { ErrorAggregation, StructuredError } from '../error-handling.js'
+import type { ErrorAggregation, StructuredError } from '../error/error-handling.js'
 
 // Mock database and table schemas
 const mockDb = {
