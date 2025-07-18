@@ -18,7 +18,12 @@ import {
 	RedisHealthCheck,
 	ReliableEventProcessor,
 } from '@repo/audit'
-import { AuditDb, auditLog as auditLogTableSchema } from '@repo/audit-db'
+import {
+	AuditDb,
+	auditLog as auditLogTableSchema,
+	errorAggregation,
+	errorLog,
+} from '@repo/audit-db'
 import {
 	closeSharedRedisConnection,
 	getRedisConnectionStatus,
@@ -250,7 +255,7 @@ async function main() {
 	const db = auditDbService.getDrizzleInstance()
 
 	// 2. Initialize error handling services
-	const { errorLog, errorAggregation } = await import('@repo/audit-db/src/db/schema.js')
+
 	databaseErrorLogger = new DatabaseErrorLogger(db, errorLog, errorAggregation)
 	errorHandler = new ErrorHandler(undefined, undefined, databaseErrorLogger)
 
@@ -413,7 +418,7 @@ async function main() {
 
 	// 7. Mount errors API routes
 	const errorsAPI = await createErrorsAPI(errorHandler, databaseErrorLogger)
-	app.route('/api/erros', errorsAPI)
+	app.route('/api/errors', errorsAPI)
 
 	logger.info('📊 Compliance API routes mounted at /api/compliance')
 
@@ -443,7 +448,7 @@ async function main() {
 
 // Start the application
 main().catch(async (error) => {
-	logger.error('💥 Unhandled error in main application scope:', error)
+	logger.error('💥 Unhandled error in main application scope:', error.message)
 	await auditDbService?.end()
 	// Ensure shared Redis connection is closed on fatal error
 	void closeSharedRedisConnection().finally(() => process.exit(1))
