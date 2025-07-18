@@ -4,7 +4,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { CircuitBreaker, DEFAULT_CIRCUIT_BREAKER_CONFIG } from '../circuit-breaker.js'
+import { CircuitBreaker, DEFAULT_CIRCUIT_BREAKER_CONFIG } from '../queue/circuit-breaker.js'
 
 describe('Circuit Breaker', () => {
 	let circuitBreaker: CircuitBreaker

@@ -12,9 +12,13 @@ import {
 	ProcessingHealthCheck,
 	QueueHealthCheck,
 	RedisHealthCheck,
-} from '../health-check.js'
+} from '../monitor/health-check.js'
 
-import type { AuditMetrics, ComponentHealthCheck, HealthCheckConfig } from '../health-check.js'
+import type {
+	AuditMetrics,
+	ComponentHealthCheck,
+	HealthCheckConfig,
+} from '../monitor/health-check.js'
 
 describe('HealthCheckService', () => {
 	let healthCheckService: HealthCheckService

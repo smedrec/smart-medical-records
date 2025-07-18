@@ -22,7 +22,9 @@
 		"check:lint": "run-eslint",
 		"check:types": "run-tsc",
 		"clean": "rm -rf dist node_modules .turbo",
-		"test": "run-vitest"
+		"test": "vitest run",
+		"test:ci": "vitest run --coverage",
+		"test:watch": "vitest"
 	},
 	"dependencies": {
 		"@repo/audit": "workspace:*",

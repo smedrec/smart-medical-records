@@ -11,7 +11,7 @@ import {
 	createFHIRAuditEvent,
 	createSystemAuditEvent,
 	DEFAULT_FACTORY_CONFIG,
-} from '../event-types.js'
+} from '../event/event-types.js'
 
 import type {
 	AuthAuditEvent,
@@ -19,7 +19,7 @@ import type {
 	EventFactoryConfig,
 	FHIRAuditEvent,
 	SystemAuditEvent,
-} from '../event-types.js'
+} from '../event/event-types.js'
 import type { AuditEventStatus } from '../types.js'
 
 describe('Event Factory Functions', () => {

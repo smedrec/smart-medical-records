@@ -3,6 +3,7 @@
  * Implements suspicious pattern detection, alert generation, and metrics collection
  */
 
+import type { AuditLogEvent } from '../types.js'
 import type {
 	Alert,
 	AlertSeverity,
@@ -10,7 +11,6 @@ import type {
 	AuditMetrics,
 	HealthStatus,
 } from './monitoring-types.js'
-import type { AuditLogEvent } from './types.js'
 
 /**
  * Pattern detection configuration

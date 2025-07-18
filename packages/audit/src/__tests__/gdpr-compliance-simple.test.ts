@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { GDPRComplianceService } from '../gdpr-compliance.js'
+import { GDPRComplianceService } from '../gdpr/gdpr-compliance.js'
 
 describe('GDPRComplianceService - Simple Tests', () => {
 	it('should instantiate without errors', () => {

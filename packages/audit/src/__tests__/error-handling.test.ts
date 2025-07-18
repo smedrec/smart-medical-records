@@ -8,9 +8,9 @@ import {
 	DEFAULT_ERROR_CLASSIFICATION_RULES,
 	DEFAULT_ERROR_LOGGING_CONFIG,
 	ErrorHandler,
-} from '../error-handling.js'
+} from '../error/error-handling.js'
 
-import type { ErrorAggregation, ErrorLogger, StructuredError } from '../error-handling.js'
+import type { ErrorAggregation, ErrorLogger, StructuredError } from '../error/error-handling.js'
 
 // Mock error logger for testing
 class MockErrorLogger implements ErrorLogger {

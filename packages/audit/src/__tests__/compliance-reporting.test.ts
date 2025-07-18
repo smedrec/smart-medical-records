@@ -11,7 +11,7 @@
 
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { ComplianceReportingService } from '../compliance-reporting.js'
+import { ComplianceReportingService } from '../report/compliance-reporting.js'
 
 import type {
 	ComplianceReport,
@@ -19,7 +19,7 @@ import type {
 	HIPAAComplianceReport,
 	IntegrityVerificationReport,
 	ReportCriteria,
-} from '../compliance-reporting.js'
+} from '../report/compliance-reporting.js'
 import type { AuditLogEvent } from '../types.js'
 
 describe('ComplianceReportingService', () => {

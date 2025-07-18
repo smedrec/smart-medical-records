@@ -5,12 +5,22 @@
 import { Redis } from 'ioredis'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { DeadLetterHandler, DEFAULT_DEAD_LETTER_CONFIG } from '../dead-letter-queue.js'
+import { DeadLetterHandler, DEFAULT_DEAD_LETTER_CONFIG } from '../queue/dead-letter-queue.js'
 
 import type { AuditLogEvent } from '../types.js'
 
-// Mock Redis
-vi.mock('ioredis')
+// Mock ioredis
+vi.mock('ioredis', () => {
+	const RedisMock = vi.fn()
+	RedisMock.prototype.on = vi.fn()
+	RedisMock.prototype.quit = vi.fn().mockResolvedValue('OK')
+	RedisMock.prototype.disconnect = vi.fn().mockResolvedValue(undefined)
+	RedisMock.prototype.status = 'ready'
+	return {
+		Redis: RedisMock,
+		default: RedisMock,
+	}
+})
 
 describe('Dead Letter Queue Handler', () => {
 	let mockRedis: vi.Mocked<Redis>

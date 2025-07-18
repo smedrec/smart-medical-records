@@ -3,14 +3,14 @@
  * Provides utilities to validate and categorize audit events
  */
 
-import type { CategorizedAuditEvent } from './event-types.js'
 import type {
 	AuditAction,
 	AuthAuditAction,
 	DataAuditAction,
 	FHIRAuditAction,
 	SystemAuditAction,
-} from './types.js'
+} from '../types.js'
+import type { CategorizedAuditEvent } from './event-types.js'
 
 /**
  * System audit actions for validation
