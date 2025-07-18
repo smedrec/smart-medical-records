@@ -34,3 +34,7 @@ export * from './report/scheduled-reporting.js'
 // Export error handling and logging services
 export * from './error/error-handling.js'
 export { DatabaseErrorLogger } from './error/database-error-logger.js'
+
+// Export archival services
+export * from './archival/archival-service.js'
+export * from './archival/postgres-archival-service.js'

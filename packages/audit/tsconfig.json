@@ -8,7 +8,7 @@
 		"types": ["node"]
 		// We inherit module, target, moduleResolution ('bundler'), lib, strict, etc., from the base.
 	},
-	"include": ["src/**/*"],
+	"include": ["src/**/*", "../audit-db/src/archival-cli.ts"],
 	"exclude": [
 		"node_modules",
 		"dist",

@@ -46,6 +46,7 @@
 // - [key: string]: any -> jsonb 'details' - OK (nullable)
 // This looks good.
 
+import { sql } from 'drizzle-orm'
 import {
 	index,
 	integer,
@@ -285,6 +286,44 @@ export const errorAggregation = pgTable(
 	}
 )
 
+/**
+ * Archive storage table for compressed audit data
+ * Requirements 4.4, 7.3: Archive data compression and storage optimization
+ */
+export const archiveStorage = pgTable(
+	'archive_storage',
+	{
+		id: varchar('id', { length: 255 }).primaryKey(), // Archive ID
+		metadata: jsonb('metadata').notNull(), // Archive metadata including compression info
+		data: text('data').notNull(), // Compressed archive data (base64 encoded)
+		createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+			.notNull()
+			.defaultNow(),
+		retrievedCount: integer('retrieved_count').notNull().default(0),
+		lastRetrievedAt: timestamp('last_retrieved_at', { withTimezone: true, mode: 'string' }),
+	},
+	(table) => {
+		return [
+			index('archive_storage_created_at_idx').on(table.createdAt),
+			index('archive_storage_retrieved_count_idx').on(table.retrievedCount),
+			index('archive_storage_last_retrieved_at_idx').on(table.lastRetrievedAt),
+			// JSONB indexes for metadata queries
+			index('archive_storage_retention_policy_idx').on(
+				sql`(${table.metadata}->>'retentionPolicy')`
+			),
+			index('archive_storage_data_classification_idx').on(
+				sql`(${table.metadata}->>'dataClassification')`
+			),
+			index('archive_storage_date_range_start_idx').on(
+				sql`((${table.metadata}->>'dateRange')::jsonb->>'start')`
+			),
+			index('archive_storage_date_range_end_idx').on(
+				sql`((${table.metadata}->>'dateRange')::jsonb->>'end')`
+			),
+		]
+	}
+)
+
 // Notes for implementation:
 // - When inserting data, the `timestamp` field of the `AuditLogEvent` (which is a string)
 //   will be directly inserted into the `timestamp` column of this table.
@@ -294,4 +333,5 @@ export const errorAggregation = pgTable(
 // - The audit_retention_policy table defines lifecycle management rules for different data classifications
 // - The error_log table stores structured error information for analysis and troubleshooting
 // - The error_aggregation table tracks error patterns and trends for system health monitoring
+// - The archive_storage table stores compressed audit data for long-term retention
 // - Consider adding database indexes on frequently queried columns for performance optimization

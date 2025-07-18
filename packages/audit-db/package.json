@@ -6,16 +6,26 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"bin": {
+		"audit-archival": "./dist/archival-cli.js",
+		"audit-db": "./dist/cli.js"
+	},
 	"files": [
 		"dist",
 		"src"
 	],
 	"scripts": {
+		"audit-db:archive": "tsx src/archival-cli.ts archive",
+		"audit-db:cleanup": "tsx src/archival-cli.ts cleanup",
+		"audit-db:delete": "tsx src/archival-cli.ts delete",
 		"audit-db:generate": "drizzle-kit generate --config=drizzle-dev.config.ts",
 		"audit-db:migrate": "drizzle-kit migrate --config=drizzle-dev.config.ts",
+		"audit-db:retrieve": "tsx src/archival-cli.ts retrieve",
 		"audit-db:rollback": "tsx src/cli.ts rollback",
 		"audit-db:seed-policies": "tsx src/cli.ts seed-policies",
+		"audit-db:stats": "tsx src/archival-cli.ts stats",
 		"audit-db:studio": "drizzle-kit studio --config=drizzle-dev.config.ts",
+		"audit-db:validate": "tsx src/archival-cli.ts validate",
 		"audit-db:verify": "tsx src/cli.ts verify",
 		"audit-db:verify-compliance": "tsx src/cli.ts verify-compliance",
 		"build": "tsc --build",
@@ -33,8 +43,6 @@
 		"postgres": "3.4.7"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "0.8.53",
-		"@cloudflare/workers-types": "4.20250712.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
